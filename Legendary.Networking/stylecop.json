@@ -1,0 +1,15 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Legendary",
+      "copyrightText": " Copyright © {copyrightYear} {companyName}\n All rights are reserved. Reproduction or transmission in whole or\n in part, in any form or by any means, electronic, mechanical or\n otherwise, is prohibited without the prior written consent of\n the copyright owner.",
+      "variables": {
+        "copyrightYear": "2021"
+      }
+    }
+  },
+  "dictionary": {
+
+  }
+}

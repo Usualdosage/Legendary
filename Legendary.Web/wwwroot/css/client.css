@@ -1,0 +1,128 @@
+﻿html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+/* Static Content */
+
+.console-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#console {
+    height: 100%;
+    border: solid 1px #ccc;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1em;
+    padding: 10px;
+    padding-top: 30px;
+    overflow-y: scroll;
+    bottom: 30px;
+    position: absolute;
+}
+
+#input {
+    width: 100%;
+    height: 30px;
+    position: absolute;
+    bottom: 0px;
+}
+
+#inputField {
+    width: 100%;
+}
+
+.message {
+    padding: 3px;
+    display: block;
+}
+
+body {
+    margin: 0px;
+    padding: 0px;
+    background-color: #000;
+    height: 100%;
+    width: 100%;
+}
+
+/* Descriptive Content */
+
+.room-title {
+    color: mediumpurple;
+    font-weight: bold;
+    border-bottom: solid 1px #ccc;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.room-image img {
+    width: 700px;
+}
+
+.room-description {
+    margin-bottom: 5px;
+}
+
+    .room-description span {
+        margin-bottom: 5px;
+    }
+
+.player {
+    display: block;
+}
+
+.item {
+    padding-left: 10px;
+    display: block;
+}
+
+.mobile {
+    display: block;
+}
+
+.exits {
+    display: block;
+    color: #999;
+}
+
+.inventory {
+    display: block;
+    font-style: italic;
+}
+
+.inventory-item {
+    display: block;
+    padding-left: 10px;
+}
+
+/* Communication Channels */
+
+.say {
+    color: yellow;
+    font-weight: bold;
+}
+
+.yell {
+    color: cyan;
+    font-weight: bold;
+}
+
+.tell {
+    color: darkgreen;
+    font-weight: bold;
+}
+
+.newbie {
+    color: #fff;
+    font-weight: bold;
+}
