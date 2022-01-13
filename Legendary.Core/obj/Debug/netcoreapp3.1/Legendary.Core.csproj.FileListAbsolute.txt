@@ -1,0 +1,9 @@
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/bin/Debug/netcoreapp3.1/Legendary.Core.deps.json
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/bin/Debug/netcoreapp3.1/Legendary.Core.dll
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/bin/Debug/netcoreapp3.1/Legendary.Core.pdb
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/netcoreapp3.1/Legendary.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/netcoreapp3.1/Legendary.Core.AssemblyInfoInputs.cache
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/netcoreapp3.1/Legendary.Core.AssemblyInfo.cs
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/netcoreapp3.1/Legendary.Core.csproj.CoreCompileInputs.cache
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/netcoreapp3.1/Legendary.Core.dll
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/netcoreapp3.1/Legendary.Core.pdb

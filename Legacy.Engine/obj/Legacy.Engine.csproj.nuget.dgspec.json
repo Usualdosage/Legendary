@@ -1,0 +1,195 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj": {}
+  },
+  "projects": {
+    "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj",
+        "projectName": "Legacy.Engine",
+        "projectPath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj",
+        "packagesPath": "/Users/matthewmartin/.nuget/packages/",
+        "outputPath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/matthewmartin/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj": {
+                "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj"
+              },
+              "/Users/matthewmartin/Projects/Legendary/Legendary.Data/Legendary.Data.csproj": {
+                "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Data/Legendary.Data.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Microsoft.AspNetCore": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.404/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj",
+        "projectName": "Legendary.Core",
+        "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj",
+        "packagesPath": "/Users/matthewmartin/.nuget/packages/",
+        "outputPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/matthewmartin/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.14.1, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.14.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.404/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/matthewmartin/Projects/Legendary/Legendary.Data/Legendary.Data.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/matthewmartin/Projects/Legendary/Legendary.Data/Legendary.Data.csproj",
+        "projectName": "Legendary.Data",
+        "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Data/Legendary.Data.csproj",
+        "packagesPath": "/Users/matthewmartin/.nuget/packages/",
+        "outputPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Data/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/matthewmartin/.config/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {
+              "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj": {
+                "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.404/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

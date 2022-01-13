@@ -1,0 +1,5 @@
+/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/Debug/netcoreapp3.1/Legacy.Engine.csproj.AssemblyReference.cache
+/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/Debug/netcoreapp3.1/Legacy.Engine.GeneratedMSBuildEditorConfig.editorconfig
+/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/Debug/netcoreapp3.1/Legacy.Engine.AssemblyInfoInputs.cache
+/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/Debug/netcoreapp3.1/Legacy.Engine.AssemblyInfo.cs
+/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/Debug/netcoreapp3.1/Legacy.Engine.csproj.CoreCompileInputs.cache
