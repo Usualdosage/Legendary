@@ -1,6 +1,7 @@
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/appsettings.Development.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/appsettings.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Web.StaticWebAssets.xml
+/Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/stylecop.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Web.deps.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Web.runtimeconfig.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Web.runtimeconfig.dev.json

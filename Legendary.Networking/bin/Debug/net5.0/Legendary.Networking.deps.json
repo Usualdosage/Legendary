@@ -10,7 +10,8 @@
         "dependencies": {
           "Legacy.Engine": "1.0.0",
           "Legendary.Core": "1.0.0",
-          "RestSharp": "107.0.3"
+          "RestSharp": "107.0.3",
+          "StyleCop.Analyzers": "1.1.118"
         },
         "runtime": {
           "Legendary.Networking.dll": {}
@@ -1484,6 +1485,7 @@
           }
         }
       },
+      "StyleCop.Analyzers/1.1.118": {},
       "System.AppContext/4.3.0": {
         "dependencies": {
           "System.Runtime": "4.3.0"
@@ -3097,6 +3099,13 @@
       "sha512": "sha512-XqD4TpfyYGa7QTPzaGlMVbcecKnXy4YmYLDWrU+JIj7IuRNl7DH2END+Ll7ekWIY8o3dAMWLFDE1xdhfIWD1nw==",
       "path": "sharpcompress/0.30.1",
       "hashPath": "sharpcompress.0.30.1.nupkg.sha512"
+    },
+    "StyleCop.Analyzers/1.1.118": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Onx6ovGSqXSK07n/0eM3ZusiNdB6cIlJdabQhWGgJp3Vooy9AaLS/tigeybOJAobqbtggTamoWndz72JscZBvw==",
+      "path": "stylecop.analyzers/1.1.118",
+      "hashPath": "stylecop.analyzers.1.1.118.nupkg.sha512"
     },
     "System.AppContext/4.3.0": {
       "type": "package",

@@ -16,6 +16,11 @@
     right: 0px;
 }
 
+img
+{
+    max-width: 800px;
+}
+
 #console {
     height: 100%;
     border: solid 1px #ccc;

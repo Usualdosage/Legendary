@@ -49,7 +49,7 @@ namespace Legendary.Networking
 
                 var html = System.Web.HttpUtility.HtmlDecode(result.Content);
 
-                return html?.Replace("\"", string.Empty);
+                return html?.Replace("\\n", string.Empty).Replace("\\r", string.Empty).Replace("\"", string.Empty);
             }
             catch (Exception exc)
             {
@@ -70,7 +70,7 @@ namespace Legendary.Networking
                 var client = new RestClient($"{this.settings.ApiUrl}:{this.settings.ApiPort}/api/content/");
                 var request = new RestRequest($"{endpoint}", Method.Get);
                 var result = await client.ExecuteAsync(request);
-                return result.Content.Replace("\"", string.Empty);
+                return result?.Content?.Replace("\\n", string.Empty).Replace("\\r", string.Empty).Replace("\"", string.Empty);
             }
             catch (Exception exc)
             {
@@ -80,6 +80,3 @@ namespace Legendary.Networking
         }
     }
 }
-
-
-

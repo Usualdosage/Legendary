@@ -15,6 +15,8 @@
     <None Remove="Contracts\" />
     <None Remove="Models\" />
     <None Remove="RestSharp" />
+    <None Remove="StyleCop.Analyzers" />
+    <None Remove="StyleCop.MSBuild" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contracts\" />
@@ -26,5 +28,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="107.0.3" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="stylecop.json">
+      <IncludeInPackage>false</IncludeInPackage>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

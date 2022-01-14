@@ -1,3 +1,4 @@
+/Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/stylecop.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Networking.deps.json
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Networking.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/ref/Legendary.Networking.dll

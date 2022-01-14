@@ -1,27 +1,35 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Legacy.Engine/Engine.cs" Line="125" Column="49" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="109" Column="56" />
-      <File FileName="Legendary.Data/DataService.cs" Line="45" Column="14" />
-      <File FileName="Legendary.Core/Models/World.cs" Line="67" Column="30" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="141" Column="1" />
+      <File FileName="Legendary.Networking/ApiClient.cs" Line="51" Column="1" />
+      <File FileName="Legendary.Data/DataService.cs" Line="44" Column="1" />
+      <File FileName="Legacy.Engine/Engine.cs" Line="155" Column="1" />
+      <File FileName="Legendary.Core/Models/World.cs" Line="107" Column="1" />
+      <File FileName="Legendary.Web/Controllers/ContentController.cs" Line="60" Column="14" />
+      <File FileName="Legendary.Web/wwwroot/css/client.css" Line="23" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True" selected="True">
+          <Node name="Legendary" expanded="True">
             <Node name="Legacy.Engine" expanded="True" />
             <Node name="Legendary.Core" expanded="True">
               <Node name="Models" expanded="True" />
             </Node>
             <Node name="Legendary.Data" expanded="True" />
+            <Node name="Legendary.Networking" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
             <Node name="Legendary.Web" expanded="True">
-              <Node name="Models" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="Shared" expanded="True" />
-              </Node>
+              <Node name="Controllers" expanded="True" />
               <Node name="wwwroot" expanded="True">
-                <Node name="js" expanded="True" />
+                <Node name="css" expanded="True" />
+                <Node name="img" expanded="True">
+                  <Node name="rooms" expanded="True">
+                    <Node name="1.jpg" selected="True" />
+                  </Node>
+                </Node>
               </Node>
             </Node>
           </Node>
@@ -33,13 +41,7 @@
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="141" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="146" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Core/Models/World.cs" relfile="Legendary.Core/Models/World.cs" line="107" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Engine.cs" relfile="Legacy.Engine/Engine.cs" line="155" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Data/DataService.cs" relfile="Legendary.Data/DataService.cs" line="44" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
 </Properties>

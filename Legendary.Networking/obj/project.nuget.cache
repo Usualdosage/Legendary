@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "WSW5FfRyVxmTLIimAoy+T2Vvm2bwkF1WUeIF+PNtBvTiIqBXt0xlm7/VXbxpfuLI8ZdZXZBKi1dWNA1P80x2xg==",
+  "dgSpecHash": "pjJQHJ2MNfQSAZXeuWHlRcQZ34uqAQxpB/T1cLpJrDNp2wq3X1uGgkoJ2Iwh6kiyxdYYjHwhK7DpYsOUyAKRUw==",
   "success": true,
   "projectFilePath": "/Users/matthewmartin/Projects/Legendary/Legendary.Networking/Legendary.Networking.csproj",
   "expectedPackageFiles": [
@@ -126,6 +126,7 @@
     "/Users/matthewmartin/.nuget/packages/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/sharpcompress/0.30.1/sharpcompress.0.30.1.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/stylecop.analyzers/1.1.118/stylecop.analyzers.1.1.118.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.appcontext/4.3.0/system.appcontext.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.buffers/4.5.1/system.buffers.4.5.1.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.collections/4.3.0/system.collections.4.3.0.nupkg.sha512",
