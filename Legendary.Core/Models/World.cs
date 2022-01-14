@@ -40,6 +40,8 @@ namespace Legendary.Core.Models
             this.items = items;
             this.apiClient = apiClient;
 
+            var temp = areas.Find(a => a.AreaId == 1).ToList();
+
             this.Areas = new HashSet<Area>(this.GetAllAreas());
             this.Items = new HashSet<Item>(this.GetAllItems());
         }
@@ -118,19 +120,19 @@ namespace Legendary.Core.Models
         /// <inheritdoc/>
         public List<Area> GetAllAreas()
         {
-            return this.areas.Find(l => true).ToList();
+            return this.areas.Find(a => true).ToList();
         }
 
         /// <inheritdoc/>
         public List<Character> GetAllCharacters()
         {
-            return this.characters.Find(l => true).ToList();
+            return this.characters.Find(c => true).ToList();
         }
 
         /// <inheritdoc/>
         public List<Item> GetAllItems()
         {
-            return this.items.Find(l => true).ToList();
+            return this.items.Find(i => true).ToList();
         }
 
         /// <inheritdoc/>
