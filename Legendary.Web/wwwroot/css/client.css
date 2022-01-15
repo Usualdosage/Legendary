@@ -16,11 +16,6 @@
     right: 0px;
 }
 
-img
-{
-    max-width: 800px;
-}
-
 #console {
     height: 100%;
     border: solid 1px #ccc;
@@ -60,6 +55,12 @@ body {
     width: 100%;
 }
 
+.intro-image
+{
+    border: solid 1px #ccc;
+    border-radius: 5px;
+}
+
 /* Descriptive Content */
 
 .room-title {
@@ -70,9 +71,22 @@ body {
     font-size: 1.1em;
 }
 
-.room-image img {
-    width: 700px;
+.room-image {
+    width: 200px;
+    height: 200px;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 40px;
+    right: 25px;
 }
+
+    .room-image img {
+        border: none;
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+    }
 
 .room-description {
     margin-bottom: 5px;

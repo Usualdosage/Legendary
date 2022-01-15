@@ -54,7 +54,7 @@ namespace Legendary.Web.Controllers
         [Route("room")]
         public async Task<string> Room(string roomId)
         {
-            string imagePath = $"{this.webHostEnvironment.WebRootPath}/img/rooms/{roomId}.jpg";
+            string imagePath = $"{this.webHostEnvironment.WebRootPath}/img/rooms/{roomId}.png";
 
             if (System.IO.File.Exists(imagePath))
             {
@@ -63,7 +63,9 @@ namespace Legendary.Web.Controllers
             }
             else
             {
-                return string.Empty;
+                string noImage = $"{this.webHostEnvironment.WebRootPath}/img/rooms/none.png";
+                byte[] imageArray = await System.IO.File.ReadAllBytesAsync(noImage);
+                return Convert.ToBase64String(imageArray);
             }
         }
     }

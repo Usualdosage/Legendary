@@ -16,7 +16,6 @@ namespace Legendary.Engine
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
-    using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
 
@@ -625,10 +624,14 @@ namespace Legendary.Engine
 
             if (!string.IsNullOrWhiteSpace(room?.Image))
             {
-                sb.Append($"<span class='room-image'><img src='data:image/jpeg;charset=utf-8;base64, {room?.Image}'</img><span><br/>");
+                sb.Append($"<div class='room-image'><img src='data:image/png;charset=utf-8;base64, {room?.Image}'/></div>");
+            }
+            else
+            {
+                sb.Append($"<div class='room-image-none'></div>");
             }
 
-            sb.Append($"<span class='room-description'>{room?.Description}<span><br/>");
+            sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
 
             // Show the items
             if (room?.Items != null)
