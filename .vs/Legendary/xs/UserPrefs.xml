@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="Legacy.Engine/Communicator.cs" Line="82" Column="1" />
-      <File FileName="Legacy.Engine/Engine.cs" />
+      <File FileName="Legacy.Engine/Engine.cs" Line="173" Column="54" />
       <File FileName="Legacy.Engine/Environment.cs" />
       <File FileName="Legendary.Core/Models/Area.cs" />
       <File FileName="Legendary.Networking/ApiClient.cs" Line="23" Column="51" />
@@ -15,14 +15,7 @@
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True" selected="True">
-            <Node name="Legacy.Engine" expanded="True" />
-            <Node name="Legendary.Networking" expanded="True">
-              <Node name="Contracts" expanded="True" />
-            </Node>
-            <Node name="Legendary.Web" expanded="True">
-              <Node name="Views" expanded="True" />
-              <Node name="wwwroot" expanded="True" />
-            </Node>
+            <Node name="Legendary.Web" expanded="True" />
           </Node>
         </State>
       </Pad>

@@ -23,7 +23,6 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj" />
     <ProjectReference Include="..\Legacy.Engine\Legacy.Engine.csproj" />
   </ItemGroup>
   <ItemGroup>

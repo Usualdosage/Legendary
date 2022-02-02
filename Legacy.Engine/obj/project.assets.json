@@ -8840,9 +8840,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj",
-      "projectName": "Legacy.Engine",
-      "projectPath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj",
+      "projectUniqueName": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legendary.Engine.csproj",
+      "projectName": "Legendary.Engine",
+      "projectPath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legendary.Engine.csproj",
       "packagesPath": "/Users/matthewmartin/.nuget/packages/",
       "outputPath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/",
       "projectStyle": "PackageReference",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JXru84mloVoD88wCmLdmn5aX8PlHN1itxYCH5hsITf/2IJU1R26qf4yR2j52E8F/SJ1WeEKWze52fg3p1HckDQ==",
+  "dgSpecHash": "wpRmNMcSoQB093bKPRJWEO6oWGj0if3zpqRMkFTd7kdFADcZAhCETH92g3wZnD3LkU/Wp5I9OdM51nh+njpoLA==",
   "success": true,
-  "projectFilePath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legacy.Engine.csproj",
+  "projectFilePath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Legendary.Engine.csproj",
   "expectedPackageFiles": [
     "/Users/matthewmartin/.nuget/packages/dnsclient/1.4.0/dnsclient.1.4.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/microsoft.aspnetcore/2.2.0/microsoft.aspnetcore.2.2.0.nupkg.sha512",
