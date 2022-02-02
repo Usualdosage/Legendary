@@ -29,6 +29,13 @@ namespace Legendary.Engine.Contracts
         /// <param name="input">The input from the socket.</param>
         /// <returns>Task.</returns>
         Task ProcessMessage(UserData user, string? input);
+
+        /// <summary>
+        /// Shows/updates the player information box.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task.</returns>
+        Task ShowPlayerInfo(UserData user);
     }
 }
 

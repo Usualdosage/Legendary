@@ -143,6 +143,7 @@ namespace Legendary.Engine
                         {
                             await this.logger.Info("Loading room images...(this may take a while)");
                             await this.World.LoadRoomImages();
+                            await this.logger.Info("Room images loaded.");
                         },
                         null,
                         10000,
@@ -157,7 +158,7 @@ namespace Legendary.Engine
                     this.processor = new Processor(this.logger, this.communicator);
 
                     await this.logger.Info("Seeding environment...");
-                    this.environment = new Environment(this.logger, this.communicator, this.random);
+                    this.environment = new Environment(this.logger, this.communicator, this.processor, this.random);
 
                     // Start the main timer.
                     await this.logger.Info("Starting main loop...");
@@ -178,7 +179,7 @@ namespace Legendary.Engine
                                 }
 
                                 this.gameTicks = 0;
-                                this.environment.ProcessChanges(this.gameHour);
+                                await this.environment.ProcessChanges(this.gameHour);
                             }
 
                             // Save all players every 60 seconds.

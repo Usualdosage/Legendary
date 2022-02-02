@@ -8,6 +8,8 @@
 
 namespace Legendary.Engine
 {
+    using System;
+    using System.Threading.Tasks;
     using Legendary.Engine.Contracts;
 
     /// <summary>
@@ -17,6 +19,7 @@ namespace Legendary.Engine
     {
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
+        private readonly IProcessor processor;
         private readonly IRandom random;
 
         /// <summary>
@@ -24,50 +27,76 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="logger">The ILogger.</param>
         /// <param name="communicator">The ICommunicator.</param>
+        /// <param name="processor">The IProcessor.</param>
         /// <param name="random">The random number generator.</param>
-        public Environment(ILogger logger, ICommunicator communicator, IRandom random)
+        public Environment(ILogger logger, ICommunicator communicator, IProcessor processor, IRandom random)
         {
             this.logger = logger;
             this.communicator = communicator;
             this.random = random;
+            this.processor = processor;
         }
 
         /// <summary>
-        /// Sends messages about environmental changes to the users (each "hour").
+        /// Sends messages about environmental changes to the users (each "hour"). Restores players each tick.
         /// </summary>
         /// <param name="gameHour">The current game hour.</param>
-        public void ProcessChanges(int gameHour)
+        public async Task ProcessChanges(int gameHour)
         {
+            await this.RestoreUsers();
+
             if (gameHour == 6)
             {
-                this.communicator.SendGlobal("The sun rises in the east.");
+                await this.communicator.SendGlobal("The sun rises in the east.");
             }
             else if (gameHour == 18)
             {
-                this.communicator.SendGlobal("The sun sets in the west.");
+                await this.communicator.SendGlobal("The sun sets in the west.");
             }
 
-            var weather = this.random.Next(1, 10);
+            var weather = this.random.Next(1, 5);
 
             switch (weather)
             {
                 default:
                     break;
                 case 1:
-                    this.communicator.SendGlobal("The stars in space seem to swirl around.");
+                    await this.communicator.SendGlobal("The stars in space seem to swirl around.");
                     break;
                 case 2:
-                    this.communicator.SendGlobal("A comet flies by.");
+                    await this.communicator.SendGlobal("A comet flies by.");
                     break;
                 case 3:
-                    this.communicator.SendGlobal("Somewhere in the distance, a star goes supernova.");
+                    await this.communicator.SendGlobal("Somewhere in the distance, a star goes supernova.");
                     break;
                 case 4:
-                    this.communicator.SendGlobal("The bleakness of vast space stretches all around you.");
+                    await this.communicator.SendGlobal("The bleakness of vast space stretches all around you.");
                     break;
                 case 5:
-                    this.communicator.SendGlobal("A cloud of primordial dust floats past you.");
+                    await this.communicator.SendGlobal("A cloud of primordial dust floats past you.");
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Each tick, restores various attributes of each user.
+        /// </summary>
+        private async Task RestoreUsers()
+        {
+            if (Communicator.Users != null)
+            {
+                foreach (var user in Communicator.Users)
+                {
+                    // TODO: If user is resting, or sleeping, restore more/faster
+
+                    var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, 20);
+                    user.Value.Character.Movement.Current += moveRestore;
+
+                    // TODO: Implement spell effects wearing off (e.g. poison)
+
+                    // Update the player info box
+                    await this.processor.ShowPlayerInfo(user.Value);
+                }
             }
         }
     }

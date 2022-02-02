@@ -1,4 +1,6 @@
-﻿html {
+﻿@import url('https://fonts.googleapis.com/css2?family=Comforter&display=swap');
+
+html {
     font-size: 14px;
     position: relative;
     min-height: 100%;
@@ -55,13 +57,69 @@ body {
     width: 100%;
 }
 
-.intro-image
-{
+.intro-image {
     border: solid 1px #ccc;
     border-radius: 5px;
 }
 
 /* Descriptive Content */
+
+.player-info {
+    position: fixed;
+    top: 10px;
+    right: 25px;
+    width: 215px;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.player-title {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    border-bottom: solid 1px #ccc;
+    padding-bottom: 5px;
+    font-size: 2em;
+    font-family: 'Comforter', cursive;
+}
+
+.condition {
+    border-top: solid 1px #ccc;
+}
+
+table {
+    width: 100%;
+    padding: 0px;
+}
+
+td {
+    font-size: .8em;
+    padding: 5px;
+}
+
+progress {
+    width: 150px;
+    border: solid 1px #aaa;
+    border-radius: 2px;
+    background-color: #000;
+}
+
+    progress::-webkit-progress-bar {
+        background-color: #000;
+    }
+
+#health::-webkit-progress-value {
+    background-color: red !important;
+}
+
+#mana::-webkit-progress-value {
+    background-color: green !important;
+}
+
+#move::-webkit-progress-value {
+    background-color: blue !important;
+}
 
 .room-title {
     color: mediumpurple;
@@ -96,7 +154,7 @@ body {
         margin-bottom: 5px;
     }
 
-.player {
+.player-info {
     display: block;
 }
 

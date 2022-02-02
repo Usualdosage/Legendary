@@ -18,7 +18,7 @@ namespace Legendary.Core.Types
         /// </summary>
         /// <param name="max">The max value.</param>
         /// <param name="current">The current value.</param>
-        public MaxCurrent(int max, int current)
+        public MaxCurrent(double max, double current)
         {
             this.Max = max;
             this.Current = current;
@@ -27,11 +27,11 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Gets or sets the Max.
         /// </summary>
-        public int Max { get; set; }
+        public double Max { get; set; }
 
         /// <summary>
         /// Gets or sets the current.
         /// </summary>
-        public int Current { get; set; }
+        public double Current { get; set; }
     }
 }

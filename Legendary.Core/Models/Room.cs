@@ -52,7 +52,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the room flags.
         /// </summary>
-        public RoomFlags Flags { get; set; } = RoomFlags.None;
+        public object? Flags { get; set; }
 
         /// <summary>
         /// Gets or sets the items in the room.

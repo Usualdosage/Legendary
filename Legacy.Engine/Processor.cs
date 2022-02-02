@@ -323,6 +323,38 @@ namespace Legendary.Engine
             }
         }
 
+        /// <summary>
+        /// Shows/updates the player information box.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task.</returns>
+        public async Task ShowPlayerInfo(UserData user)
+        {
+            StringBuilder sb = new();
+
+            sb.Append("<div class='player-info'><table><tr><td colspan='2'>");
+            sb.Append($"<span class='player-title'>{user.Character.FirstName} {user.Character.LastName}</span></td></tr>");
+
+            // Health bar
+            double healthPct = (user.Character.Health.Current / user.Character.Health.Max) * 100;
+            sb.Append($"<tr><td>Health</td><td><progress id='health' max='100' value='{healthPct}'>{healthPct}%</progress></td></tr>");
+
+            // Mana bar
+            double manaPct = (user.Character.Mana.Current / user.Character.Mana.Max) * 100;
+            sb.Append($"<tr><td>Mana</td><td><progress id='mana' max='100' value='{manaPct}'>{manaPct}%</progress></td></tr>");
+
+            // Movement bar
+            double movePct = (user.Character.Movement.Current / user.Character.Movement.Max) * 100;
+            sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
+
+            // Condition
+            sb.Append($"<tr><td colspan='2' class='condition'>You are in perfect health.</td></tr>");
+
+            sb.Append("</table></div>");
+
+            await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+        }
+
         /// <inheritdoc/>
         public void Dispose()
         {
@@ -557,6 +589,12 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task MovePlayer(UserData user, Direction direction)
         {
+            if (user.Character.Movement.Current == 0)
+            {
+                await this.communicator.SendToPlayer(user.Connection, $"You are too exhausted.");
+                return;
+            }
+
             var area = await this.World.FindArea(a => a.AreaId == user.Character.Location.AreaId);
 
             if (area == null)
@@ -585,6 +623,7 @@ namespace Legendary.Engine
                 if (newRoom != null)
                 {
                     user.Character.Location = newRoom;
+                    user.Character.Movement.Current -= 1;
                     await this.communicator.SendToRoom(newRoom, user.ConnectionId, $"{user.Character.FirstName} enters.");
                     await this.ShowRoomToPlayer(user);
                 }
@@ -628,7 +667,7 @@ namespace Legendary.Engine
             }
             else
             {
-                sb.Append($"<div class='room-image-none'></div>");
+                sb.Append($"<div class='room-image room-image-none'></div>");
             }
 
             sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
@@ -682,6 +721,9 @@ namespace Legendary.Engine
             }
 
             await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+
+            // Update player stats
+            await this.ShowPlayerInfo(user);
         }
     }
 }

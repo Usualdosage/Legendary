@@ -1484,14 +1484,14 @@
           "lib/netstandard1.3/Newtonsoft.Json.Bson.dll": {}
         }
       },
-      "RestSharp/107.0.3": {
+      "RestSharp/107.1.2": {
         "dependencies": {
           "System.Text.Json": "5.0.0"
         },
         "runtime": {
           "lib/net5.0/RestSharp.dll": {
-            "assemblyVersion": "107.0.3.0",
-            "fileVersion": "107.0.3.0"
+            "assemblyVersion": "107.1.2.0",
+            "fileVersion": "107.1.2.0"
           }
         },
         "compile": {
@@ -2396,7 +2396,7 @@
         "dependencies": {
           "Legacy.Engine": "1.0.0",
           "Legendary.Core": "1.0.0",
-          "RestSharp": "107.0.3"
+          "RestSharp": "107.1.2"
         },
         "runtime": {
           "Legendary.Networking.dll": {}
@@ -4965,12 +4965,12 @@
       "path": "newtonsoft.json.bson/1.0.1",
       "hashPath": "newtonsoft.json.bson.1.0.1.nupkg.sha512"
     },
-    "RestSharp/107.0.3": {
+    "RestSharp/107.1.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-qeS4gRCiZfjBxQEhK21qkVA9T3oE4H+gn2hM3QtyXGNug7kTUoPd0VPIrnub4heNA2GhXE9ShdjJT61tF9gEcQ==",
-      "path": "restsharp/107.0.3",
-      "hashPath": "restsharp.107.0.3.nupkg.sha512"
+      "sha512": "sha512-CD2JDjyNTTE6Jd0SqJGR/ypE+O0WLguFiyH57xcBPKhvWu4klU+LfQRcHWDwAK3Hd9X2/9c3tWz2OrJZu7WTkA==",
+      "path": "restsharp/107.1.2",
+      "hashPath": "restsharp.107.1.2.nupkg.sha512"
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",

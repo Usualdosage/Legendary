@@ -1576,7 +1576,7 @@
           "lib/netstandard1.3/Newtonsoft.Json.Bson.dll": {}
         }
       },
-      "RestSharp/107.0.3": {
+      "RestSharp/107.1.2": {
         "type": "package",
         "dependencies": {
           "System.Text.Json": "5.0.0"
@@ -1767,9 +1767,6 @@
         "runtime": {
           "lib/net5.0/SharpCompress.dll": {}
         }
-      },
-      "StyleCop.Analyzers/1.1.118": {
-        "type": "package"
       },
       "System.AppContext/4.3.0": {
         "type": "package",
@@ -4717,10 +4714,10 @@
         "newtonsoft.json.bson.nuspec"
       ]
     },
-    "RestSharp/107.0.3": {
-      "sha512": "qeS4gRCiZfjBxQEhK21qkVA9T3oE4H+gn2hM3QtyXGNug7kTUoPd0VPIrnub4heNA2GhXE9ShdjJT61tF9gEcQ==",
+    "RestSharp/107.1.2": {
+      "sha512": "CD2JDjyNTTE6Jd0SqJGR/ypE+O0WLguFiyH57xcBPKhvWu4klU+LfQRcHWDwAK3Hd9X2/9c3tWz2OrJZu7WTkA==",
       "type": "package",
-      "path": "restsharp/107.0.3",
+      "path": "restsharp/107.1.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -4730,7 +4727,7 @@
         "lib/net6.0/RestSharp.xml",
         "lib/netstandard2.0/RestSharp.dll",
         "lib/netstandard2.0/RestSharp.xml",
-        "restsharp.107.0.3.nupkg.sha512",
+        "restsharp.107.1.2.nupkg.sha512",
         "restsharp.nuspec",
         "restsharp.png"
       ]
@@ -4973,31 +4970,6 @@
         "lib/netstandard2.1/SharpCompress.dll",
         "sharpcompress.0.30.1.nupkg.sha512",
         "sharpcompress.nuspec"
-      ]
-    },
-    "StyleCop.Analyzers/1.1.118": {
-      "sha512": "Onx6ovGSqXSK07n/0eM3ZusiNdB6cIlJdabQhWGgJp3Vooy9AaLS/tigeybOJAobqbtggTamoWndz72JscZBvw==",
-      "type": "package",
-      "path": "stylecop.analyzers/1.1.118",
-      "hasTools": true,
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE",
-        "THIRD-PARTY-NOTICES.txt",
-        "analyzers/dotnet/cs/StyleCop.Analyzers.CodeFixes.dll",
-        "analyzers/dotnet/cs/StyleCop.Analyzers.dll",
-        "analyzers/dotnet/cs/de-DE/StyleCop.Analyzers.resources.dll",
-        "analyzers/dotnet/cs/en-GB/StyleCop.Analyzers.resources.dll",
-        "analyzers/dotnet/cs/es-MX/StyleCop.Analyzers.resources.dll",
-        "analyzers/dotnet/cs/fr-FR/StyleCop.Analyzers.resources.dll",
-        "analyzers/dotnet/cs/pl-PL/StyleCop.Analyzers.resources.dll",
-        "analyzers/dotnet/cs/pt-BR/StyleCop.Analyzers.resources.dll",
-        "analyzers/dotnet/cs/ru-RU/StyleCop.Analyzers.resources.dll",
-        "stylecop.analyzers.1.1.118.nupkg.sha512",
-        "stylecop.analyzers.nuspec",
-        "tools/install.ps1",
-        "tools/uninstall.ps1"
       ]
     },
     "System.AppContext/4.3.0": {
@@ -8938,8 +8910,7 @@
     "net5.0": [
       "Legacy.Engine >= 1.0.0",
       "Legendary.Core >= 1.0.0",
-      "RestSharp >= 107.0.3",
-      "StyleCop.Analyzers >= 1.1.118"
+      "RestSharp >= 107.1.2"
     ]
   },
   "packageFolders": {
@@ -8988,13 +8959,7 @@
         "dependencies": {
           "RestSharp": {
             "target": "Package",
-            "version": "[107.0.3, )"
-          },
-          "StyleCop.Analyzers": {
-            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-            "suppressParent": "All",
-            "target": "Package",
-            "version": "[1.1.118, )"
+            "version": "[107.1.2, )"
           }
         },
         "imports": [

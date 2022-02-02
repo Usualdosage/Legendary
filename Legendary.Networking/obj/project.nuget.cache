@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pjJQHJ2MNfQSAZXeuWHlRcQZ34uqAQxpB/T1cLpJrDNp2wq3X1uGgkoJ2Iwh6kiyxdYYjHwhK7DpYsOUyAKRUw==",
+  "dgSpecHash": "cAF9JHMTgsBRTsXKc4psjD0OIZ/pDB3KQdJd/xFTkbM8EYQmz/Y1w+ocpiFnkg1+sTUPXBpK7M84pNM9c4QTWg==",
   "success": true,
   "projectFilePath": "/Users/matthewmartin/Projects/Legendary/Legendary.Networking/Legendary.Networking.csproj",
   "expectedPackageFiles": [
@@ -108,7 +108,7 @@
     "/Users/matthewmartin/.nuget/packages/netstandard.library/1.6.1/netstandard.library.1.6.1.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/newtonsoft.json/11.0.2/newtonsoft.json.11.0.2.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/newtonsoft.json.bson/1.0.1/newtonsoft.json.bson.1.0.1.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/restsharp/107.0.3/restsharp.107.0.3.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/restsharp/107.1.2/restsharp.107.1.2.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
@@ -126,7 +126,6 @@
     "/Users/matthewmartin/.nuget/packages/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl/4.3.0/runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/sharpcompress/0.30.1/sharpcompress.0.30.1.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/stylecop.analyzers/1.1.118/stylecop.analyzers.1.1.118.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.appcontext/4.3.0/system.appcontext.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.buffers/4.5.1/system.buffers.4.5.1.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.collections/4.3.0/system.collections.4.3.0.nupkg.sha512",

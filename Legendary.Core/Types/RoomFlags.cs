@@ -11,16 +11,16 @@ namespace Legendary.Core.Types
     /// <summary>
     /// Flags applied to rooms.
     /// </summary>
-    public enum RoomFlags
+    public enum RoomFlags : int
     {
-        /// <summary>
-        /// No flags.
-        /// </summary>
-        None = 0,
-
         /// <summary>
         /// Room is always dark.
         /// </summary>
-        Dark = 1,
+        Dark = 0,
+
+        /// <summary>
+        /// Unaffected by weather.
+        /// </summary>
+        Indoors = 1,
     }
 }
