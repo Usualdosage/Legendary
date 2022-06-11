@@ -1,20 +1,26 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Legacy.Engine/Communicator.cs" Line="82" Column="1" />
-      <File FileName="Legacy.Engine/Engine.cs" Line="173" Column="54" />
-      <File FileName="Legacy.Engine/Environment.cs" />
-      <File FileName="Legendary.Core/Models/Area.cs" />
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="23" Column="51" />
+      <File FileName="Legendary.Console/Program.cs" Line="6" Column="1" />
+      <File FileName="Legendary.Core/Models/Room.cs" />
+      <File FileName="Legacy.Engine/Communicator.cs" />
       <File FileName="Legacy.Engine/Processor.cs" />
-      <File FileName="Legacy.Engine/Contracts/IProcessor.cs" />
-      <File FileName="Legendary.Web/Startup.cs" Line="17" Column="24" />
-      <File FileName="Legendary.Networking/Server.cs" Line="41" Column="54" />
+      <File FileName="Legendary.Web/wwwroot/css/client.css" />
+      <File FileName="Legacy.Engine/Engine.cs" />
+      <File FileName="Legendary.Core/Models/World.cs" />
+      <File FileName="Legendary.Core/Contracts/IWorld.cs" />
+      <File FileName="Legendary.Core/Models/Character.cs" />
+      <File FileName="Legendary.Core/Models/Mobile.cs" />
+      <File FileName="Legendary.Data/Contracts/IDataService.cs" />
+      <File FileName="Legendary.Data/DataService.cs" />
+      <File FileName="Legendary.Web/appsettings.json" Line="16" Column="4" />
+      <File FileName="Legendary.Networking/ApiClient.cs" Line="9" Column="31" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True" selected="True">
+            <Node name="Legendary.Networking" expanded="True" />
             <Node name="Legendary.Web" expanded="True" />
           </Node>
         </State>
@@ -22,6 +28,7 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.ItemProperties.Legendary.Console PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
