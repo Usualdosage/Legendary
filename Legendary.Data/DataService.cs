@@ -38,14 +38,15 @@ namespace Legendary.Data
             var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
             var areas = this.dbConnection.Database?.GetCollection<Area>("Areas");
             var items = this.dbConnection.Database?.GetCollection<Item>("Items");
+            var mobiles = this.dbConnection.Database?.GetCollection<Mobile>("Mobiles");
 
-            if (areas != null && characters != null && items != null)
+            if (areas != null && characters != null && items != null && mobiles != null)
             {
-                return new World(areas, characters, items, this.apiClient);
+                return new World(areas, characters, items, mobiles, this.apiClient);
             }
             else
             {
-                throw new Exception("Error loading world. No areas found.");
+                throw new Exception("Error loading world. Missing at least one collection.");
             }
         }
     }

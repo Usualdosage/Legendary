@@ -2,11 +2,11 @@
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Networking.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/ref/Legendary.Networking.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Networking.pdb
-/Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legacy.Engine.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Core.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Data.dll
+/Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Engine.dll
+/Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Engine.pdb
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Core.pdb
-/Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legacy.Engine.pdb
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/bin/Debug/net5.0/Legendary.Data.pdb
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/obj/Debug/net5.0/Legendary.Networking.csproj.AssemblyReference.cache
 /Users/matthewmartin/Projects/Legendary/Legendary.Networking/obj/Debug/net5.0/Legendary.Networking.GeneratedMSBuildEditorConfig.editorconfig

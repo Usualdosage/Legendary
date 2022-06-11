@@ -55,6 +55,16 @@ namespace Legendary.Web.Controllers
         }
 
         /// <summary>
+        /// Displays the create room page.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
+        [HttpGet]
+        public IActionResult CreateRoom()
+        {
+            return this.View();
+        }
+
+        /// <summary>
         /// Posts login information to the home page, and handles authentication.
         /// </summary>
         /// <param name="username">The username.</param>

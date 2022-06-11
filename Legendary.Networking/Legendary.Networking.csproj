@@ -23,7 +23,7 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Legacy.Engine\Legacy.Engine.csproj" />
+    <ProjectReference Include="..\Legacy.Engine\Legendary.Engine.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="107.1.2" />

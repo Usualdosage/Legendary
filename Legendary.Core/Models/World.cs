@@ -24,6 +24,7 @@ namespace Legendary.Core.Models
         private readonly IMongoCollection<Area> areas;
         private readonly IMongoCollection<Character> characters;
         private readonly IMongoCollection<Item> items;
+        private readonly IMongoCollection<Mobile> mobiles;
         private readonly IApiClient apiClient;
 
         /// <summary>
@@ -33,17 +34,19 @@ namespace Legendary.Core.Models
         /// <param name="characters">The characters.</param>
         /// <param name="items">The items.</param>
         /// <param name="apiClient">The API client.</param>
-        public World(IMongoCollection<Area> areas, IMongoCollection<Character> characters, IMongoCollection<Item> items, IApiClient apiClient)
+        public World(IMongoCollection<Area> areas, IMongoCollection<Character> characters, IMongoCollection<Item> items, IMongoCollection<Mobile> mobiles, IApiClient apiClient)
         {
             this.areas = areas;
             this.characters = characters;
             this.items = items;
+            this.mobiles = mobiles;
             this.apiClient = apiClient;
 
             var temp = areas.Find(a => a.AreaId == 1).ToList();
 
             this.Areas = new HashSet<Area>(this.GetAllAreas());
             this.Items = new HashSet<Item>(this.GetAllItems());
+            this.Mobiles = new HashSet<Mobile>(this.GetAllMobiles());
         }
 
         /// <summary>
@@ -62,6 +65,9 @@ namespace Legendary.Core.Models
 
         /// <inheritdoc/>
         public HashSet<Item> Items { get; private set; }
+
+        /// <inheritdoc/>
+        public HashSet<Mobile> Mobiles { get; private set; }
 
         /// <inheritdoc/>
         public void Dispose()
@@ -85,7 +91,15 @@ namespace Legendary.Core.Models
                         }
                     }
 
-                    // TO-DO: Populate mobs from resets
+                    // Populate mobs from resets
+                    foreach (var reset in room.MobileResets)
+                    {
+                        var mobile = await this.FindMobile(f => f.MobileId == reset);
+                        if (mobile != null)
+                        {
+                            room.Mobiles.Add(mobile);
+                        }
+                    }
                 }
             }
         }
@@ -118,6 +132,15 @@ namespace Legendary.Core.Models
         }
 
         /// <inheritdoc/>
+        public async Task<Mobile?> FindMobile(
+            Expression<Func<Mobile, bool>> filter,
+            FindOptions? options = null)
+        {
+            return await this.mobiles.Find(filter, options)
+                .FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
         public List<Area> GetAllAreas()
         {
             return this.areas.Find(a => true).ToList();
@@ -133,6 +156,12 @@ namespace Legendary.Core.Models
         public List<Item> GetAllItems()
         {
             return this.items.Find(i => true).ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<Mobile> GetAllMobiles()
+        {
+            return this.mobiles.Find(i => true).ToList();
         }
 
         /// <inheritdoc/>

@@ -68,14 +68,14 @@
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/runtimes/win-arm64/native/e_sqlite3.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/runtimes/win-x64/native/e_sqlite3.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/runtimes/win-x86/native/e_sqlite3.dll
-/Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legacy.Engine.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Core.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Data.dll
+/Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Engine.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Networking.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Core.pdb
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Networking.pdb
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Data.pdb
-/Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legacy.Engine.pdb
+/Users/matthewmartin/Projects/Legendary/Legendary.Web/bin/Debug/net5.0/Legendary.Engine.pdb
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Legendary.Web.csproj.AssemblyReference.cache
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Legendary.Web.GeneratedMSBuildEditorConfig.editorconfig
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Legendary.Web.AssemblyInfoInputs.cache
@@ -92,6 +92,7 @@
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Legendary.Web.TagHelpers.output.cache
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Legendary.Web.RazorCoreGenerate.cache
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Content/Welcome.cshtml.g.cs
+/Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/CreateRoom.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/Index.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/Login.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Shared/Error.cshtml.g.cs

@@ -2355,20 +2355,6 @@
           "System.Xml.XPath": "4.3.0"
         }
       },
-      "Legacy.Engine/1.0.0": {
-        "dependencies": {
-          "Legendary.Core": "1.0.0",
-          "Legendary.Data": "1.0.0",
-          "Microsoft.AspNetCore": "2.2.0",
-          "Microsoft.AspNetCore.Mvc": "2.2.0"
-        },
-        "runtime": {
-          "Legacy.Engine.dll": {}
-        },
-        "compile": {
-          "Legacy.Engine.dll": {}
-        }
-      },
       "Legendary.Core/1.0.0": {
         "dependencies": {
           "MongoDB.Bson": "2.14.1",
@@ -2392,10 +2378,23 @@
           "Legendary.Data.dll": {}
         }
       },
+      "Legendary.Engine/1.0.0": {
+        "dependencies": {
+          "Legendary.Core": "1.0.0",
+          "Legendary.Data": "1.0.0",
+          "Microsoft.AspNetCore": "2.2.0",
+          "Microsoft.AspNetCore.Mvc": "2.2.0"
+        },
+        "runtime": {
+          "Legendary.Engine.dll": {}
+        },
+        "compile": {
+          "Legendary.Engine.dll": {}
+        }
+      },
       "Legendary.Networking/1.0.0": {
         "dependencies": {
-          "Legacy.Engine": "1.0.0",
-          "Legendary.Core": "1.0.0",
+          "Legendary.Engine": "1.0.0",
           "RestSharp": "107.1.2"
         },
         "runtime": {
@@ -5658,17 +5657,17 @@
       "path": "system.xml.xpath.xdocument/4.3.0",
       "hashPath": "system.xml.xpath.xdocument.4.3.0.nupkg.sha512"
     },
-    "Legacy.Engine/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
     "Legendary.Core/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
     "Legendary.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Legendary.Engine/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

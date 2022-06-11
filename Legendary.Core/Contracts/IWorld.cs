@@ -32,6 +32,11 @@ namespace Legendary.Core.Contracts
         HashSet<Item> Items { get; }
 
         /// <summary>
+        /// Gets a hashset of mobiles currently loaded into memory.
+        /// </summary>
+        HashSet<Mobile> Mobiles { get; }
+
+        /// <summary>
         /// Calls the IMongoCollection Find extension method.
         /// </summary>
         /// <param name="filter">The filter.</param>
@@ -58,6 +63,12 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <returns>List of items.</returns>
         List<Item> GetAllItems();
+
+        /// <summary>
+        /// Retrieves all documents in the collection.
+        /// </summary>
+        /// <returns>List of mobiles.</returns>
+        List<Mobile> GetAllMobiles();
 
         /// <summary>
         /// Finds a character by the filter.

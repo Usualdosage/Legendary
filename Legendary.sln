@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Networking", "Leg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Engine", "Legacy.Engine\Legendary.Engine.csproj", "{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Console", "Legendary.Console\Legendary.Console.csproj", "{A2FE8452-CE4B-4D2C-A57C-C75C6AC444B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2FE8452-CE4B-4D2C-A57C-C75C6AC444B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2FE8452-CE4B-4D2C-A57C-C75C6AC444B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2FE8452-CE4B-4D2C-A57C-C75C6AC444B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2FE8452-CE4B-4D2C-A57C-C75C6AC444B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

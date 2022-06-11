@@ -49,6 +49,9 @@ namespace Legendary.Core.Models
         /// </summary>
         public IList<Exit> Exits { get; set; } = new List<Exit>();
 
+
+        // TO-DO: FIX THIS PROBLEM
+
         /// <summary>
         /// Gets or sets the room flags.
         /// </summary>
@@ -58,6 +61,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the items in the room.
         /// </summary>
         public IList<Item> Items { get; set; } = new List<Item>();
+
+        /// <summary>
+        /// Gets or sets the mobiles in the room.
+        /// </summary>
+        public IList<Mobile> Mobiles { get; set; } = new List<Mobile>();
 
         /// <summary>
         /// Gets or sets the items reset in the room.

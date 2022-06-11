@@ -701,9 +701,18 @@ namespace Legendary.Engine
             sb.Append("]</span>");
 
             // Show the mobiles
-            if (room?.MobileResets != null)
+            if (room?.Mobiles != null)
             {
-                // TODO
+                foreach (var mob in room.Mobiles)
+                {
+                    if (mob == null)
+                    {
+                        await this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!");
+                        return;
+                    }
+
+                    sb.Append($"<span class='mobile'>{mob.FirstName} is standing here.</span>");
+                }
             }
 
             // Show other players

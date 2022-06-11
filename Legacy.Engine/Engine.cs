@@ -132,7 +132,7 @@ namespace Legendary.Engine
                 else
                 {
                     this.World = world;
-                    await this.logger.Info($"World loaded, with {world.Areas.Count} area(s) and {world.GetAllCharacters().Count} character(s).");
+                    await this.logger.Info($"World loaded, with {world.Areas.Count} area(s), {world.Items.Count} item(s), {world.Mobiles.Count} mobiles, and {world.GetAllCharacters().Count} character(s).");
 
                     await this.logger.Info("Populating the world with mobiles and items..");
                     await this.World.Populate();

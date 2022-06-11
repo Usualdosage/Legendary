@@ -85,7 +85,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character flags.
         /// </summary>
-        public CharacterFlags Flags { get; set; }
+        public IList<CharacterFlags>? CharacterFlags { get; set; }
 
         /// <summary>
         /// Gets or sets the health.
