@@ -2,6 +2,7 @@
 /Users/matthewmartin/Projects/Legendary/Legendary.Core/bin/Debug/net5.0/Legendary.Core.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Core/bin/Debug/net5.0/ref/Legendary.Core.dll
 /Users/matthewmartin/Projects/Legendary/Legendary.Core/bin/Debug/net5.0/Legendary.Core.pdb
+/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/net5.0/Legendary.Core.csproj.AssemblyReference.cache
 /Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/net5.0/Legendary.Core.GeneratedMSBuildEditorConfig.editorconfig
 /Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/net5.0/Legendary.Core.AssemblyInfoInputs.cache
 /Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/Debug/net5.0/Legendary.Core.AssemblyInfo.cs

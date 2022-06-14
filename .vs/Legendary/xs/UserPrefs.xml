@@ -1,28 +1,16 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Legendary.Console/Program.cs" Line="6" Column="1" />
-      <File FileName="Legendary.Core/Models/Room.cs" />
-      <File FileName="Legacy.Engine/Communicator.cs" />
-      <File FileName="Legacy.Engine/Processor.cs" />
-      <File FileName="Legendary.Web/wwwroot/css/client.css" />
-      <File FileName="Legacy.Engine/Engine.cs" />
-      <File FileName="Legendary.Core/Models/World.cs" />
-      <File FileName="Legendary.Core/Contracts/IWorld.cs" />
-      <File FileName="Legendary.Core/Models/Character.cs" />
-      <File FileName="Legendary.Core/Models/Mobile.cs" />
-      <File FileName="Legendary.Data/Contracts/IDataService.cs" />
-      <File FileName="Legendary.Data/DataService.cs" />
-      <File FileName="Legendary.Web/appsettings.json" Line="16" Column="4" />
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="9" Column="31" />
+      <File FileName="Legendary.Web/Startup.cs" Line="59" Column="16" />
+      <File FileName="Legendary.Web/appsettings.json" Line="1" Column="1" />
+      <File FileName="Legendary.Web/appsettings.Development.json" />
+      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="13" Column="34" />
+      <File FileName="Legendary.Console/Program.cs" Line="26" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True" selected="True">
-            <Node name="Legendary.Networking" expanded="True" />
-            <Node name="Legendary.Web" expanded="True" />
-          </Node>
+          <Node name="Legendary" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>

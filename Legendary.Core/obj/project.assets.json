@@ -402,7 +402,7 @@
       "outputPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/matthewmartin/.config/NuGet/NuGet.Config"
+        "/Users/matthewmartin/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
