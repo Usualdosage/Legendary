@@ -1,41 +1,20 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Views/Home/Login.cshtml">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Legendary.Web/Startup.cs" Line="59" Column="16" />
-      <File FileName="Legendary.Web/appsettings.json" Line="1" Column="1" />
-      <File FileName="Legendary.Web/appsettings.Development.json" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="84" Column="62" />
-      <File FileName="Legendary.Web/wwwroot/js/client.js" Line="16" Column="45" />
-      <File FileName="Legendary.Web/Properties/launchSettings.json" Line="15" Column="48" />
-      <File FileName="Legendary.Web/Properties/PublishProfiles/Legendary-MUD - Web Deploy.pubxml" Line="19" Column="19" />
       <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="6" Column="52" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="7" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Web" expanded="True">
-              <Node name="Controllers" expanded="True" />
-              <Node name="Properties" expanded="True">
-                <Node name="PublishProfiles" expanded="True" />
-              </Node>
-              <Node name="Views" expanded="True">
-                <Node name="Home" expanded="True">
-                  <Node name="Login.cshtml" selected="True" />
-                </Node>
-              </Node>
-              <Node name="wwwroot" expanded="True">
-                <Node name="img" expanded="True" />
-              </Node>
-            </Node>
-          </Node>
+          <Node name="Legendary" expanded="True" selected="True" />
         </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
