@@ -63,9 +63,9 @@ namespace Legendary.Core.Models
         public long Currency { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets the password.
+        /// Gets or sets the password (hash).
         /// </summary>
-        public byte[]? Password { get; set; }
+        public string? Password { get; set; }
 
         /// <summary>
         /// Gets or sets the description.

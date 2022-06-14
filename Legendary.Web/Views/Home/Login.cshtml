@@ -1,6 +1,38 @@
-﻿<form action="@Url.Action("Index")" method="post">
-    <input type="text" placeholder="Insert user name" name="userName" />
-    <input type="submit" value="Login" />
-</form>
+﻿@model string
 
-<a href="@Url.Action("CreateRoom")">Create Room</a>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <h1>Legendary build 0.67(a).</h1>
+            </div>
+            <div class="col-sm"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <form action="@Url.Action("Index")" method="post">
+                    <input type="text" placeholder="Enter user name" name="username" />
+                    <input type="password" placeholder="Enter password" name="password" />
+                    <input type="submit" value="Login" />
+                </form>
+            </div>
+            <div class="col-sm"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <p class="alert">@Model</p>
+            </div>
+            <div class="col-sm"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm"></div>
+            <div class="col-sm">
+                <a href="@Url.Action("CreateUser")">Create User</a>
+                </div>
+            <div class="col-sm"></div>
+            </div>
+
+        </div>

@@ -12,6 +12,10 @@ namespace Legendary.Data
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
+    using System.Linq;
+    using MongoDB.Driver;
+    using System.Threading.Tasks;
+    using System.Linq.Expressions;
 
     /// <summary>
     /// Concrete implementation of an IDataService.
@@ -49,5 +53,40 @@ namespace Legendary.Data
                 throw new Exception("Error loading world. Missing at least one collection.");
             }
         }
+
+        /// <inheritdoc/>
+        public async Task<Character?> FindCharacter(
+            Expression<Func<Character, bool>> filter,
+            FindOptions? options = null)
+        {
+            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
+            return await characters.Find(filter, options)
+                .FirstOrDefaultAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<Character?> CreateCharacter(string firstName, string lastName, string hashedPassword)
+        {
+            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
+
+            var character = new Character()
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Password = hashedPassword,
+                Title = "The Tourist",
+                Health = new Core.Types.MaxCurrent(30, 30),
+                Mana = new Core.Types.MaxCurrent(30, 30),
+                Movement = new Core.Types.MaxCurrent(30, 30),
+                IsNPC = false,
+                Level = 1,
+                Location = Room.Default
+            };
+
+            await characters?.InsertOneAsync(character);
+
+            return character;
+        }
+
     }
 }

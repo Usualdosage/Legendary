@@ -17,6 +17,17 @@ namespace Legendary.Core.Models
     public class Room
     {
         /// <summary>
+        /// Gets the default room (for new characters).
+        /// </summary>
+        public static Room Default
+        {
+            get
+            {
+                return new Room() { RoomId = 1, AreaId = 1 };
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the Id.
         /// </summary>
         /// <summary>

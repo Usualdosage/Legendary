@@ -90,7 +90,7 @@ namespace Legendary.Engine
                 var ip = context.Request.HttpContext.Connection.RemoteIpAddress;
                 string? user = context.User.Identity?.Name;
 
-                // Load the character by name - change this later to be secure
+                // Load the character by name 
                 var character = await this.World.FindCharacter(c => c.FirstName == user);
 
                 if (character == null)

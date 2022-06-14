@@ -13,10 +13,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Contracts\" />
-    <None Remove="Models\" />
     <None Remove="RestSharp" />
     <None Remove="StyleCop.Analyzers" />
     <None Remove="StyleCop.MSBuild" />
+    <None Remove="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contracts\" />

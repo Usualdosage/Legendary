@@ -12,6 +12,7 @@ namespace Legendary.Web.Controllers
     using System.Diagnostics;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Legendary.Data.Contracts;
     using Legendary.Web.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,14 +25,17 @@ namespace Legendary.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> logger;
+        private readonly IDataService dataService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public HomeController(ILogger<HomeController> logger)
+        /// <param name="dataService">The data service.</param>
+        public HomeController(ILogger<HomeController> logger, IDataService dataService)
         {
             this.logger = logger;
+            this.dataService = dataService;
         }
 
         /// <summary>
@@ -49,9 +53,9 @@ namespace Legendary.Web.Controllers
         /// </summary>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? message)
         {
-            return this.View();
+            return this.View(message);
         }
 
         /// <summary>
@@ -65,30 +69,78 @@ namespace Legendary.Web.Controllers
         }
 
         /// <summary>
+        /// Displays the create user page.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            return this.View();
+        }
+
+        /// <summary>
+        /// Creates a character.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateCharacter(string firstName, string lastName, string password)
+        {
+            var pwHash = Engine.Crypt.ComputeSha256Hash(password);
+            await this.dataService.CreateCharacter(firstName, lastName, pwHash);
+            return this.View("Login", "Character created. Please login.");
+        }
+
+        /// <summary>
         /// Posts login information to the home page, and handles authentication.
         /// </summary>
         /// <param name="username">The username.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
-        public async Task<IActionResult> Index(string username)
+        public async Task<IActionResult> Index(string username, string password)
         {
-            // TO-DO: Authenticate user via Mongo. Then, sign them in.
-            var claims = new List<Claim>
+            var ipAddress = Request.Host.ToString();
+
+            logger.LogInformation($"{username} is attempting to login from {ipAddress}...");
+
+            var userModel = new UserModel(username, password);
+
+            var dbUser = await this.dataService.FindCharacter(c => c.FirstName == username);
+
+            if (dbUser == null)
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, "User"),
-            };
+                logger.LogWarning($"{username} is not an existing character. Redirecting to login.");
+                return this.View("Login", "That character does not exist. You should create one!");
+            }
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var pwHash = Engine.Crypt.ComputeSha256Hash(password);
 
-            var authProperties = new AuthenticationProperties
+            if (pwHash != dbUser.Password)
             {
-                AllowRefresh = true,
-            };
+                logger.LogWarning($"{username} provided an invalid password. Redirecting to login.");
+                return this.View("Login", "Invalid password. Try again.");
+            }
+            else
+            {
+                // User has authenticated, so move along and log them in.
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, userModel.UserName),
+                    new Claim(ClaimTypes.Role, "User"),
+                };
 
-            await this.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return this.View("Index", username);
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true,
+                };
+
+                await this.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                logger.LogInformation($"{username} is logging in from {ipAddress}...");
+
+                return this.View("Index", userModel);
+            }
         }
 
         /// <summary>
@@ -99,6 +151,6 @@ namespace Legendary.Web.Controllers
         public IActionResult Error()
         {
             return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
-        }
+        }        
     }
 }

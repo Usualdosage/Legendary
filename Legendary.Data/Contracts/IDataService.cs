@@ -8,7 +8,11 @@
 
 namespace Legendary.Data.Contracts
 {
+    using System;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using Legendary.Core.Models;
+    using MongoDB.Driver;
 
     /// <summary>
     /// Implementation contract for interacting with a database.
@@ -20,5 +24,24 @@ namespace Legendary.Data.Contracts
         /// </summary>
         /// <returns>The current world.</returns>
         public World? LoadWorld();
+
+        /// <summary>
+        /// Finds a character using the given filter.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="options">The find options.</param>
+        /// <returns>Character.</returns>
+        public Task<Character?> FindCharacter(
+            Expression<Func<Character, bool>> filter,
+            FindOptions? options = null);
+
+        /// <summary>
+        /// Creates a character.
+        /// </summary>
+        /// <param name="firstName">First name.</param>
+        /// <param name="lastName">Last name.</param>
+        /// <param name="hashedPassword">Hashed password.</param>
+        /// <returns></returns>
+        Task<Character?> CreateCharacter(string firstName, string lastName, string hashedPassword);
     }
 }
