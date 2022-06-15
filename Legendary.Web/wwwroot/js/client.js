@@ -17,7 +17,7 @@ class LegacyClient {
         };
 
         socket.onerror = function (e) {
-            console.error(e.data);
+            console.error("Error!", e);
         };
 
         socket.onmessage = function (e) {

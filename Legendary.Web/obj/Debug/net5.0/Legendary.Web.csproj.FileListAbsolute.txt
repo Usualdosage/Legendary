@@ -94,6 +94,7 @@
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Content/Welcome.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/CreateRoom.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/CreateUser.cshtml.g.cs
+/Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/Health.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/Index.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Home/Login.cshtml.g.cs
 /Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/Debug/net5.0/Razor/Views/Shared/Error.cshtml.g.cs

@@ -55,6 +55,9 @@ namespace Legendary.Web.Controllers
         [HttpGet]
         public IActionResult Login(string? message)
         {
+            // Let's make sure we can connect to the DB (or wake it up).
+            this.dataService.TestConnection();
+
             return this.View(message);
         }
 
@@ -67,10 +70,11 @@ namespace Legendary.Web.Controllers
             messages.Add($"Can connect to database: {this.dataService.TestConnection()}");
 
             // See if we can hit our own API
+            // TO-DO
 
             var healthModel = new HealthModel(messages);
 
-            return this.View("Health", healthModel);
+            return this.View(healthModel);
         }
 
         /// <summary>
