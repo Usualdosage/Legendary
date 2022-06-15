@@ -37,6 +37,12 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
+        public bool TestConnection()
+        {
+            return this.dbConnection.TestConnection();
+        }
+
+        /// <inheritdoc/>
         public World? LoadWorld()
         {
             var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");

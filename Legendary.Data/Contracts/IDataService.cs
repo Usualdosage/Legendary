@@ -43,5 +43,11 @@ namespace Legendary.Data.Contracts
         /// <param name="hashedPassword">Hashed password.</param>
         /// <returns></returns>
         Task<Character?> CreateCharacter(string firstName, string lastName, string hashedPassword);
+
+        /// <summary>
+        /// Tests that this instance can connect to Mongo.
+        /// </summary>
+        /// <returns>True if succeeded, false if not.</returns>
+        bool TestConnection();
     }
 }

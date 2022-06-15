@@ -58,6 +58,21 @@ namespace Legendary.Web.Controllers
             return this.View(message);
         }
 
+        [HttpGet]
+        public IActionResult Health()
+        {
+            List<string> messages = new();
+
+            // See if we can connect to Mongo
+            messages.Add($"Can connect to database: {this.dataService.TestConnection()}");
+
+            // See if we can hit our own API
+
+            var healthModel = new HealthModel(messages);
+
+            return this.View("Health", healthModel);
+        }
+
         /// <summary>
         /// Displays the create room page.
         /// </summary>

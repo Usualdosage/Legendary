@@ -1,23 +1,32 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Controllers/HomeController.cs">
     <Files>
-      <File FileName="Legendary.Data/DataService.cs" Line="68" Column="34" />
+      <File FileName="Legendary.Data/DataService.cs" Line="23" Column="36" />
       <File FileName="Legendary.Networking/Server.cs" Line="1" Column="1" />
       <File FileName="Legendary.Web/Startup.cs" Line="83" Column="1" />
-      <File FileName="Legendary.Web/appsettings.json" Line="14" Column="27" />
+      <File FileName="Legendary.Web/appsettings.json" Line="10" Column="100" />
       <File FileName="Legendary.Web/appsettings.Development.json" Line="14" Column="27" />
       <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="23" Column="22" />
+      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="67" Column="23" />
+      <File FileName="Legendary.Web/Views/Home/Health.cshtml" Line="11" Column="10" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="1" Column="1" />
+      <File FileName="Legendary.Data/Contracts/IDataService.cs" Line="46" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True" selected="True">
+          <Node name="Legendary" expanded="True">
             <Node name="Legendary.Core" expanded="True" />
-            <Node name="Legendary.Data" expanded="True" />
+            <Node name="Legendary.Data" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
             <Node name="Legendary.Engine" expanded="True" />
             <Node name="Legendary.Networking" expanded="True" />
             <Node name="Legendary.Web" expanded="True">
-              <Node name="Controllers" expanded="True" />
+              <Node name="Controllers" expanded="True">
+                <Node name="HomeController.cs" selected="True" />
+              </Node>
+              <Node name="Models" expanded="True" />
               <Node name="Views" expanded="True">
                 <Node name="Home" expanded="True" />
               </Node>
@@ -34,7 +43,7 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="58" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="88" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="103" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

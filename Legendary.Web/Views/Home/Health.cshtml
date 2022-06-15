@@ -1,0 +1,11 @@
+﻿@model HealthModel
+
+<h1>System Health Check</h1>
+    <ul>
+        @{
+            foreach (var message in Model.Messages)
+            {
+                <li>@message</li>
+            }
+        }
+    </ul>

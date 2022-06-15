@@ -8,16 +8,16 @@
 
 namespace Legendary.Web.Models
 {
-    public class UserModel
+    using System.Collections.Generic;
+
+    public class HealthModel
     {
-        public string UserName { get; private set; }
+        public List<string> Messages { get; set; }
 
-        public string Password { get; private set; }
-
-        public UserModel(string username, string password)
+        public HealthModel(List<string> messages)
         {
-            this.UserName = username;
-            this.Password = password;
+            this.Messages = messages;
         }
     }
 }
+
