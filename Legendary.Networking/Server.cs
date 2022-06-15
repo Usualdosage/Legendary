@@ -34,6 +34,7 @@ namespace Legendary.Networking
         public Server(RequestDelegate requestDelegate, ILogger logger, IDBConnection connection, IDataService dataService, IApiClient apiClient)
         {
             logger.Info("Legendary server is starting up...");
+            this._requestDelegate = requestDelegate;
             this.engine = new Engine.Engine(requestDelegate, logger, connection, dataService, apiClient);
             this.engine.Start();
         }
