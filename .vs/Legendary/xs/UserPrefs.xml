@@ -2,24 +2,35 @@
   <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="120" Column="75" />
-      <File FileName="Legendary.Data/DataService.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="18" Column="58" />
-      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="1" Column="1" />
-      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="11" Column="28" />
-      <File FileName="Legendary.Web/appsettings.json" Line="12" Column="5" />
-      <File FileName="Legendary.Web/appsettings.Development.json" Line="12" Column="5" />
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="33" Column="38" />
-      <File FileName="Legendary.Web/Models/UserModel.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Networking/Models/ServerSettings.cs" Line="19" Column="44" />
-      <File FileName="Legendary.Web/Startup.cs" Line="87" Column="16" />
-      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" Line="12" Column="57" />
-      <File FileName="Legendary.Web/Controllers/ContentController.cs" Line="18" Column="80" />
-      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="13" Column="7" />
+      <File FileName="Legendary.Data/DataService.cs" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" />
+      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" />
+      <File FileName="Legendary.Web/appsettings.json" />
+      <File FileName="Legendary.Web/appsettings.Development.json" />
+      <File FileName="Legendary.Networking/ApiClient.cs" />
+      <File FileName="Legendary.Web/Models/UserModel.cs" />
+      <File FileName="Legendary.Networking/Models/ServerSettings.cs" />
+      <File FileName="Legendary.Web/Startup.cs" />
+      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" />
+      <File FileName="Legendary.Web/Controllers/ContentController.cs" />
+      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" />
+      <File FileName="Legendary.Networking/Server.cs" Line="40" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True" />
+          <Node name="Legendary" expanded="True" selected="True">
+            <Node name="Legendary.Core" expanded="True" />
+            <Node name="Legendary.Engine" expanded="True" />
+            <Node name="Legendary.Networking" expanded="True" />
+            <Node name="Legendary.Web" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="wwwroot" expanded="True">
+                <Node name="img" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>

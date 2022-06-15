@@ -21,6 +21,7 @@ namespace Legendary.Networking
     public class Server : IServer
     {
         private readonly Engine.Engine engine;
+        private readonly RequestDelegate _requestDelegate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Server"/> class.
@@ -42,6 +43,9 @@ namespace Legendary.Networking
         {
             // TO-DO: Handle IP ban list
             await this.engine.Invoke(context);
+
+            // Call the next delegate/middleware in the pipeline.
+            await _requestDelegate(context);
         }
     }
 }

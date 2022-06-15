@@ -8847,7 +8847,7 @@
       "outputPath": "/Users/matthewmartin/Projects/Legendary/Legacy.Engine/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/matthewmartin/.nuget/NuGet/NuGet.Config"
+        "/Users/matthewmartin/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
