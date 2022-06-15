@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Networking", "Leg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Engine", "Legacy.Engine\Legendary.Engine.csproj", "{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{026E9A6D-8CF2-481C-A453-B67DC0821A51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +53,6 @@ Global
 		$0.VersionControlPolicy = $1
 		$1.CommitMessageStyle = $2
 		$2.IncludeDirectoryPaths = True
+		$2.LineAlign = 0
 	EndGlobalSection
 EndGlobal
