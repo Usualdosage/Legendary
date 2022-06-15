@@ -59,9 +59,16 @@ namespace Legendary.Data
             Expression<Func<Character, bool>> filter,
             FindOptions? options = null)
         {
-            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-            return await characters.Find(filter, options)
-                .FirstOrDefaultAsync();
+            try
+            {
+                var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
+                return await characters.Find(filter, options)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Unable to connect to the database. {exc}");
+            }           
         }
 
         /// <inheritdoc/>

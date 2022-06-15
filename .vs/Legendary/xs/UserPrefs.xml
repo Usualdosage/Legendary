@@ -1,34 +1,27 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="120" Column="75" />
-      <File FileName="Legendary.Data/DataService.cs" />
-      <File FileName="Legendary.Web/Views/Home/Login.cshtml" />
-      <File FileName="Legendary.Web/Views/Home/Index.cshtml" />
-      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" />
-      <File FileName="Legendary.Web/appsettings.json" />
-      <File FileName="Legendary.Web/appsettings.Development.json" />
-      <File FileName="Legendary.Networking/ApiClient.cs" />
-      <File FileName="Legendary.Web/Models/UserModel.cs" />
-      <File FileName="Legendary.Networking/Models/ServerSettings.cs" />
-      <File FileName="Legendary.Web/Startup.cs" />
-      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" />
-      <File FileName="Legendary.Web/Controllers/ContentController.cs" />
-      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" />
-      <File FileName="Legendary.Networking/Server.cs" Line="40" Column="1" />
+      <File FileName="Legendary.Data/DataService.cs" Line="68" Column="34" />
+      <File FileName="Legendary.Networking/Server.cs" Line="1" Column="1" />
+      <File FileName="Legendary.Web/Startup.cs" Line="83" Column="1" />
+      <File FileName="Legendary.Web/appsettings.json" Line="14" Column="27" />
+      <File FileName="Legendary.Web/appsettings.Development.json" Line="14" Column="27" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="23" Column="22" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True" selected="True">
             <Node name="Legendary.Core" expanded="True" />
+            <Node name="Legendary.Data" expanded="True" />
             <Node name="Legendary.Engine" expanded="True" />
             <Node name="Legendary.Networking" expanded="True" />
             <Node name="Legendary.Web" expanded="True">
               <Node name="Controllers" expanded="True" />
-              <Node name="wwwroot" expanded="True">
-                <Node name="img" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Home" expanded="True" />
               </Node>
+              <Node name="appsettings.json" expanded="True" />
             </Node>
           </Node>
         </State>
