@@ -46,7 +46,7 @@ namespace Legendary.Networking
             await this.engine.Invoke(context);
 
             // Call the next delegate/middleware in the pipeline.
-            await _requestDelegate(context);
+            await this._requestDelegate(context);
         }
     }
 }
