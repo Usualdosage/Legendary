@@ -1,0 +1,21 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm">
+            <h1>Create a Character</h1>
+            <form action="@Url.Action("CreateCharacter")" method="post">
+                <fieldset>
+                    <legend>Name</legend>
+                    <input type="text" name="firstName" placeholder="First Name" />
+                    <input type="text" name="lastName" placeholder="Last Name" />
+                </fieldset>
+                <fieldset>
+                    <legend>Password</legend>
+                    <input type="password" name="password" placeholder="Password" />
+                </fieldset>
+                <input type="submit" value="Create" />
+            </form>
+        </div>
+        <div class="col-sm"></div>
+    </div>
+</div>
