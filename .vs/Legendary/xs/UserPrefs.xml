@@ -1,9 +1,9 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Networking/ApiClient.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument=".gitignore">
     <Files>
       <File FileName="Legendary.Data/DataService.cs" Line="23" Column="36" />
       <File FileName="Legendary.Networking/Server.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Web/appsettings.json" Line="10" Column="100" />
+      <File FileName="Legendary.Web/appsettings.json" Line="14" Column="55" />
       <File FileName="Legendary.Web/appsettings.Development.json" Line="14" Column="27" />
       <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="23" Column="22" />
       <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="61" Column="39" />
@@ -12,20 +12,18 @@
       <File FileName="Legendary.Data/Contracts/IDataService.cs" Line="46" Column="1" />
       <File FileName="Legendary.Web/wwwroot/js/client.js" Line="13" Column="11" />
       <File FileName="Legendary.Web/Controllers/ContentController.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="46" Column="94" />
+      <File FileName="Legendary.Networking/ApiClient.cs" Line="70" Column="69" />
+      <File FileName=".gitignore" Line="4" Column="7" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Core" expanded="True" />
-            <Node name="Legendary.Data" expanded="True">
-              <Node name="Contracts" expanded="True" />
+            <Node name="Solution Items" expanded="True">
+              <Node name="/Users/matthewmartin/Projects/Legendary/.gitignore" selected="True" />
             </Node>
             <Node name="Legendary.Engine" expanded="True" />
-            <Node name="Legendary.Networking" expanded="True">
-              <Node name="ApiClient.cs" selected="True" />
-            </Node>
+            <Node name="Legendary.Networking" expanded="True" />
             <Node name="Legendary.Web" expanded="True">
               <Node name="Controllers" expanded="True" />
               <Node name="Models" expanded="True" />
