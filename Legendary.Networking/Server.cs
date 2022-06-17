@@ -42,10 +42,7 @@ namespace Legendary.Networking
         public async Task Invoke(HttpContext context)
         {
             // TO-DO: Handle IP ban list
-            await this.engine.Invoke(context);
-
-            // Call the next delegate/middleware in the pipeline.
-            await this._requestDelegate(context);
+            await this.engine.Invoke(context);            
         }
     }
 }

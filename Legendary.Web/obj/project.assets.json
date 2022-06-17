@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net5.0": {
+    "net6.0": {
       "DnsClient/1.4.0": {
         "type": "package",
         "compile": {
@@ -1812,14 +1812,11 @@
       },
       "RestSharp/107.1.2": {
         "type": "package",
-        "dependencies": {
-          "System.Text.Json": "5.0.0"
-        },
         "compile": {
-          "lib/net5.0/RestSharp.dll": {}
+          "lib/net6.0/RestSharp.dll": {}
         },
         "runtime": {
-          "lib/net5.0/RestSharp.dll": {}
+          "lib/net6.0/RestSharp.dll": {}
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -3159,7 +3156,7 @@
           "lib/netstandard2.0/System.Text.Encodings.Web.dll": {}
         }
       },
-      "System.Text.Json/5.0.0": {
+      "System.Text.Json/4.7.2": {
         "type": "package",
         "compile": {
           "lib/netcoreapp3.0/System.Text.Json.dll": {}
@@ -3381,7 +3378,7 @@
       },
       "Legendary.Core/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v5.0",
+        "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "MongoDB.Bson": "2.14.1",
           "MongoDB.Driver": "2.14.1"
@@ -3395,7 +3392,7 @@
       },
       "Legendary.Data/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v5.0",
+        "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "Legendary.Core": "1.0.0"
         },
@@ -3408,7 +3405,7 @@
       },
       "Legendary.Engine/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v5.0",
+        "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "Legendary.Core": "1.0.0",
           "Legendary.Data": "1.0.0",
@@ -3424,7 +3421,7 @@
       },
       "Legendary.Networking/1.0.0": {
         "type": "project",
-        "framework": ".NETCoreApp,Version=v5.0",
+        "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "Legendary.Engine": "1.0.0",
           "RestSharp": "107.1.2"
@@ -9032,10 +9029,10 @@
         "version.txt"
       ]
     },
-    "System.Text.Json/5.0.0": {
-      "sha512": "+luxMQNZ2WqeffBU7Ml6njIvxc8169NW2oU+ygNudXQGZiarjE7DOtN7bILiQjTZjkmwwRZGTtLzmdrSI/Ustw==",
+    "System.Text.Json/4.7.2": {
+      "sha512": "TcMd95wcrubm9nHvJEQs70rC0H/8omiSGGpU4FQ/ZA1URIqD4pjmFJh2Mfv1yH1eHgJDWTi2hMDXwTET+zOOyg==",
       "type": "package",
-      "path": "system.text.json/5.0.0",
+      "path": "system.text.json/4.7.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -9048,7 +9045,7 @@
         "lib/netcoreapp3.0/System.Text.Json.xml",
         "lib/netstandard2.0/System.Text.Json.dll",
         "lib/netstandard2.0/System.Text.Json.xml",
-        "system.text.json.5.0.0.nupkg.sha512",
+        "system.text.json.4.7.2.nupkg.sha512",
         "system.text.json.nuspec",
         "useSharedDesignerContext.txt",
         "version.txt"
@@ -9766,7 +9763,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net5.0": [
+    "net6.0": [
       "Legendary.Core >= 1.0.0",
       "Legendary.Data >= 1.0.0",
       "Legendary.Networking >= 1.0.0",
@@ -9790,17 +9787,17 @@
       "outputPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Web/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/matthewmartin/.config/NuGet/NuGet.Config"
+        "/Users/matthewmartin/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "net5.0"
+        "net6.0"
       ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "projectReferences": {
             "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj": {
               "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj"
@@ -9821,8 +9818,8 @@
       }
     },
     "frameworks": {
-      "net5.0": {
-        "targetAlias": "net5.0",
+      "net6.0": {
+        "targetAlias": "net6.0",
         "dependencies": {
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
             "target": "Package",
@@ -9863,7 +9860,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.408/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.301/RuntimeIdentifierGraph.json"
       }
     }
   }

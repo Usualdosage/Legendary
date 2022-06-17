@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UserSecretsId>aspnet-Legendary.Web-63352E29-7A12-4BA5-BACF-DD6BCD947CA1</UserSecretsId>
   </PropertyGroup>

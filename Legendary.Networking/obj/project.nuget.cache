@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "NexFRzy85qahYKq4ytrgnKFwycpntgJTT5oi2fHeu3XOboPRw7YqleCXXeWa4onOzQ1hKoQJjoFO1Ec7SdV3IA==",
+  "dgSpecHash": "Tj15BY8gJNZ8MrNXOu84yMPBFaSBjHoZQMVJyCNu0NP2S+x68/s+pflJwIL9MjM+7f57AjcY8psbRxX2BrCmLQ==",
   "success": true,
   "projectFilePath": "/Users/matthewmartin/Projects/Legendary/Legendary.Networking/Legendary.Networking.csproj",
   "expectedPackageFiles": [
@@ -189,7 +189,6 @@
     "/Users/matthewmartin/.nuget/packages/system.text.encoding.codepages/4.3.0/system.text.encoding.codepages.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.text.encoding.extensions/4.3.0/system.text.encoding.extensions.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.text.encodings.web/4.5.0/system.text.encodings.web.4.5.0.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/system.text.json/5.0.0/system.text.json.5.0.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.text.regularexpressions/4.3.0/system.text.regularexpressions.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.threading/4.3.0/system.threading.4.3.0.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.threading.tasks/4.3.0/system.threading.tasks.4.3.0.nupkg.sha512",
