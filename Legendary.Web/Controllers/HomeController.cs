@@ -123,23 +123,23 @@ namespace Legendary.Web.Controllers
 
             var userModel = new UserModel(username, password);
 
-            var dbUser = await this.dataService.FindCharacter(c => c.FirstName == username);
+            //var dbUser = await this.dataService.FindCharacter(c => c.FirstName == username);
 
-            if (dbUser == null)
-            {
-                logger.LogWarning($"{username} is not an existing character. Redirecting to login.");
-                return this.View("Login", "That character does not exist. You should create one!");
-            }
+            //if (dbUser == null)
+            //{
+            //    logger.LogWarning($"{username} is not an existing character. Redirecting to login.");
+            //    return this.View("Login", "That character does not exist. You should create one!");
+            //}
 
-            var pwHash = Engine.Crypt.ComputeSha256Hash(password);
+            //var pwHash = Engine.Crypt.ComputeSha256Hash(password);
 
-            if (pwHash != dbUser.Password)
-            {
-                logger.LogWarning($"{username} provided an invalid password. Redirecting to login.");
-                return this.View("Login", "Invalid password. Try again.");
-            }
-            else
-            {
+            //if (pwHash != dbUser.Password)
+            //{
+            //    logger.LogWarning($"{username} provided an invalid password. Redirecting to login.");
+            //    return this.View("Login", "Invalid password. Try again.");
+            //}
+            //else
+            //{
                 // User has authenticated, so move along and log them in.
                 var claims = new List<Claim>
                 {
@@ -159,7 +159,7 @@ namespace Legendary.Web.Controllers
                 logger.LogInformation($"{username} is logging in from {ipAddress}...");
 
                 return this.View("Index", userModel);
-            }
+            //}
         }
 
         /// <summary>

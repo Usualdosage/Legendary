@@ -74,6 +74,8 @@ namespace Legendary.Engine
         {
             try
             {
+                await this.Start();
+
                 if (this.communicator != null)
                 {
                     await this.communicator.Invoke(context);

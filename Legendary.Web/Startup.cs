@@ -79,6 +79,7 @@ namespace Legendary.Web
             });
 
             app.UseWebSockets();
+
             app.UseMiddleware<Server>();
 
             app.UseEndpoints(endpoints =>

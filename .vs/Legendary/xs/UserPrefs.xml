@@ -1,40 +1,34 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument=".gitignore">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Legendary.Data/DataService.cs" Line="23" Column="36" />
-      <File FileName="Legendary.Networking/Server.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Web/appsettings.json" Line="14" Column="55" />
-      <File FileName="Legendary.Web/appsettings.Development.json" Line="14" Column="27" />
-      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="23" Column="22" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="61" Column="39" />
-      <File FileName="Legendary.Web/Views/Home/Health.cshtml" Line="11" Column="10" />
-      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="1" Column="1" />
-      <File FileName="Legendary.Data/Contracts/IDataService.cs" Line="46" Column="1" />
-      <File FileName="Legendary.Web/wwwroot/js/client.js" Line="13" Column="11" />
-      <File FileName="Legendary.Web/Controllers/ContentController.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="70" Column="69" />
+      <File FileName="Legendary.Web/appsettings.json" Line="14" Column="12" />
+      <File FileName="Legendary.Web/appsettings.Development.json" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" />
+      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="107" Column="1" />
+      <File FileName="Legendary.Web/Views/Home/Health.cshtml" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="5" Column="21" />
+      <File FileName="Legendary.Data/Contracts/IDataService.cs" />
+      <File FileName="Legendary.Web/wwwroot/js/client.js" />
+      <File FileName="Legendary.Web/Controllers/ContentController.cs" />
+      <File FileName="Legendary.Networking/ApiClient.cs" Line="57" Column="1" />
       <File FileName=".gitignore" Line="4" Column="7" />
+      <File FileName="Legendary.Web/Program.cs" Line="22" Column="1" />
+      <File FileName="Legendary.Web/Startup.cs" Line="83" Column="34" />
+      <File FileName="Legendary.Networking/Server.cs" Line="45" Column="34" />
+      <File FileName="Legacy.Engine/Engine.cs" Line="77" Column="36" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True">
-            <Node name="Solution Items" expanded="True">
-              <Node name="/Users/matthewmartin/Projects/Legendary/.gitignore" selected="True" />
-            </Node>
+          <Node name="Legendary" expanded="True" selected="True">
             <Node name="Legendary.Engine" expanded="True" />
             <Node name="Legendary.Networking" expanded="True" />
             <Node name="Legendary.Web" expanded="True">
               <Node name="Controllers" expanded="True" />
-              <Node name="Models" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="Content" expanded="True" />
-                <Node name="Home" expanded="True" />
-              </Node>
               <Node name="wwwroot" expanded="True">
                 <Node name="js" expanded="True" />
+                <Node name="lib" expanded="True" />
               </Node>
-              <Node name="appsettings.json" expanded="True" />
             </Node>
           </Node>
         </State>

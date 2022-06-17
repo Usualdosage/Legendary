@@ -36,7 +36,6 @@ namespace Legendary.Networking
             logger.Info("Legendary server is starting up...");
             this._requestDelegate = requestDelegate;
             this.engine = new Engine.Engine(requestDelegate, logger, connection, dataService, apiClient);
-            this.engine.Start();
         }
 
         /// <inheritdoc/>
