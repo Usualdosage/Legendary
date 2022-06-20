@@ -1,17 +1,21 @@
 {
   "version": 2,
-  "dgSpecHash": "nqXCA8mUfkOF44PDyu87ORkC1DnpVAxJhqdNmPUMzNGG7ONDhzt053nCf5Tfq0H78VeTN1f1tqFSrO3+Xr8BgQ==",
+  "dgSpecHash": "RMGtU7HpGIhmnA+2gU4Uck0SkUThxk2OMBVKHKlwfKn3fF9BeebaZfnZ5jQsTfo/o70Ckf87uzqGB8vs8hNfgg==",
   "success": true,
   "projectFilePath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj",
   "expectedPackageFiles": [
-    "/Users/matthewmartin/.nuget/packages/dnsclient/1.4.0/dnsclient.1.4.0.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/mongodb.bson/2.14.1/mongodb.bson.2.14.1.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/mongodb.driver/2.14.1/mongodb.driver.2.14.1.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/mongodb.driver.core/2.14.1/mongodb.driver.core.2.14.1.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/mongodb.libmongocrypt/1.3.0/mongodb.libmongocrypt.1.3.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/dnsclient/1.6.0/dnsclient.1.6.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/microsoft.netcore.platforms/5.0.0/microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/microsoft.win32.registry/5.0.0/microsoft.win32.registry.5.0.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/mongodb.bson/2.16.0/mongodb.bson.2.16.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/mongodb.driver/2.16.0/mongodb.driver.2.16.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/mongodb.driver.core/2.16.0/mongodb.driver.core.2.16.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/mongodb.libmongocrypt/1.5.2/mongodb.libmongocrypt.1.5.2.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/sharpcompress/0.30.1/sharpcompress.0.30.1.nupkg.sha512",
     "/Users/matthewmartin/.nuget/packages/system.buffers/4.5.1/system.buffers.4.5.1.nupkg.sha512",
-    "/Users/matthewmartin/.nuget/packages/system.runtime.compilerservices.unsafe/5.0.0/system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
+    "/Users/matthewmartin/.nuget/packages/system.runtime.compilerservices.unsafe/5.0.0/system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/system.security.accesscontrol/5.0.0/system.security.accesscontrol.5.0.0.nupkg.sha512",
+    "/Users/matthewmartin/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512"
   ],
   "logs": []
 }
