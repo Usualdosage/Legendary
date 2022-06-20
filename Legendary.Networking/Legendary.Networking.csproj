@@ -26,6 +26,6 @@
     <ProjectReference Include="..\Legacy.Engine\Legendary.Engine.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="RestSharp" Version="107.1.2" />
+    <PackageReference Include="RestSharp" Version="108.0.1" />
   </ItemGroup>
 </Project>

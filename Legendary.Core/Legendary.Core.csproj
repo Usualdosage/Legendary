@@ -24,7 +24,7 @@
     <Folder Include="Types\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.14.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
+    <PackageReference Include="MongoDB.Bson" Version="2.16.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.16.0" />
   </ItemGroup>
 </Project>
