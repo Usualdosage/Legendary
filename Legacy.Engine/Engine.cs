@@ -11,10 +11,8 @@ namespace Legendary.Engine
     using System;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
-    using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
-    using Legendary.Engine.Types;
 
     /// <summary>
     /// The main entry point of the Legendary app engine.
@@ -23,7 +21,6 @@ namespace Legendary.Engine
     {
         private readonly ILogger logger;
         private readonly IWorld world;
-        private IRandom? random;
         private int gameTicks = 0;
         private int gameHour = 0;
         private int saveGame = 0;
@@ -45,6 +42,10 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public event EventHandler? Tick;
 
+        /// <inheritdoc/>
+        public event EventHandler? EngineUpdate;
+
+        /// <inheritdoc/>
         public async Task Initialize()
         {
             this.logger.Info("Populating the world with mobiles and items..");
@@ -62,9 +63,6 @@ namespace Legendary.Engine
                 10000,
                 System.Threading.Timeout.Infinite);
 
-            this.logger.Info("Initializing randomness...");
-            this.random = new Random();
-
             this.logger.Info("Starting main loop...");
             var timer = new System.Threading.Timer(
                 async
@@ -72,8 +70,7 @@ namespace Legendary.Engine
                 {                    
                     this.gameTicks++;
 
-                    this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour));
-                    this.logger.Info("Combat tick.");
+                    this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
 
                     // One "hour" game time, or 30 seconds.
                     if (this.gameTicks == 30)
@@ -86,8 +83,7 @@ namespace Legendary.Engine
 
                         this.gameTicks = 0;
 
-                        this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour));
-                        this.logger.Info("Hour tick.");
+                        this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
                   
                     }
 
@@ -106,18 +102,19 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Raises the InputReceived event.
+        /// Raises the Tick event.
         /// </summary>
         /// <param name="sender">The sender of the message (userdata).</param>
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnTick(object sender, EngineEventArgs e)
         {
+            this.RestoreUsers();
             EventHandler? handler = this.Tick;
             handler?.Invoke(sender, e);
         }
 
         /// <summary>
-        /// Raises the InputReceived event.
+        /// Raises the VioTick event.
         /// </summary>
         /// <param name="sender">The sender of the message (userdata).</param>
         /// <param name="e">CommunicationEventArgs.</param>
@@ -125,6 +122,38 @@ namespace Legendary.Engine
         {
             EventHandler? handler = this.VioTick;
             handler?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        /// Raises the EngineUpdate event.
+        /// </summary>
+        /// <param name="sender">The sender of the message (userdata).</param>
+        /// <param name="e">CommunicationEventArgs.</param>
+        protected virtual void OnEngineUpdate(object sender, EngineEventArgs e)
+        {
+            EventHandler? handler = this.EngineUpdate;
+            handler?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        /// Each tick, restores various attributes of each user.
+        /// </summary>
+        private void RestoreUsers()
+        {
+            if (Communicator.Users != null)
+            {
+                foreach (var user in Communicator.Users)
+                {
+                    // TODO: If user is resting, or sleeping, restore more/faster.
+
+                    var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, 20);
+                    user.Value.Character.Movement.Current += moveRestore;
+
+                    // This will update on tick, by the communicator.
+
+                    // TODO: Implement spell effects wearing off (e.g. poison)                    
+                }
+            }
         }
     }
 }

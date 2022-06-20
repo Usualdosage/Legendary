@@ -15,23 +15,30 @@ namespace Legendary.Engine.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationEventArgs"/> class.
         /// </summary>
-        /// <param name="socketId">The socket Id.</param>
+        /// <param name="gameHour">The game hour</param>
+        /// <param name="gameTicks">The game ticks</param>
         /// <param name="message">The message.</param>
-        public EngineEventArgs(int gameTicks, int gameHour)
+        public EngineEventArgs(int gameTicks, int gameHour, string message)
         {
             this.GameTicks = gameTicks;
             this.GameHour = gameHour;
+            this.GameMessage = message;
         }
 
         /// <summary>
-        /// Gets the message.
+        /// Gets the game hour.
         /// </summary>
         public int GameHour { get; private set; }
 
         /// <summary>
-        /// Gets the message.
+        /// Gets the game ticks.
         /// </summary>
         public int GameTicks { get; private set; }
+
+        /// <summary>
+        /// Gets the message.
+        /// </summary>
+        public string GameMessage { get; private set; }
     }
 }
 

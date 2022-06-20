@@ -36,6 +36,9 @@ namespace Legendary.Engine
         private readonly IDataService dataService;
         private readonly IProcessor processor;
         private readonly IEngine engine;
+        private readonly IRandom random;
+        private IEnvironment? environment;
+        private KeyValuePair<string, UserData> connectedUser;
         
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -54,8 +57,11 @@ namespace Legendary.Engine
             this.dataService = dataService;
             this.engine = engine;
 
-            // Create the command processor
+            // Create the command processor.
             this.processor = new Processor(logger, this, world);
+
+            // Create the random generator for weather and user effects.
+            this.random = new Random();
 
             // Add public channels.
             this.Channels = new List<CommChannel>()
@@ -123,6 +129,11 @@ namespace Legendary.Engine
 
                 // Force the user to run the look command
                 this.SendToServer(userData, "look");
+
+                this.connectedUser = new KeyValuePair<string, UserData>(socketId, userData);
+
+                // Create the environment handler for this user.
+                this.environment = new Environment(this, this.random, this.connectedUser);
 
                 while (true)
                 {
@@ -206,6 +217,7 @@ namespace Legendary.Engine
             return CommResult.NotConnected;
         }
 
+
         /// <inheritdoc/>
         public async Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken ct = default)
         {
@@ -265,6 +277,7 @@ namespace Legendary.Engine
             return CommResult.Ok;
         }
 
+
         /// <inheritdoc/>
         public void Dispose()
         {
@@ -290,9 +303,11 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void Engine_VioTick(object? sender, EventArgs e)
+        private async void Engine_VioTick(object? sender, EventArgs e)
         {
             var engineEventArgs = (EngineEventArgs)e;
+
+            // TODO: Handle combat here.
         }
 
         /// <summary>
@@ -300,9 +315,19 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private void Engine_Tick(object? sender, EventArgs e)
+        private async void Engine_Tick(object? sender, EventArgs e)
         {
             var engineEventArgs = (EngineEventArgs)e;
+
+            if (this.environment != null)
+            {
+                await this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+            }
+
+            if (this.connectedUser.Value != null)
+            {
+                await this.processor.ShowPlayerInfo(this.connectedUser.Value);
+            }
         }
 
         /// <summary>
