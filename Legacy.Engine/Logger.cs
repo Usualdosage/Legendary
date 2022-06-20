@@ -18,73 +18,52 @@ namespace Legendary.Engine
     public class Logger : ILogger
     {
         /// <inheritdoc/>
-        public async Task Debug(string message)
+        public void Debug(string message)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            await Console.Out.WriteAsync(" Debug: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(message);
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {message}");
         }
 
         /// <inheritdoc/>
-        public async Task Info(string message)
+        public void Info(string message)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.Green;
-            await Console.Out.WriteAsync($" Info: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(message);
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {message}");
         }
 
         /// <inheritdoc/>
-        public async Task Warn(string message, Exception exception)
+        public void Warn(string message, Exception exception)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            await Console.Out.WriteAsync($" Warning: {message} - ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(message);
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {message} - {exception}");
         }
 
         /// <inheritdoc/>
-        public async Task Warn(string message)
+        public void Warn(string message)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            await Console.Out.WriteAsync(" Warning: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(message);
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {message}");
         }
 
         /// <inheritdoc/>
-        public async Task Error(string message)
+        public void Error(string message)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.Red;
-            await Console.Out.WriteAsync(" Error: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(message);
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {message}");
         }
 
         /// <inheritdoc/>
-        public async Task Error(string message, Exception exception)
+        public void Error(string message, Exception exception)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.Red;
-            await Console.Out.WriteAsync($" Error: {message} - ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(message);
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {message} - {exception}");
         }
 
         /// <inheritdoc/>
-        public async Task Error(Exception exception)
+        public void Error(Exception exception)
         {
-            await Console.Out.WriteAsync(DateTime.UtcNow.ToString());
-            Console.ForegroundColor = ConsoleColor.Red;
-            await Console.Out.WriteAsync(" Error: ");
-            Console.ForegroundColor = ConsoleColor.White;
-            await Console.Out.WriteLineAsync(exception.ToString());
+            System.Diagnostics.Debug.Write(DateTime.UtcNow.ToString());
+            System.Diagnostics.Debug.WriteLine($" - {exception}");
         }
     }
 }

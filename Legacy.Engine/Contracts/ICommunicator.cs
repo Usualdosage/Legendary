@@ -13,10 +13,7 @@ namespace Legendary.Engine.Contracts
     using System.Net.WebSockets;
     using System.Threading;
     using System.Threading.Tasks;
-    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
-    using Legendary.Data.Contracts;
-    using Legendary.Engine.Models;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Http;
 
@@ -25,16 +22,6 @@ namespace Legendary.Engine.Contracts
     /// </summary>
     public interface ICommunicator : IDisposable
     {
-        /// <summary>
-        /// Event that is raised when input is received from a socket.
-        /// </summary>
-        public event EventHandler? InputReceived;
-
-        /// <summary>
-        /// Gets the world for this communicator.
-        /// </summary>
-        IWorld World { get; }
-
         /// <summary>
         /// Gets the channels for this communicator.
         /// </summary>
@@ -112,15 +99,6 @@ namespace Legendary.Engine.Contracts
         /// <param name="ct">CancellationToken.</param>
         /// <returns>Task.</returns>
         Task Quit(WebSocket socket, string? player, CancellationToken ct = default);
-
-        /// <summary>
-        /// Saves the players current state to the database.
-        /// </summary>
-        /// <param name="socket">The player socket.</param>
-        /// <param name="userData">The user data.</param>
-        /// <param name="ct">CancellationToken.</param>
-        /// <returns>Task.</returns>
-        Task Save(WebSocket socket, UserData userData, CancellationToken ct = default);
     }
 }
 

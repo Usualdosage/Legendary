@@ -21,21 +21,21 @@ namespace Legendary.Engine.Contracts
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>Task.</returns>
-        Task Debug(string message);
+        void Debug(string message);
 
         /// <summary>
         /// Logs a message.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>Task.</returns>
-        Task Info(string message);
+        void Info(string message);
 
         /// <summary>
         /// Logs a message.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>Task.</returns>
-        Task Warn(string message);
+        void Warn(string message);
 
         /// <summary>
         /// Logs a message and an exception.
@@ -43,7 +43,7 @@ namespace Legendary.Engine.Contracts
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
         /// <returns>Task.</returns>
-        Task Warn(string message, Exception exception);
+        void Warn(string message, Exception exception);
 
         /// <summary>
         /// Logs a message and an exception.
@@ -51,21 +51,21 @@ namespace Legendary.Engine.Contracts
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
         /// <returns>Task.</returns>
-        Task Error(string message, Exception exception);
+        void Error(string message, Exception exception);
 
         /// <summary>
         /// Logs an exception.
         /// </summary>
         /// <param name="exception">The exception.</param>
         /// <returns>Task.</returns>
-        Task Error(Exception exception);
+        void Error(Exception exception);
 
         /// <summary>
         /// Logs an error message.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns>Task.</returns>
-        Task Error(string message);
+        void Error(string message);
     }
 }
 

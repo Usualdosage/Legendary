@@ -1,30 +1,54 @@
-﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Legendary.Engine.csproj">
-    <Files>
-      <File FileName="Legendary.Data/Legendary.Data.csproj" Line="4" Column="26" />
-      <File FileName="Legendary.Networking/Legendary.Networking.csproj" Line="4" Column="26" />
-      <File FileName="Legendary.Web/Legendary.Web.csproj" Line="4" Column="26" />
-      <File FileName="Legacy.Engine/Legendary.Engine.csproj" Line="17" Column="31" />
-    </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Core" expanded="True" selected="True" />
-            <Node name="Legendary.Engine" expanded="True" />
-            <Node name="Legendary.Networking" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
-  </MonoDevelop.Ide.Workbench>
+﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="107" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Engine.cs">
+    <Files>
+      <File FileName="Legacy.Engine/Engine.cs" Line="71" Column="21" />
+      <File FileName="Legacy.Engine/Logger.cs" Line="14" Column="1" />
+      <File FileName="Legacy.Engine/Contracts/ILogger.cs" Line="34" Column="28" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="62" Column="19" />
+      <File FileName="Legendary.Networking/ApiClient.cs" Line="52" Column="93" />
+      <File FileName="Legendary.Web/Startup.cs" Line="63" Column="30" />
+      <File FileName="Legendary.Web/Program.cs" Line="31" Column="1" />
+      <File FileName="Legacy.Engine/Processor.cs" Line="42" Column="10" />
+      <File FileName="Legacy.Engine/Contracts/ICommunicator.cs" Line="16" Column="33" />
+      <File FileName="Legendary.Core/Models/World.cs" Line="45" Column="64" />
+      <File FileName="Legendary.Data/DataService.cs" Line="103" Column="17" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Legendary" expanded="True">
+            <Node name="Legendary.Core" expanded="True">
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="Legendary.Data" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
+            <Node name="Legendary.Engine" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
+            <Node name="Legendary.Networking" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
+            <Node name="Legendary.Web" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="appsettings.json" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
   <MultiItemStartupConfigurations />
 </Properties>

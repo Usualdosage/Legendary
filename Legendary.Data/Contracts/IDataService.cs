@@ -23,7 +23,7 @@ namespace Legendary.Data.Contracts
         /// Loads the world into memory.
         /// </summary>
         /// <returns>The current world.</returns>
-        public World? LoadWorld();
+        public World LoadWorld();
 
         /// <summary>
         /// Finds a character using the given filter.

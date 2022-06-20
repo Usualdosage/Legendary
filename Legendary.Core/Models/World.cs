@@ -42,8 +42,6 @@ namespace Legendary.Core.Models
             this.mobiles = mobiles;
             this.apiClient = apiClient;
 
-            var temp = areas.Find(a => a.AreaId == 1).ToList();
-
             this.Areas = new HashSet<Area>(this.GetAllAreas());
             this.Items = new HashSet<Item>(this.GetAllItems());
             this.Mobiles = new HashSet<Mobile>(this.GetAllMobiles());

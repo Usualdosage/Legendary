@@ -9,8 +9,11 @@
 namespace Legendary.Web
 {
     using Legendary.Core.Contracts;
+    using Legendary.Core.Models;
     using Legendary.Data;
     using Legendary.Data.Contracts;
+    using Legendary.Engine;
+    using Legendary.Engine.Contracts;
     using Legendary.Networking;
     using Legendary.Networking.Contracts;
     using Legendary.Networking.Models;
@@ -43,13 +46,19 @@ namespace Legendary.Web
             // Load the configuration values for the server.
             services.Configure<ServerSettings>(this.Configuration.GetSection(nameof(ServerSettings)));
 
-            // Apply necessary DI containers
-            services.AddSingleton<Engine.Contracts.ILogger, Engine.Logger>();
+            // Apply necessary DI containers for fully independent services.
+            services.AddSingleton<ILogger, Logger>();
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             services.AddSingleton<IDBConnection, MongoConnection>();
-            services.AddSingleton<IDataService, DataService>();
+            services.AddTransient<IDataService, DataService>();
             services.AddSingleton<IServerSettings>(sp => sp.GetRequiredService<IOptions<ServerSettings>>().Value);
             services.AddSingleton<IApiClient, ApiClient>();
+
+            // Load the world
+            services.AddSingleton<IWorld>(sp => sp.GetRequiredService<IDataService>().LoadWorld());
+
+            // Initialize the engine
+            services.AddSingleton<IEngine, Engine>();
 
             // Configure authentication
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -80,7 +89,8 @@ namespace Legendary.Web
 
             app.UseWebSockets();
 
-            app.UseMiddleware<Server>();
+            // Start up the comms to handle websocket requests.
+            app.UseMiddleware<Communicator>();
 
             app.UseEndpoints(endpoints =>
             {

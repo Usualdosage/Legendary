@@ -12,7 +12,6 @@ namespace Legendary.Data
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
-    using System.Linq;
     using MongoDB.Driver;
     using System.Threading.Tasks;
     using System.Linq.Expressions;
@@ -43,20 +42,27 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public World? LoadWorld()
+        public World LoadWorld()
         {
-            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-            var areas = this.dbConnection.Database?.GetCollection<Area>("Areas");
-            var items = this.dbConnection.Database?.GetCollection<Item>("Items");
-            var mobiles = this.dbConnection.Database?.GetCollection<Mobile>("Mobiles");
-
-            if (areas != null && characters != null && items != null && mobiles != null)
+            if (this.TestConnection())
             {
-                return new World(areas, characters, items, mobiles, this.apiClient);
+                var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
+                var areas = this.dbConnection.Database?.GetCollection<Area>("Areas");
+                var items = this.dbConnection.Database?.GetCollection<Item>("Items");
+                var mobiles = this.dbConnection.Database?.GetCollection<Mobile>("Mobiles");
+
+                if (areas != null && characters != null && items != null && mobiles != null)
+                {
+                    return new World(areas, characters, items, mobiles, this.apiClient);
+                }
+                else
+                {
+                    throw new Exception("Error loading world. Missing at least one collection.");
+                }
             }
             else
             {
-                throw new Exception("Error loading world. Missing at least one collection.");
+                throw new Exception("A connection to the database could not be established.");
             }
         }
 
@@ -96,9 +102,15 @@ namespace Legendary.Data
                 Location = Room.Default
             };
 
-            await characters?.InsertOneAsync(character);
-
-            return character;
+            if (characters != null)
+            {
+                await characters.InsertOneAsync(character);
+                return character;
+            }
+            else
+            {
+                throw new Exception("Unable to create character.");
+            }
         }
 
     }

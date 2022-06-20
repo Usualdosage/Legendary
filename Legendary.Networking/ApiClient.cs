@@ -53,7 +53,7 @@ namespace Legendary.Networking
             }
             catch (Exception exc)
             {
-                await this.logger.Error(exc);
+                this.logger.Error(exc);
                 return $"<h3>An Exception Occurred</h3><p>{exc}</p>";
             }
         }
@@ -74,7 +74,7 @@ namespace Legendary.Networking
             }
             catch (Exception exc)
             {
-                await this.logger.Error(exc);
+                this.logger.Error(exc);
                 return string.Empty;
             }
         }

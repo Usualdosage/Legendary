@@ -26,16 +26,19 @@ namespace Legendary.Engine
     {
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
+        private readonly IWorld world;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Processor"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="logger">The logger.</param>
-        public Processor(ILogger logger, ICommunicator communicator)
+        /// <param name="world">The world.</param>
+        public Processor(ILogger logger, ICommunicator communicator, IWorld world)
         {
             this.communicator = communicator;
             this.logger = logger;
+            this.world = world;
         }
 
         /// <inheritdoc/>
@@ -43,7 +46,7 @@ namespace Legendary.Engine
         {
             get
             {
-                return this.communicator.World;
+                return this.world;
             }
         }
 
@@ -192,14 +195,6 @@ namespace Legendary.Engine
                     case "southwest":
                         {
                             await this.MovePlayer(user, ParseDirection(args[0]));
-                            break;
-                        }
-
-                    case "save":
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"Saving...");
-                            await this.communicator.Save(user.Connection, user);
-                            await this.communicator.SendToPlayer(user.Connection, $"Save complete.");
                             break;
                         }
 
@@ -599,7 +594,7 @@ namespace Legendary.Engine
 
             if (area == null)
             {
-                await this.logger.Warn($"MovePlayer: Null area found for user. {user} {user.Character.Location}!");
+                this.logger.Warn($"MovePlayer: Null area found for user. {user} {user.Character.Location}!");
                 return;
             }
 
@@ -607,7 +602,7 @@ namespace Legendary.Engine
 
             if (room == null)
             {
-                await this.logger.Warn($"MovePlayer: Null room found for user. {user} {user.Character.Location}!");
+                this.logger.Warn($"MovePlayer: Null room found for user. {user} {user.Character.Location}!");
                 return;
             }
 
@@ -645,7 +640,7 @@ namespace Legendary.Engine
 
             if (area == null)
             {
-                await this.logger.Warn($"ShowRoomToPlayer: Null area found for user. {user} {user.Character.Location}!");
+                this.logger.Warn($"ShowRoomToPlayer: Null area found for user. {user} {user.Character.Location}!");
                 return;
             }
 
@@ -653,7 +648,7 @@ namespace Legendary.Engine
 
             if (room == null)
             {
-                await this.logger.Warn($"ShowRoomToPlayer: Null room found for user. {user} {user.Character.Location}!");
+                this.logger.Warn($"ShowRoomToPlayer: Null room found for user. {user} {user.Character.Location}!");
                 return;
             }
 
@@ -679,7 +674,7 @@ namespace Legendary.Engine
                 {
                     if (item == null)
                     {
-                        await this.logger.Warn($"ShowRoomToPlayer: Null item found for item!");
+                        this.logger.Warn($"ShowRoomToPlayer: Null item found for item!");
                         return;
                     }
 
@@ -707,7 +702,7 @@ namespace Legendary.Engine
                 {
                     if (mob == null)
                     {
-                        await this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!");
+                        this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!");
                         return;
                     }
 

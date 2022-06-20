@@ -10,42 +10,27 @@ namespace Legendary.Engine.Contracts
 {
     using System;
     using System.Threading.Tasks;
-    using Legendary.Core.Contracts;
-    using Legendary.Data.Contracts;
-    using Microsoft.AspNetCore.Http;
 
     /// <summary>
     /// Implementation contract for a server engine.
     /// </summary>
-    public interface IEngine : IDisposable
+    public interface IEngine
     {
         /// <summary>
-        /// Gets the World.
-        /// </summary>
-        IWorld? World { get; }
-
-        /// <summary>
-        /// Tests the database connection.
-        /// </summary>
-        void TestConnection();
-
-        /// <summary>
-        /// Invokes HTTP handlers.
-        /// </summary>
-        /// <param name="context">The HttpContext.</param>
-        /// <returns>Task.</returns>
-        Task Invoke(HttpContext context);
-
-        /// <summary>
-        /// Terminates the engine.
-        /// </summary>
-        void Terminate();
-
-        /// <summary>
-        /// Starts or restarts the engine.
+        /// Starts the engine.
         /// </summary>
         /// <returns>Task.</returns>
-        Task Start();
+        Task Initialize();
+
+        /// <summary>
+        /// Raises an event every second.
+        /// </summary>
+        event EventHandler? VioTick;
+
+        /// <summary>
+        /// Raises an event every 30 seconds.
+        /// </summary>
+        event EventHandler? Tick;
     }
 }
 

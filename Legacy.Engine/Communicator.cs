@@ -19,6 +19,7 @@ namespace Legendary.Engine
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
     using Legendary.Engine.Types;
@@ -32,20 +33,29 @@ namespace Legendary.Engine
         private readonly RequestDelegate requestDelegate;
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
-
+        private readonly IDataService dataService;
+        private readonly IProcessor processor;
+        private readonly IEngine engine;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
         /// </summary>
         /// <param name="requestDelegate">RequestDelegate.</param>
         /// <param name="logger">ILogger.</param>
         /// <param name="apiClient">The api client.</param>
-        /// <param name="world">The world.</param>
-        public Communicator(RequestDelegate requestDelegate, ILogger logger, IApiClient apiClient, IWorld world)
+        /// <param name="dataService">The data service.</param>
+        /// <param name="engine">Singleton instance of the game engine.</param>
+        /// <param name="world">The world to use in this comm instance.</param>
+        public Communicator(RequestDelegate requestDelegate, ILogger logger, IApiClient apiClient, IDataService dataService, IEngine engine, IWorld world)
         {
             this.logger = logger;
             this.requestDelegate = requestDelegate;
             this.apiClient = apiClient;
-            this.World = world;
+            this.dataService = dataService;
+            this.engine = engine;
+
+            // Create the command processor
+            this.processor = new Processor(logger, this, world);
 
             // Add public channels.
             this.Channels = new List<CommChannel>()
@@ -53,18 +63,18 @@ namespace Legendary.Engine
                     new CommChannel("pray", false),
                     new CommChannel("newbie", false),
                 };
+
+            this.engine.Tick += Engine_Tick;
+            this.engine.VioTick += Engine_VioTick;
         }
 
         /// <inheritdoc/>
-        public event EventHandler? InputReceived;
+        public IProcessor Processor { get { return processor; } }
 
         /// <summary>
         /// Gets a concurrent dictionary of all currently connected sockets.
         /// </summary>
         public static ConcurrentDictionary<string, UserData>? Users { get; private set; } = new ConcurrentDictionary<string, UserData>();
-
-        /// <inheritdoc/>
-        public IWorld World { get; internal set; }
 
         /// <summary>
         /// Gets the communication channels.
@@ -91,11 +101,11 @@ namespace Legendary.Engine
                 string? user = context.User.Identity?.Name;
 
                 // Load the character by name 
-                var character = await this.World.FindCharacter(c => c.FirstName == user);
+                var character = await this.dataService.FindCharacter(c => c.FirstName == user);
 
                 if (character == null)
                 {
-                    await this.logger.Warn($"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.");
+                    this.logger.Warn($"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.");
                     throw new Exception($"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.");
                 }
 
@@ -103,7 +113,7 @@ namespace Legendary.Engine
 
                 Users?.TryAdd(socketId, userData);
 
-                await this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
+                this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
 
                 // Display the welcome content
                 await this.ShowWelcomeScreen(userData);
@@ -140,7 +150,7 @@ namespace Legendary.Engine
                 Users?.TryRemove(socketId, out dummy);
                 this.RemoveFromChannels(socketId, dummy);
 
-                await this.logger.Info($"{DateTime.UtcNow}: {user} {socketId} has disconnected.");
+                this.logger.Info($"{DateTime.UtcNow}: {user} {socketId} has disconnected.");
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
                 currentSocket.Dispose();
@@ -176,21 +186,8 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task Quit(WebSocket socket, string? player, CancellationToken ct = default)
         {
-            await this.logger.Info($"{DateTime.UtcNow}: {player} has quit.");
+            this.logger.Info($"{DateTime.UtcNow}: {player} has quit.");
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
-        }
-
-        /// <inheritdoc/>
-        public async Task Save(WebSocket socket, UserData userData, CancellationToken ct = default)
-        {
-            try
-            {
-                await this.World.ReplaceOneCharacterAsync(c => c.CharacterId == userData.Character.CharacterId, userData.Character);
-            }
-            catch (Exception exc)
-            {
-                await this.logger.Error($"{DateTime.UtcNow}: Error saving player information for {userData.Username}!", exc);
-            }
         }
 
         /// <inheritdoc/>
@@ -281,8 +278,31 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnInputReceived(object sender, CommunicationEventArgs e)
         {
-            EventHandler? handler = this.InputReceived;
-            handler?.Invoke(sender, e);
+            var user = Users?.FirstOrDefault(u => u.Key == e.SocketId);
+            if (user != null && user.HasValue)
+            {
+                this.processor.ProcessMessage(user.Value.Value, e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Occurs each second.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event args.</param>
+        private void Engine_VioTick(object? sender, EventArgs e)
+        {
+            var engineEventArgs = (EngineEventArgs)e;
+        }
+
+        /// <summary>
+        /// Occurs every 30 seconds.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event args.</param>
+        private void Engine_Tick(object? sender, EventArgs e)
+        {
+            var engineEventArgs = (EngineEventArgs)e;
         }
 
         /// <summary>

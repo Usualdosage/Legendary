@@ -18,11 +18,6 @@ namespace Legendary.Engine.Contracts
     public interface IProcessor
     {
         /// <summary>
-        /// Gets the world for this processor.
-        /// </summary>
-        IWorld World { get; }
-
-        /// <summary>
         /// Handles the incoming message from the socket, and parses the arguments.
         /// </summary>
         /// <param name="user">The user data.</param>
