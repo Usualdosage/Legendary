@@ -204,3 +204,21 @@ progress {
     color: #fff;
     font-weight: bold;
 }
+
+/* Player Score */
+.player-score {
+    border: solid 1px #ccc;
+    width: 500px;
+    border-radius: 5px;
+    background-color: #333;
+}
+
+    .player-score table {
+    }
+
+.player-score-title {
+    font-family: 'Comforter', cursive;
+    font-size: 2em;
+    width: 100%;
+    text-align: center;
+}

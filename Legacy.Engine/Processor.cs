@@ -206,7 +206,56 @@ namespace Legendary.Engine
                             await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} says \"<span class='say'>{sentence}</span>\"");
                             break;
                         }
+                    case "sc":
+                    case "sco":
+                    case "scor":
+                    case "score":
+                        {
+                            await this.ShowPlayerScore(user);
+                            break;
+                        }
+                    case "skill":
+                    case "skills":
+                        {
+                            var builder = new StringBuilder();
+                            builder.AppendLine("Your skills are:<br/>");
 
+                            if (user.Character.Skills.Count > 0)
+                            {
+                                foreach (var skill in user.Character.Skills)
+                                {
+                                    builder.AppendLine(skill.Name);
+                                }
+                            }
+                            else
+                            {
+                                builder.Append("You currently have no skills.");
+                            }
+
+                            await this.communicator.SendToPlayer(user.Connection, builder.ToString());
+                            break;
+                        }
+                    case "spell":
+                    case "spells":
+                        {
+                            var builder = new StringBuilder();
+                            builder.AppendLine("Your spells are:<br/>");
+
+                            if (user.Character.Spells.Count > 0)
+                            {
+                                foreach (var spell in user.Character.Spells)
+                                {
+                                    builder.AppendLine(spell.Name);
+                                }
+                            }
+                            else
+                            {
+                                builder.Append("You currently have no spells.");
+                            }
+
+                            await this.communicator.SendToPlayer(user.Connection, builder.ToString());
+                            break;
+                        }
                     case "sub":
                     case "subscribe":
                         {
@@ -627,6 +676,35 @@ namespace Legendary.Engine
             {
                 await this.communicator.SendToPlayer(user.Connection, $"You can't go that way.");
             }
+        }
+
+        /// <summary>
+        /// Shows the players score information.
+        /// </summary>
+        /// <param name="user">The connected user.</param>
+        /// <returns>Task.</returns>
+        private async Task ShowPlayerScore(UserData user)
+        {
+            StringBuilder sb = new();
+
+            sb.Append("<div class='player-score'><table><tr><td colspan='4'>");
+            sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
+
+            sb.Append($"<tr><td>Level</td><td>{user.Character.Level}</td><td>Experience</td><td>{user.Character.Experience}</td></tr>");
+
+            sb.Append($"<tr><td>Health</td><td>{user.Character.Health.Current}/{user.Character.Health.Max}</td><td>Str</td><td>{user.Character.Str}</td></tr>");
+
+            sb.Append($"<tr><td>Mana</td><td>{user.Character.Mana.Current}/{user.Character.Mana.Max}</td><td>Int</td><td>{user.Character.Int}</td></tr>");
+
+            sb.Append($"<tr><td>Movement</td><td>{user.Character.Movement.Current}/{user.Character.Movement.Max}</td><td>Wis</td><td>{user.Character.Wis}</td></tr>");
+
+            sb.Append($"<tr><td>Currency</td><td>{user.Character.Currency}</td><td>Dex</td><td>{user.Character.Dex}</td></tr>");
+
+            sb.Append($"<tr><td colspan='2'></td><td>Con</td><td>{user.Character.Con}</td></tr>");
+
+            sb.Append("</table></div>");
+
+            await this.communicator.SendToPlayer(user.Connection, sb.ToString());
         }
 
         /// <summary>

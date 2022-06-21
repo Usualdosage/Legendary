@@ -106,5 +106,40 @@ namespace Legendary.Core.Models
         /// Gets or sets the inventory.
         /// </summary>
         public IList<Item> Inventory { get; set; } = new List<Item>();
+
+        /// <summary>
+        /// Gets or sets the player's strength.
+        /// </summary>
+        public int Str { get; set; } = 12;
+
+        /// <summary>
+        /// Gets or sets the player's intelligence.
+        /// </summary>
+        public int Int { get; set; } = 12;
+
+        /// <summary>
+        /// Gets or sets the player's wisdom.
+        /// </summary>
+        public int Wis { get; set; } = 12;
+
+        /// <summary>
+        /// Gets or sets the player's dexterity.
+        /// </summary>
+        public int Dex { get; set; } = 12;
+
+        /// <summary>
+        /// Gets or sets the player's constitution.
+        /// </summary>
+        public int Con { get; set; } = 12;
+
+        /// <summary>
+        /// Gets or sets the inventory.
+        /// </summary>
+        public IList<Skill> Skills { get; set; } = new List<Skill>();
+
+        /// <summary>
+        /// Gets or sets the inventory.
+        /// </summary>
+        public IList<Spell> Spells { get; set; } = new List<Spell>();
     }
 }
