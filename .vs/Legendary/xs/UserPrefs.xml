@@ -1,45 +1,48 @@
 ﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="107" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Engine.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Networking/Contracts/IServerSettings.cs">
     <Files>
-      <File FileName="Legacy.Engine/Engine.cs" Line="71" Column="21" />
-      <File FileName="Legacy.Engine/Logger.cs" Line="14" Column="1" />
-      <File FileName="Legacy.Engine/Contracts/ILogger.cs" Line="34" Column="28" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="62" Column="19" />
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="52" Column="93" />
-      <File FileName="Legendary.Web/Startup.cs" Line="63" Column="30" />
-      <File FileName="Legendary.Web/Program.cs" Line="31" Column="1" />
-      <File FileName="Legacy.Engine/Processor.cs" Line="42" Column="10" />
-      <File FileName="Legacy.Engine/Contracts/ICommunicator.cs" Line="16" Column="33" />
-      <File FileName="Legendary.Core/Models/World.cs" Line="45" Column="64" />
-      <File FileName="Legendary.Data/DataService.cs" Line="103" Column="17" />
+      <File FileName="Legendary.Networking/ApiClient.cs" Line="67" Column="10" />
+      <File FileName="Legendary.Web/Startup.cs" Line="60" Column="113" />
+      <File FileName="Legendary.Core/Models/World.cs" Line="258" Column="49" />
+      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" Line="13" Column="54" />
+      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="12" Column="80" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="19" Column="114" />
+      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="21" Column="27" />
+      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="15" Column="36" />
+      <File FileName="Legendary.Networking/Contracts/IServerSettings.cs" Line="9" Column="41" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Core" expanded="True">
+            <Node name="Legendary.Networking" expanded="True">
+              <Node name="Contracts" expanded="True">
+                <Node name="IServerSettings.cs" selected="True" />
+              </Node>
               <Node name="Models" expanded="True" />
             </Node>
-            <Node name="Legendary.Data" expanded="True">
-              <Node name="Contracts" expanded="True" />
-            </Node>
-            <Node name="Legendary.Engine" expanded="True">
-              <Node name="Contracts" expanded="True" />
-            </Node>
-            <Node name="Legendary.Networking" expanded="True">
-              <Node name="Contracts" expanded="True" />
-            </Node>
             <Node name="Legendary.Web" expanded="True">
-              <Node name="Dependencies" expanded="True" />
-              <Node name="Properties" expanded="True" />
+              <Node name="Contracts" expanded="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Content" expanded="True" />
+                <Node name="Home" expanded="True" />
+              </Node>
+              <Node name="wwwroot" expanded="True">
+                <Node name="css" expanded="True" />
+                <Node name="img" expanded="True" />
+                <Node name="js" expanded="True" />
+                <Node name="lib" expanded="True">
+                  <Node name="bootstrap" expanded="True" />
+                </Node>
+              </Node>
               <Node name="appsettings.json" expanded="True" />
             </Node>
           </Node>
