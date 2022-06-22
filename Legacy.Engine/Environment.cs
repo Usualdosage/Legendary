@@ -10,6 +10,7 @@ namespace Legendary.Engine
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
 

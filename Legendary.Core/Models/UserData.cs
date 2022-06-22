@@ -6,7 +6,7 @@
 //  the copyright owner.
 // </copyright>
 
-namespace Legendary.Engine.Models
+namespace Legendary.Core.Models
 {
     using System.Net.WebSockets;
     using Legendary.Core.Models;

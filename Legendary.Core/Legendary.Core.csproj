@@ -17,11 +17,15 @@
     <None Remove="Types\" />
     <None Remove="MongoDB.Bson" />
     <None Remove="MongoDB.Driver" />
+    <None Remove="Models\Skills\" />
+    <None Remove="Models\Spells\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Contracts\" />
     <Folder Include="Types\" />
+    <Folder Include="Models\Skills\" />
+    <Folder Include="Models\Spells\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MongoDB.Bson" Version="2.16.0" />

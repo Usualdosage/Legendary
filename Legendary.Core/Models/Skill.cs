@@ -10,11 +10,9 @@ namespace Legendary.Core.Models
 {
     using System;
 
-    public class Skill
+    public abstract class Skill
 	{
-		public Skill()
-		{
-		}
+        public abstract void Act();
 
         public string? Name { get; set; }
     }
