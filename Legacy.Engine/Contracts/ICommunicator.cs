@@ -92,6 +92,13 @@ namespace Legendary.Engine.Contracts
         Task<CommResult> SendToChannel(CommChannel? channel, string socketId, string message, CancellationToken ct = default);
 
         /// <summary>
+        /// Sends a command from the given user to the server.
+        /// </summary>
+        /// <param name="userData">The connected user.</param>
+        /// <param name="command">The command to send.</param>
+        void SendToServer(UserData userData, string command);
+
+        /// <summary>
         /// Disconnects the connected player.
         /// </summary>
         /// <param name="socket">The player socket.</param>

@@ -9,6 +9,8 @@
 namespace Legendary.Core.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
@@ -103,6 +105,11 @@ namespace Legendary.Core.Models
         public MaxCurrent Movement { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
+        /// Gets or sets the character's home room.
+        /// </summary>
+        public Room? Home { get; set; }
+
+        /// <summary>
         /// Gets or sets the inventory.
         /// </summary>
         public IList<Item> Inventory { get; set; } = new List<Item>();
@@ -133,13 +140,53 @@ namespace Legendary.Core.Models
         public int Con { get; set; } = 12;
 
         /// <summary>
-        /// Gets or sets the inventory.
+        /// Gets or sets the player's skills.
         /// </summary>
-        public IList<Skill> Skills { get; set; } = new List<Skill>();
+        public IList<SkillProficiency> Skills { get; set; } = new List<SkillProficiency>();
 
         /// <summary>
-        /// Gets or sets the inventory.
+        /// Gets or sets the player's spells.
         /// </summary>
-        public IList<Spell> Spells { get; set; } = new List<Spell>();
+        public IList<SpellProficiency> Spells { get; set; } = new List<SpellProficiency>();
+
+        /// <summary>
+        /// Indicates whether the player has a given skill.
+        /// </summary>
+        /// <param name="name">The name of the skill.</param>
+        /// <returns>True if they have it.</returns>
+        public bool HasSkill(string name)
+        {
+            return Skills.Any(sk => sk.Skill.Name?.ToLower() == name.ToLower());
+        }
+
+        /// <summary>
+        /// Gets the skill by name.
+        /// </summary>
+        /// <param name="name">The skill name.</param>
+        /// <returns>The skill, if exists.</returns>
+        public ISkill? GetSkill(string name)
+        {
+            return Skills.FirstOrDefault(sk => sk.Skill?.Name?.ToLower() == name.ToLower())?.Skill;
+        }
+
+        /// <summary>
+        /// Indicates whether the player has a given spell.
+        /// </summary>
+        /// <param name="name">The name of the spell.</param>
+        /// <returns>True if they have it.</returns>
+        public bool HasSpell(string name)
+        {
+            return Spells.Any(sp => sp.Spell.Name?.ToLower() == name.ToLower());
+        }
+
+        /// <summary>
+        /// Gets the spell by name.
+        /// </summary>
+        /// <param name="name">The spell name.</param>
+        /// <returns>The spell, if exists.</returns>
+        public ISpell? GetSpell(string name)
+        {
+            return Spells.FirstOrDefault(sp => sp.Spell.Name?.ToLower() == name.ToLower())?.Spell;
+        }
     }
 }

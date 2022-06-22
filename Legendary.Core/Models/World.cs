@@ -234,6 +234,7 @@ namespace Legendary.Core.Models
         /// <inheritdoc/>
         public async Task SaveAllCharacters()
         {
+            // TODO: This doesn't work right at all.
             var allCharacters = this.GetAllCharacters();
             foreach (var character in allCharacters)
             {

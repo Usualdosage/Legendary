@@ -70,299 +70,333 @@ namespace Legendary.Engine
             }
             else
             {
-                switch (args[0].ToLower())
+                var command = args[0].ToLower();
+
+                // Check skills first and foremost.
+
+                if (user.Character.HasSkill(command))
                 {
-                    default:
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, "Unknown command.");
-                            break;
-                        }
+                    var skill = user.Character.GetSkill(command);
+                    
+                    if (skill != null)
+                    {
+                        var targetName = args.Length > 1 ? args[1] : string.Empty;
 
-                    case "drop":
-                        {
-                            if (args.Length < 2)
+                        // We may or may not have a target. The skill will figure that bit out.
+                        var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
+
+                        skill.Act(user, target?.Value);
+                    }
+                }
+                else
+                {
+
+                    // Not a skill, so parse the command.
+                    switch (command)
+                    {
+                        default:
                             {
-                                await this.communicator.SendToPlayer(user.Connection, $"Drop what?");
+                                await this.communicator.SendToPlayer(user.Connection, "Unknown command.");
                                 break;
                             }
-                            else
+                        case "cast":
                             {
-                                await this.DropItem(user, args[1]);
-                                break;
-                            }
-                        }
-
-                    case "get":
-                        {
-                            if (args.Length < 2)
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"Get what?");
-                                break;
-                            }
-                            else
-                            {
-                                await this.GetItem(user, args[1]);
-                                break;
-                            }
-                        }
-
-                    case "h":
-                    case "help":
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, "Help text.");
-                            break;
-                        }
-
-                    case "inv":
-                    case "inventory":
-                        {
-                            var sb = new StringBuilder();
-                            sb.AppendLine("<span class='inventory'>You are carrying:</span>");
-                            foreach (var item in user.Character.Inventory)
-                            {
-                                sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
-                            }
-
-                            await this.communicator.SendToPlayer(user.Connection, sb.ToString());
-
-                            break;
-                        }
-
-                    case "l":
-                    case "lo":
-                    case "loo":
-                    case "look":
-                        {
-                            await this.ShowRoomToPlayer(user);
-                            break;
-                        }
-
-                    case "newbie":
-                        {
-                            var sentence = string.Join(' ', args, 1, args.Length - 1);
-                            sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                            var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
-                            if (channel != null)
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"");
-                                await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"");
-                            }
-
-                            break;
-                        }
-
-                    case "pray":
-                        {
-                            var sentence = string.Join(' ', args, 1, args.Length - 1);
-                            sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                            var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "pray");
-                            if (channel != null)
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"");
-                                await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} prays \"<span class='newbie'>{sentence}</span>\"");
-                            }
-
-                            break;
-                        }
-
-                    case "quit":
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"You have disconnected.");
-                            await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} has left the realms.");
-                            await this.communicator.Quit(user.Connection, user.Character.FirstName ?? "Someone");
-                            break;
-                        }
-
-                    case "n":
-                    case "north":
-                    case "s":
-                    case "south":
-                    case "e":
-                    case "east":
-                    case "w":
-                    case "west":
-                    case "u":
-                    case "up":
-                    case "d":
-                    case "down":
-                    case "ne":
-                    case "northeast":
-                    case "nw":
-                    case "northwest":
-                    case "se":
-                    case "southeast":
-                    case "sw":
-                    case "southwest":
-                        {
-                            await this.MovePlayer(user, ParseDirection(args[0]));
-                            break;
-                        }
-
-                    case "say":
-                        {
-                            var sentence = string.Join(' ', args, 1, args.Length - 1);
-                            sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                            await this.communicator.SendToPlayer(user.Connection, $"You say \"<span class='say'>{sentence}</b>\"");
-                            await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} says \"<span class='say'>{sentence}</span>\"");
-                            break;
-                        }
-                    case "sc":
-                    case "sco":
-                    case "scor":
-                    case "score":
-                        {
-                            await this.ShowPlayerScore(user);
-                            break;
-                        }
-                    case "skill":
-                    case "skills":
-                        {
-                            var builder = new StringBuilder();
-                            builder.AppendLine("Your skills are:<br/>");
-
-                            if (user.Character.Skills.Count > 0)
-                            {
-                                foreach (var skill in user.Character.Skills)
+                                if (args.Length < 2)
                                 {
-                                    builder.AppendLine(skill.Name);
-                                }
-                            }
-                            else
-                            {
-                                builder.Append("You currently have no skills.");
-                            }
-
-                            await this.communicator.SendToPlayer(user.Connection, builder.ToString());
-                            break;
-                        }
-                    case "spell":
-                    case "spells":
-                        {
-                            var builder = new StringBuilder();
-                            builder.AppendLine("Your spells are:<br/>");
-
-                            if (user.Character.Spells.Count > 0)
-                            {
-                                foreach (var spell in user.Character.Spells)
-                                {
-                                    builder.AppendLine(spell.Name);
-                                }
-                            }
-                            else
-                            {
-                                builder.Append("You currently have no spells.");
-                            }
-
-                            await this.communicator.SendToPlayer(user.Connection, builder.ToString());
-                            break;
-                        }
-                    case "sub":
-                    case "subscribe":
-                        {
-                            var name = string.Join(' ', args, 1, args.Length - 1);
-                            var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
-                            if (channel != null)
-                            {
-                                if (channel.AddUser(user.ConnectionId, user))
-                                {
-                                    await this.communicator.SendToPlayer(user.Connection, $"You have subscribed to the {channel.Name} channel.");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Cast what?");
+                                    break;
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to the {channel.Name} channel.");
+                                    break;
                                 }
                             }
-                            else
+                        case "drop":
                             {
-                                await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to {name}. Channel does not exist.");
-                            }
-
-                            break;
-                        }
-
-                    case "tell":
-                        {
-                            if (args.Length < 3)
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"Tell whom what?");
-                                break;
-                            }
-                            else
-                            {
-                                var sentence = string.Join(' ', args, 2, args.Length - 2);
-                                await this.Tell(user, args[1], sentence);
-                                break;
-                            }
-                        }
-
-                    case "time":
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"The system time is {DateTime.UtcNow}.");
-                            break;
-                        }
-
-                    case "unsub":
-                    case "unsubscribe":
-                        {
-                            var name = string.Join(' ', args, 1, args.Length - 1);
-                            var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
-                            if (channel != null)
-                            {
-                                if (channel.RemoveUser(user.ConnectionId))
+                                if (args.Length < 2)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"You have unsubscribed from the {channel.Name} channel.");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Drop what?");
+                                    break;
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from the {channel.Name} channel.");
+                                    await this.DropItem(user, args[1]);
+                                    break;
                                 }
                             }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from {name}. Channel does not exist.");
-                            }
 
-                            break;
-                        }
-
-                    case "who":
-                        {
-                            if (Communicator.Users != null)
+                        case "get":
                             {
-                                foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
+                                if (args.Length < 2)
                                 {
-                                    var sb = new StringBuilder();
-                                    sb.Append($"<span class='who'>{player?.Value.Character.FirstName}");
-
-                                    if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
-                                    {
-                                        sb.Append($" {player?.Value.Character.LastName}");
-                                    }
-
-                                    if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
-                                    {
-                                        sb.Append($" {player?.Value.Character.Title}");
-                                    }
-
-                                    sb.Append("</span");
-
-                                    await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+                                    await this.communicator.SendToPlayer(user.Connection, $"Get what?");
+                                    break;
                                 }
-
-                                await this.communicator.SendToPlayer(user.Connection, $"There are {Communicator.Users?.Count} players connected.");
+                                else
+                                {
+                                    await this.GetItem(user, args[1]);
+                                    break;
+                                }
                             }
 
-                            break;
-                        }
+                        case "h":
+                        case "help":
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, "Help text.");
+                                break;
+                            }
 
-                    case "yell":
-                        {
-                            var sentence = string.Join(' ', args, 1, args.Length - 1);
-                            sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                            await this.communicator.SendToPlayer(user.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"");
-                            await this.communicator.SendToArea(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"");
-                            break;
-                        }
+                        case "inv":
+                        case "inventory":
+                            {
+                                var sb = new StringBuilder();
+                                sb.AppendLine("<span class='inventory'>You are carrying:</span>");
+                                foreach (var item in user.Character.Inventory)
+                                {
+                                    sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
+                                }
+
+                                await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+
+                                break;
+                            }
+
+                        case "l":
+                        case "lo":
+                        case "loo":
+                        case "look":
+                            {
+                                await this.ShowRoomToPlayer(user);
+                                break;
+                            }
+
+                        case "newbie":
+                            {
+                                var sentence = string.Join(' ', args, 1, args.Length - 1);
+                                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                                var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
+                                if (channel != null)
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"");
+                                    await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"");
+                                }
+
+                                break;
+                            }
+
+                        case "pray":
+                            {
+                                var sentence = string.Join(' ', args, 1, args.Length - 1);
+                                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                                var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "pray");
+                                if (channel != null)
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"");
+                                    await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} prays \"<span class='newbie'>{sentence}</span>\"");
+                                }
+
+                                break;
+                            }
+
+                        case "quit":
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, $"You have disconnected.");
+                                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} has left the realms.");
+                                await this.communicator.Quit(user.Connection, user.Character.FirstName ?? "Someone");
+                                break;
+                            }
+
+                        case "n":
+                        case "north":
+                        case "s":
+                        case "south":
+                        case "e":
+                        case "east":
+                        case "w":
+                        case "west":
+                        case "u":
+                        case "up":
+                        case "d":
+                        case "down":
+                        case "ne":
+                        case "northeast":
+                        case "nw":
+                        case "northwest":
+                        case "se":
+                        case "southeast":
+                        case "sw":
+                        case "southwest":
+                            {
+                                await this.MovePlayer(user, ParseDirection(args[0]));
+                                break;
+                            }
+
+                        case "say":
+                            {
+                                var sentence = string.Join(' ', args, 1, args.Length - 1);
+                                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                                await this.communicator.SendToPlayer(user.Connection, $"You say \"<span class='say'>{sentence}</b>\"");
+                                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} says \"<span class='say'>{sentence}</span>\"");
+                                break;
+                            }
+                        case "sc":
+                        case "sco":
+                        case "scor":
+                        case "score":
+                            {
+                                await this.ShowPlayerScore(user);
+                                break;
+                            }
+                        case "skill":
+                        case "skills":
+                            {
+                                var builder = new StringBuilder();
+                                builder.AppendLine("Your skills are:<br/>");
+
+                                if (user.Character.Skills.Count > 0)
+                                {
+                                    foreach (var skill in user.Character.Skills)
+                                    {
+                                        builder.AppendLine($"{skill.Skill.Name} {skill.Proficiency}%");
+                                    }
+                                }
+                                else
+                                {
+                                    builder.Append("You currently have no skills.");
+                                }
+
+                                await this.communicator.SendToPlayer(user.Connection, builder.ToString());
+                                break;
+                            }
+                        case "spell":
+                        case "spells":
+                            {
+                                var builder = new StringBuilder();
+                                builder.AppendLine("Your spells are:<br/>");
+
+                                if (user.Character.Spells.Count > 0)
+                                {
+                                    foreach (var spell in user.Character.Spells)
+                                    {
+                                        builder.AppendLine($"{spell.Spell.Name} {spell.Proficiency}%");
+                                    }
+                                }
+                                else
+                                {
+                                    builder.Append("You currently have no spells.");
+                                }
+
+                                await this.communicator.SendToPlayer(user.Connection, builder.ToString());
+                                break;
+                            }
+                        case "sub":
+                        case "subscribe":
+                            {
+                                var name = string.Join(' ', args, 1, args.Length - 1);
+                                var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
+                                if (channel != null)
+                                {
+                                    if (channel.AddUser(user.ConnectionId, user))
+                                    {
+                                        await this.communicator.SendToPlayer(user.Connection, $"You have subscribed to the {channel.Name} channel.");
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to the {channel.Name} channel.");
+                                    }
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to {name}. Channel does not exist.");
+                                }
+
+                                break;
+                            }
+
+                        case "tell":
+                            {
+                                if (args.Length < 3)
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"Tell whom what?");
+                                    break;
+                                }
+                                else
+                                {
+                                    var sentence = string.Join(' ', args, 2, args.Length - 2);
+                                    await this.Tell(user, args[1], sentence);
+                                    break;
+                                }
+                            }
+
+                        case "time":
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, $"The system time is {DateTime.UtcNow}.");
+                                break;
+                            }
+
+                        case "unsub":
+                        case "unsubscribe":
+                            {
+                                var name = string.Join(' ', args, 1, args.Length - 1);
+                                var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
+                                if (channel != null)
+                                {
+                                    if (channel.RemoveUser(user.ConnectionId))
+                                    {
+                                        await this.communicator.SendToPlayer(user.Connection, $"You have unsubscribed from the {channel.Name} channel.");
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from the {channel.Name} channel.");
+                                    }
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from {name}. Channel does not exist.");
+                                }
+
+                                break;
+                            }
+
+                        case "who":
+                            {
+                                if (Communicator.Users != null)
+                                {
+                                    foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
+                                    {
+                                        var sb = new StringBuilder();
+                                        sb.Append($"<span class='who'>{player?.Value.Character.FirstName}");
+
+                                        if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
+                                        {
+                                            sb.Append($" {player?.Value.Character.LastName}");
+                                        }
+
+                                        if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
+                                        {
+                                            sb.Append($" {player?.Value.Character.Title}");
+                                        }
+
+                                        sb.Append("</span");
+
+                                        await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+                                    }
+
+                                    await this.communicator.SendToPlayer(user.Connection, $"There are {Communicator.Users?.Count} players connected.");
+                                }
+
+                                break;
+                            }
+
+                        case "yell":
+                            {
+                                var sentence = string.Join(' ', args, 1, args.Length - 1);
+                                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                                await this.communicator.SendToPlayer(user.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"");
+                                await this.communicator.SendToArea(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"");
+                                break;
+                            }
+                    }
                 }
             }
         }

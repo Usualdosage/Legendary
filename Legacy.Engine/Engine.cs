@@ -87,9 +87,9 @@ namespace Legendary.Engine
                   
                     }
 
-                    // Save all players every 60 seconds.
+                    // Save all players every 5 seconds.
                     this.saveGame++;
-                    if (this.saveGame == 60)
+                    if (this.saveGame == 5)
                     {
                         this.saveGame = 0;
                         this.logger.Info("Saving players...");

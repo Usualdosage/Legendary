@@ -18,12 +18,16 @@
     <None Remove="Types\" />
     <None Remove="Microsoft.AspNetCore" />
     <None Remove="Microsoft.AspNetCore.Mvc" />
+    <None Remove="Models\Skills\" />
+    <None Remove="Models\Spells\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contracts\" />
     <Folder Include="Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="Types\" />
+    <Folder Include="Models\Skills\" />
+    <Folder Include="Models\Spells\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj" />

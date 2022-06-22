@@ -13,6 +13,7 @@ namespace Legendary.Web.Controllers
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Legendary.Data.Contracts;
+    using Legendary.Engine.Models.Skills;
     using Legendary.Web.Contracts;
     using Legendary.Web.Models;
     using Microsoft.AspNetCore.Authentication;
@@ -105,7 +106,7 @@ namespace Legendary.Web.Controllers
             if (character == null)
             {
                 var pwHash = Engine.Crypt.ComputeSha256Hash(password);
-                await this.dataService.CreateCharacter(firstName, lastName, pwHash);
+                await this.dataService.CreateCharacter(firstName, lastName, pwHash);                
                 return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
             }
             else

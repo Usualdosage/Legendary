@@ -22,6 +22,7 @@ namespace Legendary.Engine
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Http;
 
@@ -120,6 +121,12 @@ namespace Legendary.Engine
                 Users?.TryAdd(socketId, userData);
 
                 this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
+
+                // Give any user the Recall skill at max percentage if they don't have it.
+                if (!userData.Character.HasSkill("Recall"))
+                {
+                    userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
+                }
 
                 // Display the welcome content
                 await this.ShowWelcomeScreen(userData);
@@ -277,6 +284,15 @@ namespace Legendary.Engine
             return CommResult.Ok;
         }
 
+        /// <summary>
+        /// Sends a command to the server automatically from the given user.
+        /// </summary>
+        /// <param name="userData">UserData.</param>
+        /// <param name="command">The command to send.</param>
+        public void SendToServer(UserData userData, string command)
+        {
+            this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, command));
+        }
 
         /// <inheritdoc/>
         public void Dispose()
@@ -328,16 +344,6 @@ namespace Legendary.Engine
             {
                 await this.processor.ShowPlayerInfo(this.connectedUser.Value);
             }
-        }
-
-        /// <summary>
-        /// Sends a command to the server automatically from the given user.
-        /// </summary>
-        /// <param name="userData">UserData.</param>
-        /// <param name="command">The command to send.</param>
-        private void SendToServer(UserData userData, string command)
-        {
-            this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, command));
         }
 
         /// <summary>

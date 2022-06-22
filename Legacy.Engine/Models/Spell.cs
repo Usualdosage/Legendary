@@ -6,13 +6,14 @@
 //  the copyright owner.
 // </copyright>
 
-namespace Legendary.Core.Models
+namespace Legendary.Engine.Models
 {
-    using System;
+    using Legendary.Core.Contracts;
+    using Legendary.Core.Models;
 
-    public abstract class Spell
+    public abstract class Spell : ISpell
 	{
-        public abstract void Cast(UserData target);
+        public abstract void Cast(UserData actor, UserData? target);
 
         public string? Name { get; set; }
     }

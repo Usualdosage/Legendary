@@ -1,11 +1,8 @@
-﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
-  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Networking/Contracts/IServerSettings.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processor.cs">
     <Files>
       <File FileName="Legendary.Networking/ApiClient.cs" Line="67" Column="10" />
       <File FileName="Legendary.Web/Startup.cs" Line="60" Column="113" />
@@ -15,36 +12,21 @@
       <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="19" Column="114" />
       <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="21" Column="27" />
       <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="15" Column="36" />
-      <File FileName="Legendary.Networking/Contracts/IServerSettings.cs" Line="9" Column="41" />
+      <File FileName="Legendary.Networking/Contracts/IServerSettings.cs" Line="25" Column="6" />
+      <File FileName="Legendary.Core/Models/Skills/Recall.cs" Line="17" Column="49" />
+      <File FileName="Legendary.Core/Models/Skill.cs" Line="16" Column="1" />
+      <File FileName="Legendary.Core/Models/Spell.cs" Line="17" Column="42" />
+      <File FileName="Legendary.Core/Models/UserData.cs" Line="18" Column="6" />
+      <File FileName="Legacy.Engine/Environment.cs" Line="22" Column="1" />
+      <File FileName="Legacy.Engine/Contracts/IProcessor.cs" Line="35" Column="6" />
+      <File FileName="Legacy.Engine/Processor.cs" Line="45" Column="28" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Networking" expanded="True">
-              <Node name="Contracts" expanded="True">
-                <Node name="IServerSettings.cs" selected="True" />
-              </Node>
-              <Node name="Models" expanded="True" />
-            </Node>
-            <Node name="Legendary.Web" expanded="True">
-              <Node name="Contracts" expanded="True" />
-              <Node name="Controllers" expanded="True" />
-              <Node name="Models" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="Content" expanded="True" />
-                <Node name="Home" expanded="True" />
-              </Node>
-              <Node name="wwwroot" expanded="True">
-                <Node name="css" expanded="True" />
-                <Node name="img" expanded="True" />
-                <Node name="js" expanded="True" />
-                <Node name="lib" expanded="True">
-                  <Node name="bootstrap" expanded="True" />
-                </Node>
-              </Node>
-              <Node name="appsettings.json" expanded="True" />
-            </Node>
+            <Node name="Legendary.Engine" expanded="True" />
+            <Node name="Legendary.Web" expanded="True" />
           </Node>
         </State>
       </Pad>
@@ -53,5 +35,8 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>
