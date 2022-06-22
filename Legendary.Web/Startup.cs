@@ -1,5 +1,5 @@
 ﻿// <copyright file="DataService.cs" company="Legendary">
-//  Copyright © 2022 Legendary
+//  Copyright © 2021-2022 Legendary
 //  All rights are reserved. Reproduction or transmission in whole or
 //  in part, in any form or by any means, electronic, mechanical or
 //  otherwise, is prohibited without the prior written consent of
@@ -9,7 +9,6 @@
 namespace Legendary.Web
 {
     using Legendary.Core.Contracts;
-    using Legendary.Core.Models;
     using Legendary.Data;
     using Legendary.Data.Contracts;
     using Legendary.Engine;
@@ -17,6 +16,8 @@ namespace Legendary.Web
     using Legendary.Networking;
     using Legendary.Networking.Contracts;
     using Legendary.Networking.Models;
+    using Legendary.Web.Contracts;
+    using Legendary.Web.Models;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -46,6 +47,9 @@ namespace Legendary.Web
             // Load the configuration values for the server.
             services.Configure<ServerSettings>(this.Configuration.GetSection(nameof(ServerSettings)));
 
+            // Load the configuration values for the build.
+            services.Configure<BuildSettings>(this.Configuration.GetSection(nameof(BuildSettings)));
+
             // Apply necessary DI containers for fully independent services.
             services.AddSingleton<ILogger, Logger>();
             services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
@@ -53,14 +57,15 @@ namespace Legendary.Web
             services.AddTransient<IDataService, DataService>();
             services.AddSingleton<IServerSettings>(sp => sp.GetRequiredService<IOptions<ServerSettings>>().Value);
             services.AddSingleton<IApiClient, ApiClient>();
+            services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
 
-            // Load the world
+            // Load the world.
             services.AddSingleton<IWorld>(sp => sp.GetRequiredService<IDataService>().LoadWorld());
 
-            // Initialize the engine
+            // Initialize the engine.
             services.AddSingleton<IEngine, Engine>();
 
-            // Configure authentication
+            // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
         }

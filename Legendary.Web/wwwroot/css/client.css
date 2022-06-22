@@ -6,6 +6,11 @@ html {
     min-height: 100%;
 }
 
+/* Login/Create Pages */
+.card {
+    box-shadow: 5px 5px 5px #666;
+}
+
 /* Static Content */
 
 .console-container {
@@ -55,6 +60,9 @@ body {
     background-color: #000;
     height: 100%;
     width: 100%;
+    background-image: url('../img/Mystra.jpg');
+    background-position: center;
+    background-size: cover;
 }
 
 .intro-image {

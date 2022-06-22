@@ -1,5 +1,5 @@
 ﻿// <copyright file="EngineEventArgs.cs" company="Legendary">
-//  Copyright © 2022 Legendary
+//  Copyright © 2021-2022 Legendary
 //  All rights are reserved. Reproduction or transmission in whole or
 //  in part, in any form or by any means, electronic, mechanical or
 //  otherwise, is prohibited without the prior written consent of
@@ -18,7 +18,7 @@ namespace Legendary.Engine.Models
         /// <param name="gameHour">The game hour</param>
         /// <param name="gameTicks">The game ticks</param>
         /// <param name="message">The message.</param>
-        public EngineEventArgs(int gameTicks, int gameHour, string message)
+        public EngineEventArgs(int gameTicks, int gameHour, string? message)
         {
             this.GameTicks = gameTicks;
             this.GameHour = gameHour;
@@ -38,7 +38,7 @@ namespace Legendary.Engine.Models
         /// <summary>
         /// Gets the message.
         /// </summary>
-        public string GameMessage { get; private set; }
+        public string? GameMessage { get; private set; }
     }
 }
 

@@ -31,10 +31,12 @@
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\img\rooms\" />
     <Folder Include="Views\Content\" />
+    <Folder Include="Contracts\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />
     <None Remove="Newtonsoft.Json" />
+    <None Remove="Contracts\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj">

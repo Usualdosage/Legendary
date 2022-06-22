@@ -1,5 +1,5 @@
 ﻿// <copyright file="HomeController.cs" company="Legendary">
-//  Copyright © 2021 Legendary
+//  Copyright © 2021-2022 Legendary
 //  All rights are reserved. Reproduction or transmission in whole or
 //  in part, in any form or by any means, electronic, mechanical or
 //  otherwise, is prohibited without the prior written consent of
@@ -13,6 +13,7 @@ namespace Legendary.Web.Controllers
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Legendary.Data.Contracts;
+    using Legendary.Web.Contracts;
     using Legendary.Web.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -26,16 +27,19 @@ namespace Legendary.Web.Controllers
     {
         private readonly ILogger<HomeController> logger;
         private readonly IDataService dataService;
-
+        private readonly IBuildSettings buildSettings;
+       
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="dataService">The data service.</param>
-        public HomeController(ILogger<HomeController> logger, IDataService dataService)
+        /// <param name="buildSettings">The build settings.</param>
+        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings)
         {
             this.logger = logger;
             this.dataService = dataService;
+            this.buildSettings = buildSettings;
         }
 
         /// <summary>
@@ -45,7 +49,7 @@ namespace Legendary.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return this.View("Login");
+            return this.View("Login", new LoginModel("", this.buildSettings));
         }
 
         /// <summary>
@@ -53,28 +57,14 @@ namespace Legendary.Web.Controllers
         /// </summary>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult Login(string? message)
+        public IActionResult Login(LoginModel model)
         {
-            // Let's make sure we can connect to the DB (or wake it up).
-            this.dataService.TestConnection();
+            if (model.BuildSettings == null)
+            {
+                model.BuildSettings = this.buildSettings;
+            }
 
-            return this.View(message);
-        }
-
-        [HttpGet]
-        public IActionResult Health()
-        {
-            List<string> messages = new();
-
-            // See if we can connect to Mongo
-            messages.Add($"Can connect to database: {this.dataService.TestConnection()}");
-
-            // See if we can hit our own API
-            // TO-DO
-
-            var healthModel = new HealthModel(messages);
-
-            return this.View(healthModel);
+            return this.View(model);
         }
 
         /// <summary>
@@ -92,9 +82,9 @@ namespace Legendary.Web.Controllers
         /// </summary>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult CreateUser()
+        public IActionResult CreateUser(string message)
         {
-            return this.View();
+            return this.View(message);
         }
 
         /// <summary>
@@ -104,6 +94,11 @@ namespace Legendary.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCharacter(string firstName, string lastName, string password)
         {
+            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(password))
+            {
+                return this.View("CreateUser", "You need to provide a first name and a password.");
+            }
+
             // Make sure the character doesn't exist yet.
             var character = await this.dataService.FindCharacter(c => c.FirstName == firstName);
 
@@ -111,11 +106,11 @@ namespace Legendary.Web.Controllers
             {
                 var pwHash = Engine.Crypt.ComputeSha256Hash(password);
                 await this.dataService.CreateCharacter(firstName, lastName, pwHash);
-                return this.View("Login", "Character created. Please login.");
+                return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
             }
             else
             {
-                return this.View("Login", "That character already exists. Please login.");
+                return this.View("Login", new LoginModel("That character already exists. Please login.", this.buildSettings));
             }
         }
 
@@ -138,7 +133,7 @@ namespace Legendary.Web.Controllers
             if (dbUser == null)
             {
                 logger.LogWarning($"{username} is not an existing character. Redirecting to login.");
-                return this.View("Login", "That character does not exist. You should create one!");
+                return this.View("Login", new LoginModel("That character does not exist. You should create one!", this.buildSettings));
             }
 
             var pwHash = Engine.Crypt.ComputeSha256Hash(password);
@@ -146,7 +141,7 @@ namespace Legendary.Web.Controllers
             if (pwHash != dbUser.Password)
             {
                 logger.LogWarning($"{username} provided an invalid password. Redirecting to login.");
-                return this.View("Login", "Invalid password. Try again.");
+                return this.View("Login", new LoginModel("Invalid password. Try again.", this.buildSettings));
             }
             else
             {
