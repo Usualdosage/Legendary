@@ -693,22 +693,26 @@ namespace Legendary.Engine
 
             if (exit != null)
             {
-                string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>");
-                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.");
-
                 var newRoom = area?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
                 if (newRoom != null)
                 {
+                    string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                    await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>");
+                    await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.");
+
                     user.Character.Location = newRoom;
                     user.Character.Movement.Current -= 1;
                     await this.communicator.SendToRoom(newRoom, user.ConnectionId, $"{user.Character.FirstName} enters.");
                     await this.ShowRoomToPlayer(user);
                 }
+                else
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"You are unable to go that way.<br/>");
+                }
             }
             else
             {
-                await this.communicator.SendToPlayer(user.Connection, $"You can't go that way.");
+                await this.communicator.SendToPlayer(user.Connection, $"You can't go that way.<br/>");
             }
         }
 
@@ -766,11 +770,13 @@ namespace Legendary.Engine
 
             StringBuilder sb = new();
 
-            sb.Append($"<span class='room-title'>{room?.Name}</span><br/>");
+            var terrainClass = (room != null && room.Terrain.HasValue) ? Enum.GetName(room.Terrain.Value).ToLower() : "city";
+
+            sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span><br/>");
 
             if (!string.IsNullOrWhiteSpace(room?.Image))
             {
-                sb.Append($"<div class='room-image'><img src='data:image/png;charset=utf-8;base64, {room?.Image}'/></div>");
+                sb.Append($"<div class='room-image'><img src='{room?.Image}'/></div>");
             }
             else
             {

@@ -10,10 +10,12 @@ namespace Legendary.Core.Models
 {
     using System.Collections.Generic;
     using Legendary.Core.Types;
+    using MongoDB.Bson.Serialization.Attributes;
 
     /// <summary>
     /// Represents a single room within an area.
     /// </summary>
+    [BsonIgnoreExtraElements]
     public class Room
     {
         /// <summary>
@@ -33,7 +35,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets loan number. As this is the primary key, it will never be null.
         /// </summary>
-        public int RoomId { get; set; }
+        public long RoomId { get; set; }
 
         /// <summary>
         /// Gets or sets the ID of the area this room belongs to.
@@ -60,13 +62,17 @@ namespace Legendary.Core.Models
         /// </summary>
         public IList<Exit> Exits { get; set; } = new List<Exit>();
 
-
         // TO-DO: FIX THIS PROBLEM
 
         /// <summary>
         /// Gets or sets the room flags.
         /// </summary>
         public object? Flags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the room's terrain.
+        /// </summary>
+        public Terrain? Terrain { get; set; }
 
         /// <summary>
         /// Gets or sets the items in the room.

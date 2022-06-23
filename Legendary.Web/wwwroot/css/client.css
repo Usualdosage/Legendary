@@ -129,6 +129,8 @@ progress {
     background-color: blue !important;
 }
 
+/* Room Data */
+
 .room-title {
     color: mediumpurple;
     font-weight: bold;
@@ -189,6 +191,58 @@ progress {
 .inventory-item {
     display: block;
     padding-left: 10px;
+}
+
+.city {
+    color: #999 !important;
+}
+
+.mountains {
+    color: #7d6704 !important;
+}
+
+.grasslands {
+    color: #aee681 !important;
+}
+
+.water {
+    color: #2262c9 !important;
+}
+
+.swamp {
+    color: #615a4e !important;
+}
+
+.air {
+    color: #75e0df !important;
+}
+
+.beach {
+    color: #d9d684 !important;
+}
+
+.hills {
+    color: #c7b289 !important;
+}
+
+.ethereal {
+    color: mediumpurple !important;
+}
+
+.forest {
+    color: #3d9949 !important;
+}
+
+.jungle {
+    color: #105719 !important;
+}
+
+.desert {
+    color: #c7c6a1 !important;
+}
+
+.snow {
+    color: #fff;
 }
 
 /* Communication Channels */

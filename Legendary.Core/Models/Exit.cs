@@ -21,7 +21,7 @@ namespace Legendary.Core.Models
         /// <param name="direction">The direction.</param>
         /// <param name="toArea">To area.</param>
         /// <param name="toRoom">To room.</param>
-        public Exit(Direction direction, int toArea, int toRoom)
+        public Exit(Direction direction, int toArea, long toRoom)
         {
             this.Direction = direction;
             this.ToArea = toArea;
@@ -41,6 +41,6 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the room this exit goes to.
         /// </summary>
-        public int ToRoom { get; private set; }
+        public long ToRoom { get; private set; }
     }
 }
