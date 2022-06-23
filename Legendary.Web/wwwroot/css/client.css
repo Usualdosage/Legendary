@@ -1,5 +1,10 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Comforter&display=swap');
 
+@font-face {
+    font-family: 'BeyondWonderland';
+    src: url('../fonts/BeyondWonderland.ttf') format('truetype');
+}
+
 html {
     font-size: 14px;
     position: relative;
@@ -89,7 +94,7 @@ body {
     border-bottom: solid 1px #ccc;
     padding-bottom: 5px;
     font-size: 2em;
-    font-family: 'Comforter', cursive;
+    font-family: 'BeyondWonderland', 'Comforter', cursive;
 }
 
 .condition {
@@ -279,7 +284,7 @@ progress {
     }
 
 .player-score-title {
-    font-family: 'Comforter', cursive;
+    font-family: 'BeyondWonderland', 'Comforter', cursive;
     font-size: 2em;
     width: 100%;
     text-align: center;

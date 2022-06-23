@@ -26,12 +26,14 @@
   <ItemGroup>
     <Content Remove="wwwroot\img\" />
     <Content Remove="wwwroot\img\rooms\" />
+    <Content Remove="wwwroot\fonts\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\img\rooms\" />
     <Folder Include="Views\Content\" />
     <Folder Include="Contracts\" />
+    <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />

@@ -51,18 +51,6 @@ namespace Legendary.Engine
             this.logger.Info("Populating the world with mobiles and items..");
             await this.world.Populate();
 
-            // Wait for the webserver to load before loading the images
-            var contentPopulationTimer = new System.Threading.Timer(
-                async t =>
-                {
-                    this.logger.Info("Loading room images...(this may take a while)");
-                    await this.world.LoadRoomImages();
-                    this.logger.Info("Room images loaded.");
-                },
-                null,
-                10000,
-                System.Threading.Timeout.Infinite);
-
             this.logger.Info("Starting main loop...");
             var timer = new System.Threading.Timer(
                 async

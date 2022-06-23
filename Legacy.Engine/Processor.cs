@@ -693,15 +693,20 @@ namespace Legendary.Engine
 
             if (exit != null)
             {
-                var newRoom = area?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
-                if (newRoom != null)
+                var newArea = await this.World.FindArea(a => a.AreaId == exit.ToArea);
+                var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
+
+                if (newArea != null && newRoom != null)
                 {
                     string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
                     await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>");
                     await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.");
 
                     user.Character.Location = newRoom;
+
+                    // TODO: Update this based on the terrain.
                     user.Character.Movement.Current -= 1;
+
                     await this.communicator.SendToRoom(newRoom, user.ConnectionId, $"{user.Character.FirstName} enters.");
                     await this.ShowRoomToPlayer(user);
                 }

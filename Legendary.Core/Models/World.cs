@@ -250,19 +250,6 @@ namespace Legendary.Core.Models
             this.Areas = new HashSet<Area>(this.areas.Find(l => true).ToList());
             this.Items = new HashSet<Item>(this.items.Find(l => true).ToList());
         }
-
-        /// <inheritdoc/>
-        public async Task LoadRoomImages()
-        {
-            foreach (var area in this.Areas)
-            {
-                foreach (var room in area.Rooms)
-                {
-                    var base64 = await this.apiClient.GetRawContent($"room?roomId={room.RoomId}");
-                    room.Image = base64;
-                }
-            }
-        }
     }
 }
 

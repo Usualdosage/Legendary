@@ -181,12 +181,6 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <returns>Task.</returns>
         Task Populate();
-
-        /// <summary>
-        /// Preloads all of the room images once.
-        /// </summary>
-        /// <returns>Task.</returns>
-        Task LoadRoomImages();
     }
 }
 
