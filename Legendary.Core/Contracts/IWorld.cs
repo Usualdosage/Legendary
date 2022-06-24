@@ -166,12 +166,6 @@ namespace Legendary.Core.Contracts
             CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Saves all character changes to the database globally.
-        /// </summary>
-        /// <returns>Task.</returns>
-        Task SaveAllCharacters();
-
-        /// <summary>
         /// Reload the in-memory collections from the database.
         /// </summary>
         void Reload();

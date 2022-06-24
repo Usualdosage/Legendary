@@ -343,7 +343,18 @@ namespace Legendary.Engine
             if (this.connectedUser.Value != null)
             {
                 await this.processor.ShowPlayerInfo(this.connectedUser.Value);
+                await SaveCharacter(this.connectedUser.Value);
             }
+        }
+
+        /// <summary>
+        /// Saves the character to disk.
+        /// </summary>
+        /// <param name="userData">The user data.</param>
+        /// <returns>Task.</returns>
+        private async Task SaveCharacter(UserData userData)
+        {
+            await this.dataService.SaveCharacter(userData.Character);
         }
 
         /// <summary>

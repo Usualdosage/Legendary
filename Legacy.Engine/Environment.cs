@@ -33,12 +33,16 @@ namespace Legendary.Engine
         /// <returns></returns>
         public async Task ProcessEnvironmentChanges(int gameTicks, int gameHour)
         {
-            await ProcessTime(gameHour);
-            await ProcessWeather();
+            await ProcessTime(connectedUser, gameHour);
+            await ProcessWeather(connectedUser);
         }
 
-        private async Task ProcessTime(int gameHour)
+        private async Task ProcessTime(KeyValuePair<string, UserData> userData, int gameHour)
         {
+            // TODO: Is the player inside?
+
+            var room = userData.Value.Character.Location;
+
             if (gameHour == 6)
             {
                 await this.communicator.SendToPlayer(connectedUser.Value.Connection, "The sun rises in the east.");
@@ -57,9 +61,11 @@ namespace Legendary.Engine
         /// Processes messages about the weather each hour to the user.
         /// </summary>
         /// <returns></returns>
-        private async Task ProcessWeather()
+        private async Task ProcessWeather(KeyValuePair<string, UserData> userData)
         {
-            // TODO: Check what sort of room/area the player is in, and generate weather based on that.
+            var room = userData.Value.Character.Location;
+
+            // TODO: Fix room flags, then check to see if the weather can be seen. Based on terrain.
 
             var weather = this.random.Next(1, 8);
 

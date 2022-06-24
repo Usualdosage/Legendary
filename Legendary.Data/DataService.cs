@@ -67,6 +67,14 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
+        public async Task<ReplaceOneResult> SaveCharacter(Character character)
+        {
+            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
+            FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == character.CharacterId);
+            return await characters.ReplaceOneAsync(charToReplace, character);
+        }
+
+        /// <inheritdoc/>
         public async Task<Character?> FindCharacter(
             Expression<Func<Character, bool>> filter,
             FindOptions? options = null)

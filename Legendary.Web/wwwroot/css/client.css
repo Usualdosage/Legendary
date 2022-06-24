@@ -75,6 +75,10 @@ body {
     border-radius: 5px;
 }
 
+.intro-title {
+    font-family: 'BeyondWonderland', 'Comforter', cursive;
+}
+
 /* Descriptive Content */
 
 .player-info {
@@ -288,4 +292,5 @@ progress {
     font-size: 2em;
     width: 100%;
     text-align: center;
+    display: block;
 }

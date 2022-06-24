@@ -229,18 +229,7 @@ namespace Legendary.Core.Models
                 replacement,
                 options,
                 cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public async Task SaveAllCharacters()
-        {
-            // TODO: This doesn't work right at all.
-            var allCharacters = this.GetAllCharacters();
-            foreach (var character in allCharacters)
-            {
-                await this.ReplaceOneCharacterAsync(c => c.CharacterId == character.CharacterId, character);
-            }
-        }
+        }        
 
         /// <summary>
         /// Reload the in-memory collections from the database.

@@ -36,6 +36,13 @@ namespace Legendary.Data.Contracts
             FindOptions? options = null);
 
         /// <summary>
+        /// Saves the character to the database.
+        /// </summary>
+        /// <param name="character">The chanracter.</param>
+        /// <returns>ReplaceOneResult.</returns>
+        public Task<ReplaceOneResult> SaveCharacter(Character character);
+
+        /// <summary>
         /// Creates a character.
         /// </summary>
         /// <param name="firstName">First name.</param>
