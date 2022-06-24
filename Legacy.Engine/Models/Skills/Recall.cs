@@ -10,7 +10,9 @@ namespace Legendary.Engine.Models.Skills
 {
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using MongoDB.Bson.Serialization.Attributes;
 
+    [BsonDiscriminator("Recall")]
     public class Recall : Skill
     {
         public Recall(ICommunicator communicator) : base(communicator)

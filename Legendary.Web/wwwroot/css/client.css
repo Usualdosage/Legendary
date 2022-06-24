@@ -57,6 +57,7 @@ html {
 .message {
     padding: 3px;
     display: block;
+    max-width: 1024px;
 }
 
 body {

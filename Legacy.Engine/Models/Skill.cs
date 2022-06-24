@@ -11,7 +11,9 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using MongoDB.Bson.Serialization.Attributes;
 
+    [BsonDiscriminator("Skill")]
     public abstract class Skill : ISkill
 	{
         protected readonly ICommunicator communicator;

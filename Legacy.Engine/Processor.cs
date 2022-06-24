@@ -139,6 +139,20 @@ namespace Legendary.Engine
                                 }
                             }
 
+                        case "goto":
+                            {
+                                if (args.Length < 2)
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"Goto where?");
+                                    break;
+                                }
+                                else
+                                {
+                                    await this.GotoRoom(user, args[1]);
+                                    break;
+                                }
+                            }
+
                         case "h":
                         case "help":
                             {
@@ -462,6 +476,30 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Moves the player to the specified room.
+        /// </summary>
+        /// <returns></returns>
+        private async Task GotoRoom(UserData user, string room)
+        {
+            if (long.TryParse(room, out long roomId))
+            {
+                foreach (var area in this.World.Areas)
+                {
+                    var targetRoom = area.Rooms.FirstOrDefault(r => r.RoomId == roomId);
+                    if (targetRoom == null)
+                        continue;
+                    else
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.");
+                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} vanishes.");
+                        user.Character.Location = targetRoom;
+                        this.communicator.SendToServer(user, "look");
+                    }
+                }                
+            }
+        }
+
+        /// <summary>
         /// Moves an item from a room's resets to a user's inventory.
         /// </summary>
         /// <param name="user">The user.</param>
@@ -777,7 +815,7 @@ namespace Legendary.Engine
 
             var terrainClass = (room != null && room.Terrain.HasValue) ? Enum.GetName(room.Terrain.Value).ToLower() : "city";
 
-            sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span><br/>");
+            sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span> <span class='roomNum'>[{room?.RoomId}]</span><br/>");
 
             if (!string.IsNullOrWhiteSpace(room?.Image))
             {

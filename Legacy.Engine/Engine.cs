@@ -74,15 +74,6 @@ namespace Legendary.Engine
                         this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
                   
                     }
-
-                    // Save all players every 5 seconds.
-                    this.saveGame++;
-                    if (this.saveGame == 5)
-                    {
-                        this.saveGame = 0;
-                        this.logger.Info("Saving players...");
-                        await this.world.SaveAllCharacters();
-                    }
                 },
                 null,
                 1000,

@@ -25,6 +25,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Http;
+    using MongoDB.Bson.Serialization;
 
     /// <summary>
     /// Handles communication between the engine and connected sockets.
@@ -122,11 +123,12 @@ namespace Legendary.Engine
 
                 this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
 
+                // TODO: Figure out why Mongo chokes on skill deserialization.
                 // Give any user the Recall skill at max percentage if they don't have it.
-                if (!userData.Character.HasSkill("Recall"))
-                {
-                    userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
-                }
+                //if (!userData.Character.HasSkill("Recall"))
+                //{
+                //    userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
+                //}
 
                 // Display the welcome content
                 await this.ShowWelcomeScreen(userData);
