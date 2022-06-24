@@ -9,7 +9,7 @@ class LegacyClient {
         var socket = new WebSocket(wsUri);
 
         socket.onopen = e => {
-            console.log("Connected!", e);
+            console.log("Connected to Legendary!", e);
         };
 
         socket.onclose = function (e) {
@@ -56,6 +56,7 @@ class LegacyClient {
         };
 
         $('#inputField').keypress(function (e) {
+
             if (e.which != 13) {
                 return;
             }
