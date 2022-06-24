@@ -119,6 +119,16 @@ namespace Legendary.Engine
 
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
 
+                // If the user is already connected, remove, and then re-add.
+                var connectedUser = Users?.FirstOrDefault(u => u.Value.Username == character.FirstName);
+                if (connectedUser?.Value != null)
+                {
+                    this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.");
+                    await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!");
+                    await this.Quit(connectedUser.Value.Value.Connection, connectedUser.Value.Value.Character.FirstName);
+                    Users?.TryRemove(connectedUser.Value);
+                }
+
                 Users?.TryAdd(socketId, userData);
 
                 this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
@@ -202,6 +212,12 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task Quit(WebSocket socket, string? player, CancellationToken ct = default)
         {
+            var user = Users?.FirstOrDefault(u => u.Value.Username == player);
+            if (user != null)
+            {
+                Users?.TryRemove(user.Value);
+            }
+
             this.logger.Info($"{DateTime.UtcNow}: {player} has quit.");
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
         }
@@ -372,20 +388,27 @@ namespace Legendary.Engine
         /// <param name="e">The event args.</param>
         private async void Engine_Tick(object? sender, EventArgs e)
         {
-            var engineEventArgs = (EngineEventArgs)e;
-
-            if (this.environment != null)
+            try
             {
-                await this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+                var engineEventArgs = (EngineEventArgs)e;
+
+                if (this.environment != null)
+                {
+                    await this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+                }
+
+                if (this.connectedUser.Value != null)
+                {
+                    await this.processor.ShowPlayerInfo(this.connectedUser.Value);
+
+                    // Autosave the user each tick.
+                    await SaveCharacter(this.connectedUser.Value);
+                }
             }
-
-            if (this.connectedUser.Value != null)
+            catch (Exception)
             {
-                await this.processor.ShowPlayerInfo(this.connectedUser.Value);
-
-                // Autosave the user each tick.
-                await SaveCharacter(this.connectedUser.Value);
-            }            
+                this.logger.Warn("Attempted to send information to disconnected sockets. Continuing.");
+            }
         }
 
         /// <summary>

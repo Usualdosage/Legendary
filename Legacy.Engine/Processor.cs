@@ -828,7 +828,7 @@ namespace Legendary.Engine
 
             StringBuilder sb = new();
 
-            var terrainClass = (room != null && room.Terrain.HasValue) ? Enum.GetName(room.Terrain.Value).ToLower() : "city";
+            var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
 
             sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span> <span class='roomNum'>[{room?.RoomId}]</span><br/>");
 
