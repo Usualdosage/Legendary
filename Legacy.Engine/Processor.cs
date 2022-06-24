@@ -13,6 +13,7 @@ namespace Legendary.Engine
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using System.Web;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -57,6 +58,9 @@ namespace Legendary.Engine
             {
                 return;
             }
+
+            // Encode the string, otherwise the player can input HTML and have it actually render.
+            input = HttpUtility.HtmlEncode(input);
 
             string[] args = input.Split(' ');
 
@@ -242,6 +246,13 @@ namespace Legendary.Engine
                         case "southwest":
                             {
                                 await this.MovePlayer(user, ParseDirection(args[0]));
+                                break;
+                            }
+
+                        case "save":
+                            {
+                                await this.communicator.SaveCharacter(user);
+                                await this.communicator.SendToPlayer(user.Connection, $"Character saved.");
                                 break;
                             }
 
@@ -768,20 +779,24 @@ namespace Legendary.Engine
         {
             StringBuilder sb = new();
 
+            string homeTown = user.Character.Home?.Name ?? "nowhere";
+
             sb.Append("<div class='player-score'><table><tr><td colspan='4'>");
             sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
+            sb.Append($"<tr><td colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from {homeTown}.</td></tr>");
+            sb.Append($"<tr><td colspan='2'>You are {user.Character.Age} years of age.</td><td>Experience:</td><td>{user.Character.Experience}</td></tr>");
 
-            sb.Append($"<tr><td>Level</td><td>{user.Character.Level}</td><td>Experience</td><td>{user.Character.Experience}</td></tr>");
+            sb.Append($"<tr><td>Health:</td><td>{user.Character.Health.Current}/{user.Character.Health.Max}</td><td>Str:</td><td>{user.Character.Str}</td></tr>");
 
-            sb.Append($"<tr><td>Health</td><td>{user.Character.Health.Current}/{user.Character.Health.Max}</td><td>Str</td><td>{user.Character.Str}</td></tr>");
+            sb.Append($"<tr><td>Mana:</td><td>{user.Character.Mana.Current}/{user.Character.Mana.Max}</td><td>Int:</td><td>{user.Character.Int}</td></tr>");
 
-            sb.Append($"<tr><td>Mana</td><td>{user.Character.Mana.Current}/{user.Character.Mana.Max}</td><td>Int</td><td>{user.Character.Int}</td></tr>");
+            sb.Append($"<tr><td>Movement:</td><td>{user.Character.Movement.Current}/{user.Character.Movement.Max}</td><td>Wis:</td><td>{user.Character.Wis}</td></tr>");
 
-            sb.Append($"<tr><td>Movement</td><td>{user.Character.Movement.Current}/{user.Character.Movement.Max}</td><td>Wis</td><td>{user.Character.Wis}</td></tr>");
+            sb.Append($"<tr><td>Currency:</td><td>{user.Character.Currency}</td><td>Dex:</td><td>{user.Character.Dex}</td></tr>");
 
-            sb.Append($"<tr><td>Currency</td><td>{user.Character.Currency}</td><td>Dex</td><td>{user.Character.Dex}</td></tr>");
+            sb.Append($"<tr><td colspan='2'>&nbsp;</td><td>Con:</td><td>{user.Character.Con}</td></tr>");
 
-            sb.Append($"<tr><td colspan='2'></td><td>Con</td><td>{user.Character.Con}</td></tr>");
+            sb.Append($"<tr><td colspan='4'>You are not affected by any skills or spells.</td></tr>");
 
             sb.Append("</table></div>");
 

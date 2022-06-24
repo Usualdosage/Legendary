@@ -13,6 +13,8 @@ namespace Legendary.Web
     using Legendary.Data.Contracts;
     using Legendary.Engine;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Skills;
     using Legendary.Networking;
     using Legendary.Networking.Contracts;
     using Legendary.Networking.Models;
@@ -25,6 +27,7 @@ namespace Legendary.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
+    using MongoDB.Bson.Serialization;
 
     public class Startup
     {
@@ -68,6 +71,34 @@ namespace Legendary.Web
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
+
+            // Register skills and spells.
+            ConfigureSkills();
+            ConfigureSpells();
+        }
+
+        /// <summary>
+        /// Registers all of the skills to a class map so Mongo knows how to save them since they all derive from a root class.
+        /// </summary>
+        public void ConfigureSkills()
+        {
+            BsonClassMap.RegisterClassMap<Skill>(cm => {
+                cm.AutoMap();
+                cm.SetIsRootClass(true);
+            });
+
+            BsonClassMap.RegisterClassMap<Recall>();
+        }
+
+        /// <summary>
+        /// Registers all of the spells to a class map so Mongo knows how to save them since they all derive from a root class.
+        /// </summary>
+        public void ConfigureSpells()
+        {
+            BsonClassMap.RegisterClassMap<Spell>(cm => {
+                cm.AutoMap();
+                cm.SetIsRootClass(true);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

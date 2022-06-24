@@ -43,6 +43,13 @@ namespace Legendary.Engine.Contracts
         Task<CommResult> SendGlobal(string message, CancellationToken ct = default);
 
         /// <summary>
+        /// Saves a player to the database.
+        /// </summary>
+        /// <param name="userData">The player.</param>
+        /// <returns>Task.</returns>
+        Task SaveCharacter(UserData userData);
+
+        /// <summary>
         /// Sends a message to a specified socket.
         /// </summary>
         /// <param name="socket">The socket to send to.</param>

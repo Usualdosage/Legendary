@@ -11,21 +11,19 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
-    using MongoDB.Bson.Serialization.Attributes;
 
-    [BsonDiscriminator("Skill")]
     public abstract class Skill : ISkill
 	{
         protected readonly ICommunicator communicator;
+
+        public abstract void Act(UserData actor, UserData? target);
+
+        public string? Name { get; set; }
 
         public Skill(ICommunicator communicator)
         {
             this.communicator = communicator;
         }
-
-        public abstract void Act(UserData actor, UserData? target);
-
-        public string? Name { get; set; }
     }
 }
 

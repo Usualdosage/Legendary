@@ -7,6 +7,7 @@ class LegacyClient {
         var protocol = location.protocol === "https:" ? "wss:" : "ws:";
         var wsUri = protocol + "//" + window.location.host;
         var socket = new WebSocket(wsUri);
+        let commands = [];
 
         socket.onopen = e => {
             console.log("Connected to Legendary!", e);
@@ -21,6 +22,8 @@ class LegacyClient {
         };
 
         socket.onmessage = function (e) {
+
+            var $roomImage = $(".loader").remove();
 
             var $console = $("#console");
 
@@ -55,6 +58,10 @@ class LegacyClient {
             }
         };
 
+        $("#inputField").click(function (e) {
+            $(this).select();
+        });
+
         $('#inputField').keypress(function (e) {
 
             if (e.which != 13) {
@@ -66,7 +73,9 @@ class LegacyClient {
             var message = $('#inputField').val();
             socket.send(message);
 
-            $('#inputField').val('');
+            commands.push(message);
+
+            $(this).select();
         });
     }
 }

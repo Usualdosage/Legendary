@@ -123,12 +123,8 @@ namespace Legendary.Engine
 
                 this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
 
-                // TODO: Figure out why Mongo chokes on skill deserialization.
-                // Give any user the Recall skill at max percentage if they don't have it.
-                //if (!userData.Character.HasSkill("Recall"))
-                //{
-                //    userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
-                //}
+                // Update the user metrics
+                await UpdateMetrics(userData, ip.ToString());
 
                 // Display the welcome content
                 await this.ShowWelcomeScreen(userData);
@@ -303,6 +299,16 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Saves the character to disk.
+        /// </summary>
+        /// <param name="userData">The user data.</param>
+        /// <returns>Task.</returns>
+        public async Task SaveCharacter(UserData userData)
+        {
+            await this.dataService.SaveCharacter(userData.Character);
+        }
+
+        /// <summary>
         /// Raises the InputReceived event.
         /// </summary>
         /// <param name="sender">The sender of the message (userdata).</param>
@@ -314,6 +320,37 @@ namespace Legendary.Engine
             {
                 this.processor.ProcessMessage(user.Value.Value, e.Message);
             }
+        }
+
+        /// <summary>
+        /// Updates the user's metrics on login.
+        /// </summary>
+        /// <param name="user">The user to update.</param>
+        /// <param name="ipAddress">The remote IP address.</param>
+        /// <returns>Task.</returns>
+        private async Task UpdateMetrics(UserData userData, string ipAddress)
+        {
+            var metrics = userData.Character.Metrics;
+
+            // Log the IP address to the character
+            if (!metrics.IPAddresses.Contains(ipAddress.ToString()))
+            {
+                metrics.IPAddresses.Add(ipAddress.ToString());
+            }
+
+            // Update last login.
+            metrics.LastLogin = DateTime.UtcNow;
+
+            // Give any user the Recall skill at max percentage if they don't have it.
+            if (!userData.Character.HasSkill("Recall"))
+            {
+                userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
+            }
+
+            userData.Character.Metrics = metrics;
+
+            // Save the changes.
+            await this.SaveCharacter(userData);
         }
 
         /// <summary>
@@ -345,18 +382,10 @@ namespace Legendary.Engine
             if (this.connectedUser.Value != null)
             {
                 await this.processor.ShowPlayerInfo(this.connectedUser.Value);
-                await SaveCharacter(this.connectedUser.Value);
-            }
-        }
 
-        /// <summary>
-        /// Saves the character to disk.
-        /// </summary>
-        /// <param name="userData">The user data.</param>
-        /// <returns>Task.</returns>
-        private async Task SaveCharacter(UserData userData)
-        {
-            await this.dataService.SaveCharacter(userData.Character);
+                // Autosave the user each tick.
+                await SaveCharacter(this.connectedUser.Value);
+            }            
         }
 
         /// <summary>

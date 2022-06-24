@@ -50,6 +50,11 @@ namespace Legendary.Core.Models
         public string? Title { get; set; }
 
         /// <summary>
+        /// Gets or sets the player's age.
+        /// </summary>
+        public int Age { get; set; } = 18;
+
+        /// <summary>
         /// Gets or sets the level.
         /// </summary>
         public int Level { get; set; } = 1;
@@ -85,6 +90,11 @@ namespace Legendary.Core.Models
         public virtual bool IsNPC { get; set; } = false;
 
         /// <summary>
+        /// Gets or sets a flag indicating whether the character is fighting or not.
+        /// </summary>
+        public bool IsFighting { get; set; }
+
+        /// <summary>
         /// Gets or sets the character flags.
         /// </summary>
         public IList<CharacterFlags>? CharacterFlags { get; set; }
@@ -105,9 +115,9 @@ namespace Legendary.Core.Models
         public MaxCurrent Movement { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
-        /// Gets or sets the character's home room.
+        /// Gets or sets the character's home room (recall point).
         /// </summary>
-        public Room? Home { get; set; }
+        public Room Home { get; set; } = new Room() { AreaId = 1, RoomId = 1 };
 
         /// <summary>
         /// Gets or sets the inventory.
@@ -140,6 +150,26 @@ namespace Legendary.Core.Models
         public int Con { get; set; } = 12;
 
         /// <summary>
+        /// Gets or sets the alignment.
+        /// </summary>
+        public Alignment Alignment { get; set; } = Alignment.Neutral;
+
+        /// <summary>
+        /// Gets or sets the ethos.
+        /// </summary>
+        public Ethos Ethos { get; set; } = Ethos.Neutral;
+
+        /// <summary>
+        /// Gets or sets the gender.
+        /// </summary>
+        public Gender Gender { get; set; } = Gender.Other;
+
+        /// <summary>
+        /// Gets or sets the race.
+        /// </summary>
+        public Race Race { get; set; } = Race.Human;
+
+        /// <summary>
         /// Gets or sets the player's skills.
         /// </summary>
         public IList<SkillProficiency> Skills { get; set; } = new List<SkillProficiency>();
@@ -148,6 +178,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the player's spells.
         /// </summary>
         public IList<SpellProficiency> Spells { get; set; } = new List<SpellProficiency>();
+
+        /// <summary>
+        /// Gets or sets the player's metrics.
+        /// </summary>
+        public Metrics Metrics { get; set; } = new Metrics();
 
         /// <summary>
         /// Indicates whether the player has a given skill.
