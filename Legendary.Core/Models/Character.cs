@@ -181,6 +181,11 @@ namespace Legendary.Core.Models
         public Metrics Metrics { get; set; } = new Metrics();
 
         /// <summary>
+        /// Gets or sets the skills or spells the player is affected by, and the remaining duration.
+        /// </summary>
+        public IDictionary<IAction, int> AffectedBy { get; set; } = new Dictionary<IAction, int>();
+
+        /// <summary>
         /// Indicates whether the player has a given skill.
         /// </summary>
         /// <param name="name">The name of the skill.</param>
@@ -195,7 +200,7 @@ namespace Legendary.Core.Models
         /// </summary>
         /// <param name="name">The skill name.</param>
         /// <returns>The skill, if exists.</returns>
-        public ISkill? GetSkill(string name)
+        public IAction? GetSkill(string name)
         {
             return this.Skills.FirstOrDefault(sk => sk.Skill?.Name?.ToLower() == name.ToLower())?.Skill;
         }
@@ -215,7 +220,7 @@ namespace Legendary.Core.Models
         /// </summary>
         /// <param name="name">The spell name.</param>
         /// <returns>The spell, if exists.</returns>
-        public ISpell? GetSpell(string name)
+        public IAction? GetSpell(string name)
         {
             return this.Spells.FirstOrDefault(sp => sp.Spell.Name?.ToLower() == name.ToLower())?.Spell;
         }

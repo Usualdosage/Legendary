@@ -9,14 +9,16 @@
 
 namespace Legendary.Engine.Models
 {
+    using System;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.
     /// </summary>
-    public abstract class Skill : ISkill
+    public abstract class Skill : IAction
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Skill"/> class.
@@ -34,6 +36,21 @@ namespace Legendary.Engine.Models
 
         /// <inheritdoc/>
         public string? Name { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsAffect { get; set; }
+
+        /// <inheritdoc/>
+        public int? AffectDuration { get; set; }
+
+        /// <inheritdoc/>
+        public ActionType ActionType => ActionType.Skill;
+
+        /// <inheritdoc/>
+        public Action? PreAction { get; set; }
+
+        /// <inheritdoc/>
+        public Action? PostAction { get; set; }
 
         /// <inheritdoc/>
         public abstract void Act(UserData actor, UserData? target);

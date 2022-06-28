@@ -1,4 +1,4 @@
-﻿// <copyright file="ISpell.cs" company="Legendary™">
+﻿// <copyright file="ActionType.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -7,25 +7,21 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Core.Contracts
+namespace Legendary.Core.Types
 {
-    using Legendary.Core.Models;
-
     /// <summary>
-    /// Implementation contract for a spell.
+    /// Defines the type of an IAction.
     /// </summary>
-    public interface ISpell
+    public enum ActionType
     {
         /// <summary>
-        /// Gets or sets the name of the spell.
+        /// Skill.
         /// </summary>
-        string? Name { get; set; }
+        Skill = 0,
 
         /// <summary>
-        /// Casts the spell.
+        /// Spell.
         /// </summary>
-        /// <param name="actor">The caster.</param>
-        /// <param name="target">The target.</param>
-        abstract void Act(UserData actor, UserData? target);
+        Spell = 1,
     }
 }
