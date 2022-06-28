@@ -74,16 +74,11 @@ namespace Legendary.Engine
                     new CommChannel("wiznet", true, false),
                 };
 
-<<<<<<< HEAD
+            // Create the language generator.
+            this.languageGenerator = new LanguageGenerator(this.random);
+
             this.engine.Tick += this.Engine_Tick;
             this.engine.VioTick += this.Engine_VioTick;
-=======
-            // Create the language generator.
-            this.languageGenerator = new LanguageGenerator(random);
-
-            this.engine.Tick += Engine_Tick;
-            this.engine.VioTick += Engine_VioTick;
->>>>>>> 4e33d3b (Checkpoint.)
         }
 
         /// <summary>
@@ -152,13 +147,8 @@ namespace Legendary.Engine
                 await this.Wizlog(msg, ct);
                 this.logger.Info(msg);
 
-<<<<<<< HEAD
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip.ToString());
-=======
-                // Update the user metrics.
-                await UpdateMetrics(userData, ip.ToString());
->>>>>>> 4e33d3b (Checkpoint.)
 
                 // Display the welcome content.
                 await this.ShowWelcomeScreen(userData);
@@ -351,12 +341,7 @@ namespace Legendary.Engine
             await this.dataService.SaveCharacter(userData.Character);
         }
 
-        /// <summary>
-        /// Add a user to the specified channel (by name).
-        /// </summary>
-        /// <param name="channelName"></param>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
+        /// <inheritdoc/>
         public void AddToChannel(string channelName, string socketId, UserData user)
         {
             foreach (var channel in this.Channels)
@@ -369,12 +354,7 @@ namespace Legendary.Engine
             }
         }
 
-        /// <summary>
-        /// Remove the user from the channel.
-        /// </summary>
-        /// <param name="channelName"></param>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
+        /// <inheritdoc/>
         public void RemoveFromChannel(string channelName, string socketId, UserData user)
         {
             foreach (var channel in this.Channels)
@@ -387,13 +367,7 @@ namespace Legendary.Engine
             }
         }
 
-        /// <summary>
-        /// Check if a user is subscribed to a channel.
-        /// </summary>
-        /// <param name="channelName"></param>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public bool IsSubscribed(string channelName, string socketId, UserData user)
         {
             foreach (var channel in this.Channels)
@@ -410,8 +384,9 @@ namespace Legendary.Engine
         /// <summary>
         /// Logs a message to wiznet.
         /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
+        /// <param name="message">The message to log.</param>
+        /// <param name="ct">The cancellation token.</param>
+        /// <returns>Task.</returns>
         protected async Task<CommResult> Wizlog(string message, CancellationToken ct = default)
         {
             var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == "wiznet");
@@ -463,7 +438,7 @@ namespace Legendary.Engine
             // Give any user the Recall skill at max percentage if they don't have it.
             if (!userData.Character.HasSkill("recall"))
             {
-                userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
+                userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this, this.random), 100));
             }
 
             userData.Character.Metrics = metrics;
@@ -571,8 +546,8 @@ namespace Legendary.Engine
         /// <summary>
         /// Adds user to all public channels.
         /// </summary>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
+        /// <param name="socketId">The socket Id.</param>
+        /// <param name="user">The user.</param>
         private void AddToChannels(string socketId, UserData user)
         {
             foreach (var channel in this.Channels)
@@ -587,8 +562,8 @@ namespace Legendary.Engine
         /// <summary>
         /// Removes user from all public channels.
         /// </summary>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
+        /// <param name="socketId">The socket Id.</param>
+        /// <param name="user">The user.</param>
         private void RemoveFromChannels(string socketId, UserData? user)
         {
             if (user == null)

@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Skills
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Models;
@@ -23,36 +24,33 @@ namespace Legendary.Engine.Models.Skills
         /// Initializes a new instance of the <see cref="Recall"/> class.
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
-        public Recall(ICommunicator communicator)
-            : base(communicator)
+        /// <param name="random">The random number generator.</param>
+        public Recall(ICommunicator communicator, IRandom random)
+            : base(communicator, random)
         {
             this.Name = "Recall";
+            this.ManaCost = 0;
         }
 
-<<<<<<< HEAD
         /// <inheritdoc/>
-        public override void Act(UserData actor, UserData? target)
+        public override async Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
         {
-            this.PreAction = new System.Action(() =>
-            {
-                this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.");
-                this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.");
-            });
-=======
-        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+            await this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.", cancellationToken);
+            await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.", cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public override Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.", cancellationToken);
->>>>>>> 4e33d3b (Checkpoint.)
-
-            this.PostAction = new System.Action(() =>
-            {
-                this.Communicator.SendToServer(actor, "look");
-            });
-
-            this.PreAction?.Invoke();
             actor.Character.Location = actor.Character.Home ?? Room.Default;
-            this.PostAction?.Invoke();
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public override Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        {
+            this.Communicator.SendToServer(actor, "look");
+            return Task.CompletedTask;
         }
     }
 }

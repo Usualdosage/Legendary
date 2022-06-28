@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Contracts
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
@@ -24,14 +25,16 @@ namespace Legendary.Engine.Contracts
         /// </summary>
         /// <param name="user">The user data.</param>
         /// <param name="input">The input from the socket.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ProcessMessage(UserData user, string? input);
+        Task ProcessMessage(UserData user, string? input, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Shows/updates the player information box.
         /// </summary>
         /// <param name="user">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ShowPlayerInfo(UserData user);
+        Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default);
     }
 }

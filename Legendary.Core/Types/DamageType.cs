@@ -1,69 +1,72 @@
-﻿// <copyright file="DamageType.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="DamageType.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Types
 {
-	public enum DamageType
-	{
-		/// <summary>
+    /// <summary>
+    /// The type of damage from an attack.
+    /// </summary>
+    public enum DamageType
+    {
+        /// <summary>
         /// None.
         /// </summary>
-		None = 0,
+        None = 0,
 
-		/// <summary>
+        /// <summary>
         /// Fire.
         /// </summary>
-		Fire = 1,
+        Fire = 1,
 
-		/// <summary>
+        /// <summary>
         /// Water.
         /// </summary>
-		Water = 2,
+        Water = 2,
 
-		/// <summary>
+        /// <summary>
         /// Energy.
         /// </summary>
-		Energy = 3,
+        Energy = 3,
 
-		/// <summary>
+        /// <summary>
         /// Blunt.
         /// </summary>
-		Blunt = 4,
+        Blunt = 4,
 
-		/// <summary>
+        /// <summary>
         /// Slash.
         /// </summary>
-		Slash = 5,
+        Slash = 5,
 
-		/// <summary>
+        /// <summary>
         /// Pierce.
         /// </summary>
-		Pierce = 6,
+        Pierce = 6,
 
-		/// <summary>
+        /// <summary>
         /// Air.
         /// </summary>
-		Air = 7,
+        Air = 7,
 
-		/// <summary>
+        /// <summary>
         /// Earth.
         /// </summary>
-		Earth = 8,
+        Earth = 8,
 
-		/// <summary>
+        /// <summary>
         /// Lightning.
         /// </summary>
-		Lightning = 9,
+        Lightning = 9,
 
-		/// <summary>
+        /// <summary>
         /// Negative.
         /// </summary>
-		Negative = 10
-	}
+        Negative = 10,
+    }
 }
-

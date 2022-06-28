@@ -181,15 +181,14 @@ namespace Legendary.Core.Models
         public Metrics Metrics { get; set; } = new Metrics();
 
         /// <summary>
-<<<<<<< HEAD
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.
         /// </summary>
         public IDictionary<IAction, int> AffectedBy { get; set; } = new Dictionary<IAction, int>();
-=======
+
+        /// <summary>
         /// Gets or sets the player's saving spells.
         /// </summary>
         public Saves Saves { get; set; } = new Saves();
->>>>>>> 4e33d3b (Checkpoint.)
 
         /// <summary>
         /// Indicates whether the player has a given skill.
