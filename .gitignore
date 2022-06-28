@@ -10,7 +10,11 @@ obj/
 /.vs/VSWorkspaceState.json
 *.user
 .DS_Store
+<<<<<<< HEAD
 /.vs/Legendary/v17/TestStore/0/000.testlog
 /.vs/Legendary/v17/TestStore/0/testlog.manifest
 slnx.sqlite
 /.vs/slnx.sqlite
+=======
+sqlnx.sqlite
+>>>>>>> 64b550afc31cf0fbc55110b0b89e75792090500f
