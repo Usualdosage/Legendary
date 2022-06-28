@@ -1,13 +1,17 @@
-﻿// <copyright file="Gender.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Gender.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Types
 {
+    /// <summary>
+    /// Player's gender.
+    /// </summary>
     public enum Gender
     {
         /// <summary>
@@ -23,7 +27,6 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Other.
         /// </summary>
-        Other = 2
+        Other = 2,
     }
 }
-

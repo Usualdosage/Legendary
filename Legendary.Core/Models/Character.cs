@@ -1,9 +1,10 @@
-﻿// <copyright file="Character.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Character.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Models
@@ -88,11 +89,6 @@ namespace Legendary.Core.Models
         /// Gets or sets a value indicating whether this is an NPC.
         /// </summary>
         public virtual bool IsNPC { get; set; } = false;
-
-        /// <summary>
-        /// Gets or sets a flag indicating whether the character is fighting or not.
-        /// </summary>
-        public bool IsFighting { get; set; }
 
         /// <summary>
         /// Gets or sets the character flags.
@@ -191,7 +187,7 @@ namespace Legendary.Core.Models
         /// <returns>True if they have it.</returns>
         public bool HasSkill(string name)
         {
-            return Skills.Any(sk => sk.Skill.Name?.ToLower() == name.ToLower());
+            return this.Skills.Any(sk => sk.Skill.Name?.ToLower() == name.ToLower());
         }
 
         /// <summary>
@@ -201,7 +197,7 @@ namespace Legendary.Core.Models
         /// <returns>The skill, if exists.</returns>
         public ISkill? GetSkill(string name)
         {
-            return Skills.FirstOrDefault(sk => sk.Skill?.Name?.ToLower() == name.ToLower())?.Skill;
+            return this.Skills.FirstOrDefault(sk => sk.Skill?.Name?.ToLower() == name.ToLower())?.Skill;
         }
 
         /// <summary>
@@ -211,7 +207,7 @@ namespace Legendary.Core.Models
         /// <returns>True if they have it.</returns>
         public bool HasSpell(string name)
         {
-            return Spells.Any(sp => sp.Spell.Name?.ToLower() == name.ToLower());
+            return this.Spells.Any(sp => sp.Spell.Name?.ToLower() == name.ToLower());
         }
 
         /// <summary>
@@ -221,7 +217,7 @@ namespace Legendary.Core.Models
         /// <returns>The spell, if exists.</returns>
         public ISpell? GetSpell(string name)
         {
-            return Spells.FirstOrDefault(sp => sp.Spell.Name?.ToLower() == name.ToLower())?.Spell;
+            return this.Spells.FirstOrDefault(sp => sp.Spell.Name?.ToLower() == name.ToLower())?.Spell;
         }
     }
 }

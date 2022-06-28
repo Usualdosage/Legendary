@@ -1,26 +1,29 @@
 {
   "format": 1,
   "restore": {
-    "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj": {}
+    "C:\\Users\\matthew.martin\\source\\repos\\Legendary\\Legendary_MUD\\Legendary.Core\\Legendary.Core.csproj": {}
   },
   "projects": {
-    "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj": {
+    "C:\\Users\\matthew.martin\\source\\repos\\Legendary\\Legendary_MUD\\Legendary.Core\\Legendary.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj",
+        "projectUniqueName": "C:\\Users\\matthew.martin\\source\\repos\\Legendary\\Legendary_MUD\\Legendary.Core\\Legendary.Core.csproj",
         "projectName": "Legendary.Core",
-        "projectPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/Legendary.Core.csproj",
-        "packagesPath": "/Users/matthewmartin/.nuget/packages/",
-        "outputPath": "/Users/matthewmartin/Projects/Legendary/Legendary.Core/obj/",
+        "projectPath": "C:\\Users\\matthew.martin\\source\\repos\\Legendary\\Legendary_MUD\\Legendary.Core\\Legendary.Core.csproj",
+        "packagesPath": "C:\\Users\\matthew.martin\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\matthew.martin\\source\\repos\\Legendary\\Legendary_MUD\\Legendary.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/matthewmartin/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\matthew.martin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "https://api.nuget.org/v3/index.json": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://hpfc.pkgs.visualstudio.com/_packaging/HomepointFeed/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
@@ -40,11 +43,17 @@
           "dependencies": {
             "MongoDB.Bson": {
               "target": "Package",
-              "version": "[2.16.1, )"
+              "version": "[2.16.0, )"
             },
             "MongoDB.Driver": {
               "target": "Package",
-              "version": "[2.16.1, )"
+              "version": "[2.16.0, )"
+            },
+            "StyleCop.Analyzers": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[1.1.118, )"
             }
           },
           "imports": [
@@ -62,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.301/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.106\\RuntimeIdentifierGraph.json"
         }
       }
     }

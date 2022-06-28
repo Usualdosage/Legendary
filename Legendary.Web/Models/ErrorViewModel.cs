@@ -1,19 +1,24 @@
-﻿// <copyright file="ErrorViewModel.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="ErrorViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Legendary.Web.Models
 {
     using System;
 
+    /// <summary>
+    /// Displays debug errors.
+    /// </summary>
     public class ErrorViewModel
     {
+        /// <summary>
+        /// Gets or sets the request Id.
+        /// </summary>
         public string? RequestId { get; set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        /// <summary>
+        /// Gets a value indicating whether or not to show the request Id.
+        /// </summary>
+        public bool ShowRequestId => !string.IsNullOrEmpty(this.RequestId);
     }
 }

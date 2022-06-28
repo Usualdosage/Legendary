@@ -1,9 +1,10 @@
-﻿// <copyright file="Communicator.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Communicator.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Engine
@@ -41,7 +42,7 @@ namespace Legendary.Engine
         private readonly IRandom random;
         private IEnvironment? environment;
         private KeyValuePair<string, UserData> connectedUser;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
         /// </summary>
@@ -72,17 +73,20 @@ namespace Legendary.Engine
                     new CommChannel("newbie", false),
                 };
 
-            this.engine.Tick += Engine_Tick;
-            this.engine.VioTick += Engine_VioTick;
+            this.engine.Tick += this.Engine_Tick;
+            this.engine.VioTick += this.Engine_VioTick;
         }
-
-        /// <inheritdoc/>
-        public IProcessor Processor { get { return processor; } }
 
         /// <summary>
         /// Gets a concurrent dictionary of all currently connected sockets.
         /// </summary>
         public static ConcurrentDictionary<string, UserData>? Users { get; private set; } = new ConcurrentDictionary<string, UserData>();
+
+        /// <inheritdoc/>
+        public IProcessor Processor
+        {
+            get { return this.processor; }
+        }
 
         /// <summary>
         /// Gets the communication channels.
@@ -108,7 +112,7 @@ namespace Legendary.Engine
                 var ip = context.Request.HttpContext.Connection.RemoteIpAddress;
                 string? user = context.User.Identity?.Name;
 
-                // Load the character by name 
+                // Load the character by name.
                 var character = await this.dataService.FindCharacter(c => c.FirstName == user);
 
                 if (character == null)
@@ -134,7 +138,7 @@ namespace Legendary.Engine
                 this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
 
                 // Update the user metrics
-                await UpdateMetrics(userData, ip.ToString());
+                await this.UpdateMetrics(userData, ip.ToString());
 
                 // Display the welcome content
                 await this.ShowWelcomeScreen(userData);
@@ -238,7 +242,6 @@ namespace Legendary.Engine
             return CommResult.NotConnected;
         }
 
-
         /// <inheritdoc/>
         public async Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken ct = default)
         {
@@ -341,7 +344,7 @@ namespace Legendary.Engine
         /// <summary>
         /// Updates the user's metrics on login.
         /// </summary>
-        /// <param name="user">The user to update.</param>
+        /// <param name="userData">The user to update.</param>
         /// <param name="ipAddress">The remote IP address.</param>
         /// <returns>Task.</returns>
         private async Task UpdateMetrics(UserData userData, string ipAddress)
@@ -376,7 +379,7 @@ namespace Legendary.Engine
         /// <param name="e">The event args.</param>
         private async void Engine_VioTick(object? sender, EventArgs e)
         {
-            var engineEventArgs = (EngineEventArgs)e;
+            // var engineEventArgs = (EngineEventArgs)e;
 
             // TODO: Handle combat here.
         }
@@ -402,7 +405,7 @@ namespace Legendary.Engine
                     await this.processor.ShowPlayerInfo(this.connectedUser.Value);
 
                     // Autosave the user each tick.
-                    await SaveCharacter(this.connectedUser.Value);
+                    await this.SaveCharacter(this.connectedUser.Value);
                 }
             }
             catch (Exception)
@@ -487,6 +490,3 @@ namespace Legendary.Engine
         }
     }
 }
-
-
-

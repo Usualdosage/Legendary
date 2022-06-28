@@ -1,20 +1,20 @@
-﻿// <copyright file="DataService.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="DataService.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Data
 {
     using System;
-    using Legendary.Core.Contracts;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
     using MongoDB.Driver;
-    using System.Threading.Tasks;
-    using System.Linq.Expressions;
 
     /// <summary>
     /// Concrete implementation of an IDataService.
@@ -22,16 +22,13 @@ namespace Legendary.Data
     public class DataService : IDataService
     {
         private readonly IDBConnection dbConnection;
-        private readonly IApiClient apiClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService"/> class.
         /// </summary>
         /// <param name="dbConnection">The database connection.</param>
-        /// <param name="apiClient">The API client.</param>
-        public DataService(IDBConnection dbConnection, IApiClient apiClient)
+        public DataService(IDBConnection dbConnection)
         {
-            this.apiClient = apiClient;
             this.dbConnection = dbConnection;
         }
 
@@ -53,7 +50,7 @@ namespace Legendary.Data
 
                 if (areas != null && characters != null && items != null && mobiles != null)
                 {
-                    return new World(areas, characters, items, mobiles, this.apiClient);
+                    return new World(areas, characters, items, mobiles);
                 }
                 else
                 {
@@ -71,7 +68,14 @@ namespace Legendary.Data
         {
             var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
             FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == character.CharacterId);
-            return await characters.ReplaceOneAsync(charToReplace, character);
+            if (characters != null)
+            {
+                return await characters.ReplaceOneAsync(charToReplace, character);
+            }
+            else
+            {
+                throw new Exception("No characters to replace!");
+            }
         }
 
         /// <inheritdoc/>
@@ -88,7 +92,7 @@ namespace Legendary.Data
             catch (Exception exc)
             {
                 throw new Exception($"Unable to connect to the database. {exc}");
-            }           
+            }
         }
 
         /// <inheritdoc/>
@@ -107,7 +111,7 @@ namespace Legendary.Data
                 Movement = new Core.Types.MaxCurrent(30, 30),
                 IsNPC = false,
                 Level = 1,
-                Location = Room.Default
+                Location = Room.Default,
             };
 
             if (characters != null)
@@ -120,6 +124,5 @@ namespace Legendary.Data
                 throw new Exception("Unable to create character.");
             }
         }
-
     }
 }
