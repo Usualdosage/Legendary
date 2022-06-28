@@ -123,26 +123,26 @@ namespace Legendary.Engine.Contracts
         /// <summary>
         /// Add a user to the specified channel (by name).
         /// </summary>
-        /// <param name="channelName"></param>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
+        /// <param name="channelName">The channel name.</param>
+        /// <param name="socketId">The socket Id.</param>
+        /// <param name="user">The user.</param>
         void AddToChannel(string channelName, string socketId, UserData user);
 
         /// <summary>
         /// Remove the user from the channel.
         /// </summary>
-        /// <param name="channelName"></param>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
+        /// <param name="channelName">The channel name.</param>
+        /// <param name="socketId">The socket Id.</param>
+        /// <param name="user">The user.</param>
         void RemoveFromChannel(string channelName, string socketId, UserData user);
 
         /// <summary>
         /// Check if a user is subscribed to a channel.
         /// </summary>
-        /// <param name="channelName"></param>
-        /// <param name="socketId"></param>
-        /// <param name="user"></param>
-        /// <returns></returns>
+        /// <param name="channelName">The channel name.</param>
+        /// <param name="socketId">The socket Id.</param>
+        /// <param name="user">The user.</param>
+        /// <returns>True if subscribed.</returns>
         bool IsSubscribed(string channelName, string socketId, UserData user);
     }
 }

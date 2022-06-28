@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contracts\" />
-    <Folder Include="Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="Types\" />
     <Folder Include="Models\Skills\" />

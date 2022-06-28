@@ -10,3 +10,4 @@ obj/
 /.vs/VSWorkspaceState.json
 *.user
 .DS_Store
+sqlnx.sqlite
