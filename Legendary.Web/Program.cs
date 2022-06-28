@@ -1,9 +1,5 @@
-﻿// <copyright file="Program.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Program.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Legendary.Web
@@ -17,19 +13,25 @@ namespace Legendary.Web
     /// </summary>
     public class Program
     {
+        /// <summary>
+        /// The main entry point of the application.
+        /// </summary>
+        /// <param name="args">Command line args.</param>
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
         }
 
+        /// <summary>
+        /// Creates the host builder and initializes the startup.
+        /// </summary>
+        /// <param name="args">Command line args.</param>
+        /// <returns>IHostBuilder.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
     }
 }
-
-

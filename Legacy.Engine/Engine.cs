@@ -1,9 +1,10 @@
-﻿// <copyright file="Engine.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Engine.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Engine
@@ -23,15 +24,16 @@ namespace Legendary.Engine
         private readonly IWorld world;
         private int gameTicks = 0;
         private int gameHour = 0;
-        private int saveGame = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Engine"/> class.
         /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="world">The world.</param>
         public Engine(ILogger logger, IWorld world)
         {
-            this.logger = logger;
-            this.world = world;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.world = world ?? throw new ArgumentNullException(nameof(world));
 
             Task.Run(async () => await this.Initialize());
         }
@@ -53,9 +55,8 @@ namespace Legendary.Engine
 
             this.logger.Info("Starting main loop...");
             var timer = new System.Threading.Timer(
-                async
                 t =>
-                {                    
+                {
                     this.gameTicks++;
 
                     this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
@@ -72,7 +73,6 @@ namespace Legendary.Engine
                         this.gameTicks = 0;
 
                         this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
-                  
                     }
                 },
                 null,
@@ -87,7 +87,7 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnTick(object sender, EngineEventArgs e)
         {
-            this.RestoreUsers();
+            RestoreUsers();
             EventHandler? handler = this.Tick;
             handler?.Invoke(sender, e);
         }
@@ -117,25 +117,21 @@ namespace Legendary.Engine
         /// <summary>
         /// Each tick, restores various attributes of each user.
         /// </summary>
-        private void RestoreUsers()
+        private static void RestoreUsers()
         {
             if (Communicator.Users != null)
             {
                 foreach (var user in Communicator.Users)
                 {
                     // TODO: If user is resting, or sleeping, restore more/faster.
-
                     var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, 20);
                     user.Value.Character.Movement.Current += moveRestore;
 
                     // This will update on tick, by the communicator.
 
-                    // TODO: Implement spell effects wearing off (e.g. poison)                    
+                    // TODO: Implement spell effects wearing off (e.g. poison)
                 }
             }
         }
     }
 }
-
-
-

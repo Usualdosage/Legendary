@@ -1,9 +1,5 @@
-﻿// <copyright file="HomeController.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="HomeController.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Legendary.Web.Controllers
@@ -29,7 +25,7 @@ namespace Legendary.Web.Controllers
         private readonly ILogger<HomeController> logger;
         private readonly IDataService dataService;
         private readonly IBuildSettings buildSettings;
-       
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
@@ -50,13 +46,14 @@ namespace Legendary.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return this.View("Login", new LoginModel("", this.buildSettings));
+            return this.View("Login", new LoginModel(string.Empty, this.buildSettings));
         }
 
         /// <summary>
         /// Displays the login page.
         /// </summary>
         /// <returns>IActionResult.</returns>
+        /// <param name="model">The login model.</param>
         [HttpGet]
         public IActionResult Login(LoginModel model)
         {
@@ -81,6 +78,7 @@ namespace Legendary.Web.Controllers
         /// <summary>
         /// Displays the create user page.
         /// </summary>
+        /// <param name="message">The create message.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult CreateUser(string message)
@@ -91,6 +89,9 @@ namespace Legendary.Web.Controllers
         /// <summary>
         /// Creates a character.
         /// </summary>
+        /// <param name="firstName">The first name.</param>
+        /// <param name="lastName">The last name.</param>
+        /// <param name="password">The password.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> CreateCharacter(string firstName, string lastName, string password)
@@ -106,7 +107,7 @@ namespace Legendary.Web.Controllers
             if (character == null)
             {
                 var pwHash = Engine.Crypt.ComputeSha256Hash(password);
-                await this.dataService.CreateCharacter(firstName, lastName, pwHash);                
+                await this.dataService.CreateCharacter(firstName, lastName, pwHash);
                 return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
             }
             else
@@ -119,13 +120,14 @@ namespace Legendary.Web.Controllers
         /// Posts login information to the home page, and handles authentication.
         /// </summary>
         /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> Index(string username, string password)
         {
-            var ipAddress = Request.Host.ToString();
+            var ipAddress = this.Request.Host.ToString();
 
-            logger.LogInformation($"{username} is attempting to login from {ipAddress}...");
+            this.logger.LogInformation("{username} is attempting to login from {ipAddress}...", username, ipAddress);
 
             var userModel = new UserModel(username, password);
 
@@ -133,7 +135,7 @@ namespace Legendary.Web.Controllers
 
             if (dbUser == null)
             {
-                logger.LogWarning($"{username} is not an existing character. Redirecting to login.");
+                this.logger.LogWarning("{username} is not an existing character. Redirecting to login.", username);
                 return this.View("Login", new LoginModel("That character does not exist. You should create one!", this.buildSettings));
             }
 
@@ -141,7 +143,7 @@ namespace Legendary.Web.Controllers
 
             if (pwHash != dbUser.Password)
             {
-                logger.LogWarning($"{username} provided an invalid password. Redirecting to login.");
+                this.logger.LogWarning("{username} provided an invalid password. Redirecting to login.", username);
                 return this.View("Login", new LoginModel("Invalid password. Try again.", this.buildSettings));
             }
             else
@@ -162,7 +164,7 @@ namespace Legendary.Web.Controllers
 
                 await this.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                logger.LogInformation($"{username} is logging in from {ipAddress}...");
+                this.logger.LogInformation("{username} is logging in from {ipAddress}...", username, ipAddress);
 
                 return this.View("Index", userModel);
             }
@@ -176,6 +178,6 @@ namespace Legendary.Web.Controllers
         public IActionResult Error()
         {
             return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
-        }        
+        }
     }
 }

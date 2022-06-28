@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -15,8 +16,12 @@
     <None Remove="Contracts\" />
     <None Remove="RestSharp" />
     <None Remove="StyleCop.Analyzers" />
+    <None Remove="stylecop.json" />
     <None Remove="StyleCop.MSBuild" />
     <None Remove="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Contracts\" />
@@ -27,5 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="108.0.1" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

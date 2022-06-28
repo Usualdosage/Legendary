@@ -1,9 +1,10 @@
-﻿// <copyright file="World.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="World.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Models
@@ -25,7 +26,6 @@ namespace Legendary.Core.Models
         private readonly IMongoCollection<Character> characters;
         private readonly IMongoCollection<Item> items;
         private readonly IMongoCollection<Mobile> mobiles;
-        private readonly IApiClient apiClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
@@ -33,14 +33,13 @@ namespace Legendary.Core.Models
         /// <param name="areas">The areas within the world.</param>
         /// <param name="characters">The characters.</param>
         /// <param name="items">The items.</param>
-        /// <param name="apiClient">The API client.</param>
-        public World(IMongoCollection<Area> areas, IMongoCollection<Character> characters, IMongoCollection<Item> items, IMongoCollection<Mobile> mobiles, IApiClient apiClient)
+        /// <param name="mobiles">The mobs.</param>
+        public World(IMongoCollection<Area> areas, IMongoCollection<Character> characters, IMongoCollection<Item> items, IMongoCollection<Mobile> mobiles)
         {
             this.areas = areas;
             this.characters = characters;
             this.items = items;
             this.mobiles = mobiles;
-            this.apiClient = apiClient;
 
             this.Areas = new HashSet<Area>(this.GetAllAreas());
             this.Items = new HashSet<Item>(this.GetAllItems());
@@ -66,11 +65,6 @@ namespace Legendary.Core.Models
 
         /// <inheritdoc/>
         public HashSet<Mobile> Mobiles { get; private set; }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-        }
 
         /// <inheritdoc/>
         public async Task Populate()
@@ -229,7 +223,7 @@ namespace Legendary.Core.Models
                 replacement,
                 options,
                 cancellationToken);
-        }        
+        }
 
         /// <summary>
         /// Reload the in-memory collections from the database.
@@ -241,6 +235,3 @@ namespace Legendary.Core.Models
         }
     }
 }
-
-
-

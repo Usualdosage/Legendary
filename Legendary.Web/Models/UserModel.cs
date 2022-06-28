@@ -1,23 +1,33 @@
-﻿// <copyright file="UserModel.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="UserModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Legendary.Web.Models
 {
+    /// <summary>
+    /// Represents a user forthe purpose of login.
+    /// </summary>
     public class UserModel
     {
-        public string UserName { get; private set; }
-
-        public string Password { get; private set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserModel"/> class.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
         public UserModel(string username, string password)
         {
             this.UserName = username;
             this.Password = password;
         }
+
+        /// <summary>
+        /// Gets the username.
+        /// </summary>
+        public string UserName { get; private set; }
+
+        /// <summary>
+        /// Gets the password.
+        /// </summary>
+        public string Password { get; private set; }
     }
 }
