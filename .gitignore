@@ -8,3 +8,5 @@ obj/
 /.vs/Legendary_MUD/project-colors.json
 /.vs/slnx.sqlite~Stashed changes
 /.vs/VSWorkspaceState.json
+*.user
+.DS_Store

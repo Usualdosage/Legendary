@@ -1,9 +1,10 @@
-﻿// <copyright file="IWorld.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="IWorld.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Contracts
@@ -19,7 +20,7 @@ namespace Legendary.Core.Contracts
     /// <summary>
     /// Represents the world, as defined by its sub objects.
     /// </summary>
-    public interface IWorld : IDisposable
+    public interface IWorld
     {
         /// <summary>
         /// Gets a hashset of areas currently loaded into memory.
@@ -44,6 +45,16 @@ namespace Legendary.Core.Contracts
         /// <returns>The existing area or null.</returns>
         Task<Area?> FindArea(
             Expression<Func<Area, bool>> filter,
+            FindOptions? options = null);
+
+        /// <summary>
+        /// Finds a mobile using the given expression.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="options">The options.</param>
+        /// <returns>A mobile or null.</returns>
+        Task<Mobile?> FindMobile(
+            Expression<Func<Mobile, bool>> filter,
             FindOptions? options = null);
 
         /// <summary>
@@ -177,6 +188,3 @@ namespace Legendary.Core.Contracts
         Task Populate();
     }
 }
-
-
-

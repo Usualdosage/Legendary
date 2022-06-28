@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Legendary™",
+      "copyrightText": " Copyright ©{copyrightYear} {creator}.\n Use, reuse, and/or modification of this software requires\n adherence to the included license file at\n {license}.\n Registered work by {url}.\n This header must remain on all derived works.",
+      "variables": {
+        "copyrightYear": "2021-2022",
+        "url": "https://www.thelegendarygame.com",
+        "license": "https://github.com/Usualdosage/Legendary",
+        "creator": "Legendary and Matthew Martin (Crypticant)"
+      }
+    }
+  },
+  "dictionary": {
+
+  }
+}

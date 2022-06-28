@@ -1,9 +1,10 @@
-﻿// <copyright file="Processor.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Processor.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Engine
@@ -42,7 +43,9 @@ namespace Legendary.Engine
             this.world = world;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets the world.
+        /// </summary>
         public IWorld World
         {
             get
@@ -77,11 +80,10 @@ namespace Legendary.Engine
                 var command = args[0].ToLower();
 
                 // Check skills first and foremost.
-
                 if (user.Character.HasSkill(command))
                 {
                     var skill = user.Character.GetSkill(command);
-                    
+
                     if (skill != null)
                     {
                         var targetName = args.Length > 1 ? args[1] : string.Empty;
@@ -94,7 +96,6 @@ namespace Legendary.Engine
                 }
                 else
                 {
-
                     // Not a skill, so parse the command.
                     switch (command)
                     {
@@ -103,6 +104,7 @@ namespace Legendary.Engine
                                 await this.communicator.SendToPlayer(user.Connection, "Unknown command.");
                                 break;
                             }
+
                         case "cast":
                             {
                                 if (args.Length < 2)
@@ -115,6 +117,7 @@ namespace Legendary.Engine
                                     break;
                                 }
                             }
+
                         case "drop":
                             {
                                 if (args.Length < 2)
@@ -264,6 +267,7 @@ namespace Legendary.Engine
                                 await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} says \"<span class='say'>{sentence}</span>\"");
                                 break;
                             }
+
                         case "sc":
                         case "sco":
                         case "scor":
@@ -272,6 +276,7 @@ namespace Legendary.Engine
                                 await this.ShowPlayerScore(user);
                                 break;
                             }
+
                         case "skill":
                         case "skills":
                             {
@@ -293,6 +298,7 @@ namespace Legendary.Engine
                                 await this.communicator.SendToPlayer(user.Connection, builder.ToString());
                                 break;
                             }
+
                         case "spell":
                         case "spells":
                             {
@@ -314,6 +320,7 @@ namespace Legendary.Engine
                                 await this.communicator.SendToPlayer(user.Connection, builder.ToString());
                                 break;
                             }
+
                         case "sub":
                         case "subscribe":
                             {
@@ -433,7 +440,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         public async Task ShowPlayerInfo(UserData user)
         {
-            StringBuilder sb = new();
+            StringBuilder sb = new ();
 
             sb.Append("<div class='player-info'><table><tr><td colspan='2'>");
             sb.Append($"<span class='player-title'>{user.Character.FirstName} {user.Character.LastName}</span></td></tr>");
@@ -489,7 +496,7 @@ namespace Legendary.Engine
         /// <summary>
         /// Moves the player to the specified room.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Task.</returns>
         private async Task GotoRoom(UserData user, string room)
         {
             if (long.TryParse(room, out long roomId))
@@ -498,7 +505,9 @@ namespace Legendary.Engine
                 {
                     var targetRoom = area.Rooms.FirstOrDefault(r => r.RoomId == roomId);
                     if (targetRoom == null)
+                    {
                         continue;
+                    }
                     else
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.");
@@ -506,7 +515,7 @@ namespace Legendary.Engine
                         user.Character.Location = targetRoom;
                         this.communicator.SendToServer(user, "look");
                     }
-                }                
+                }
             }
         }
 
@@ -526,7 +535,7 @@ namespace Legendary.Engine
                 {
                     if (target.ToLower() == "all")
                     {
-                        List<Item> itemsToRemove = new();
+                        List<Item> itemsToRemove = new ();
 
                         if (room.Items == null || room.Items.Count == 0)
                         {
@@ -558,7 +567,7 @@ namespace Legendary.Engine
                             return;
                         }
 
-                        List<Item> itemsToRemove = new();
+                        List<Item> itemsToRemove = new ();
 
                         var count = 0;
 
@@ -604,7 +613,7 @@ namespace Legendary.Engine
                 {
                     if (target.ToLower() == "all")
                     {
-                        List<Item> itemsToRemove = new();
+                        List<Item> itemsToRemove = new ();
 
                         if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
                         {
@@ -636,7 +645,7 @@ namespace Legendary.Engine
                             return;
                         }
 
-                        List<Item> itemsToRemove = new();
+                        List<Item> itemsToRemove = new ();
 
                         var count = 0;
 
@@ -777,7 +786,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ShowPlayerScore(UserData user)
         {
-            StringBuilder sb = new();
+            StringBuilder sb = new ();
 
             string homeTown = user.Character.Home?.Name ?? "nowhere";
 
@@ -826,7 +835,7 @@ namespace Legendary.Engine
                 return;
             }
 
-            StringBuilder sb = new();
+            StringBuilder sb = new ();
 
             var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
 
@@ -907,6 +916,3 @@ namespace Legendary.Engine
         }
     }
 }
-
-
-

@@ -1,93 +1,92 @@
-﻿
-// <copyright file="Race.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Race.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Types
 {
-	/// <summary>
+    /// <summary>
     /// Defines the race of the player.
     /// </summary>
-	public enum Race
-	{
-		/// <summary>
+    public enum Race
+    {
+        /// <summary>
         /// Human.
         /// </summary>
-		Human = 0,
+        Human = 0,
 
-		/// <summary>
+        /// <summary>
         /// Elf.
         /// </summary>
-		Elf = 1,
+        Elf = 1,
 
-		/// <summary>
+        /// <summary>
         /// Dwarf.
         /// </summary>
-		Dwarf = 2,
+        Dwarf = 2,
 
-		/// <summary>
+        /// <summary>
         /// Half-Elf.
         /// </summary>
-		HalfElf = 3,
+        HalfElf = 3,
 
-		/// <summary>
+        /// <summary>
         /// Half-Orc.
         /// </summary>
-		HalfOrc = 4,
+        HalfOrc = 4,
 
-		/// <summary>
+        /// <summary>
         /// Gnome.
         /// </summary>
-		Gnome = 5,
+        Gnome = 5,
 
-		/// <summary>
+        /// <summary>
         /// Avian.
         /// </summary>
-		Avian = 6,
+        Avian = 6,
 
-		/// <summary>
+        /// <summary>
         /// Stone giant.
         /// </summary>
-		StoneGiant = 7,
+        StoneGiant = 7,
 
-		/// <summary>
+        /// <summary>
         /// Storm giant.
         /// </summary>
-		StormGiant = 8,
+        StormGiant = 8,
 
-		/// <summary>
+        /// <summary>
         /// Fire giant.
         /// </summary>
-		FireGiant = 9,
+        FireGiant = 9,
 
-		/// <summary>
+        /// <summary>
         /// Drow.
         /// </summary>
-		Drow = 10,
+        Drow = 10,
 
-		/// <summary>
+        /// <summary>
         /// Duergar.
         /// </summary>
-		Duergar = 11,
+        Duergar = 11,
 
-		/// <summary>
+        /// <summary>
         /// Halfling.
         /// </summary>
-		Halfling = 12,
+        Halfling = 12,
 
-		/// <summary>
+        /// <summary>
         /// Faerie.
         /// </summary>
-		Faerie = 13,
+        Faerie = 13,
 
-		/// <summary>
+        /// <summary>
         /// Deity.
         /// </summary>
-		Deity = 14,
-	}
+        Deity = 14,
+    }
 }
-

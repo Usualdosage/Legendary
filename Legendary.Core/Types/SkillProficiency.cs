@@ -1,22 +1,31 @@
-﻿// <copyright file="ISkill.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="SkillProficiency.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Types
 {
     using Legendary.Core.Contracts;
 
+    /// <summary>
+    /// Represent's a player's skill proficiency.
+    /// </summary>
     public class SkillProficiency
     {
-		public SkillProficiency(ISkill skill, int proficiency)
-		{
-			this.Skill = skill;
-			this.Proficiency = proficiency;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SkillProficiency"/> class.
+        /// </summary>
+        /// <param name="skill">The skill.</param>
+        /// <param name="proficiency">The proficiency.</param>
+        public SkillProficiency(ISkill skill, int proficiency)
+        {
+            this.Skill = skill;
+            this.Proficiency = proficiency;
+        }
 
         /// <summary>
         /// Gets or sets the skill.
@@ -29,4 +38,3 @@ namespace Legendary.Core.Types
         public int Proficiency { get; set; }
     }
 }
-

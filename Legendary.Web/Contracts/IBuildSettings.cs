@@ -1,17 +1,16 @@
-﻿// <copyright file="IBuildSettings.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="IBuildSettings.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Legendary.Web.Contracts
 {
     using System;
 
+    /// <summary>
+    /// Displayed to the end user on the web interface.
+    /// </summary>
     public interface IBuildSettings
-	{
+    {
         /// <summary>
         /// Gets or sets the build version.
         /// </summary>
@@ -23,4 +22,3 @@ namespace Legendary.Web.Contracts
         DateTime? ReleaseDate { get; set; }
     }
 }
-

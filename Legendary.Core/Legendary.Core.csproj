@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -14,9 +15,13 @@
   <ItemGroup>
     <None Remove="Models\" />
     <None Remove="Contracts\" />
+    <None Remove="stylecop.json" />
     <None Remove="Types\" />
     <None Remove="MongoDB.Bson" />
     <None Remove="MongoDB.Driver" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -26,5 +31,9 @@
   <ItemGroup>
     <PackageReference Include="MongoDB.Bson" Version="2.16.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.16.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

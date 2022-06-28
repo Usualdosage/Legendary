@@ -1,9 +1,5 @@
-﻿// <copyright file="DataService.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="Startup.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace Legendary.Web
@@ -29,16 +25,29 @@ namespace Legendary.Web
     using Microsoft.Extensions.Options;
     using MongoDB.Bson.Serialization;
 
+    /// <summary>
+    /// Main entry point.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration">IConfiguration object.</param>
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        /// <summary>
+        /// Gets the IConfiguration interface.
+        /// </summary>
+        public IConfiguration Configuration { get; private set; }
 
-        // Use this method to add services to the container.  
+        /// <summary>
+        /// Adds services to the dependency injection container.
+        /// </summary>
+        /// <param name="services">IServiceCollection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             // Add services to the container.
@@ -73,8 +82,8 @@ namespace Legendary.Web
                 .AddCookie();
 
             // Register skills and spells.
-            ConfigureSkills();
-            ConfigureSpells();
+            this.ConfigureSkills();
+            this.ConfigureSpells();
         }
 
         /// <summary>
@@ -82,7 +91,8 @@ namespace Legendary.Web
         /// </summary>
         public void ConfigureSkills()
         {
-            BsonClassMap.RegisterClassMap<Skill>(cm => {
+            BsonClassMap.RegisterClassMap<Skill>(cm =>
+            {
                 cm.AutoMap();
                 cm.SetIsRootClass(true);
             });
@@ -95,18 +105,23 @@ namespace Legendary.Web
         /// </summary>
         public void ConfigureSpells()
         {
-            BsonClassMap.RegisterClassMap<Spell>(cm => {
+            BsonClassMap.RegisterClassMap<Spell>(cm =>
+            {
                 cm.AutoMap();
                 cm.SetIsRootClass(true);
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">The application builder.</param>
+        /// <param name="env">The hosting environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
 
-            //app.UseExceptionHandler("/Home/Error");
+            // app.UseExceptionHandler("/Home/Error");
 
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
