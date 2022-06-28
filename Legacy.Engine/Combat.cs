@@ -108,13 +108,13 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="target">The target.</param>
         /// <param name="action">The action.</param>
-        public void ApplyEffect(UserData target, IAction action)
+        public void ApplyAffect(UserData target, IAction action)
         {
             bool hasEffect = target.Character.AffectedBy.Any(a => a.Key == action);
 
-            if (!hasEffect)
+            if (!hasEffect && action.AffectDuration.HasValue)
             {
-                target.Character.AffectedBy.Add(action, action.AffectDuration);
+                target.Character.AffectedBy.Add(action, action.AffectDuration.Value);
             }
         }
     }
