@@ -21,7 +21,7 @@ namespace Legendary.Core.Types
         /// </summary>
         /// <param name="skill">The skill.</param>
         /// <param name="proficiency">The proficiency.</param>
-        public SkillProficiency(ISkill skill, int proficiency)
+        public SkillProficiency(IAction skill, int proficiency)
         {
             this.Skill = skill;
             this.Proficiency = proficiency;
@@ -30,7 +30,7 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Gets or sets the skill.
         /// </summary>
-        public ISkill Skill { get; set; }
+        public IAction Skill { get; set; }
 
         /// <summary>
         /// Gets or sets the skill proficiency.

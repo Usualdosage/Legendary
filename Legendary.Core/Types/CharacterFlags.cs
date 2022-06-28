@@ -43,5 +43,10 @@ namespace Legendary.Core.Types
         /// Character is dead.
         /// </summary>
         Dead = 5,
+
+        /// <summary>
+        /// Character is a ghost.
+        /// </summary>
+        Ghost = 6,
     }
 }

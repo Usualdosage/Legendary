@@ -30,12 +30,20 @@ namespace Legendary.Engine.Models.Skills
         /// <inheritdoc/>
         public override void Act(UserData actor, UserData? target)
         {
-            this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.");
-            this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.");
+            this.PreAction = new System.Action(() =>
+            {
+                this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.");
+                this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.");
+            });
 
+            this.PostAction = new System.Action(() =>
+            {
+                this.Communicator.SendToServer(actor, "look");
+            });
+
+            this.PreAction?.Invoke();
             actor.Character.Location = actor.Character.Home ?? Room.Default;
-
-            this.Communicator.SendToServer(actor, "look");
+            this.PostAction?.Invoke();
         }
     }
 }

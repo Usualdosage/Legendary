@@ -21,7 +21,7 @@ namespace Legendary.Core.Types
         /// </summary>
         /// <param name="spell">The spell.</param>
         /// <param name="proficiency">The proficiency percentage.</param>
-        public SpellProficiency(ISpell spell, int proficiency)
+        public SpellProficiency(IAction spell, int proficiency)
         {
             this.Spell = spell;
             this.Proficiency = proficiency;
@@ -30,7 +30,7 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Gets or sets the Spell.
         /// </summary>
-        public ISpell Spell { get; set; }
+        public IAction Spell { get; set; }
 
         /// <summary>
         /// Gets or sets the Spell proficiency.

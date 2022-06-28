@@ -9,14 +9,16 @@
 
 namespace Legendary.Engine.Models
 {
+    using System;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Abstract implementation of an ISpell contract.
     /// </summary>
-    public abstract class Spell : ISpell
+    public abstract class Spell : IAction
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Spell"/> class.
@@ -33,7 +35,22 @@ namespace Legendary.Engine.Models
         public ICommunicator Communicator { get; private set; }
 
         /// <inheritdoc/>
+        public ActionType ActionType => ActionType.Spell;
+
+        /// <inheritdoc/>
         public string? Name { get; set; }
+
+        /// <inheritdoc/>
+        public Action? PreAction { get; set; }
+
+        /// <inheritdoc/>
+        public Action? PostAction { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsAffect { get; set; }
+
+        /// <inheritdoc/>
+        public int? AffectDuration { get; set; }
 
         /// <inheritdoc/>
         public abstract void Act(UserData actor, UserData? target);
