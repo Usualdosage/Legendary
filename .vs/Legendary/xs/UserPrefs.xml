@@ -2,31 +2,54 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processor.cs">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Models/Spells/Fireball.cs">
     <Files>
-      <File FileName="Legendary.Networking/ApiClient.cs" Line="67" Column="10" />
-      <File FileName="Legendary.Web/Startup.cs" Line="60" Column="113" />
-      <File FileName="Legendary.Core/Models/World.cs" Line="258" Column="49" />
-      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" Line="13" Column="54" />
-      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="12" Column="80" />
-      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="19" Column="114" />
-      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="21" Column="27" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="15" Column="36" />
-      <File FileName="Legendary.Networking/Contracts/IServerSettings.cs" Line="25" Column="6" />
-      <File FileName="Legendary.Core/Models/Skills/Recall.cs" Line="17" Column="49" />
-      <File FileName="Legendary.Core/Models/Skill.cs" Line="16" Column="1" />
-      <File FileName="Legendary.Core/Models/Spell.cs" Line="17" Column="42" />
-      <File FileName="Legendary.Core/Models/UserData.cs" Line="18" Column="6" />
-      <File FileName="Legacy.Engine/Environment.cs" Line="22" Column="1" />
-      <File FileName="Legacy.Engine/Contracts/IProcessor.cs" Line="35" Column="6" />
-      <File FileName="Legacy.Engine/Processor.cs" Line="45" Column="28" />
+      <File FileName="Legendary.Core/Types/Metrics.cs" Line="57" Column="35" />
+      <File FileName="Legendary.Web/Program.cs" Line="21" Column="10" />
+      <File FileName="Legendary.Web/Startup.cs" Line="90" Column="53" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="225" Column="96" />
+      <File FileName="Legacy.Engine/Processor.cs" Line="95" Column="32" />
+      <File FileName="Legendary.Core/Contracts/ISkill.cs" Line="22" Column="106" />
+      <File FileName="Legacy.Engine/Models/Skill.cs" Line="15" Column="38" />
+      <File FileName="Legacy.Engine/Models/Spells/Fireball.cs" Line="22" Column="24" />
+      <File FileName="Legacy.Engine/Models/Skills/Recall.cs" Line="21" Column="10" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Engine" expanded="True" />
-            <Node name="Legendary.Web" expanded="True" />
+            <Node name="Legendary.Core" expanded="True">
+              <Node name="Contracts" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Types" expanded="True" />
+            </Node>
+            <Node name="Legendary.Data" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
+            <Node name="Legendary.Engine" expanded="True">
+              <Node name="Contracts" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="Skills" expanded="True" />
+                <Node name="Spells" expanded="True" />
+              </Node>
+              <Node name="Types" expanded="True" />
+            </Node>
+            <Node name="Legendary.Networking" expanded="True">
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="Legendary.Web" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Content" expanded="True" />
+                <Node name="Home" expanded="True" />
+              </Node>
+              <Node name="wwwroot" expanded="True">
+                <Node name="css" expanded="True" />
+                <Node name="js" expanded="True" />
+              </Node>
+            </Node>
           </Node>
         </State>
       </Pad>
@@ -36,7 +59,5 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

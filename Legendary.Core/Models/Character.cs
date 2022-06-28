@@ -123,27 +123,27 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's strength.
         /// </summary>
-        public int Str { get; set; } = 12;
+        public int Str { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the player's intelligence.
         /// </summary>
-        public int Int { get; set; } = 12;
+        public int Int { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the player's wisdom.
         /// </summary>
-        public int Wis { get; set; } = 12;
+        public int Wis { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the player's dexterity.
         /// </summary>
-        public int Dex { get; set; } = 12;
+        public int Dex { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the player's constitution.
         /// </summary>
-        public int Con { get; set; } = 12;
+        public int Con { get; set; } = 10;
 
         /// <summary>
         /// Gets or sets the alignment.
@@ -181,9 +181,15 @@ namespace Legendary.Core.Models
         public Metrics Metrics { get; set; } = new Metrics();
 
         /// <summary>
+<<<<<<< HEAD
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.
         /// </summary>
         public IDictionary<IAction, int> AffectedBy { get; set; } = new Dictionary<IAction, int>();
+=======
+        /// Gets or sets the player's saving spells.
+        /// </summary>
+        public Saves Saves { get; set; } = new Saves();
+>>>>>>> 4e33d3b (Checkpoint.)
 
         /// <summary>
         /// Indicates whether the player has a given skill.

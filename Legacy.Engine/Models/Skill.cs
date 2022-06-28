@@ -9,7 +9,12 @@
 
 namespace Legendary.Engine.Models
 {
+<<<<<<< HEAD
     using System;
+=======
+    using System.Threading;
+    using System.Threading.Tasks;
+>>>>>>> 4e33d3b (Checkpoint.)
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -29,10 +34,14 @@ namespace Legendary.Engine.Models
             this.Communicator = communicator;
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Gets the communicator.
         /// </summary>
         public ICommunicator Communicator { get; private set; }
+=======
+        public abstract Task Act(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+>>>>>>> 4e33d3b (Checkpoint.)
 
         /// <inheritdoc/>
         public string? Name { get; set; }

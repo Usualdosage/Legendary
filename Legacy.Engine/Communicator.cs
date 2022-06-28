@@ -26,7 +26,6 @@ namespace Legendary.Engine
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Http;
-    using MongoDB.Bson.Serialization;
 
     /// <summary>
     /// Handles communication between the engine and connected sockets.
@@ -34,6 +33,7 @@ namespace Legendary.Engine
     public class Communicator : ICommunicator, IDisposable
     {
         private readonly RequestDelegate requestDelegate;
+        private readonly LanguageGenerator languageGenerator;
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
         private readonly IDataService dataService;
@@ -69,12 +69,21 @@ namespace Legendary.Engine
             // Add public channels.
             this.Channels = new List<CommChannel>()
                 {
-                    new CommChannel("pray", false),
-                    new CommChannel("newbie", false),
+                    new CommChannel("pray", false, true),
+                    new CommChannel("newbie", false, true),
+                    new CommChannel("wiznet", true, false),
                 };
 
+<<<<<<< HEAD
             this.engine.Tick += this.Engine_Tick;
             this.engine.VioTick += this.Engine_VioTick;
+=======
+            // Create the language generator.
+            this.languageGenerator = new LanguageGenerator(random);
+
+            this.engine.Tick += Engine_Tick;
+            this.engine.VioTick += Engine_VioTick;
+>>>>>>> 4e33d3b (Checkpoint.)
         }
 
         /// <summary>
@@ -117,8 +126,10 @@ namespace Legendary.Engine
 
                 if (character == null)
                 {
-                    this.logger.Warn($"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.");
-                    throw new Exception($"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.");
+                    string message = $"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.";
+                    this.logger.Info(message);
+                    await this.Wizlog(message);
+                    throw new Exception(message);
                 }
 
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
@@ -127,7 +138,9 @@ namespace Legendary.Engine
                 var connectedUser = Users?.FirstOrDefault(u => u.Value.Username == character.FirstName);
                 if (connectedUser?.Value != null)
                 {
-                    this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.");
+                    string message = $"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.";
+                    await this.Wizlog(message, ct);
+                    this.logger.Info(message);
                     await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!");
                     await this.Quit(connectedUser.Value.Value.Connection, connectedUser.Value.Value.Character.FirstName);
                     Users?.TryRemove(connectedUser.Value);
@@ -135,18 +148,25 @@ namespace Legendary.Engine
 
                 Users?.TryAdd(socketId, userData);
 
-                this.logger.Info($"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.");
+                string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
+                await this.Wizlog(msg, ct);
+                this.logger.Info(msg);
 
+<<<<<<< HEAD
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip.ToString());
+=======
+                // Update the user metrics.
+                await UpdateMetrics(userData, ip.ToString());
+>>>>>>> 4e33d3b (Checkpoint.)
 
-                // Display the welcome content
+                // Display the welcome content.
                 await this.ShowWelcomeScreen(userData);
 
-                // Add the user to public channels
+                // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
-                // Force the user to run the look command
+                // Force the user to run the look command.
                 this.SendToServer(userData, "look");
 
                 this.connectedUser = new KeyValuePair<string, UserData>(socketId, userData);
@@ -161,7 +181,7 @@ namespace Legendary.Engine
                         break;
                     }
 
-                    // Handle input from socket
+                    // Handle input from socket.
                     var response = await this.ReceiveStringAsync(userData, ct);
 
                     if (string.IsNullOrEmpty(response))
@@ -175,12 +195,14 @@ namespace Legendary.Engine
                     }
                 }
 
-                // Disconnected, remove the socket & user from the dictionary, remove from channels
+                // Disconnected, remove the socket & user from the dictionary, remove from channels.
                 UserData? dummy = null;
                 Users?.TryRemove(socketId, out dummy);
                 this.RemoveFromChannels(socketId, dummy);
 
-                this.logger.Info($"{DateTime.UtcNow}: {user} {socketId} has disconnected.");
+                string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
+                await this.Wizlog(logout, ct);
+                this.logger.Info(logout);
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
                 currentSocket.Dispose();
@@ -222,7 +244,9 @@ namespace Legendary.Engine
                 Users?.TryRemove(user.Value);
             }
 
-            this.logger.Info($"{DateTime.UtcNow}: {player} has quit.");
+            string message = $"{DateTime.UtcNow}: {player} has quit.";
+            this.logger.Info(message);
+            await this.Wizlog(message, ct);
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
         }
 
@@ -328,6 +352,82 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Add a user to the specified channel (by name).
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
+        public void AddToChannel(string channelName, string socketId, UserData user)
+        {
+            foreach (var channel in this.Channels)
+            {
+                if (channel.Name.ToLower() == channelName && channel.CanUnsubscribe)
+                {
+                    channel.AddUser(socketId, user);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Remove the user from the channel.
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
+        public void RemoveFromChannel(string channelName, string socketId, UserData user)
+        {
+            foreach (var channel in this.Channels)
+            {
+                if (channel.Name.ToLower() == channelName && channel.CanUnsubscribe)
+                {
+                    channel.RemoveUser(socketId);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check if a user is subscribed to a channel.
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public bool IsSubscribed(string channelName, string socketId, UserData user)
+        {
+            foreach (var channel in this.Channels)
+            {
+                if (channel.Name.ToLower() == channelName)
+                {
+                    return channel.Subscribers.Any(u => u.Value == user);
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Logs a message to wiznet.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        protected async Task<CommResult> Wizlog(string message, CancellationToken ct = default)
+        {
+            var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == "wiznet");
+
+            if (comm != null && !comm.IsMuted)
+            {
+                foreach (var sub in comm.Subscribers)
+                {
+                    await this.SendToPlayer(sub.Value.Connection, $"<span class='wizmessage'>{DateTime.UtcNow}: {message}</span>", ct);
+                }
+            }
+
+            return CommResult.Ok;
+        }
+
+        /// <summary>
         /// Raises the InputReceived event.
         /// </summary>
         /// <param name="sender">The sender of the message (userdata).</param>
@@ -361,7 +461,7 @@ namespace Legendary.Engine
             metrics.LastLogin = DateTime.UtcNow;
 
             // Give any user the Recall skill at max percentage if they don't have it.
-            if (!userData.Character.HasSkill("Recall"))
+            if (!userData.Character.HasSkill("recall"))
             {
                 userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this), 100));
             }
@@ -468,14 +568,27 @@ namespace Legendary.Engine
             await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} suddenly appears.", ct);
         }
 
+        /// <summary>
+        /// Adds user to all public channels.
+        /// </summary>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
         private void AddToChannels(string socketId, UserData user)
         {
             foreach (var channel in this.Channels)
             {
-                channel.AddUser(socketId, user);
+                if (channel.IsPublic)
+                {
+                    channel.AddUser(socketId, user);
+                }
             }
         }
 
+        /// <summary>
+        /// Removes user from all public channels.
+        /// </summary>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
         private void RemoveFromChannels(string socketId, UserData? user)
         {
             if (user == null)
