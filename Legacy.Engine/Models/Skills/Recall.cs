@@ -9,6 +9,8 @@
 
 namespace Legendary.Engine.Models.Skills
 {
+    using System.Threading;
+    using System.Threading.Tasks;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
 
@@ -27,6 +29,7 @@ namespace Legendary.Engine.Models.Skills
             this.Name = "Recall";
         }
 
+<<<<<<< HEAD
         /// <inheritdoc/>
         public override void Act(UserData actor, UserData? target)
         {
@@ -35,6 +38,12 @@ namespace Legendary.Engine.Models.Skills
                 this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.");
                 this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.");
             });
+=======
+        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.", cancellationToken);
+>>>>>>> 4e33d3b (Checkpoint.)
 
             this.PostAction = new System.Action(() =>
             {

@@ -293,6 +293,11 @@ progress {
     font-weight: bold;
 }
 
+.wizmessage {
+    color: #666;
+    font-weight: bold;
+}
+
 /* Player Score */
 .player-score {
     border: solid 1px #ccc;

@@ -119,5 +119,30 @@ namespace Legendary.Engine.Contracts
         /// <param name="ct">CancellationToken.</param>
         /// <returns>Task.</returns>
         Task Quit(WebSocket socket, string? player, CancellationToken ct = default);
+
+        /// <summary>
+        /// Add a user to the specified channel (by name).
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
+        void AddToChannel(string channelName, string socketId, UserData user);
+
+        /// <summary>
+        /// Remove the user from the channel.
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
+        void RemoveFromChannel(string channelName, string socketId, UserData user);
+
+        /// <summary>
+        /// Check if a user is subscribed to a channel.
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="socketId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        bool IsSubscribed(string channelName, string socketId, UserData user);
     }
 }

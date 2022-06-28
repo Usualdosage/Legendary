@@ -80,6 +80,13 @@ namespace Legendary.Engine
                 var command = args[0].ToLower();
 
                 // Check skills first and foremost.
+<<<<<<< HEAD
+=======
+
+                // <skill>
+                // <skill> <target>
+
+>>>>>>> 4e33d3b (Checkpoint.)
                 if (user.Character.HasSkill(command))
                 {
                     var skill = user.Character.GetSkill(command);
@@ -91,7 +98,7 @@ namespace Legendary.Engine
                         // We may or may not have a target. The skill will figure that bit out.
                         var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
 
-                        skill.Act(user, target?.Value);
+                        await skill.Act(user, target?.Value);
                     }
                 }
                 else
@@ -114,6 +121,7 @@ namespace Legendary.Engine
                                 }
                                 else
                                 {
+                                    await this.Cast(args, user);
                                     break;
                                 }
                             }
@@ -419,6 +427,23 @@ namespace Legendary.Engine
 
                                 break;
                             }
+                        case "wiznet":
+                            {
+                                // TODO: Check if user is an IMM
+
+                                // Sub/unsub to wiznet channel
+                                if (communicator.IsSubscribed("wiznet", user.ConnectionId, user))
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"Unsubscribed from WIZNET.");
+                                    communicator.RemoveFromChannel("wiznet", user.ConnectionId, user);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(user.Connection, $"Welcome to WIZNET!");
+                                    communicator.AddToChannel("wiznet", user.ConnectionId, user);
+                                }
+                                break;
+                            }
 
                         case "yell":
                             {
@@ -520,6 +545,41 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Casts a spell on a player or target.
+        /// </summary>
+        /// <param name="spell"></param>
+        /// <param name="user"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private async Task Cast(string[] args, UserData user)
+        {
+            // cast <spell>
+            // cast <spell> <target>
+
+            var spellName = args[1].ToLower();
+
+            // Check if the user has the spell.
+            if (user.Character.HasSpell(spellName))
+            {
+                var spell = user.Character.GetSpell(spellName);
+
+                if (spell != null)
+                {
+                    var targetName = args.Length > 1 ? args[1] : string.Empty;
+
+                    // We may or may not have a target. The spell will figure that bit out.
+                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
+
+                    await spell.Cast(user, target?.Value);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(user.Connection, "You don't know how to cast that.");
+            }
+        }
+
+        /// <summary>
         /// Moves an item from a room's resets to a user's inventory.
         /// </summary>
         /// <param name="user">The user.</param>
@@ -527,6 +587,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task GetItem(UserData user, string target)
         {
+            // TODO: This area call is probably not necessary as long as room IDs are unique.
             var area = this.World.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
             if (area != null)
             {

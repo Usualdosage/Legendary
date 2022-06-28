@@ -11,7 +11,6 @@ namespace Legendary.Engine.Types
 {
     using System.Collections.Concurrent;
     using Legendary.Core.Models;
-    using Legendary.Engine.Models;
 
     /// <summary>
     /// Represents a channel that users can subscribe/unscribe to.
@@ -23,10 +22,11 @@ namespace Legendary.Engine.Types
         /// </summary>
         /// <param name="name">The name of the channel.</param>
         /// <param name="canUnsubscribe">Whether a user can manually unsubscribe.</param>
-        public CommChannel(string name, bool canUnsubscribe)
+        public CommChannel(string name, bool canUnsubscribe, bool isPublic)
         {
             this.Name = name;
             this.CanUnsubscribe = canUnsubscribe;
+            this.IsPublic = isPublic;
             this.Subscribers = new ConcurrentDictionary<string, UserData>();
         }
 
@@ -49,6 +49,11 @@ namespace Legendary.Engine.Types
         /// Gets or sets a value indicating whether the channel is muted or not.
         /// </summary>
         public bool IsMuted { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the channel is public or not.
+        /// </summary>
+        public bool IsPublic { get; set; }
 
         /// <summary>
         /// Adds a subscriber to the channel.
