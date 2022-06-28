@@ -10,6 +10,8 @@
 namespace Legendary.Core.Contracts
 {
     using System;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
 
@@ -19,7 +21,7 @@ namespace Legendary.Core.Contracts
     public interface IAction
     {
         /// <summary>
-        /// Gets or sets the name of the skill.
+        /// Gets or sets the name of the action.
         /// </summary>
         string? Name { get; set; }
 
@@ -27,6 +29,16 @@ namespace Legendary.Core.Contracts
         /// Gets the action type.
         /// </summary>
         ActionType ActionType { get; }
+
+        /// <summary>
+        /// Gets or sets the damage type.
+        /// </summary>
+        DamageType DamageType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mana cost to use the action.
+        /// </summary>
+        int ManaCost { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this action is an affect or not.
@@ -39,20 +51,30 @@ namespace Legendary.Core.Contracts
         int? AffectDuration { get; set; }
 
         /// <summary>
-        /// Gets or sets the action to perform when before Act() is triggered.
-        /// </summary>
-        Action? PreAction { get; set; }
-
-        /// <summary>
-        /// Gets or sets the action to perform when after Act() is triggered.
-        /// </summary>
-        Action? PostAction { get; set; }
-
-        /// <summary>
         /// Performs the skill action.
         /// </summary>
         /// <param name="actor">The one who performs the skill.</param>
         /// <param name="target">The target of the skill.</param>
-        abstract void Act(UserData actor, UserData? target);
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        abstract Task Act(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets or sets the action to execute before the main action effect.
+        /// </summary>
+        /// <param name="actor">The one who performs the skill.</param>
+        /// <param name="target">The target of the skill.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        abstract Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets or sets the action to execute after the main action effect.
+        /// </summary>
+        /// <param name="actor">The one who performs the skill.</param>
+        /// <param name="target">The target of the skill.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        abstract Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
     }
 }

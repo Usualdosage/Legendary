@@ -1,39 +1,42 @@
-﻿// <copyright file="SpellType.cs" company="Legendary">
-//  Copyright © 2021-2022 Legendary
-//  All rights are reserved. Reproduction or transmission in whole or
-//  in part, in any form or by any means, electronic, mechanical or
-//  otherwise, is prohibited without the prior written consent of
-//  the copyright owner.
+﻿// <copyright file="SpellType.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Core.Types
 {
-	public enum SpellType
-	{
-		/// <summary>
+    /// <summary>
+    /// The type of spell.
+    /// </summary>
+    public enum SpellType
+    {
+        /// <summary>
         /// Spell.
         /// </summary>
-		Spell = 0,
+        Spell = 0,
 
-		/// <summary>
+        /// <summary>
         /// Negative.
         /// </summary>
-		Negative = 1,
+        Negative = 1,
 
-		/// <summary>
+        /// <summary>
         /// Maledictive.
         /// </summary>
-		Maledictive = 2,
+        Maledictive = 2,
 
-		/// <summary>
+        /// <summary>
         /// Afflictive.
         /// </summary>
-		Afflictive = 3,
+        Afflictive = 3,
 
-		/// <summary>
+        /// <summary>
         /// Death.
         /// </summary>
-		Death = 4
-	}
+        Death = 4,
+    }
 }
-

@@ -22,6 +22,7 @@ namespace Legendary.Engine.Types
         /// </summary>
         /// <param name="name">The name of the channel.</param>
         /// <param name="canUnsubscribe">Whether a user can manually unsubscribe.</param>
+        /// <param name="isPublic">Whether or not the channel is publically accessible.</param>
         public CommChannel(string name, bool canUnsubscribe, bool isPublic)
         {
             this.Name = name;

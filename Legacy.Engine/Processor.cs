@@ -13,6 +13,7 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
     using Legendary.Core.Contracts;
@@ -55,7 +56,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task ProcessMessage(UserData user, string? input)
+        public async Task ProcessMessage(UserData user, string? input, CancellationToken cancellationToken = default)
         {
             if (input == null)
             {
@@ -72,21 +73,13 @@ namespace Legendary.Engine
 
             if (emote != null)
             {
-                await this.communicator.SendToPlayer(user.Connection, emote.ToSelf);
-                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName));
+                await this.communicator.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
+                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
             }
             else
             {
                 var command = args[0].ToLower();
 
-                // Check skills first and foremost.
-<<<<<<< HEAD
-=======
-
-                // <skill>
-                // <skill> <target>
-
->>>>>>> 4e33d3b (Checkpoint.)
                 if (user.Character.HasSkill(command))
                 {
                     var skill = user.Character.GetSkill(command);
@@ -98,7 +91,9 @@ namespace Legendary.Engine
                         // We may or may not have a target. The skill will figure that bit out.
                         var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
 
-                        await skill.Act(user, target?.Value);
+                        await skill.PreAction(user, target?.Value, cancellationToken);
+                        await skill.Act(user, target?.Value, cancellationToken);
+                        await skill.PostAction(user, target?.Value, cancellationToken);
                     }
                 }
                 else
@@ -108,7 +103,7 @@ namespace Legendary.Engine
                     {
                         default:
                             {
-                                await this.communicator.SendToPlayer(user.Connection, "Unknown command.");
+                                await this.communicator.SendToPlayer(user.Connection, "Unknown command.", cancellationToken);
                                 break;
                             }
 
@@ -116,12 +111,12 @@ namespace Legendary.Engine
                             {
                                 if (args.Length < 2)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Cast what?");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Cast what?", cancellationToken);
                                     break;
                                 }
                                 else
                                 {
-                                    await this.Cast(args, user);
+                                    await this.Cast(args, user, cancellationToken);
                                     break;
                                 }
                             }
@@ -130,12 +125,12 @@ namespace Legendary.Engine
                             {
                                 if (args.Length < 2)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Drop what?");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Drop what?", cancellationToken);
                                     break;
                                 }
                                 else
                                 {
-                                    await this.DropItem(user, args[1]);
+                                    await this.DropItem(user, args[1], cancellationToken);
                                     break;
                                 }
                             }
@@ -144,12 +139,12 @@ namespace Legendary.Engine
                             {
                                 if (args.Length < 2)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Get what?");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Get what?", cancellationToken);
                                     break;
                                 }
                                 else
                                 {
-                                    await this.GetItem(user, args[1]);
+                                    await this.GetItem(user, args[1], cancellationToken);
                                     break;
                                 }
                             }
@@ -158,12 +153,12 @@ namespace Legendary.Engine
                             {
                                 if (args.Length < 2)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Goto where?");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Goto where?", cancellationToken);
                                     break;
                                 }
                                 else
                                 {
-                                    await this.GotoRoom(user, args[1]);
+                                    await this.GotoRoom(user, args[1], cancellationToken);
                                     break;
                                 }
                             }
@@ -171,7 +166,7 @@ namespace Legendary.Engine
                         case "h":
                         case "help":
                             {
-                                await this.communicator.SendToPlayer(user.Connection, "Help text.");
+                                await this.communicator.SendToPlayer(user.Connection, "Help text.", cancellationToken);
                                 break;
                             }
 
@@ -185,7 +180,7 @@ namespace Legendary.Engine
                                     sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
                                 }
 
-                                await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+                                await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
 
                                 break;
                             }
@@ -195,7 +190,7 @@ namespace Legendary.Engine
                         case "loo":
                         case "look":
                             {
-                                await this.ShowRoomToPlayer(user);
+                                await this.ShowRoomToPlayer(user, cancellationToken);
                                 break;
                             }
 
@@ -206,8 +201,8 @@ namespace Legendary.Engine
                                 var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
                                 if (channel != null)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"");
-                                    await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"");
+                                    await this.communicator.SendToPlayer(user.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                                    await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
                                 }
 
                                 break;
@@ -220,8 +215,8 @@ namespace Legendary.Engine
                                 var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "pray");
                                 if (channel != null)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"");
-                                    await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} prays \"<span class='newbie'>{sentence}</span>\"");
+                                    await this.communicator.SendToPlayer(user.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"", cancellationToken);
+                                    await this.communicator.SendToChannel(channel, user.ConnectionId, $"{user.Character.FirstName} prays \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
                                 }
 
                                 break;
@@ -229,9 +224,9 @@ namespace Legendary.Engine
 
                         case "quit":
                             {
-                                await this.communicator.SendToPlayer(user.Connection, $"You have disconnected.");
-                                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} has left the realms.");
-                                await this.communicator.Quit(user.Connection, user.Character.FirstName ?? "Someone");
+                                await this.communicator.SendToPlayer(user.Connection, $"You have disconnected.", cancellationToken);
+                                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} has left the realms.", cancellationToken);
+                                await this.communicator.Quit(user.Connection, user.Character.FirstName ?? "Someone", cancellationToken);
                                 break;
                             }
 
@@ -256,14 +251,14 @@ namespace Legendary.Engine
                         case "sw":
                         case "southwest":
                             {
-                                await this.MovePlayer(user, ParseDirection(args[0]));
+                                await this.MovePlayer(user, ParseDirection(args[0]), cancellationToken);
                                 break;
                             }
 
                         case "save":
                             {
                                 await this.communicator.SaveCharacter(user);
-                                await this.communicator.SendToPlayer(user.Connection, $"Character saved.");
+                                await this.communicator.SendToPlayer(user.Connection, $"Character saved.", cancellationToken);
                                 break;
                             }
 
@@ -271,8 +266,8 @@ namespace Legendary.Engine
                             {
                                 var sentence = string.Join(' ', args, 1, args.Length - 1);
                                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                                await this.communicator.SendToPlayer(user.Connection, $"You say \"<span class='say'>{sentence}</b>\"");
-                                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} says \"<span class='say'>{sentence}</span>\"");
+                                await this.communicator.SendToPlayer(user.Connection, $"You say \"<span class='say'>{sentence}</b>\"", cancellationToken);
+                                await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
                                 break;
                             }
 
@@ -281,7 +276,7 @@ namespace Legendary.Engine
                         case "scor":
                         case "score":
                             {
-                                await this.ShowPlayerScore(user);
+                                await this.ShowPlayerScore(user, cancellationToken);
                                 break;
                             }
 
@@ -303,7 +298,7 @@ namespace Legendary.Engine
                                     builder.Append("You currently have no skills.");
                                 }
 
-                                await this.communicator.SendToPlayer(user.Connection, builder.ToString());
+                                await this.communicator.SendToPlayer(user.Connection, builder.ToString(), cancellationToken);
                                 break;
                             }
 
@@ -325,7 +320,7 @@ namespace Legendary.Engine
                                     builder.Append("You currently have no spells.");
                                 }
 
-                                await this.communicator.SendToPlayer(user.Connection, builder.ToString());
+                                await this.communicator.SendToPlayer(user.Connection, builder.ToString(), cancellationToken);
                                 break;
                             }
 
@@ -338,16 +333,16 @@ namespace Legendary.Engine
                                 {
                                     if (channel.AddUser(user.ConnectionId, user))
                                     {
-                                        await this.communicator.SendToPlayer(user.Connection, $"You have subscribed to the {channel.Name} channel.");
+                                        await this.communicator.SendToPlayer(user.Connection, $"You have subscribed to the {channel.Name} channel.", cancellationToken);
                                     }
                                     else
                                     {
-                                        await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to the {channel.Name} channel.");
+                                        await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to the {channel.Name} channel.", cancellationToken);
                                     }
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to {name}. Channel does not exist.");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to subscribe to {name}. Channel does not exist.", cancellationToken);
                                 }
 
                                 break;
@@ -357,20 +352,20 @@ namespace Legendary.Engine
                             {
                                 if (args.Length < 3)
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Tell whom what?");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Tell whom what?", cancellationToken);
                                     break;
                                 }
                                 else
                                 {
                                     var sentence = string.Join(' ', args, 2, args.Length - 2);
-                                    await this.Tell(user, args[1], sentence);
+                                    await this.Tell(user, args[1], sentence, cancellationToken);
                                     break;
                                 }
                             }
 
                         case "time":
                             {
-                                await this.communicator.SendToPlayer(user.Connection, $"The system time is {DateTime.UtcNow}.");
+                                await this.communicator.SendToPlayer(user.Connection, $"The system time is {DateTime.UtcNow}.", cancellationToken);
                                 break;
                             }
 
@@ -383,16 +378,16 @@ namespace Legendary.Engine
                                 {
                                     if (channel.RemoveUser(user.ConnectionId))
                                     {
-                                        await this.communicator.SendToPlayer(user.Connection, $"You have unsubscribed from the {channel.Name} channel.");
+                                        await this.communicator.SendToPlayer(user.Connection, $"You have unsubscribed from the {channel.Name} channel.", cancellationToken);
                                     }
                                     else
                                     {
-                                        await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from the {channel.Name} channel.");
+                                        await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from the {channel.Name} channel.", cancellationToken);
                                     }
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from {name}. Channel does not exist.");
+                                    await this.communicator.SendToPlayer(user.Connection, $"Unable to unsubscribe from {name}. Channel does not exist.", cancellationToken);
                                 }
 
                                 break;
@@ -419,29 +414,31 @@ namespace Legendary.Engine
 
                                         sb.Append("</span");
 
-                                        await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+                                        await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
                                     }
 
-                                    await this.communicator.SendToPlayer(user.Connection, $"There are {Communicator.Users?.Count} players connected.");
+                                    await this.communicator.SendToPlayer(user.Connection, $"There are {Communicator.Users?.Count} players connected.", cancellationToken);
                                 }
 
                                 break;
                             }
+
                         case "wiznet":
                             {
                                 // TODO: Check if user is an IMM
 
                                 // Sub/unsub to wiznet channel
-                                if (communicator.IsSubscribed("wiznet", user.ConnectionId, user))
+                                if (this.communicator.IsSubscribed("wiznet", user.ConnectionId, user))
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Unsubscribed from WIZNET.");
-                                    communicator.RemoveFromChannel("wiznet", user.ConnectionId, user);
+                                    await this.communicator.SendToPlayer(user.Connection, $"Unsubscribed from WIZNET.", cancellationToken);
+                                    this.communicator.RemoveFromChannel("wiznet", user.ConnectionId, user);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(user.Connection, $"Welcome to WIZNET!");
-                                    communicator.AddToChannel("wiznet", user.ConnectionId, user);
+                                    await this.communicator.SendToPlayer(user.Connection, $"Welcome to WIZNET!", cancellationToken);
+                                    this.communicator.AddToChannel("wiznet", user.ConnectionId, user);
                                 }
+
                                 break;
                             }
 
@@ -449,8 +446,8 @@ namespace Legendary.Engine
                             {
                                 var sentence = string.Join(' ', args, 1, args.Length - 1);
                                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                                await this.communicator.SendToPlayer(user.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"");
-                                await this.communicator.SendToArea(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"");
+                                await this.communicator.SendToPlayer(user.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
+                                await this.communicator.SendToArea(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
                                 break;
                             }
                     }
@@ -462,8 +459,9 @@ namespace Legendary.Engine
         /// Shows/updates the player information box.
         /// </summary>
         /// <param name="user">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task ShowPlayerInfo(UserData user)
+        public async Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default)
         {
             StringBuilder sb = new ();
 
@@ -487,7 +485,7 @@ namespace Legendary.Engine
 
             sb.Append("</table></div>");
 
-            await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+            await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -521,8 +519,11 @@ namespace Legendary.Engine
         /// <summary>
         /// Moves the player to the specified room.
         /// </summary>
+        /// <param name="user">The target user.</param>
+        /// <param name="room">The room to go to.</param>
+        /// <param name="cancellationToken">The dancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task GotoRoom(UserData user, string room)
+        private async Task GotoRoom(UserData user, string room, CancellationToken cancellationToken = default)
         {
             if (long.TryParse(room, out long roomId))
             {
@@ -535,8 +536,8 @@ namespace Legendary.Engine
                     }
                     else
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.");
-                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} vanishes.");
+                        await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} vanishes.", cancellationToken);
                         user.Character.Location = targetRoom;
                         this.communicator.SendToServer(user, "look");
                     }
@@ -547,15 +548,14 @@ namespace Legendary.Engine
         /// <summary>
         /// Casts a spell on a player or target.
         /// </summary>
-        /// <param name="spell"></param>
-        /// <param name="user"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        private async Task Cast(string[] args, UserData user)
+        /// <param name="args">The arguments.</param>
+        /// <param name="user">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task Cast(string[] args, UserData user, CancellationToken cancellationToken = default)
         {
             // cast <spell>
             // cast <spell> <target>
-
             var spellName = args[1].ToLower();
 
             // Check if the user has the spell.
@@ -570,12 +570,12 @@ namespace Legendary.Engine
                     // We may or may not have a target. The spell will figure that bit out.
                     var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
 
-                    await spell.Cast(user, target?.Value);
+                    await spell.Act(user, target?.Value, cancellationToken);
                 }
             }
             else
             {
-                await this.communicator.SendToPlayer(user.Connection, "You don't know how to cast that.");
+                await this.communicator.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
             }
         }
 
@@ -584,8 +584,9 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="target">The target.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task GetItem(UserData user, string target)
+        private async Task GetItem(UserData user, string target, CancellationToken cancellationToken = default)
         {
             // TODO: This area call is probably not necessary as long as room IDs are unique.
             var area = this.World.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
@@ -600,7 +601,7 @@ namespace Legendary.Engine
 
                         if (room.Items == null || room.Items.Count == 0)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.");
+                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
                             return;
                         }
 
@@ -609,8 +610,8 @@ namespace Legendary.Engine
                             if (item != null)
                             {
                                 user.Character.Inventory.Add(item);
-                                await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.");
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.");
+                                await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
                             }
                         }
@@ -624,7 +625,7 @@ namespace Legendary.Engine
                     {
                         if (room.Items == null || room.Items.Count == 0)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.");
+                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
                             return;
                         }
 
@@ -638,15 +639,15 @@ namespace Legendary.Engine
                             {
                                 count++;
                                 user.Character.Inventory.Add(item);
-                                await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.");
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.");
+                                await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
                             }
                         }
 
                         if (count == 0)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"That isn't here.");
+                            await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
                         }
 
                         foreach (var itemToRemove in itemsToRemove)
@@ -663,8 +664,9 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="user">The user.</param>
         /// <param name="target">The target.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task DropItem(UserData user, string target)
+        private async Task DropItem(UserData user, string target, CancellationToken cancellationToken = default)
         {
             var area = this.World.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
             if (area != null)
@@ -678,7 +680,7 @@ namespace Legendary.Engine
 
                         if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
                             return;
                         }
 
@@ -687,8 +689,8 @@ namespace Legendary.Engine
                             if (item != null)
                             {
                                 room.Items.Add(item);
-                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.");
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.");
+                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
                             }
                         }
@@ -702,7 +704,7 @@ namespace Legendary.Engine
                     {
                         if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
                             return;
                         }
 
@@ -716,15 +718,15 @@ namespace Legendary.Engine
                             {
                                 count++;
                                 room.Items.Add(item);
-                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.");
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.");
+                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
                             }
                         }
 
                         if (count == 0)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You don't have that.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You don't have that.", cancellationToken);
                         }
 
                         foreach (var itemToRemove in itemsToRemove)
@@ -742,37 +744,38 @@ namespace Legendary.Engine
         /// <param name="user">The sender.</param>
         /// <param name="target">The target.</param>
         /// <param name="message">The message.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task Tell(UserData user, string target, string message)
+        private async Task Tell(UserData user, string target, string message, CancellationToken cancellationToken = default)
         {
             message = char.ToUpper(message[0]) + message[1..];
             target = char.ToUpper(target[0]) + target[1..];
 
-            var commResult = await this.communicator.SendToPlayer(user.Connection, target, $"{user.Character.FirstName} tells you \"<span class='tell'>{message}</span>\"");
+            var commResult = await this.communicator.SendToPlayer(user.Connection, target, $"{user.Character.FirstName} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
             switch (commResult)
             {
                 default:
                 case Types.CommResult.NotAvailable:
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"{target} can't hear you.");
+                        await this.communicator.SendToPlayer(user.Connection, $"{target} can't hear you.", cancellationToken);
                         break;
                     }
 
                 case Types.CommResult.NotConnected:
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"{target} is not here.");
+                        await this.communicator.SendToPlayer(user.Connection, $"{target} is not here.", cancellationToken);
                         break;
                     }
 
                 case Types.CommResult.Ignored:
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"{target} is ignoring you.");
+                        await this.communicator.SendToPlayer(user.Connection, $"{target} is ignoring you.", cancellationToken);
                         break;
                     }
 
                 case Types.CommResult.Ok:
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"");
+                        await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
                         break;
                     }
             }
@@ -783,12 +786,13 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="user">UserData.</param>
         /// <param name="direction">The direction.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task MovePlayer(UserData user, Direction direction)
+        private async Task MovePlayer(UserData user, Direction direction, CancellationToken cancellationToken = default)
         {
             if (user.Character.Movement.Current == 0)
             {
-                await this.communicator.SendToPlayer(user.Connection, $"You are too exhausted.");
+                await this.communicator.SendToPlayer(user.Connection, $"You are too exhausted.", cancellationToken);
                 return;
             }
 
@@ -818,25 +822,25 @@ namespace Legendary.Engine
                 if (newArea != null && newRoom != null)
                 {
                     string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                    await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>");
-                    await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.");
+                    await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>", cancellationToken);
+                    await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.", cancellationToken);
 
                     user.Character.Location = newRoom;
 
                     // TODO: Update this based on the terrain.
                     user.Character.Movement.Current -= 1;
 
-                    await this.communicator.SendToRoom(newRoom, user.ConnectionId, $"{user.Character.FirstName} enters.");
-                    await this.ShowRoomToPlayer(user);
+                    await this.communicator.SendToRoom(newRoom, user.ConnectionId, $"{user.Character.FirstName} enters.", cancellationToken);
+                    await this.ShowRoomToPlayer(user, cancellationToken);
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"You are unable to go that way.<br/>");
+                    await this.communicator.SendToPlayer(user.Connection, $"You are unable to go that way.<br/>", cancellationToken);
                 }
             }
             else
             {
-                await this.communicator.SendToPlayer(user.Connection, $"You can't go that way.<br/>");
+                await this.communicator.SendToPlayer(user.Connection, $"You can't go that way.<br/>", cancellationToken);
             }
         }
 
@@ -844,8 +848,9 @@ namespace Legendary.Engine
         /// Shows the players score information.
         /// </summary>
         /// <param name="user">The connected user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task ShowPlayerScore(UserData user)
+        private async Task ShowPlayerScore(UserData user, CancellationToken cancellationToken = default)
         {
             StringBuilder sb = new ();
 
@@ -870,15 +875,16 @@ namespace Legendary.Engine
 
             sb.Append("</table></div>");
 
-            await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+            await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
         }
 
         /// <summary>
         /// Shows the information in a room to a single player.
         /// </summary>
         /// <param name="user">The connected user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task ShowRoomToPlayer(UserData user)
+        private async Task ShowRoomToPlayer(UserData user, CancellationToken cancellationToken = default)
         {
             var area = this.World.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
 
@@ -970,10 +976,10 @@ namespace Legendary.Engine
                 }
             }
 
-            await this.communicator.SendToPlayer(user.Connection, sb.ToString());
+            await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
 
             // Update player stats
-            await this.ShowPlayerInfo(user);
+            await this.ShowPlayerInfo(user, cancellationToken);
         }
     }
 }
