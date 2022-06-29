@@ -12,6 +12,13 @@ namespace Legendary.Web.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="UserModel"/> class.
         /// </summary>
+        public UserModel()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserModel"/> class.
+        /// </summary>
         /// <param name="username">The username.</param>
         /// <param name="password">The password.</param>
         public UserModel(string username, string password)

@@ -14,6 +14,13 @@ namespace Legendary.Web.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginModel"/> class.
         /// </summary>
+        public LoginModel()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginModel"/> class.
+        /// </summary>
         /// <param name="message">The login message.</param>
         /// <param name="buildSettings">The build settings.</param>
         public LoginModel(string? message, IBuildSettings? buildSettings)

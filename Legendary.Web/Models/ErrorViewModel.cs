@@ -12,6 +12,13 @@ namespace Legendary.Web.Models
     public class ErrorViewModel
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorViewModel"/> class.
+        /// </summary>
+        public ErrorViewModel()
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the request Id.
         /// </summary>
         public string? RequestId { get; set; }
