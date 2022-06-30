@@ -22,6 +22,8 @@
     <None Remove="Microsoft.AspNetCore.Mvc" />
     <None Remove="Models\Skills\" />
     <None Remove="Models\Spells\" />
+    <None Remove="Processors\" />
+    <None Remove="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
@@ -32,6 +34,8 @@
     <Folder Include="Types\" />
     <Folder Include="Models\Skills\" />
     <Folder Include="Models\Spells\" />
+    <Folder Include="Processors\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj" />

@@ -19,18 +19,18 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Initializes a new instance of the <see cref="SkillProficiency"/> class.
         /// </summary>
-        /// <param name="skill">The skill.</param>
+        /// <param name="skillName">The skill.</param>
         /// <param name="proficiency">The proficiency.</param>
-        public SkillProficiency(IAction skill, int proficiency)
+        public SkillProficiency(string skillName, int proficiency)
         {
-            this.Skill = skill;
+            this.SkillName = skillName;
             this.Proficiency = proficiency;
         }
 
         /// <summary>
         /// Gets or sets the skill.
         /// </summary>
-        public IAction Skill { get; set; }
+        public string SkillName { get; set; }
 
         /// <summary>
         /// Gets or sets the skill proficiency.

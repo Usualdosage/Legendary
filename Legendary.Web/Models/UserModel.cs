@@ -1,5 +1,10 @@
-﻿// <copyright file="UserModel.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="UserModel.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Web.Models
@@ -30,11 +35,11 @@ namespace Legendary.Web.Models
         /// <summary>
         /// Gets the username.
         /// </summary>
-        public string UserName { get; private set; }
+        public string UserName { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the password.
         /// </summary>
-        public string Password { get; private set; }
+        public string Password { get; private set; } = string.Empty;
     }
 }

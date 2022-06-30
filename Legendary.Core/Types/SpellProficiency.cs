@@ -19,18 +19,18 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Initializes a new instance of the <see cref="SpellProficiency"/> class.
         /// </summary>
-        /// <param name="spell">The spell.</param>
+        /// <param name="spellName">The spell.</param>
         /// <param name="proficiency">The proficiency percentage.</param>
-        public SpellProficiency(IAction spell, int proficiency)
+        public SpellProficiency(string spellName, int proficiency)
         {
-            this.Spell = spell;
+            this.SpellName = spellName;
             this.Proficiency = proficiency;
         }
 
         /// <summary>
         /// Gets or sets the Spell.
         /// </summary>
-        public IAction Spell { get; set; }
+        public string SpellName { get; set; }
 
         /// <summary>
         /// Gets or sets the Spell proficiency.

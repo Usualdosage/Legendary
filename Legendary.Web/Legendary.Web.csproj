@@ -32,6 +32,7 @@
     <Content Remove="wwwroot\img\" />
     <Content Remove="wwwroot\img\rooms\" />
     <Content Remove="wwwroot\fonts\" />
+    <Content Remove="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
@@ -55,5 +56,8 @@
     <ProjectReference Include="..\Legendary.Data\Legendary.Data.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
 </Project>

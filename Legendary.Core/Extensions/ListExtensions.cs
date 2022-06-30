@@ -47,5 +47,18 @@ namespace Legendary.Core.Extensions
                 list.Remove(flag);
             }
         }
+
+        /// <summary>
+        /// Checks if a flag exists, and if it does, removes it.
+        /// </summary>
+        /// <param name="list">The list to check.</param>
+        /// <param name="flag">The flag to add.</param>
+        public static void RemoveIfExists(this IList<MobileFlags> list, MobileFlags flag)
+        {
+            if (list.Any(l => l == flag))
+            {
+                list.Remove(flag);
+            }
+        }
     }
 }

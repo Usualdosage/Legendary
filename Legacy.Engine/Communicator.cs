@@ -18,12 +18,15 @@ namespace Legendary.Engine
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Web;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Http;
 
@@ -37,9 +40,12 @@ namespace Legendary.Engine
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
         private readonly IDataService dataService;
-        private readonly IProcessor processor;
         private readonly IEngine engine;
         private readonly IRandom random;
+        private readonly IWorld world;
+        private SkillProcessor? skillProcessor;
+        private SpellProcessor? spellProcessor;
+        private ActionProcessor? actionProcessor;
         private IEnvironment? environment;
         private KeyValuePair<string, UserData> connectedUser;
 
@@ -59,9 +65,7 @@ namespace Legendary.Engine
             this.apiClient = apiClient;
             this.dataService = dataService;
             this.engine = engine;
-
-            // Create the command processor.
-            this.processor = new Processor(logger, this, world);
+            this.world = world;
 
             // Create the random generator for weather and user effects.
             this.random = new Random();
@@ -86,12 +90,6 @@ namespace Legendary.Engine
         /// </summary>
         public static ConcurrentDictionary<string, UserData>? Users { get; private set; } = new ConcurrentDictionary<string, UserData>();
 
-        /// <inheritdoc/>
-        public IProcessor Processor
-        {
-            get { return this.processor; }
-        }
-
         /// <summary>
         /// Gets the communication channels.
         /// </summary>
@@ -106,7 +104,7 @@ namespace Legendary.Engine
                 return;
             }
 
-            CancellationToken ct = context.RequestAborted;
+            CancellationToken cancellationToken = context.RequestAborted;
             WebSocket currentSocket = await context.WebSockets.AcceptWebSocketAsync();
             var socketId = Guid.NewGuid().ToString();
 
@@ -134,7 +132,7 @@ namespace Legendary.Engine
                 if (connectedUser?.Value != null)
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.";
-                    await this.Wizlog(message, ct);
+                    await this.Wizlog(message, cancellationToken);
                     this.logger.Info(message);
                     await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!");
                     await this.Quit(connectedUser.Value.Value.Connection, connectedUser.Value.Value.Character.FirstName);
@@ -144,7 +142,7 @@ namespace Legendary.Engine
                 Users?.TryAdd(socketId, userData);
 
                 string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
-                await this.Wizlog(msg, ct);
+                await this.Wizlog(msg, cancellationToken);
                 this.logger.Info(msg);
 
                 // Update the user metrics
@@ -156,8 +154,8 @@ namespace Legendary.Engine
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
-                // Force the user to run the look command.
-                this.SendToServer(userData, "look");
+                // Show the room to the player.
+                await this.ShowRoomToPlayer(userData, cancellationToken);
 
                 this.connectedUser = new KeyValuePair<string, UserData>(socketId, userData);
 
@@ -166,13 +164,13 @@ namespace Legendary.Engine
 
                 while (true)
                 {
-                    if (ct.IsCancellationRequested)
+                    if (cancellationToken.IsCancellationRequested)
                     {
                         break;
                     }
 
                     // Handle input from socket.
-                    var response = await this.ReceiveStringAsync(userData, ct);
+                    var response = await this.ReceiveStringAsync(userData, cancellationToken);
 
                     if (string.IsNullOrEmpty(response))
                     {
@@ -191,10 +189,10 @@ namespace Legendary.Engine
                 this.RemoveFromChannels(socketId, dummy);
 
                 string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
-                await this.Wizlog(logout, ct);
+                await this.Wizlog(logout, cancellationToken);
                 this.logger.Info(logout);
 
-                await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", ct);
+                await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
                 currentSocket.Dispose();
             }
         }
@@ -238,6 +236,138 @@ namespace Legendary.Engine
             this.logger.Info(message);
             await this.Wizlog(message, ct);
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
+        }
+
+        /// <summary>
+        /// Shows the information in a room to a single player.
+        /// </summary>
+        /// <param name="user">The connected user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task ShowRoomToPlayer(UserData user, CancellationToken cancellationToken = default)
+        {
+            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
+
+            if (area == null)
+            {
+                this.logger.Warn($"ShowRoomToPlayer: Null area found for user. {user} {user.Character.Location}!");
+                return;
+            }
+
+            var room = area.Rooms.FirstOrDefault(r => r.RoomId == user.Character.Location.RoomId);
+
+            if (room == null)
+            {
+                this.logger.Warn($"ShowRoomToPlayer: Null room found for user. {user} {user.Character.Location}!");
+                return;
+            }
+
+            StringBuilder sb = new ();
+
+            var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
+
+            sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span> <span class='roomNum'>[{room?.RoomId}]</span><br/>");
+
+            if (!string.IsNullOrWhiteSpace(room?.Image))
+            {
+                sb.Append($"<div class='room-image'><img src='{room?.Image}'/></div>");
+            }
+            else
+            {
+                sb.Append($"<div class='room-image room-image-none'></div>");
+            }
+
+            sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
+
+            // Show the items
+            if (room?.Items != null)
+            {
+                foreach (var item in room.Items)
+                {
+                    if (item == null)
+                    {
+                        this.logger.Warn($"ShowRoomToPlayer: Null item found for item!");
+                        return;
+                    }
+
+                    sb.Append($"<span class='item'>{item.Name} is here.</span>");
+                }
+            }
+
+            sb.Append("<span class='exits'>[ Exits: ");
+
+            // Show the exits
+            if (room?.Exits != null)
+            {
+                foreach (var exit in room.Exits)
+                {
+                    sb.Append(Enum.GetName(typeof(Direction), exit.Direction)?.ToLower() + " ");
+                }
+            }
+
+            sb.Append("]</span>");
+
+            // Show the mobiles
+            if (room?.Mobiles != null)
+            {
+                foreach (var mob in room.Mobiles)
+                {
+                    if (mob == null)
+                    {
+                        this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!");
+                        return;
+                    }
+
+                    sb.Append($"<span class='mobile'>{mob.FirstName} is standing here.</span>");
+                }
+            }
+
+            // Show other players
+            if (Communicator.Users != null)
+            {
+                foreach (var other in Communicator.Users)
+                {
+                    if (other.Key != user.ConnectionId &&
+                        other.Value.Character.Location.AreaId == user.Character.Location.AreaId &&
+                        other.Value.Character.Location.RoomId == user.Character.Location.RoomId)
+                    {
+                        sb.Append($"<span class='player'>{other.Value.Character.FirstName} is here.</span>");
+                    }
+                }
+            }
+
+            await this.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
+
+            // Update player stats
+            await this.ShowPlayerInfo(user, cancellationToken);
+        }
+
+        /// <inheritdoc/>
+        public async Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default)
+        {
+            StringBuilder sb = new ();
+
+            sb.Append("<div class='player-info'><table><tr><td colspan='2'>");
+            sb.Append($"<span class='player-title'>{user.Character.FirstName} {user.Character.LastName}</span></td></tr>");
+
+            // Health bar
+            double healthPct = (user.Character.Health.Current / user.Character.Health.Max) * 100;
+            sb.Append($"<tr><td>Health</td><td><progress id='health' max='100' value='{healthPct}'>{healthPct}%</progress></td></tr>");
+
+            // Mana bar
+            double manaPct = (user.Character.Mana.Current / user.Character.Mana.Max) * 100;
+            sb.Append($"<tr><td>Mana</td><td><progress id='mana' max='100' value='{manaPct}'>{manaPct}%</progress></td></tr>");
+
+            // Movement bar
+            double movePct = (user.Character.Movement.Current / user.Character.Movement.Max) * 100;
+            sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
+
+            // Condition
+            sb.Append($"<tr><td colspan='2' class='condition'>You are in perfect health.</td></tr>");
+
+            sb.Append("</table></div>");
+
+            await this.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -320,9 +450,11 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="userData">UserData.</param>
         /// <param name="command">The command to send.</param>
-        public void SendToServer(UserData userData, string command)
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task SendToServer(UserData userData, string command, CancellationToken cancellationToken)
         {
-            this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, command));
+            await this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, command), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -385,9 +517,9 @@ namespace Legendary.Engine
         /// Logs a message to wiznet.
         /// </summary>
         /// <param name="message">The message to log.</param>
-        /// <param name="ct">The cancellation token.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected async Task<CommResult> Wizlog(string message, CancellationToken ct = default)
+        protected async Task<CommResult> Wizlog(string message, CancellationToken cancellationToken = default)
         {
             var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == "wiznet");
 
@@ -395,7 +527,7 @@ namespace Legendary.Engine
             {
                 foreach (var sub in comm.Subscribers)
                 {
-                    await this.SendToPlayer(sub.Value.Connection, $"<span class='wizmessage'>{DateTime.UtcNow}: {message}</span>", ct);
+                    await this.SendToPlayer(sub.Value.Connection, $"<span class='wizmessage'>{DateTime.UtcNow}: {message}</span>", cancellationToken);
                 }
             }
 
@@ -407,13 +539,101 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="sender">The sender of the message (userdata).</param>
         /// <param name="e">CommunicationEventArgs.</param>
-        protected virtual void OnInputReceived(object sender, CommunicationEventArgs e)
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        protected virtual async Task OnInputReceived(object sender, CommunicationEventArgs e, CancellationToken cancellationToken = default)
         {
             var user = Users?.FirstOrDefault(u => u.Key == e.SocketId);
             if (user != null && user.HasValue)
             {
-                this.processor.ProcessMessage(user.Value.Value, e.Message);
+                await this.ProcessMessage(user.Value.Value, e.Message, cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Processes the user's command.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="input">The input.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task ProcessMessage(UserData user, string? input, CancellationToken cancellationToken = default)
+        {
+            if (input == null)
+            {
+                return;
+            }
+
+            // Encode the string, otherwise the player can input HTML and have it actually render.
+            input = HttpUtility.HtmlEncode(input);
+
+            string[] args = input.Split(' ');
+
+            // See if this is a single emote
+            var emote = Emotes.Get(args[0]);
+
+            if (emote != null)
+            {
+                await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
+                await this.SendToRoom(user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
+            }
+            else
+            {
+                // Parse the command and see if the player is using one of their skills.
+                var command = args[0].ToLower();
+
+                if (user.Character.HasSkill(command))
+                {
+                    if (this.skillProcessor != null)
+                    {
+                        await this.skillProcessor.DoSkill(args, command, cancellationToken);
+                        return;
+                    }
+                    else
+                    {
+                        await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                        return;
+                    }
+                }
+                else if (this.IsCasting(command))
+                {
+                    if (user.Character.HasSpell(args[1]))
+                    {
+                        if (this.spellProcessor != null)
+                        {
+                            await this.spellProcessor.DoSpell(args, command, cancellationToken);
+                            return;
+                        }
+                        else
+                        {
+                            await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.actionProcessor != null)
+                    {
+                        await this.actionProcessor.DoAction(args, command, cancellationToken);
+                        return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks to see if this player is casting something.
+        /// </summary>
+        /// <param name="command">The first argument.</param>
+        /// <returns>True if casting.</returns>
+        private bool IsCasting(string command)
+        {
+            return command switch
+            {
+                "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
+                _ => false
+            };
         }
 
         /// <summary>
@@ -438,10 +658,15 @@ namespace Legendary.Engine
             // Give any user the Recall skill at max percentage if they don't have it.
             if (!userData.Character.HasSkill("recall"))
             {
-                userData.Character.Skills.Add(new Core.Types.SkillProficiency(new Recall(this, this.random), 100));
+                userData.Character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
             }
 
             userData.Character.Metrics = metrics;
+
+            // Create instances of the skill and spell processors.
+            this.skillProcessor = new SkillProcessor(userData, this, this.random);
+            this.spellProcessor = new SpellProcessor(userData, this, this.random);
+            this.actionProcessor = new ActionProcessor(userData, this, this.world, this.logger);
 
             // Save the changes.
             await this.SaveCharacter(userData);
@@ -477,7 +702,7 @@ namespace Legendary.Engine
 
                 if (this.connectedUser.Value != null)
                 {
-                    await this.processor.ShowPlayerInfo(this.connectedUser.Value);
+                    await this.ShowPlayerInfo(this.connectedUser.Value);
 
                     // Autosave the user each tick.
                     await this.SaveCharacter(this.connectedUser.Value);
@@ -493,9 +718,9 @@ namespace Legendary.Engine
         /// Receives a message from a connected socket.
         /// </summary>
         /// <param name="userData">UserData.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task.</returns>
-        private async Task<string?> ReceiveStringAsync(UserData userData, CancellationToken ct = default)
+        private async Task<string?> ReceiveStringAsync(UserData userData, CancellationToken cancellationToken = default)
         {
             var buffer = new ArraySegment<byte>(new byte[8192]);
 
@@ -503,8 +728,8 @@ namespace Legendary.Engine
             WebSocketReceiveResult result;
             do
             {
-                ct.ThrowIfCancellationRequested();
-                result = await userData.Connection.ReceiveAsync(buffer, ct);
+                cancellationToken.ThrowIfCancellationRequested();
+                result = await userData.Connection.ReceiveAsync(buffer, cancellationToken);
                 if (buffer.Array != null)
                 {
                     ms.Write(buffer.Array, buffer.Offset, result.Count);
@@ -522,7 +747,7 @@ namespace Legendary.Engine
             using var reader = new StreamReader(ms, Encoding.UTF8);
             var message = await reader.ReadToEndAsync();
 
-            this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, message));
+            await this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, message), cancellationToken);
 
             return message;
         }

@@ -197,17 +197,18 @@ namespace Legendary.Core.Models
         /// <returns>True if they have it.</returns>
         public bool HasSkill(string name)
         {
-            return this.Skills.Any(sk => sk.Skill.Name?.ToLower() == name.ToLower());
+            // TODO: Do a 'closest match' on this. So if they type 'rec', it'll resolve to 'recall'.
+            return this.Skills.Any(sk => sk.SkillName?.ToLower() == name.ToLower());
         }
 
         /// <summary>
-        /// Gets the skill by name.
+        /// Gets the skill proficiency by name.
         /// </summary>
         /// <param name="name">The skill name.</param>
-        /// <returns>The skill, if exists.</returns>
-        public IAction? GetSkill(string name)
+        /// <returns>The skill proficiency, if exists.</returns>
+        public SkillProficiency? GetSkillProficiency(string name)
         {
-            return this.Skills.FirstOrDefault(sk => sk.Skill?.Name?.ToLower() == name.ToLower())?.Skill;
+            return this.Skills.FirstOrDefault(sk => sk.SkillName?.ToLower() == name.ToLower());
         }
 
         /// <summary>
@@ -217,17 +218,18 @@ namespace Legendary.Core.Models
         /// <returns>True if they have it.</returns>
         public bool HasSpell(string name)
         {
-            return this.Spells.Any(sp => sp.Spell.Name?.ToLower() == name.ToLower());
+            // TODO: Do a 'closest match' on this. So if they type 'rec', it'll resolve to 'recall'.
+            return this.Spells.Any(sp => sp.SpellName?.ToLower() == name.ToLower());
         }
 
         /// <summary>
-        /// Gets the spell by name.
+        /// Gets the spell proficiency by name.
         /// </summary>
         /// <param name="name">The spell name.</param>
-        /// <returns>The spell, if exists.</returns>
-        public IAction? GetSpell(string name)
+        /// <returns>The spell proficiency, if exists.</returns>
+        public SpellProficiency? GetSpellProficiency(string name)
         {
-            return this.Spells.FirstOrDefault(sp => sp.Spell.Name?.ToLower() == name.ToLower())?.Spell;
+            return this.Spells.FirstOrDefault(sk => sk.SpellName?.ToLower() == name.ToLower());
         }
     }
 }

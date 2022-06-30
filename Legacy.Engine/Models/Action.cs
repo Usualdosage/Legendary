@@ -43,6 +43,9 @@ namespace Legendary.Engine.Models
         public int? AffectDuration { get; set; }
 
         /// <inheritdoc/>
+        public bool CanInvoke { get; set; }
+
+        /// <inheritdoc/>
         public abstract ActionType ActionType { get; }
 
         /// <inheritdoc/>
@@ -67,12 +70,29 @@ namespace Legendary.Engine.Models
         public LanguageGenerator LanguageGenerator { get; private set; }
 
         /// <inheritdoc/>
-        public abstract Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        public virtual async Task<bool> IsSuccess(UserData actor, UserData? target, int proficiency, CancellationToken cancellationToken = default)
+        {
+            return await Task.Run(() =>
+            {
+                // Even with mastery, there is always a 1% chance of failure.
+                var result = this.Random.Next(1, 99);
+                return result < proficiency;
+            });
+        }
+
+        /// <inheritdoc/>
+        public virtual Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
 
         /// <inheritdoc/>
         public abstract Task Act(UserData actor, UserData? target, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public abstract Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        public virtual Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

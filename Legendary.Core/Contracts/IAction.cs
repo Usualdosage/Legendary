@@ -41,6 +41,11 @@ namespace Legendary.Core.Contracts
         int ManaCost { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this action can be invoked, or is automatic.
+        /// </summary>
+        public bool CanInvoke { get; set; }
+
+        /// <summary>
         /// Gets a value indicating whether this action is an affect or not.
         /// </summary>
         bool IsAffect { get; }
@@ -49,6 +54,16 @@ namespace Legendary.Core.Contracts
         /// Gets or sets the duration the player is affected by this action.
         /// </summary>
         int? AffectDuration { get; set; }
+
+        /// <summary>
+        /// Determines if the action was executed successfully. This should be called BEFORE PreAction.
+        /// </summary>
+        /// <param name="actor">The one who performs the skill.</param>
+        /// <param name="target">The target of the skill.</param>
+        /// <param name="proficiency">The action proficiency.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task<bool> IsSuccess(UserData actor, UserData? target, int proficiency, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Performs the skill action.
@@ -66,7 +81,7 @@ namespace Legendary.Core.Contracts
         /// <param name="target">The target of the skill.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        abstract Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets or sets the action to execute after the main action effect.
@@ -75,6 +90,6 @@ namespace Legendary.Core.Contracts
         /// <param name="target">The target of the skill.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        abstract Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
     }
 }

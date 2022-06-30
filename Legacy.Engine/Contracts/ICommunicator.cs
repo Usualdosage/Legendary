@@ -29,11 +29,6 @@ namespace Legendary.Engine.Contracts
         IList<CommChannel> Channels { get; }
 
         /// <summary>
-        /// Gets the processor.
-        /// </summary>
-        IProcessor Processor { get; }
-
-        /// <summary>
         /// When invoked, handles adding/removing sockets.
         /// </summary>
         /// <param name="context">The HttpContext.</param>
@@ -44,9 +39,9 @@ namespace Legendary.Engine.Contracts
         /// Sends a global message to all connected sockets.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendGlobal(string message, CancellationToken ct = default);
+        Task<CommResult> SendGlobal(string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Saves a player to the database.
@@ -54,6 +49,22 @@ namespace Legendary.Engine.Contracts
         /// <param name="userData">The player.</param>
         /// <returns>Task.</returns>
         Task SaveCharacter(UserData userData);
+
+        /// <summary>
+        /// Shows the room to the player.
+        /// </summary>
+        /// <param name="user">The player.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task ShowRoomToPlayer(UserData user, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Shows/updates the player information box.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to a specified socket.
@@ -70,9 +81,9 @@ namespace Legendary.Engine.Contracts
         /// <param name="socket">The socket to send to.</param>
         /// <param name="target">The target name to send to.</param>
         /// <param name="message">The message.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToPlayer(WebSocket socket, string target, string message, CancellationToken ct = default);
+        Task<CommResult> SendToPlayer(WebSocket socket, string target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the sender.
@@ -80,9 +91,9 @@ namespace Legendary.Engine.Contracts
         /// <param name="room">The room.</param>
         /// <param name="socketId">The socket ID of the sender.</param>
         /// <param name="message">The message to send.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken ct = default);
+        Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in an area, EXCEPT the sender.
@@ -90,9 +101,9 @@ namespace Legendary.Engine.Contracts
         /// <param name="room">The room.</param>
         /// <param name="socketId">The socket ID of the sender.</param>
         /// <param name="message">The message to send.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken ct = default);
+        Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to a channel.
@@ -100,25 +111,27 @@ namespace Legendary.Engine.Contracts
         /// <param name="channel">The channel.</param>
         /// <param name="socketId">The player socket.</param>
         /// <param name="message">The message.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToChannel(CommChannel? channel, string socketId, string message, CancellationToken ct = default);
+        Task<CommResult> SendToChannel(CommChannel? channel, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a command from the given user to the server.
         /// </summary>
         /// <param name="userData">The connected user.</param>
         /// <param name="command">The command to send.</param>
-        void SendToServer(UserData userData, string command);
+        /// <param name="cancellationToken">CancellationToken.</param>
+        /// <returns>Task.</returns>
+        Task SendToServer(UserData userData, string command, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Disconnects the connected player.
         /// </summary>
         /// <param name="socket">The player socket.</param>
         /// <param name="player">The player name.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task.</returns>
-        Task Quit(WebSocket socket, string? player, CancellationToken ct = default);
+        Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Add a user to the specified channel (by name).

@@ -1,0 +1,50 @@
+﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Types/SkillLookup.cs">
+    <Files>
+      <File FileName="Legendary.Core/Contracts/IAction.cs" Line="60" Column="23" />
+      <File FileName="Legacy.Engine/Models/Skills/Recall.cs" Line="21" Column="30" />
+      <File FileName="Legendary.Core/Models/Character.cs" Line="243" Column="22" />
+      <File FileName="Legendary.Web/Startup.cs" Line="141" Column="30" />
+      <File FileName="Legacy.Engine/Models/Skill.cs" Line="18" Column="38" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="601" Column="49" />
+      <File FileName="Legacy.Engine/Contracts/ICommunicator.cs" Line="151" Column="1" />
+      <File FileName="Legacy.Engine/Contracts/IEngine.cs" Line="33" Column="31" />
+      <File FileName="Legacy.Engine/Engine.cs" Line="114" Column="40" />
+      <File FileName="Legacy.Engine/Types/SkillLookup.cs" Line="83" Column="13" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Legendary" expanded="True">
+            <Node name="Legendary.Core" expanded="True">
+              <Node name="Contracts" expanded="True" />
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="Legendary.Engine" expanded="True">
+              <Node name="Contracts" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="Skills" expanded="True" />
+              </Node>
+              <Node name="Types" expanded="True" />
+            </Node>
+            <Node name="Legendary.Networking" expanded="True" />
+            <Node name="Legendary.Web" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Models" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

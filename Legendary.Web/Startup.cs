@@ -1,10 +1,16 @@
-﻿// <copyright file="Startup.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="Startup.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
 // </copyright>
 
 namespace Legendary.Web
 {
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
     using Legendary.Data;
     using Legendary.Data.Contracts;
     using Legendary.Engine;
@@ -80,36 +86,6 @@ namespace Legendary.Web
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
-
-            // Register skills and spells.
-            this.ConfigureSkills();
-            this.ConfigureSpells();
-        }
-
-        /// <summary>
-        /// Registers all of the skills to a class map so Mongo knows how to save them since they all derive from a root class.
-        /// </summary>
-        public void ConfigureSkills()
-        {
-            BsonClassMap.RegisterClassMap<Skill>(cm =>
-            {
-                cm.AutoMap();
-                cm.SetIsRootClass(true);
-            });
-
-            BsonClassMap.RegisterClassMap<Recall>();
-        }
-
-        /// <summary>
-        /// Registers all of the spells to a class map so Mongo knows how to save them since they all derive from a root class.
-        /// </summary>
-        public void ConfigureSpells()
-        {
-            BsonClassMap.RegisterClassMap<Spell>(cm =>
-            {
-                cm.AutoMap();
-                cm.SetIsRootClass(true);
-            });
         }
 
         /// <summary>

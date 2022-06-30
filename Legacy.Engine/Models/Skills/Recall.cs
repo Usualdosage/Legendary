@@ -29,7 +29,11 @@ namespace Legendary.Engine.Models.Skills
             : base(communicator, random)
         {
             this.Name = "Recall";
-            this.ManaCost = 0;
+            this.ManaCost = 5;
+            this.CanInvoke = true;
+            this.DamageType = Core.Types.DamageType.None;
+            this.IsAffect = false;
+            this.AffectDuration = 0;
         }
 
         /// <inheritdoc/>
@@ -40,17 +44,19 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
         {
-            actor.Character.Location = actor.Character.Home ?? Room.Default;
-            return Task.CompletedTask;
+            await Task.Run(
+                () =>
+                {
+                    actor.Character.Location = actor.Character.Home ?? Room.Default;
+                }, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public override async Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
         {
-            this.Communicator.SendToServer(actor, "look");
-            return Task.CompletedTask;
+            await this.Communicator.ShowRoomToPlayer(actor, cancellationToken);
         }
     }
 }
