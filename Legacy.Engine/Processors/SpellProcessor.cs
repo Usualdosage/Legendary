@@ -9,11 +9,9 @@
 
 namespace Legendary.Engine.Processors
 {
-    using System;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
