@@ -25,7 +25,6 @@ namespace Legendary.Engine.Processors
     {
         private readonly UserData actor;
         private readonly ICommunicator communicator;
-        private readonly IRandom random;
         private readonly ActionHelper actionHelper;
 
         /// <summary>
@@ -34,13 +33,12 @@ namespace Legendary.Engine.Processors
         /// <param name="actor">The user.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public SkillProcessor(UserData actor, ICommunicator communicator, IRandom random)
+        /// <param name="combat">The combat generator.</param>
+        public SkillProcessor(UserData actor, ICommunicator communicator, IRandom random, Combat combat)
         {
             this.actor = actor;
             this.communicator = communicator;
-            this.random = random;
-
-            this.actionHelper = new ActionHelper(communicator, random);
+            this.actionHelper = new ActionHelper(communicator, random, combat);
         }
 
         /// <summary>

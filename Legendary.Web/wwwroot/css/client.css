@@ -316,3 +316,10 @@ progress {
     text-align: center;
     display: block;
 }
+
+/* Combat Things */
+
+.damage {
+    color: darkred;
+    font-weight: bold;
+}

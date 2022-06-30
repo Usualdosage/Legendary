@@ -22,8 +22,9 @@ namespace Legendary.Engine.Models
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        protected Skill(ICommunicator communicator, IRandom random)
-            : base(communicator, random)
+        /// <param name="combat">The combat generator.</param>
+        protected Skill(ICommunicator communicator, IRandom random, Combat combat)
+            : base(communicator, random, combat)
         {
         }
 

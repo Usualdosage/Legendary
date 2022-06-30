@@ -26,11 +26,13 @@ namespace Legendary.Engine.Models
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public Action(ICommunicator communicator, IRandom random)
+        /// <param name="combat">The combat generator.</param>
+        public Action(ICommunicator communicator, IRandom random, Combat combat)
         {
             this.Communicator = communicator;
             this.Random = random;
             this.LanguageGenerator = new LanguageGenerator(random);
+            this.Combat = combat;
         }
 
         /// <inheritdoc/>
@@ -58,6 +60,11 @@ namespace Legendary.Engine.Models
         /// Gets the communicator.
         /// </summary>
         public ICommunicator Communicator { get; private set; }
+
+        /// <summary>
+        /// Gets the combat generator.
+        /// </summary>
+        public Combat Combat { get; private set; }
 
         /// <summary>
         /// Gets the random number generator.

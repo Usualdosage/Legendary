@@ -20,16 +20,19 @@ namespace Legendary.Engine.Helpers
     {
         private readonly ICommunicator communicator;
         private readonly IRandom random;
+        private readonly Combat combat;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionHelper"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public ActionHelper(ICommunicator communicator, IRandom random)
+        /// <param name="combat">The combat generator.</param>
+        public ActionHelper(ICommunicator communicator, IRandom random, Combat combat)
         {
             this.communicator = communicator;
             this.random = random;
+            this.combat = combat;
         }
 
         /// <summary>
@@ -54,7 +57,7 @@ namespace Legendary.Engine.Helpers
 
                     if (type != null)
                     {
-                        var instance = Activator.CreateInstance(type, this.communicator, this.random);
+                        var instance = Activator.CreateInstance(type, this.communicator, this.random, this.combat);
 
                         if (instance is not null and T)
                         {

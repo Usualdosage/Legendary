@@ -161,6 +161,33 @@ namespace Legendary.Core.Models
         public Gender Gender { get; set; } = Gender.Other;
 
         /// <summary>
+        /// Gets the pronoun associated with the character's gender.
+        /// </summary>
+        public string Pronoun
+        {
+            get
+            {
+                switch (this.Gender)
+                {
+                    default:
+                    {
+                        return "their";
+                    }
+
+                    case Legendary.Core.Types.Gender.Female:
+                    {
+                        return "her";
+                    }
+
+                    case Legendary.Core.Types.Gender.Male:
+                    {
+                        return "his";
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the race.
         /// </summary>
         public Race Race { get; set; } = Race.Human;

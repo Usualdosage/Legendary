@@ -25,7 +25,6 @@ namespace Legendary.Engine.Processors
     {
         private readonly UserData actor;
         private readonly ICommunicator communicator;
-        private readonly IRandom random;
         private readonly ActionHelper actionHelper;
 
         /// <summary>
@@ -34,13 +33,12 @@ namespace Legendary.Engine.Processors
         /// <param name="actor">The user.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public SpellProcessor(UserData actor, ICommunicator communicator, IRandom random)
+        /// <param name="combat">The combat generator.</param>
+        public SpellProcessor(UserData actor, ICommunicator communicator, IRandom random, Combat combat)
         {
             this.actor = actor;
             this.communicator = communicator;
-            this.random = random;
-
-            this.actionHelper = new ActionHelper(communicator, random);
+            this.actionHelper = new ActionHelper(communicator, random, combat);
         }
 
         /// <summary>
@@ -54,11 +52,13 @@ namespace Legendary.Engine.Processors
         {
             // cast <spell>
             // cast <spell> <target>
-            var proficiency = this.actor.Character.GetSpellProficiency(command);
+            var spellName = args[1];
+
+            var proficiency = this.actor.Character.GetSpellProficiency(spellName);
 
             if (proficiency != null && proficiency.Proficiency > 0)
             {
-                var spell = this.actionHelper.CreateActionInstance<Spell>("Legendary.Engine.Models.Spells", command.FirstCharToUpper());
+                var spell = this.actionHelper.CreateActionInstance<Spell>("Legendary.Engine.Models.Spells", spellName.FirstCharToUpper());
 
                 if (spell != null)
                 {
@@ -74,7 +74,7 @@ namespace Legendary.Engine.Processors
                         this.actor.Character.Mana.Current -= spell.ManaCost;
                     }
 
-                    var targetName = args.Length > 1 ? args[1] : string.Empty;
+                    var targetName = args.Length > 2 ? args[2] : string.Empty;
 
                     // We may or may not have a target. The skill will figure that bit out.
                     var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);

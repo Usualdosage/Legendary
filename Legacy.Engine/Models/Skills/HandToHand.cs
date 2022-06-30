@@ -24,8 +24,9 @@ namespace Legendary.Engine.Models.Skills
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
-        public HandToHand(ICommunicator communicator, IRandom random)
-            : base(communicator, random)
+        /// <param name="combat">The combat generator.</param>
+        public HandToHand(ICommunicator communicator, IRandom random, Combat combat)
+            : base(communicator, random, combat)
         {
             this.Name = "HandToHand";
             this.ManaCost = 0;

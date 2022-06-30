@@ -26,6 +26,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Http;
@@ -661,11 +662,17 @@ namespace Legendary.Engine
                 userData.Character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
             }
 
+            // TODO: Remove this after testing.
+            if (!userData.Character.HasSpell("fireball"))
+            {
+                userData.Character.Spells.Add(new SpellProficiency(nameof(Fireball), 75));
+            }
+
             userData.Character.Metrics = metrics;
 
             // Create instances of the skill and spell processors.
-            this.skillProcessor = new SkillProcessor(userData, this, this.random);
-            this.spellProcessor = new SpellProcessor(userData, this, this.random);
+            this.skillProcessor = new SkillProcessor(userData, this, this.random, new Combat(this.random));
+            this.spellProcessor = new SpellProcessor(userData, this, this.random, new Combat(this.random));
             this.actionProcessor = new ActionProcessor(userData, this, this.world, this.logger);
 
             // Save the changes.

@@ -45,6 +45,19 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Calculates the damage for an action by an actor against a mobile.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="action">The action.</param>
+        /// <returns>Damage.</returns>
+        public int CalculateDamage(UserData actor, Mobile target, IAction action)
+        {
+            // TODO: Calculate this.
+            return this.random.Next(1, 50);
+        }
+
+        /// <summary>
         /// Applies the damage to the target. If damage brings them to below 0, sets the "dead" flags.
         /// </summary>
         /// <param name="target">The target.</param>
@@ -84,20 +97,20 @@ namespace Legendary.Engine
         {
             var message = damage switch
             {
-                <= 0 => "<span class='damage_0'>has no effect on</span>",
-                > 0 and <= 10 => "<span class='damage_1'>scratches</span>", // 1-10
-                > 11 and <= 20 => "<span class='damage_2'>injures</span>", // 11-20
-                > 21 and <= 30 => "<span class='damage_3'>wounds</span>", // 21-30
-                > 31 and <= 40 => "<span class='damage_4'>mauls</span>", // 31-40
-                > 41 and <= 50 => "<span class='damage_5'>maims</span>", // 41-50
-                > 51 and <= 100 => "<span class='damage_6'>MUTILATES</span>", // 51-100
-                > 101 and <= 200 => "<span class='damage_7'>MASSACRES</span>", // 101-200
-                > 201 and <= 300 => "<span class='damage_8'>MANGLES</span>", // 201-300
-                > 301 and <= 500 => "<span class='damage_9'>*** OBLITERATES ***</span>", // 301-500
-                > 501 and <= 700 => "<span class='damage_10'>*** DISINTEGRATES ***</span>", // 501-700
-                > 701 and <= 900 => "<span class='damage_11'>*** ANNIHILIATES ***</span>", // 701-900
-                > 901 and <= 1100 => "<span class='damage_12'>=== EVISCERATES ===</span>", // 901-1100
-                _ => "<span class='damage_13'>does UNSPEAKABLE things</span>"
+                <= 0 => "<span class='damage damage_0'>has no effect on</span>",
+                > 0 and <= 10 => "<span class='damage damage_1'>scratches</span>", // 1-10
+                > 11 and <= 20 => "<span class='damage damage_2'>injures</span>", // 11-20
+                > 21 and <= 30 => "<span class='damage damage_3'>wounds</span>", // 21-30
+                > 31 and <= 40 => "<span class='damage damage_4'>mauls</span>", // 31-40
+                > 41 and <= 50 => "<span class='damage damage_5'>maims</span>", // 41-50
+                > 51 and <= 100 => "<span class='damage damage_6'>MUTILATES</span>", // 51-100
+                > 101 and <= 200 => "<span class='damage damage_7'>MASSACRES</span>", // 101-200
+                > 201 and <= 300 => "<span class='damage damage_8'>MANGLES</span>", // 201-300
+                > 301 and <= 500 => "<span class='damage damage_9'>*** OBLITERATES ***</span>", // 301-500
+                > 501 and <= 700 => "<span class='damage damage_10'>*** DISINTEGRATES ***</span>", // 501-700
+                > 701 and <= 900 => "<span class='damage damage_11'>*** ANNIHILIATES ***</span>", // 701-900
+                > 901 and <= 1100 => "<span class='damage damage_12'>=== EVISCERATES ===</span>", // 901-1100
+                _ => "<span class='damage damage_13'>does UNSPEAKABLE things</span>" // Over 1100
             };
 
             return message;
