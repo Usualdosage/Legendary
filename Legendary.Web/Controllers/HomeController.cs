@@ -67,7 +67,7 @@ namespace Legendary.Web.Controllers
                 model.BuildSettings = this.buildSettings;
             }
 
-            return this.View(model);
+            return this.View("Login", model);
         }
 
         /// <summary>
