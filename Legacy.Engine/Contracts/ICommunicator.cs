@@ -157,5 +157,26 @@ namespace Legendary.Engine.Contracts
         /// <param name="user">The user.</param>
         /// <returns>True if subscribed.</returns>
         bool IsSubscribed(string channelName, string socketId, UserData user);
+
+        /// <summary>
+        /// Gets all of the mobiles currently in the given location.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <returns>List of mobiles.</returns>
+        List<Mobile>? GetMobilesInRoom(Room location);
+
+        /// <summary>
+        /// Gets all of the items currently in the given location.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <returns>List of items.</returns>
+        List<Item>? GetItemsInRoom(Room location);
+
+        /// <summary>
+        /// Gets the global reference to a room for a given location.
+        /// </summary>
+        /// <param name="location">The player location.</param>
+        /// <returns>Room.</returns>
+        Room? GetRoom(Room location);
     }
 }

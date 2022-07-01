@@ -65,5 +65,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the flags on the item.
         /// </summary>
         public IList<ItemFlags>? Flags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current location of this item.
+        /// </summary>
+        public Room? Location { get; set; }
     }
 }

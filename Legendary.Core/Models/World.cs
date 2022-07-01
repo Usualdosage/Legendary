@@ -79,6 +79,7 @@ namespace Legendary.Core.Models
                         var item = await this.FindItem(f => f.ItemId == reset);
                         if (item != null)
                         {
+                            item.Location = room;
                             room.Items.Add(item);
                         }
                     }
@@ -86,9 +87,10 @@ namespace Legendary.Core.Models
                     // Populate mobs from resets
                     foreach (var reset in room.MobileResets)
                     {
-                        var mobile = await this.FindMobile(f => f.MobileId == reset);
+                        var mobile = await this.FindMobile(f => f.CharacterId == reset);
                         if (mobile != null)
                         {
+                            mobile.Location = room;
                             room.Mobiles.Add(mobile);
                         }
                     }

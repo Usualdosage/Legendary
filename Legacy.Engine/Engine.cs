@@ -123,11 +123,31 @@ namespace Legendary.Engine
             {
                 foreach (var user in Communicator.Users)
                 {
-                    // TODO: If user is resting, or sleeping, restore more/faster.
-                    var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, 20);
+                    int standardHPRecover = 20;
+                    int standardManaRecover = 20;
+                    int standardMoveRecover = 20;
+
+                    if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
+                    {
+                        standardHPRecover = standardHPRecover * 2;
+                        standardManaRecover = standardManaRecover * 2;
+                        standardMoveRecover = standardMoveRecover * 2;
+                    }
+                    else if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Sleeping))
+                    {
+                        standardHPRecover = standardHPRecover * 5;
+                        standardManaRecover = standardManaRecover * 5;
+                        standardMoveRecover = standardMoveRecover * 5;
+                    }
+
+                    var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, standardMoveRecover);
                     user.Value.Character.Movement.Current += moveRestore;
 
-                    // This will update on tick, by the communicator.
+                    var manaRestore = Math.Min(user.Value.Character.Mana.Max - user.Value.Character.Mana.Current, standardManaRecover);
+                    user.Value.Character.Mana.Current += manaRestore;
+
+                    var hitRestore = Math.Min(user.Value.Character.Health.Max - user.Value.Character.Health.Current, standardHPRecover);
+                    user.Value.Character.Health.Current += hitRestore;
 
                     // TODO: Implement spell effects wearing off (e.g. poison)
                 }

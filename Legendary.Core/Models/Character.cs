@@ -93,7 +93,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character flags.
         /// </summary>
-        public IList<CharacterFlags>? CharacterFlags { get; set; }
+        public IList<CharacterFlags> CharacterFlags { get; set; } = new List<CharacterFlags>();
 
         /// <summary>
         /// Gets or sets the health.
@@ -218,14 +218,23 @@ namespace Legendary.Core.Models
         public Saves Saves { get; set; } = new Saves();
 
         /// <summary>
+        /// Gets or sets the character this character (or mob) is currently fighting.
+        /// </summary>
+        public Character? FightingCharacter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mob this character (or mob) is currently fighting.
+        /// </summary>
+        public Mobile? FightingMobile { get; set; }
+
+        /// <summary>
         /// Indicates whether the player has a given skill.
         /// </summary>
         /// <param name="name">The name of the skill.</param>
         /// <returns>True if they have it.</returns>
         public bool HasSkill(string name)
         {
-            // TODO: Do a 'closest match' on this. So if they type 'rec', it'll resolve to 'recall'.
-            return this.Skills.Any(sk => sk.SkillName?.ToLower() == name.ToLower());
+            return this.Skills.Any(sk => sk.SkillName.ToLower().StartsWith(name.ToLower()));
         }
 
         /// <summary>
@@ -245,8 +254,7 @@ namespace Legendary.Core.Models
         /// <returns>True if they have it.</returns>
         public bool HasSpell(string name)
         {
-            // TODO: Do a 'closest match' on this. So if they type 'rec', it'll resolve to 'recall'.
-            return this.Spells.Any(sp => sp.SpellName?.ToLower() == name.ToLower());
+            return this.Spells.Any(sp => sp.SpellName.ToLower().StartsWith(name.ToLower()));
         }
 
         /// <summary>

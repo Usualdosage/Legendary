@@ -23,10 +23,5 @@ namespace Legendary.Core.Types
         /// Whether the mob is aggressive or not.
         /// </summary>
         Aggressive = 1,
-
-        /// <summary>
-        /// Whether the mob is fighting or not.
-        /// </summary>
-        Fighting = 2,
     }
 }

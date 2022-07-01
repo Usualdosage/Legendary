@@ -9,6 +9,9 @@
 
 namespace Legendary.Engine.Models
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
 
@@ -30,5 +33,69 @@ namespace Legendary.Engine.Models
 
         /// <inheritdoc/>
         public override ActionType ActionType => ActionType.Spell;
+
+        /// <summary>
+        /// Invokes damage on a single target.
+        /// </summary>
+        /// <param name="actor">The caster.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="spellName">The name of the spell.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public virtual async Task DamageToTarget(UserData actor, UserData target, string spellName, CancellationToken cancellationToken)
+        {
+            var damage = this.Combat.CalculateDamage(actor, target, this);
+            var damageVerb = this.Combat.CalculateDamageVerb(damage);
+
+            // Do damage directly to the target.
+            await this.Communicator.SendToPlayer(actor.Connection, $"Your {spellName} {damageVerb} {target?.Character.FirstName}!", cancellationToken);
+            await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s {spellName} {damageVerb} {target?.Character.FirstName}!", cancellationToken);
+
+        }
+
+        /// <summary>
+        /// Invokes damage for everything in the room.
+        /// </summary>
+        /// <param name="actor">The caster.</param>
+        /// <param name="spellName">The name of the spell.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public virtual async Task DamageToRoom(UserData actor, string spellName, CancellationToken cancellationToken)
+        {
+            if (Legendary.Engine.Communicator.Users != null)
+            {
+                foreach (var user in Legendary.Engine.Communicator.Users)
+                {
+                    // Do damage to everything in the room that isn't the player, or in the player's group.
+                    if (user.Value.Character.Location.RoomId == actor.Character.Location.RoomId && user.Value.Character.FirstName != actor.Character.FirstName)
+                    {
+                        var damage = this.Combat.CalculateDamage(actor, user.Value, this);
+                        var damageVerb = this.Combat.CalculateDamageVerb(damage);
+
+                        await this.Communicator.SendToPlayer(actor.Connection, $"Your {spellName} {damageVerb} {user.Value.Character.FirstName}!", cancellationToken);
+                        await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s {spellName} {damageVerb} {user.Value.Character.FirstName}!", cancellationToken);
+
+                        this.Combat.ApplyDamage(user.Value, damage);
+                    }
+                }
+            }
+
+            // Do damage to all mobiles in the room.
+            var mobiles = this.Communicator.GetMobilesInRoom(actor.Character.Location);
+
+            if (mobiles != null)
+            {
+                foreach (var mobile in mobiles)
+                {
+                    var damage = this.Combat.CalculateDamage(actor, mobile, this);
+                    var damageVerb = this.Combat.CalculateDamageVerb(damage);
+
+                    await this.Communicator.SendToPlayer(actor.Connection, $"Your fireball {damageVerb} {mobile.FirstName}!", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s spell {damageVerb} {mobile.FirstName}!", cancellationToken);
+
+                    this.Combat.ApplyDamage(mobile, damage);
+                }
+            }
+        }
     }
 }

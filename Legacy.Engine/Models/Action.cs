@@ -56,6 +56,15 @@ namespace Legendary.Engine.Models
         /// <inheritdoc/>
         public int ManaCost { get; set; }
 
+        /// <inheritdoc/>
+        public int HitDice { get; set; }
+
+        /// <inheritdoc/>
+        public int DamageDice { get; set; }
+
+        /// <inheritdoc/>
+        public int DamageModifier { get; set; }
+
         /// <summary>
         /// Gets the communicator.
         /// </summary>

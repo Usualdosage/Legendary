@@ -34,6 +34,9 @@ namespace Legendary.Engine.Models.Spells
             this.DamageType = Core.Types.DamageType.Fire;
             this.IsAffect = false;
             this.AffectDuration = 0;
+            this.HitDice = 3;
+            this.DamageDice = 6;
+            this.DamageModifier = 200;
         }
 
         /// <inheritdoc/>
@@ -58,40 +61,11 @@ namespace Legendary.Engine.Models.Spells
         {
             if (target == null)
             {
-                if (Legendary.Engine.Communicator.Users != null)
-                {
-                    foreach (var user in Legendary.Engine.Communicator.Users)
-                    {
-                        // Do damage to everything in the room that isn't the player, or in the player's group.
-                        if (user.Value.Character.Location.RoomId == actor.Character.Location.RoomId && user.Value.Character.FirstName != actor.Character.FirstName)
-                        {
-                            var damage = this.Combat.CalculateDamage(actor, user.Value, this);
-                            var damageVerb = this.Combat.CalculateDamageVerb(damage);
-
-                            await this.Communicator.SendToPlayer(actor.Connection, $"Your fireball {damageVerb} {user.Value.Character.FirstName}!", cancellationToken);
-                            await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s spell {damageVerb} {user.Value.Character.FirstName}!", cancellationToken);
-                        }
-                    }
-
-                    // Do damage to all mobiles in the room.
-                    foreach (var mobile in actor.Character.Location.Mobiles)
-                    {
-                        var damage = this.Combat.CalculateDamage(actor, mobile, this);
-                        var damageVerb = this.Combat.CalculateDamageVerb(damage);
-
-                        await this.Communicator.SendToPlayer(actor.Connection, $"Your fireball {damageVerb} {mobile.FirstName}!", cancellationToken);
-                        await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s spell {damageVerb} {mobile.FirstName}!", cancellationToken);
-                    }
-                }
+                await this.DamageToRoom(actor, "fireball", cancellationToken);
             }
             else
             {
-                var damage = this.Combat.CalculateDamage(actor, target, this);
-                var damageVerb = this.Combat.CalculateDamageVerb(damage);
-
-                // Do damage directly to the target.
-                await this.Communicator.SendToPlayer(actor.Connection, $"Your fireball {damageVerb} {target?.Character.FirstName}!", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s spell {damageVerb} {target?.Character.FirstName}!", cancellationToken);
+                await this.DamageToTarget(actor, target, "fireball", cancellationToken);
             }
         }
 

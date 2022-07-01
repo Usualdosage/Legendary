@@ -176,12 +176,17 @@ namespace Legendary.Engine.Processors
                                 foreach (var user in users)
                                 {
                                     user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                                    user.Value.Character.FightingCharacter = null;
+                                    user.Value.Character.FightingMobile = null;
                                 }
 
                                 // Stop all the mobiles from fighting
-                                foreach (var mob in this.actor.Character.Location.Mobiles)
+                                foreach (var mob in this.communicator.GetMobilesInRoom(this.actor.Character.Location))
                                 {
-                                    mob.MobileFlags?.RemoveIfExists(MobileFlags.Fighting);
+                                    mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                                    mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
+                                    mob.FightingMobile = null;
+                                    mob.FightingCharacter = null;
                                 }
                             }
 
@@ -211,6 +216,14 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(this.actor.Connection, $"You have disconnected.", cancellationToken);
                         await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} has left the realms.", cancellationToken);
                         await this.communicator.Quit(this.actor.Connection, this.actor.Character.FirstName ?? "Someone", cancellationToken);
+                        break;
+                    }
+
+                case "rest":
+                    {
+                        await this.communicator.SendToPlayer(this.actor.Connection, $"You kick back and rest.", cancellationToken);
+                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} kicks back and rests.", cancellationToken);
+                        this.actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
                         break;
                     }
 
@@ -283,6 +296,14 @@ namespace Legendary.Engine.Processors
                         }
 
                         await this.communicator.SendToPlayer(this.actor.Connection, builder.ToString(), cancellationToken);
+                        break;
+                    }
+
+                case "sleep":
+                    {
+                        await this.communicator.SendToPlayer(this.actor.Connection, $"You go to sleep.", cancellationToken);
+                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} goes to sleep.", cancellationToken);
+                        this.actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
                         break;
                     }
 
@@ -404,6 +425,15 @@ namespace Legendary.Engine.Processors
                             await this.communicator.SendToPlayer(this.actor.Connection, $"There are {Communicator.Users?.Count} players connected.", cancellationToken);
                         }
 
+                        break;
+                    }
+
+                case "wake":
+                    {
+                        await this.communicator.SendToPlayer(this.actor.Connection, $"You wake and and stand up.", cancellationToken);
+                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} wakes and stands up.", cancellationToken);
+                        this.actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Resting);
+                        this.actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Sleeping);
                         break;
                     }
 
@@ -699,6 +729,12 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         private async Task MovePlayer(UserData user, Direction direction, CancellationToken cancellationToken = default)
         {
+            if (user.Character.CharacterFlags.Contains(CharacterFlags.Resting))
+            {
+                await this.communicator.SendToPlayer(user.Connection, "You're far too relaxed.", cancellationToken);
+                return;
+            }
+
             if (user.Character.Movement.Current == 0)
             {
                 await this.communicator.SendToPlayer(user.Connection, $"You are too exhausted.", cancellationToken);

@@ -514,6 +514,27 @@ namespace Legendary.Engine
             return false;
         }
 
+        /// <inheritdoc/>
+        public Room? GetRoom(Room location)
+        {
+            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == location.AreaId);
+            return area?.Rooms.FirstOrDefault(r => r.RoomId == location.RoomId);
+        }
+
+        /// <inheritdoc/>
+        public List<Mobile>? GetMobilesInRoom(Room location)
+        {
+            var room = this.GetRoom(location);
+            return room?.Mobiles.ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<Item>? GetItemsInRoom(Room location)
+        {
+            var room = this.GetRoom(location);
+            return room?.Items.ToList();
+        }
+
         /// <summary>
         /// Logs a message to wiznet.
         /// </summary>
@@ -562,6 +583,12 @@ namespace Legendary.Engine
         {
             if (input == null)
             {
+                return;
+            }
+
+            if (user.Character.CharacterFlags.Contains(CharacterFlags.Sleeping) && input.Trim().ToLower() != "wake")
+            {
+                await this.SendToPlayer(user.Connection, "You can't do that while you're asleep.", cancellationToken);
                 return;
             }
 
@@ -674,6 +701,12 @@ namespace Legendary.Engine
             this.skillProcessor = new SkillProcessor(userData, this, this.random, new Combat(this.random));
             this.spellProcessor = new SpellProcessor(userData, this, this.random, new Combat(this.random));
             this.actionProcessor = new ActionProcessor(userData, this, this.world, this.logger);
+
+            // Make sure we have populated character flags
+            if (userData.Character.CharacterFlags == null)
+            {
+                userData.Character.CharacterFlags = new List<CharacterFlags>();
+            }
 
             // Save the changes.
             await this.SaveCharacter(userData);

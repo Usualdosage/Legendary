@@ -40,8 +40,27 @@ namespace Legendary.Engine
         /// <returns>Damage.</returns>
         public int CalculateDamage(UserData actor, UserData target, IAction action)
         {
-            // TODO: Calculate this.
-            return this.random.Next(1, 50);
+            // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
+            // If the player is 20, target is 10, damage modifier is doubled.
+            // If the player is 10, target is 20, damage modifier is halved.
+            double adjust = (actor.Character.Level / target.Character.Level) * action.DamageModifier;
+
+            var damage = 0;
+            for (var x = 0; x < action.HitDice; x++)
+            {
+                damage += this.random.Next(1, action.DamageDice);
+            }
+
+            if (this.DidSave(target, action))
+            {
+                // Save for half damage.
+                return (int)((damage + adjust) / 2);
+            }
+            else
+            {
+                // Whole numbers only.
+                return (int)(damage + adjust);
+            }
         }
 
         /// <summary>
@@ -53,8 +72,27 @@ namespace Legendary.Engine
         /// <returns>Damage.</returns>
         public int CalculateDamage(UserData actor, Mobile target, IAction action)
         {
-            // TODO: Calculate this.
-            return this.random.Next(1, 50);
+            // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
+            // If the player is 20, target is 10, damage modifier is doubled.
+            // If the player is 10, target is 20, damage modifier is halved.
+            double adjust = (actor.Character.Level / target.Level) * action.DamageModifier;
+
+            var damage = 0;
+            for (var x = 0; x < action.HitDice; x++)
+            {
+                damage += this.random.Next(1, action.DamageDice);
+            }
+
+            if (this.DidSave(target, action))
+            {
+                // Save for half damage.
+                return (int)((damage + adjust) / 2);
+            }
+            else
+            {
+                // Whole numbers only.
+                return (int)(damage + adjust);
+            }
         }
 
         /// <summary>
@@ -80,12 +118,71 @@ namespace Legendary.Engine
         /// Determines whether the target saved vs the attack type.
         /// </summary>
         /// <param name="target">The target.</param>
+        /// <param name="action">The action to save against.</param>
         /// <returns>True if the target saved.</returns>
-        public bool DidSave(UserData target)
+        public bool DidSave(UserData target, IAction action)
         {
-            // TODO: Calculate this.
-            // var save = this.random.Next(1, 20);
-            return true;
+            var saveThrow = this.random.Next(1, 20);
+
+            // Critical failure.
+            if (saveThrow == 1)
+            {
+                return false;
+            }
+
+            switch (action.DamageType)
+            {
+                default:
+                    return saveThrow < target.Character.Saves.Spell;
+                case Core.Types.DamageType.Energy:
+                case Core.Types.DamageType.Negative:
+                    return saveThrow < target.Character.Saves.Negative;
+            }
+        }
+
+        /// <summary>
+        /// Applies the damage to the target. If damage brings them to below 0, sets the "dead" flags.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="damage">The damage.</param>
+        public void ApplyDamage(Mobile target, int damage)
+        {
+            target.Health.Current -= damage;
+
+            // If below zero, character is dead. Set the appropriate flags.
+            if (target.Health.Current < 0)
+            {
+                target.CharacterFlags?.RemoveIfExists(Core.Types.CharacterFlags.Fighting);
+                target.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
+                target.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
+                target.Location = target.Home ?? Room.Default;
+            }
+        }
+
+        /// <summary>
+        /// Determines whether the target saved vs the attack type.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="action">The action to save against.</param>
+        /// <returns>True if the target saved.</returns>
+        public bool DidSave(Mobile target, IAction action)
+        {
+            var saveThrow = this.random.Next(1, 20);
+
+            // Critical failure.
+            if (saveThrow == 1)
+            {
+                return false;
+            }
+
+            switch (action.DamageType)
+            {
+                default:
+                    return saveThrow < target.Saves.Spell;
+                case Core.Types.DamageType.Energy:
+                case Core.Types.DamageType.Negative:
+                    return saveThrow < target.Saves.Negative;
+            }
         }
 
         /// <summary>

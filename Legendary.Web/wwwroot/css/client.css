@@ -320,6 +320,11 @@ progress {
 /* Combat Things */
 
 .damage {
-    color: darkred;
+    color: indianred;
+    font-weight: bold;
+}
+
+.spellWords {
+    color: deeppink;
     font-weight: bold;
 }

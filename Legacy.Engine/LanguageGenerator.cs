@@ -86,7 +86,7 @@ namespace Legendary.Engine
             result = char.ToUpper(result[0]) + result[1..];
 
             // Add some emphasis.
-            return result + "!";
+            return $"<span class='spellWords'>{result}!</span>";
         }
 
         private string BuildPseudoWord(int length)

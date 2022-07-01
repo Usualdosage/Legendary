@@ -43,7 +43,22 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets a value indicating whether this action can be invoked, or is automatic.
         /// </summary>
-        public bool CanInvoke { get; set; }
+        bool CanInvoke { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of dice to roll.
+        /// </summary>
+        int HitDice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of dice to roll.
+        /// </summary>
+        int DamageDice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the damage modifier (bonus added to damage roll).
+        /// </summary>
+        int DamageModifier { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this action is an affect or not.
