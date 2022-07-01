@@ -239,6 +239,50 @@ namespace Legendary.Engine
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
         }
 
+        /// <inheritdoc/>
+        public async Task ShowPlayerToPlayer(UserData user, string player, CancellationToken cancellationToken = default)
+        {
+            // Update player stats
+            await this.ShowPlayerInfo(user, cancellationToken);
+
+            if (player == user.Character.FirstName || player == "self")
+            {
+                await this.SendToPlayer(user.Connection, "You look at yourself.", cancellationToken);
+                await this.SendToPlayer(user.Connection, this.GetPlayerInfo(user.Character), cancellationToken);
+                await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {user.Character.Pronoun}self.", cancellationToken);
+            }
+            else
+            {
+                var target = Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == player.ToLower());
+
+                if (target == null || target.Value.Value == null)
+                {
+                    // Maybe a mobile
+                    var mobiles = this.GetMobilesInRoom(user.Character.Location);
+                    if (mobiles != null)
+                    {
+                        var mobile = mobiles.FirstOrDefault(m => m.FirstName?.ToLower() == player.ToLower());
+                        if (mobile != null)
+                        {
+                            await this.SendToPlayer(user.Connection, $"You look at {mobile.FirstName}.", cancellationToken);
+                            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {mobile.FirstName}.", cancellationToken);
+                            await this.SendToPlayer(user.Connection, this.GetPlayerInfo(mobile), cancellationToken);
+                        }
+                        else
+                        {
+                            await this.SendToPlayer(user.Connection, "They are not here.", cancellationToken);
+                        }
+                    }
+                }
+                else
+                {
+                    await this.SendToPlayer(target.Value.Value.Connection, $"{user.Character.FirstName} looks at you.", cancellationToken);
+                    await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
+                    await this.SendToPlayer(user.Connection, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
+                }
+            }
+        }
+
         /// <summary>
         /// Shows the information in a room to a single player.
         /// </summary>
@@ -364,7 +408,7 @@ namespace Legendary.Engine
             sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
 
             // Condition
-            sb.Append($"<tr><td colspan='2' class='condition'>You are in perfect health.</td></tr>");
+            sb.Append($"<tr><td colspan='2' class='condition'>{this.GetPlayerCondition(user.Character)}</td></tr>");
 
             sb.Append("</table></div>");
 
@@ -570,6 +614,55 @@ namespace Legendary.Engine
             {
                 await this.ProcessMessage(user.Value.Value, e.Message, cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Shows the player (or mobile) to another player.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>String.</returns>
+        private string GetPlayerInfo(Character target)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"<span class='player-desc-title'>{target.FirstName} {target.LastName}</span><br/>");
+            sb.Append($"<span class='player-description'>{target.Description}</span><br/>");
+
+            // TODO: Show equipped items.
+            sb.Append($"<span class='player-wear'>{target.FirstName} is wearing: nothing.</span><br/>");
+
+            sb.Append($"<span class='player-condition'>{this.GetPlayerCondition(target)}</span><br/>");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Shows the player's physical condition.
+        /// </summary>
+        /// <param name="target">The player.</param>
+        /// <returns>String.</returns>
+        private string GetPlayerCondition(Character target)
+        {
+            // Get the target's health as a percentage of their total health.
+            var percentage = target.Health.GetPercentage();
+
+            var message = percentage switch
+            {
+                <= 0 => "<span class='player-health'>is DEAD.</span>", // 0
+                > 0 and <= 10 => $"<span class='player-health'>is on {target.Pronoun} death bed.</span>", // 1-10
+                > 11 and <= 20 => "<span class='player-health'>is mortally wounded.</span>", // 11-20
+                > 21 and <= 30 => "<span class='player-health'>is seriously hurt.</span>", // 21-30
+                > 31 and <= 40 => "<span class='player-health'>has taken some severe damage.</span>", // 31-40
+                > 41 and <= 50 => "<span class='player-health'>is covered in major wounds.</span>", // 41-50
+                > 51 and <= 60 => "<span class='player-health'>is bleeding profusely from many wounds.</span>", // 51-60
+                > 61 and <= 70 => "<span class='player-health'>has some big wounds and nasty scratches.</span>", // 61-70
+                > 71 and <= 80 => "<span class='player-health'>has some abrasions and lacerations.</span>", // 71-80
+                > 81 and <= 90 => "<span class='player-health'>has some small wounds and bruises.</span>", // 81-90
+                > 91 and <= 99 => "<span class='player-health'>has some tiny scrapes.</span>", // 91-99
+                _ => "<span class='player-health'>is in perfect health.</span>" // 100
+            };
+
+            return $"{target.FirstName} {message}.";
         }
 
         /// <summary>

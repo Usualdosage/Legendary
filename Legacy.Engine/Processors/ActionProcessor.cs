@@ -141,7 +141,15 @@ namespace Legendary.Engine.Processors
                 case "loo":
                 case "look":
                     {
-                        await this.communicator.ShowRoomToPlayer(this.actor, cancellationToken);
+                        if (args.Length > 1)
+                        {
+                            await this.communicator.ShowPlayerToPlayer(this.actor, args[1], cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.ShowRoomToPlayer(this.actor, cancellationToken);
+                        }
+
                         break;
                     }
 
@@ -181,12 +189,16 @@ namespace Legendary.Engine.Processors
                                 }
 
                                 // Stop all the mobiles from fighting
-                                foreach (var mob in this.communicator.GetMobilesInRoom(this.actor.Character.Location))
+                                var mobiles = this.communicator.GetMobilesInRoom(this.actor.Character.Location);
+                                if (mobiles != null)
                                 {
-                                    mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                                    mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
-                                    mob.FightingMobile = null;
-                                    mob.FightingCharacter = null;
+                                    foreach (var mob in mobiles)
+                                    {
+                                        mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                                        mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
+                                        mob.FightingMobile = null;
+                                        mob.FightingCharacter = null;
+                                    }
                                 }
                             }
 

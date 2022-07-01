@@ -159,7 +159,8 @@ progress {
 /* Room Data */
 
 .room-title {
-    font-family: 'Balgruf', font-weight: bold;
+    font-family: 'Balgruf';
+    font-weight: bold;
     border-bottom: solid 1px #ccc;
     margin-bottom: 5px;
     font-size: 1.1em;
@@ -314,6 +315,38 @@ progress {
     font-size: 2em;
     width: 100%;
     text-align: center;
+    display: block;
+}
+
+.player-desc-title {
+    font-family: 'BeyondWonderland', 'Comforter', cursive;
+    font-size: 2em;
+    width: 100%;
+    text-align: left;
+    display: block;
+}
+
+.player-description {
+    font-family: 'Balgruf';
+    font-size: 1em;
+    width: 100%;
+    text-align: left;
+    display: block;
+}
+
+.player-condition {
+    font-family: 'Balgruf';
+    font-size: 1em;
+    width: 100%;
+    text-align: justify-all;
+    display: block;
+}
+
+.player-wear {
+    font-family: 'Balgruf';
+    font-size: 1em;
+    width: 100%;
+    text-align: justify-all;
     display: block;
 }
 

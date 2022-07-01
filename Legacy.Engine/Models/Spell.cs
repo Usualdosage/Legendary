@@ -50,7 +50,6 @@ namespace Legendary.Engine.Models
             // Do damage directly to the target.
             await this.Communicator.SendToPlayer(actor.Connection, $"Your {spellName} {damageVerb} {target?.Character.FirstName}!", cancellationToken);
             await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s {spellName} {damageVerb} {target?.Character.FirstName}!", cancellationToken);
-
         }
 
         /// <summary>

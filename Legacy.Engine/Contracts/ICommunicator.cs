@@ -67,6 +67,15 @@ namespace Legendary.Engine.Contracts
         Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Shows a target player or mobile to the actor.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task ShowPlayerToPlayer(UserData user, string target, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sends a message to a specified socket.
         /// </summary>
         /// <param name="socket">The socket to send to.</param>

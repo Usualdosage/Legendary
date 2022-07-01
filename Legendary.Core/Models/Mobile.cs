@@ -20,17 +20,6 @@ namespace Legendary.Core.Models
     [BsonIgnoreExtraElements]
     public class Mobile : Character
     {
-        ///// <summary>
-        ///// Gets or sets the ID of the mobile.
-        ///// </summary>
-        ///// <summary>
-        ///// Gets or sets the Id.
-        ///// </summary>
-        //[BsonId]
-        //[BsonRepresentation(BsonType.Int64)]
-        //[BsonElement("_id")]
-        //public override CharacterId{ get; set; }
-
         /// <inheritdoc/>
         public override bool IsNPC { get => true; set => base.IsNPC = true; }
 

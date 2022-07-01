@@ -129,15 +129,15 @@ namespace Legendary.Engine
 
                     if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
                     {
-                        standardHPRecover = standardHPRecover * 2;
-                        standardManaRecover = standardManaRecover * 2;
-                        standardMoveRecover = standardMoveRecover * 2;
+                        standardHPRecover *= 2;
+                        standardManaRecover *= 2;
+                        standardMoveRecover *= 2;
                     }
                     else if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Sleeping))
                     {
-                        standardHPRecover = standardHPRecover * 5;
-                        standardManaRecover = standardManaRecover * 5;
-                        standardMoveRecover = standardMoveRecover * 5;
+                        standardHPRecover *= 5;
+                        standardManaRecover *= 5;
+                        standardMoveRecover *= 5;
                     }
 
                     var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, standardMoveRecover);

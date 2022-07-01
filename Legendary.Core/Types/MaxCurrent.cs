@@ -34,5 +34,14 @@ namespace Legendary.Core.Types
         /// Gets or sets the current.
         /// </summary>
         public double Current { get; set; }
+
+        /// <summary>
+        /// Gets the percentage of current vs. max.
+        /// </summary>
+        /// <returns>The percentage as an integer.</returns>
+        public int GetPercentage()
+        {
+            return (int)((this.Current / this.Max) * 100);
+        }
     }
 }
