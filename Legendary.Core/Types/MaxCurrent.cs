@@ -43,5 +43,11 @@ namespace Legendary.Core.Types
         {
             return (int)((this.Current / this.Max) * 100);
         }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return $"{this.Max} ({this.Current})";
+        }
     }
 }

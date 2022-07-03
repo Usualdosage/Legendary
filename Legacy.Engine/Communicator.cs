@@ -19,6 +19,7 @@ namespace Legendary.Engine
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
+    using Legendary.Core.Attributes;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -617,6 +618,34 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Gets the description of the wear location.
+        /// </summary>
+        /// <param name="wearLocation">The wear location.</param>
+        /// <returns>String.</returns>
+        private static string GetWearLocationDescription(string wearLocation)
+        {
+            try
+            {
+                var enumType = typeof(WearLocation);
+                var memberInfos =
+                enumType.GetMember(wearLocation);
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
+
+                if (valueAttributes != null)
+                {
+                    return ((WearDescription)valueAttributes[0]).Description;
+                }
+
+                return WearLocation.None.ToString();
+            }
+            catch
+            {
+                return WearLocation.None.ToString();
+            }
+        }
+
+        /// <summary>
         /// Shows the player (or mobile) to another player.
         /// </summary>
         /// <param name="target">The target.</param>
@@ -626,10 +655,29 @@ namespace Legendary.Engine
             var sb = new StringBuilder();
 
             sb.Append($"<span class='player-desc-title'>{target.FirstName} {target.LastName}</span><br/>");
-            sb.Append($"<span class='player-description'>{target.Description}</span><br/>");
+            sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
 
-            // TODO: Show equipped items.
-            sb.Append($"<span class='player-wear'>{target.FirstName} is wearing: nothing.</span><br/>");
+            // Worn items.
+            var wearLocations = Enum.GetNames<WearLocation>();
+
+            sb.Append("<table class='wear-table'>");
+
+            foreach (var wearLocation in wearLocations)
+            {
+                var description = GetWearLocationDescription(wearLocation);
+
+                if (description.ToLower() == "none")
+                {
+                    continue;
+                }
+
+                sb.Append("<tr>");
+                var location = Enum.Parse<WearLocation>(wearLocation);
+                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{target.Armor.FirstOrDefault(a => a.WearLocation == location)?.Name ?? "nothing."}</td>");
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</table>");
 
             sb.Append($"<span class='player-condition'>{this.GetPlayerCondition(target)}</span><br/>");
 
@@ -794,12 +842,6 @@ namespace Legendary.Engine
             this.skillProcessor = new SkillProcessor(userData, this, this.random, new Combat(this.random));
             this.spellProcessor = new SpellProcessor(userData, this, this.random, new Combat(this.random));
             this.actionProcessor = new ActionProcessor(userData, this, this.world, this.logger);
-
-            // Make sure we have populated character flags
-            if (userData.Character.CharacterFlags == null)
-            {
-                userData.Character.CharacterFlags = new List<CharacterFlags>();
-            }
 
             // Save the changes.
             await this.SaveCharacter(userData);

@@ -9,13 +9,14 @@
 
 namespace Legendary.Engine
 {
+    using System;
     using System.Security.Cryptography;
     using System.Text;
 
     /// <summary>
     /// Methods for encrypting and/or hashing things.
     /// </summary>
-    public class Crypt
+    public static class Crypt
     {
         /// <summary>
         /// Computes a SHA-256 hash of a string value.

@@ -13,7 +13,7 @@ namespace Legendary.Core.Types
     using System.Collections.Generic;
 
     /// <summary>
-    /// Trancs various metrics for a character.
+    /// Tracks various metrics for a character.
     /// </summary>
     public class Metrics
     {

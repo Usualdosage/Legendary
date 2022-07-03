@@ -46,11 +46,9 @@ namespace Legendary.Data.Contracts
         /// <summary>
         /// Creates a character.
         /// </summary>
-        /// <param name="firstName">First name.</param>
-        /// <param name="lastName">Last name.</param>
-        /// <param name="hashedPassword">Hashed password.</param>
+        /// <param name="character">The character.</param>
         /// <returns>Task.</returns>
-        Task<Character?> CreateCharacter(string firstName, string lastName, string hashedPassword);
+        Task<Character?> CreateCharacter(Character character);
 
         /// <summary>
         /// Tests that this instance can connect to Mongo.

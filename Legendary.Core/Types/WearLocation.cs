@@ -9,114 +9,141 @@
 
 namespace Legendary.Core.Types
 {
+    using Legendary.Core.Attributes;
+
     /// <summary>
     /// Defines the possible wear location on a player for items.
     /// </summary>
     public enum WearLocation : short
     {
         /// <summary>
+        /// Cannot be worn.
+        /// </summary>
+        None = 0,
+
+        /// <summary>
         /// Inventory.
         /// </summary>
-        Inventory = 0,
+        Inventory = 1,
 
         /// <summary>
         /// Head.
         /// </summary>
-        Head = 1,
+        [WearDescription("Worn on head")]
+        Head = 2,
 
         /// <summary>
         /// Torso.
         /// </summary>
-        Torso = 2,
+        [WearDescription("Worn on body")]
+        Torso = 3,
 
         /// <summary>
         /// Arms.
         /// </summary>
-        Arms = 3,
+        [WearDescription("Worn on arms")]
+        Arms = 4,
 
         /// <summary>
         /// Legs.
         /// </summary>
-        Legs = 4,
+        [WearDescription("Worn on legs")]
+        Legs = 5,
 
         /// <summary>
         /// Waist.
         /// </summary>
-        Waist = 5,
+        [WearDescription("Worn around waist")]
+        Waist = 6,
 
         /// <summary>
         /// Neck.
         /// </summary>
-        Neck = 6,
+        [WearDescription("Worn around neck")]
+        Neck = 7,
 
         /// <summary>
         /// Left wrist.
         /// </summary>
-        LWrist = 7,
+        [WearDescription("Worn on left wrist")]
+        LWrist = 8,
 
         /// <summary>
         /// Right wrist.
         /// </summary>
-        RWist = 8,
+        [WearDescription("Worn on right wrist")]
+        RWist = 9,
 
         /// <summary>
         /// Feet.
         /// </summary>
-        Feet = 9,
+        [WearDescription("Worn on feet")]
+        Feet = 10,
 
         /// <summary>
         /// Face.
         /// </summary>
-        Face = 10,
+        [WearDescription("Worn on face")]
+        Face = 11,
 
         /// <summary>
         /// Left ear.
         /// </summary>
-        LEar = 11,
+        [WearDescription("Worn in left ear")]
+        LEar = 12,
 
         /// <summary>
         /// Right ear.
         /// </summary>
-        REar = 12,
+        [WearDescription("Worn in right ear")]
+        REar = 13,
 
         /// <summary>
         /// Hands.
         /// </summary>
-        Hands = 13,
+        [WearDescription("Worn on hands")]
+        Hands = 14,
 
         /// <summary>
         /// Right finger.
         /// </summary>
-        RFinger = 14,
+        [WearDescription("Worn on right finger")]
+        RFinger = 15,
 
         /// <summary>
         /// Left finger.
         /// </summary>
-        LFinder = 15,
+        [WearDescription("Worn on left finger")]
+        LFinder = 16,
 
         /// <summary>
         /// Floating.
         /// </summary>
-        Floating = 16,
+        [WearDescription("Floating nearby")]
+        Floating = 17,
 
         /// <summary>
         /// Held.
         /// </summary>
-        Held = 17,
+        [WearDescription("Held in hand")]
+        Held = 18,
 
         /// <summary>
         /// Primary.
         /// </summary>
-        Wielded = 18,
+        [WearDescription("Wielded")]
+        Wielded = 19,
 
         /// <summary>
         /// Secondary.
         /// </summary>
-        DualWielded = 19,
+        [WearDescription("Wielded in off hand")]
+        DualWielded = 20,
 
         /// <summary>
         /// Shield.
         /// </summary>
-        Shield = 20,
+        [WearDescription("Worn as a shield")]
+        Shield = 21,
     }
 }

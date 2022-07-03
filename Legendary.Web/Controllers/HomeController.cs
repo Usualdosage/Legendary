@@ -9,18 +9,22 @@
 
 namespace Legendary.Web.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Data.Contracts;
-    using Legendary.Engine.Models.Skills;
+    using Legendary.Engine;
     using Legendary.Web.Contracts;
     using Legendary.Web.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Handles login security, authorization, and renders the main views.
@@ -86,33 +90,80 @@ namespace Legendary.Web.Controllers
         /// <param name="message">The create message.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult CreateUser(string message)
+        public IActionResult CreateUser()
         {
-            return this.View(message);
+            var random = new Legendary.Engine.Random();
+
+            var statModel = new StatModel();
+
+            statModel.Str = random.Next(12, 18);
+            statModel.Int = random.Next(12, 18);
+            statModel.Dex = random.Next(12, 18);
+            statModel.Wis = random.Next(12, 18);
+            statModel.Con = random.Next(12, 18);
+
+            if (this.TempData.ContainsKey("StatModel"))
+            {
+                this.TempData["StatModel"] = JsonConvert.SerializeObject(statModel);
+            }
+            else
+            {
+                this.TempData.Add("StatModel", JsonConvert.SerializeObject(statModel));
+            }
+
+            return this.View(statModel);
         }
 
         /// <summary>
         /// Creates a character.
         /// </summary>
-        /// <param name="firstName">The first name.</param>
-        /// <param name="lastName">The last name.</param>
-        /// <param name="password">The password.</param>
+        /// <param name="model">The stat model.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateCharacter(string firstName, string lastName, string password)
+        public async Task<IActionResult> CreateCharacter()
         {
-            if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(password))
+            var form = this.Request.Form;
+
+            var stats = JsonConvert.DeserializeObject<StatModel>(this.TempData["StatModel"].ToString());
+
+            // This field would only be submitted by a bot.
+            if (form["submittalfield"] != string.Empty)
             {
-                return this.View("CreateUser", "You need to provide a first name and a password.");
+                return this.CreateUser();
             }
 
             // Make sure the character doesn't exist yet.
-            var character = await this.dataService.FindCharacter(c => c.FirstName == firstName);
+            var existingCharacter = await this.dataService.FindCharacter(c => c.FirstName == form["FirstName"]);
 
-            if (character == null)
+            if (existingCharacter == null)
             {
-                var pwHash = Engine.Crypt.ComputeSha256Hash(password);
-                await this.dataService.CreateCharacter(firstName, lastName, pwHash);
+                var character = new Character()
+                {
+                    FirstName = form["FirstName"],
+                    LastName = form["LastName"],
+                    LongDescription = form["LongDescription"],
+                    Health = new MaxCurrent(30, 30),
+                    Movement = new MaxCurrent(30, 30),
+                    Mana = new MaxCurrent(30, 30),
+                    Str = new MaxCurrent(stats.Str, stats.Str),
+                    Int = new MaxCurrent(stats.Int, stats.Int),
+                    Wis = new MaxCurrent(stats.Wis, stats.Wis),
+                    Dex = new MaxCurrent(stats.Dex, stats.Dex),
+                    Con = new MaxCurrent(stats.Con, stats.Con),
+                    Gender = Enum.Parse<Gender>(form["Gender"]),
+                    Race = Enum.Parse<Race>(form["Race"]),
+                    Ethos = Enum.Parse<Ethos>(form["Ethos"]),
+                    Alignment = Enum.Parse<Alignment>(form["Alignment"]),
+                    Title = "the Adventurer",
+                };
+
+                var pwHash = Crypt.ComputeSha256Hash(form["Password"]);
+                character.Password = pwHash;
+
+                character.CharacterId = Math.Abs(character.GetHashCode());
+
+                await this.dataService.CreateCharacter(character);
+
                 return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
             }
             else
@@ -144,7 +195,7 @@ namespace Legendary.Web.Controllers
                 return this.View("Login", new LoginModel("That character does not exist. You should create one!", this.buildSettings));
             }
 
-            var pwHash = Engine.Crypt.ComputeSha256Hash(password);
+            var pwHash = Crypt.ComputeSha256Hash(password);
 
             if (pwHash != dbUser.Password)
             {

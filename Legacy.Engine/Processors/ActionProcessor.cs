@@ -78,6 +78,12 @@ namespace Legendary.Engine.Processors
                         }
                     }
 
+                case "eq" or "equip":
+                    {
+                        await this.ShowPlayerEquipment(this.actor, cancellationToken);
+                        break;
+                    }
+
                 case "get":
                     {
                         if (args.Length < 2)
@@ -121,8 +127,7 @@ namespace Legendary.Engine.Processors
                         break;
                     }
 
-                case "inv":
-                case "inventory":
+                case "inv" or "inventory":
                     {
                         var sb = new StringBuilder();
                         sb.AppendLine("<span class='inventory'>You are carrying:</span>");
@@ -136,10 +141,7 @@ namespace Legendary.Engine.Processors
                         break;
                     }
 
-                case "l":
-                case "lo":
-                case "loo":
-                case "look":
+                case "l" or "lo" or "loo" or "look":
                     {
                         if (args.Length > 1)
                         {
@@ -280,17 +282,13 @@ namespace Legendary.Engine.Processors
                         break;
                     }
 
-                case "sc":
-                case "sco":
-                case "scor":
-                case "score":
+                case "sc" or "sco" or "scor" or "score":
                     {
                         await this.ShowPlayerScore(this.actor, cancellationToken);
                         break;
                     }
 
-                case "skill":
-                case "skills":
+                case "skill" or "skills":
                     {
                         var builder = new StringBuilder();
                         builder.AppendLine("Your skills are:<br/>");
@@ -319,8 +317,7 @@ namespace Legendary.Engine.Processors
                         break;
                     }
 
-                case "spell":
-                case "spells":
+                case "spell" or "spells":
                     {
                         var builder = new StringBuilder();
                         builder.AppendLine("Your spells are:<br/>");
@@ -341,8 +338,7 @@ namespace Legendary.Engine.Processors
                         break;
                     }
 
-                case "sub":
-                case "subscribe":
+                case "sub" or "subscribe":
                     {
                         var name = string.Join(' ', args, 1, args.Length - 1);
                         var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
@@ -386,8 +382,7 @@ namespace Legendary.Engine.Processors
                         break;
                     }
 
-                case "unsub":
-                case "unsubscribe":
+                case "unsub" or "unsubscribe":
                     {
                         var name = string.Join(' ', args, 1, args.Length - 1);
                         var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
@@ -828,11 +823,28 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td colspan='2'>&nbsp;</td><td>Con:</td><td>{user.Character.Con}</td></tr>");
 
+            sb.Append($"<tr><td class='player-armor' colspan='4'>Armor</td></tr>");
+
+            sb.Append($"<tr><td>Pierce:</td><td>{user.Character.Armor.Sum(a => a.Pierce)}%</td><td>Blunt:</td><td>{user.Character.Armor.Sum(a => a.Blunt)}%</td></tr>");
+
+            sb.Append($"<tr><td>Edged:</td><td>{user.Character.Armor.Sum(a => a.Edged)}%</td><td>Magic:</td><td>{user.Character.Armor.Sum(a => a.Magic)}%</td></tr>");
+
             sb.Append($"<tr><td colspan='4'>You are not affected by any skills or spells.</td></tr>");
 
             sb.Append("</table></div>");
 
             await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
+        }
+
+        /// <summary>
+        /// Shows the equipment the player is wearing.
+        /// </summary>
+        /// <param name="user">The connected user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task ShowPlayerEquipment(UserData user, CancellationToken cancellationToken = default)
+        {
+
         }
     }
 }

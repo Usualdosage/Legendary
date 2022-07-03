@@ -9,6 +9,7 @@
 
 namespace Legendary.Core.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Legendary.Core.Contracts;
@@ -29,6 +30,11 @@ namespace Legendary.Core.Models
         [BsonRepresentation(BsonType.Int64)]
         [BsonElement("_id")]
         public long CharacterId { get; set; }
+
+        /// <summary>
+        /// Gets the unique ID of this character for generating a unique character ID.
+        /// </summary>
+        public Guid UniqueId { get => Guid.NewGuid(); }
 
         /// <summary>
         /// Gets or sets the first name.
@@ -76,9 +82,14 @@ namespace Legendary.Core.Models
         public string? Password { get; set; }
 
         /// <summary>
-        /// Gets or sets the description.
+        /// Gets or sets the short description.
         /// </summary>
-        public string? Description { get; set; }
+        public string? ShortDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the long description.
+        /// </summary>
+        public string? LongDescription { get; set; }
 
         /// <summary>
         /// Gets or sets the location.
@@ -111,6 +122,11 @@ namespace Legendary.Core.Models
         public MaxCurrent Movement { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
+        /// Gets or sets the carry weight of the player.
+        /// </summary>
+        public MaxCurrent CarryWeight { get; set; } = new MaxCurrent(120, 120);
+
+        /// <summary>
         /// Gets or sets the character's home room (recall point).
         /// </summary>
         public Room Home { get; set; } = new Room() { AreaId = 1, RoomId = 1 };
@@ -123,27 +139,27 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's strength.
         /// </summary>
-        public int Str { get; set; } = 10;
+        public MaxCurrent Str { get; set; } = new MaxCurrent(10, 10);
 
         /// <summary>
         /// Gets or sets the player's intelligence.
         /// </summary>
-        public int Int { get; set; } = 10;
+        public MaxCurrent Int { get; set; } = new MaxCurrent(10, 10);
 
         /// <summary>
         /// Gets or sets the player's wisdom.
         /// </summary>
-        public int Wis { get; set; } = 10;
+        public MaxCurrent Wis { get; set; } = new MaxCurrent(10, 10);
 
         /// <summary>
         /// Gets or sets the player's dexterity.
         /// </summary>
-        public int Dex { get; set; } = 10;
+        public MaxCurrent Dex { get; set; } = new MaxCurrent(10, 10);
 
         /// <summary>
         /// Gets or sets the player's constitution.
         /// </summary>
-        public int Con { get; set; } = 10;
+        public MaxCurrent Con { get; set; } = new MaxCurrent(10, 10);
 
         /// <summary>
         /// Gets or sets the alignment.
@@ -206,6 +222,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the player's metrics.
         /// </summary>
         public Metrics Metrics { get; set; } = new Metrics();
+
+        /// <summary>
+        /// Gets or sets the player's armor.
+        /// </summary>
+        public IList<Armor> Armor { get; set; } = new List<Armor>();
 
         /// <summary>
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.

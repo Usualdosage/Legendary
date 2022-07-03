@@ -16,9 +16,41 @@ html {
     min-height: 100%;
 }
 
+.visually-hidden {
+    display: none;
+}
+
 /* Login/Create Pages */
+
 .card {
     box-shadow: 5px 5px 5px #666;
+}
+
+.card-body .row {
+    padding: 5px;
+}
+
+.charinput {
+    width: 100%;
+    padding: 5px;
+    border: solid 1px #ccc;
+    border-radius: 3px;
+}
+
+.statinput {
+    width: 50px;
+    padding: 5px;
+    border: solid 1px #ccc;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.descinput {
+    width: 100%;
+    padding: 5px;
+    border: solid 1px #ccc;
+    border-radius: 3px;
+    height: 120px;
 }
 
 /* Static Content */
@@ -117,6 +149,29 @@ body {
     padding-bottom: 5px;
     font-size: 2em;
     font-family: 'BeyondWonderland', 'Comforter', cursive;
+}
+
+.player-armor {
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+.wear-table {
+    border: none;
+    width: 400px;
+    font-size: .9em;
+}
+
+    .wear-table td {
+        padding: 2px;
+    }
+
+.wear-table-location {
+    width: 150px;
+}
+
+.wear-table-item {
+    
 }
 
 .condition {
@@ -347,6 +402,14 @@ progress {
     font-size: 1em;
     width: 100%;
     text-align: justify-all;
+    display: block;
+}
+
+.wear-location {
+    font-family: 'Balgruf';
+    font-size: 1em;
+    width: 100%;
+    text-align: left;
     display: block;
 }
 

@@ -33,5 +33,10 @@ namespace Legendary.Core.Types
         /// Sharp.
         /// </summary>
         Sharp = 3,
-    }
+
+        /// <summary>
+        /// Magical.
+        /// </summary>
+        Magical = 4,
+}
 }

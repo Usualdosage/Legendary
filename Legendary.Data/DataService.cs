@@ -96,28 +96,21 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task<Character?> CreateCharacter(string firstName, string lastName, string hashedPassword)
+        public async Task<Character?> CreateCharacter(Character character)
         {
             var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
 
-            var character = new Character()
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Password = hashedPassword,
-                Title = "The Tourist",
-                Health = new Core.Types.MaxCurrent(30, 30),
-                Mana = new Core.Types.MaxCurrent(30, 30),
-                Movement = new Core.Types.MaxCurrent(30, 30),
-                IsNPC = false,
-                Level = 1,
-                Location = Room.Default,
-            };
-
             if (characters != null)
             {
-                await characters.InsertOneAsync(character);
-                return character;
+                try
+                {
+                    await characters.InsertOneAsync(character);
+                    return character;
+                }
+                catch
+                {
+                    throw;
+                }
             }
             else
             {

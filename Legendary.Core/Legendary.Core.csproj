@@ -19,6 +19,7 @@
     <None Remove="Types\" />
     <None Remove="MongoDB.Bson" />
     <None Remove="MongoDB.Driver" />
+    <None Remove="Attributes\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
@@ -30,5 +31,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\" />
   </ItemGroup>
 </Project>
