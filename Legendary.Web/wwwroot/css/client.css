@@ -53,6 +53,12 @@ html {
     height: 120px;
 }
 
+.input-label {
+    float: left;
+    color: #666;
+    font-size: 0.8em;
+}
+
 /* Static Content */
 
 .console-container {
@@ -93,13 +99,17 @@ html {
 }
 
 .loader {
-    padding: 10px;
+    padding: 15px;
     border: solid 1px #ccc;
-    width: 300px;
+    width: 350px;
     border-radius: 5px;
     margin-top: 10px;
     background-color: #222;
 }
+
+    .loader i {
+        color: cornflowerblue;
+    }
 
 .message {
     padding: 3px;

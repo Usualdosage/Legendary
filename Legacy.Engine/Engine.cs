@@ -12,6 +12,7 @@ namespace Legendary.Engine
     using System;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
 
@@ -87,7 +88,7 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnTick(object sender, EngineEventArgs e)
         {
-            RestoreUsers();
+            UpdateUsers();
             EventHandler? handler = this.Tick;
             handler?.Invoke(sender, e);
         }
@@ -115,29 +116,29 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Each tick, restores various attributes of each user.
+        /// Each tick, updates various attributes of each user.
         /// </summary>
-        private static void RestoreUsers()
+        private static void UpdateUsers()
         {
             if (Communicator.Users != null)
             {
                 foreach (var user in Communicator.Users)
                 {
-                    int standardHPRecover = 20;
-                    int standardManaRecover = 20;
-                    int standardMoveRecover = 20;
+                    int standardHPRecover = Constants.STANDARD_HP_RECOVERY;
+                    int standardManaRecover = Constants.STANDARD_MANA_RECOVERY;
+                    int standardMoveRecover = Constants.STANDARD_MOVE_RECOVERY;
 
                     if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
                     {
-                        standardHPRecover *= 2;
-                        standardManaRecover *= 2;
-                        standardMoveRecover *= 2;
+                        standardHPRecover *= Constants.REST_RECOVERY_MULTIPLIER;
+                        standardManaRecover *= Constants.REST_RECOVERY_MULTIPLIER;
+                        standardMoveRecover *= Constants.REST_RECOVERY_MULTIPLIER;
                     }
                     else if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Sleeping))
                     {
-                        standardHPRecover *= 5;
-                        standardManaRecover *= 5;
-                        standardMoveRecover *= 5;
+                        standardHPRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
+                        standardManaRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
+                        standardMoveRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
                     }
 
                     var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, standardMoveRecover);
@@ -149,7 +150,9 @@ namespace Legendary.Engine
                     var hitRestore = Math.Min(user.Value.Character.Health.Max - user.Value.Character.Health.Current, standardHPRecover);
                     user.Value.Character.Health.Current += hitRestore;
 
-                    // TODO: Implement spell effects wearing off (e.g. poison)
+                    // TODO: Implement spell effects wearing off (e.g. poison).
+
+                    // TODO: Implement hunger and thirst counters.
                 }
             }
         }

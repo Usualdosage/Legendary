@@ -9,8 +9,6 @@
 
 namespace Legendary.Core.Types
 {
-    using Legendary.Core.Contracts;
-
     /// <summary>
     /// Represent's a player's skill proficiency.
     /// </summary>
@@ -36,5 +34,10 @@ namespace Legendary.Core.Types
         /// Gets or sets the skill proficiency.
         /// </summary>
         public int Proficiency { get; set; }
+
+        /// <summary>
+        /// Gets or sets the progress to the next increment.
+        /// </summary>
+        public int Progress { get; set; } = 0;
     }
 }

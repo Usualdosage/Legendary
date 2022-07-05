@@ -51,6 +51,20 @@ namespace Legendary.Data.Contracts
         Task<Character?> CreateCharacter(Character character);
 
         /// <summary>
+        /// Creates an item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>Task.</returns>
+        Task<Item?> CreateItem(Item item);
+
+        /// <summary>
+        /// Creates a mobile.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <returns>Task.</returns>
+        Task<Character?> CreateMobile(Character mobile);
+
+        /// <summary>
         /// Tests that this instance can connect to Mongo.
         /// </summary>
         /// <returns>True if succeeded, false if not.</returns>

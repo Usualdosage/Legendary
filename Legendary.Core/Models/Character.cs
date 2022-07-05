@@ -77,6 +77,11 @@ namespace Legendary.Core.Models
         public long Currency { get; set; } = 0;
 
         /// <summary>
+        /// Gets or sets the player's divine favor.
+        /// </summary>
+        public int DivineFavor { get; set; }
+
+        /// <summary>
         /// Gets or sets the password (hash).
         /// </summary>
         public string? Password { get; set; }
@@ -125,6 +130,16 @@ namespace Legendary.Core.Models
         /// Gets or sets the carry weight of the player.
         /// </summary>
         public MaxCurrent CarryWeight { get; set; } = new MaxCurrent(120, 120);
+
+        /// <summary>
+        /// Gets or sets the player's hunger counter.
+        /// </summary>
+        public MaxCurrent Hunger { get; set; } = new MaxCurrent(24, 0);
+
+        /// <summary>
+        /// Gets or sets the player's thirst counter.
+        /// </summary>
+        public MaxCurrent Thirst { get; set; } = new MaxCurrent(24, 0);
 
         /// <summary>
         /// Gets or sets the character's home room (recall point).
@@ -224,9 +239,19 @@ namespace Legendary.Core.Models
         public Metrics Metrics { get; set; } = new Metrics();
 
         /// <summary>
-        /// Gets or sets the player's armor.
+        /// Gets or sets the player's equipment.
         /// </summary>
-        public IList<Armor> Armor { get; set; } = new List<Armor>();
+        public IList<Item> Equipment { get; set; } = new List<Item>();
+
+        /// <summary>
+        /// Gets or sets the player's followers.
+        /// </summary>
+        public IList<Character> Followers { get; set; } = new List<Character>();
+
+        /// <summary>
+        /// Gets or sets the character the player is following.
+        /// </summary>
+        public Character? Following { get; set; }
 
         /// <summary>
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.
@@ -247,6 +272,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the mob this character (or mob) is currently fighting.
         /// </summary>
         public Mobile? FightingMobile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base-64 image for this character.
+        /// </summary>
+        public string? Image { get; set; }
 
         /// <summary>
         /// Indicates whether the player has a given skill.

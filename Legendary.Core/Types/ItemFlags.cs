@@ -20,7 +20,7 @@ namespace Legendary.Core.Types
         None = 0,
 
         /// <summary>
-        /// Glowing.
+        /// Glowing (default: yellow).
         /// </summary>
         Glowing = 1,
 
@@ -38,5 +38,65 @@ namespace Legendary.Core.Types
         /// Magical.
         /// </summary>
         Magical = 4,
-}
+
+        /// <summary>
+        /// Can be used by good alignment.
+        /// </summary>
+        Good = 5,
+
+        /// <summary>
+        /// Can be used by evil alignment.
+        /// </summary>
+        Evil = 6,
+
+        /// <summary>
+        /// Can be used by neutral alignment.
+        /// </summary>
+        Neutral = 7,
+
+        /// <summary>
+        /// Glowing blue.
+        /// </summary>
+        GlowBlue = 8,
+
+        /// <summary>
+        /// Glowing red.
+        /// </summary>
+        GlowRed = 9,
+
+        /// <summary>
+        /// Glowing orange.
+        /// </summary>
+        GlowOrange = 10,
+
+        /// <summary>
+        /// Glowing green.
+        /// </summary>
+        GlowGreen = 11,
+
+        /// <summary>
+        /// Glowing white.
+        /// </summary>
+        GlowWhite = 12,
+
+        /// <summary>
+        /// Darkly glowing.
+        /// </summary>
+        GlowDark = 13,
+
+        /// <summary>
+        /// Glowing purple.
+        /// </summary>
+        GlowPurple = 14,
+
+        /// <summary>
+        /// Holy item.
+        /// </summary>
+        Holy = 15,
+
+        /// <summary>
+        /// Invisible.
+        /// </summary>
+        Invisible = 16,
+    }
 }

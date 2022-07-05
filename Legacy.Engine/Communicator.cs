@@ -25,6 +25,7 @@ namespace Legendary.Engine
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
@@ -60,6 +61,7 @@ namespace Legendary.Engine
         /// <param name="dataService">The data service.</param>
         /// <param name="engine">Singleton instance of the game engine.</param>
         /// <param name="world">The world to use in this comm instance.</param>
+        /// <param name="actionProcessor">The action processor.</param>
         public Communicator(RequestDelegate requestDelegate, ILogger logger, IApiClient apiClient, IDataService dataService, IEngine engine, IWorld world)
         {
             this.logger = logger;
@@ -149,6 +151,12 @@ namespace Legendary.Engine
 
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip.ToString());
+
+                // Create instances of the action, skill, and spell processors.
+                // TODO: Can this be global somehow, so we don't have to create these for each character the logs in?
+                this.skillProcessor = new SkillProcessor(userData, this, this.random, new Combat(this.random));
+                this.spellProcessor = new SpellProcessor(userData, this, this.random, new Combat(this.random));
+                this.actionProcessor = new ActionProcessor(this, this.world, this.logger);
 
                 // Display the welcome content.
                 await this.ShowWelcomeScreen(userData);
@@ -336,7 +344,7 @@ namespace Legendary.Engine
                         return;
                     }
 
-                    sb.Append($"<span class='item'>{item.Name} is here.</span>");
+                    sb.Append($"<span class='item'>{item.ShortDescription}</span>");
                 }
             }
 
@@ -618,34 +626,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Gets the description of the wear location.
-        /// </summary>
-        /// <param name="wearLocation">The wear location.</param>
-        /// <returns>String.</returns>
-        private static string GetWearLocationDescription(string wearLocation)
-        {
-            try
-            {
-                var enumType = typeof(WearLocation);
-                var memberInfos =
-                enumType.GetMember(wearLocation);
-                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
-                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
-
-                if (valueAttributes != null)
-                {
-                    return ((WearDescription)valueAttributes[0]).Description;
-                }
-
-                return WearLocation.None.ToString();
-            }
-            catch
-            {
-                return WearLocation.None.ToString();
-            }
-        }
-
-        /// <summary>
         /// Shows the player (or mobile) to another player.
         /// </summary>
         /// <param name="target">The target.</param>
@@ -658,28 +638,7 @@ namespace Legendary.Engine
             sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
 
             // Worn items.
-            var wearLocations = Enum.GetNames<WearLocation>();
-
-            sb.Append("<table class='wear-table'>");
-
-            foreach (var wearLocation in wearLocations)
-            {
-                var description = GetWearLocationDescription(wearLocation);
-
-                if (description.ToLower() == "none")
-                {
-                    continue;
-                }
-
-                sb.Append("<tr>");
-                var location = Enum.Parse<WearLocation>(wearLocation);
-                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{target.Armor.FirstOrDefault(a => a.WearLocation == location)?.Name ?? "nothing."}</td>");
-                sb.Append("</tr>");
-            }
-
-            sb.Append("</table>");
-
-            sb.Append($"<span class='player-condition'>{this.GetPlayerCondition(target)}</span><br/>");
+            sb.Append(ActionHelper.GetEquipment(target));
 
             return sb.ToString();
         }
@@ -784,7 +743,7 @@ namespace Legendary.Engine
                 {
                     if (this.actionProcessor != null)
                     {
-                        await this.actionProcessor.DoAction(args, command, cancellationToken);
+                        await this.actionProcessor.DoAction(user, args, command, cancellationToken);
                         return;
                     }
                 }
@@ -837,11 +796,6 @@ namespace Legendary.Engine
             }
 
             userData.Character.Metrics = metrics;
-
-            // Create instances of the skill and spell processors.
-            this.skillProcessor = new SkillProcessor(userData, this, this.random, new Combat(this.random));
-            this.spellProcessor = new SpellProcessor(userData, this, this.random, new Combat(this.random));
-            this.actionProcessor = new ActionProcessor(userData, this, this.world, this.logger);
 
             // Save the changes.
             await this.SaveCharacter(userData);

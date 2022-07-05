@@ -20,16 +20,17 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Helpers;
 
     /// <summary>
     /// Used to perform quick lookups of skills.
     /// </summary>
     public class ActionProcessor
     {
-        private readonly UserData actor;
         private readonly ICommunicator communicator;
         private readonly IWorld world;
         private readonly ILogger logger;
+        private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionProcessor"/> class.
@@ -38,439 +39,38 @@ namespace Legendary.Engine.Processors
         /// <param name="communicator">The communicator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
-        public ActionProcessor(UserData actor, ICommunicator communicator, IWorld world, ILogger logger)
+        public ActionProcessor(ICommunicator communicator, IWorld world, ILogger logger)
         {
-            this.actor = actor;
             this.communicator = communicator;
             this.world = world;
             this.logger = logger;
+
+            this.ConfigureActions();
         }
 
         /// <summary>
         /// Executes the action provided by the command.
         /// </summary>
+        /// <param name="actor">The actor.</param>
         /// <param name="args">The input args.</param>
         /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoAction(string[] args, string command, CancellationToken cancellationToken)
+        public async Task DoAction(UserData actor, string[] args, string command, CancellationToken cancellationToken)
         {
-            // Not a skill or a spell, so parse the command.
-            switch (command.ToLower())
+            // Get the matching actions for the command word.
+            var action = this.actions
+                .Where(a => a.Key.StartsWith(command))
+                .OrderBy(a => a.Value.Key)
+                .FirstOrDefault();
+
+            if (action.Value.Value != null)
             {
-                default:
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, "Unknown command.", cancellationToken);
-                        break;
-                    }
-
-                case "drop":
-                    {
-                        if (args.Length < 2)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Drop what?", cancellationToken);
-                            break;
-                        }
-                        else
-                        {
-                            await this.DropItem(this.actor, args[1], cancellationToken);
-                            break;
-                        }
-                    }
-
-                case "eq" or "equip":
-                    {
-                        await this.ShowPlayerEquipment(this.actor, cancellationToken);
-                        break;
-                    }
-
-                case "get":
-                    {
-                        if (args.Length < 2)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Get what?", cancellationToken);
-                            break;
-                        }
-                        else
-                        {
-                            await this.GetItem(this.actor, args[1], cancellationToken);
-                            break;
-                        }
-                    }
-
-                case "goto":
-                    {
-                        if (this.actor.Character.Level < 100)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, "Unknown command.", cancellationToken);
-                            break;
-                        }
-                        else
-                        {
-                            if (args.Length < 2)
-                            {
-                                await this.communicator.SendToPlayer(this.actor.Connection, $"Goto where?", cancellationToken);
-                                break;
-                            }
-                            else
-                            {
-                                await this.GotoRoom(this.actor, args[1], cancellationToken);
-                                break;
-                            }
-                        }
-                    }
-
-                case "h":
-                case "help":
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, "Help text.", cancellationToken);
-                        break;
-                    }
-
-                case "inv" or "inventory":
-                    {
-                        var sb = new StringBuilder();
-                        sb.AppendLine("<span class='inventory'>You are carrying:</span>");
-                        foreach (var item in this.actor.Character.Inventory)
-                        {
-                            sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
-                        }
-
-                        await this.communicator.SendToPlayer(this.actor.Connection, sb.ToString(), cancellationToken);
-
-                        break;
-                    }
-
-                case "l" or "lo" or "loo" or "look":
-                    {
-                        if (args.Length > 1)
-                        {
-                            await this.communicator.ShowPlayerToPlayer(this.actor, args[1], cancellationToken);
-                        }
-                        else
-                        {
-                            await this.communicator.ShowRoomToPlayer(this.actor, cancellationToken);
-                        }
-
-                        break;
-                    }
-
-                case "newbie":
-                    {
-                        var sentence = string.Join(' ', args, 1, args.Length - 1);
-                        sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                        var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
-                        if (channel != null)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
-                            await this.communicator.SendToChannel(channel, this.actor.ConnectionId, $"{this.actor.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
-                        }
-
-                        break;
-                    }
-
-                case "peace":
-                    {
-                        if (this.actor.Character.Level < 100)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, "Unknown command.", cancellationToken);
-                            break;
-                        }
-                        else
-                        {
-                            if (Communicator.Users != null)
-                            {
-                                var users = Communicator.Users.Where(u => u.Value.Character.Location.RoomId == this.actor.Character.Location.RoomId);
-
-                                // Stop all the users from fighting
-                                foreach (var user in users)
-                                {
-                                    user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                                    user.Value.Character.FightingCharacter = null;
-                                    user.Value.Character.FightingMobile = null;
-                                }
-
-                                // Stop all the mobiles from fighting
-                                var mobiles = this.communicator.GetMobilesInRoom(this.actor.Character.Location);
-                                if (mobiles != null)
-                                {
-                                    foreach (var mob in mobiles)
-                                    {
-                                        mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                                        mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
-                                        mob.FightingMobile = null;
-                                        mob.FightingCharacter = null;
-                                    }
-                                }
-                            }
-
-                            await this.communicator.SendToPlayer(this.actor.Connection, "You stop all fighting in the room.", cancellationToken);
-                            await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
-
-                            break;
-                        }
-                    }
-
-                case "pray":
-                    {
-                        var sentence = string.Join(' ', args, 1, args.Length - 1);
-                        sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                        var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "pray");
-                        if (channel != null)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"", cancellationToken);
-                            await this.communicator.SendToChannel(channel, this.actor.ConnectionId, $"{this.actor.Character.FirstName} prays \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
-                        }
-
-                        break;
-                    }
-
-                case "quit":
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"You have disconnected.", cancellationToken);
-                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} has left the realms.", cancellationToken);
-                        await this.communicator.Quit(this.actor.Connection, this.actor.Character.FirstName ?? "Someone", cancellationToken);
-                        break;
-                    }
-
-                case "rest":
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"You kick back and rest.", cancellationToken);
-                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} kicks back and rests.", cancellationToken);
-                        this.actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
-                        break;
-                    }
-
-                case "n":
-                case "north":
-                case "s":
-                case "south":
-                case "e":
-                case "east":
-                case "w":
-                case "west":
-                case "u":
-                case "up":
-                case "d":
-                case "down":
-                case "ne":
-                case "northeast":
-                case "nw":
-                case "northwest":
-                case "se":
-                case "southeast":
-                case "sw":
-                case "southwest":
-                    {
-                        await this.MovePlayer(this.actor, ParseDirection(args[0]), cancellationToken);
-                        break;
-                    }
-
-                case "save":
-                    {
-                        await this.communicator.SaveCharacter(this.actor);
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"Character saved.", cancellationToken);
-                        break;
-                    }
-
-                case "say":
-                    {
-                        var sentence = string.Join(' ', args, 1, args.Length - 1);
-                        sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"You say \"<span class='say'>{sentence}</b>\"", cancellationToken);
-                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
-                        break;
-                    }
-
-                case "sc" or "sco" or "scor" or "score":
-                    {
-                        await this.ShowPlayerScore(this.actor, cancellationToken);
-                        break;
-                    }
-
-                case "skill" or "skills":
-                    {
-                        var builder = new StringBuilder();
-                        builder.AppendLine("Your skills are:<br/>");
-
-                        if (this.actor.Character.Skills.Count > 0)
-                        {
-                            foreach (var skill in this.actor.Character.Skills)
-                            {
-                                builder.AppendLine($"{skill.SkillName} {skill.Proficiency}%");
-                            }
-                        }
-                        else
-                        {
-                            builder.Append("You currently have no skills.");
-                        }
-
-                        await this.communicator.SendToPlayer(this.actor.Connection, builder.ToString(), cancellationToken);
-                        break;
-                    }
-
-                case "sleep":
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"You go to sleep.", cancellationToken);
-                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} goes to sleep.", cancellationToken);
-                        this.actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
-                        break;
-                    }
-
-                case "spell" or "spells":
-                    {
-                        var builder = new StringBuilder();
-                        builder.AppendLine("Your spells are:<br/>");
-
-                        if (this.actor.Character.Spells.Count > 0)
-                        {
-                            foreach (var spell in this.actor.Character.Spells)
-                            {
-                                builder.AppendLine($"{spell.SpellName} {spell.Proficiency}%");
-                            }
-                        }
-                        else
-                        {
-                            builder.Append("You currently have no spells.");
-                        }
-
-                        await this.communicator.SendToPlayer(this.actor.Connection, builder.ToString(), cancellationToken);
-                        break;
-                    }
-
-                case "sub" or "subscribe":
-                    {
-                        var name = string.Join(' ', args, 1, args.Length - 1);
-                        var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
-                        if (channel != null)
-                        {
-                            if (channel.AddUser(this.actor.ConnectionId, this.actor))
-                            {
-                                await this.communicator.SendToPlayer(this.actor.Connection, $"You have subscribed to the {channel.Name} channel.", cancellationToken);
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(this.actor.Connection, $"Unable to subscribe to the {channel.Name} channel.", cancellationToken);
-                            }
-                        }
-                        else
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Unable to subscribe to {name}. Channel does not exist.", cancellationToken);
-                        }
-
-                        break;
-                    }
-
-                case "tell":
-                    {
-                        if (args.Length < 3)
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Tell whom what?", cancellationToken);
-                            break;
-                        }
-                        else
-                        {
-                            var sentence = string.Join(' ', args, 2, args.Length - 2);
-                            await this.Tell(this.actor, args[1], sentence, cancellationToken);
-                            break;
-                        }
-                    }
-
-                case "time":
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"The system time is {DateTime.UtcNow}.", cancellationToken);
-                        break;
-                    }
-
-                case "unsub" or "unsubscribe":
-                    {
-                        var name = string.Join(' ', args, 1, args.Length - 1);
-                        var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
-                        if (channel != null)
-                        {
-                            if (channel.RemoveUser(this.actor.ConnectionId))
-                            {
-                                await this.communicator.SendToPlayer(this.actor.Connection, $"You have unsubscribed from the {channel.Name} channel.", cancellationToken);
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(this.actor.Connection, $"Unable to unsubscribe from the {channel.Name} channel.", cancellationToken);
-                            }
-                        }
-                        else
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Unable to unsubscribe from {name}. Channel does not exist.", cancellationToken);
-                        }
-
-                        break;
-                    }
-
-                case "who":
-                    {
-                        if (Communicator.Users != null)
-                        {
-                            foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
-                            {
-                                var sb = new StringBuilder();
-                                sb.Append($"<span class='who'>{player?.Value.Character.FirstName}");
-
-                                if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
-                                {
-                                    sb.Append($" {player?.Value.Character.LastName}");
-                                }
-
-                                if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
-                                {
-                                    sb.Append($" {player?.Value.Character.Title}");
-                                }
-
-                                sb.Append("</span");
-
-                                await this.communicator.SendToPlayer(this.actor.Connection, sb.ToString(), cancellationToken);
-                            }
-
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"There are {Communicator.Users?.Count} players connected.", cancellationToken);
-                        }
-
-                        break;
-                    }
-
-                case "wake":
-                    {
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"You wake and and stand up.", cancellationToken);
-                        await this.communicator.SendToRoom(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} wakes and stands up.", cancellationToken);
-                        this.actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Resting);
-                        this.actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Sleeping);
-                        break;
-                    }
-
-                case "wiznet":
-                    {
-                        // TODO: Check if user is an IMM
-
-                        // Sub/unsub to wiznet channel
-                        if (this.communicator.IsSubscribed("wiznet", this.actor.ConnectionId, this.actor))
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Unsubscribed from WIZNET.", cancellationToken);
-                            this.communicator.RemoveFromChannel("wiznet", this.actor.ConnectionId, this.actor);
-                        }
-                        else
-                        {
-                            await this.communicator.SendToPlayer(this.actor.Connection, $"Welcome to WIZNET!", cancellationToken);
-                            this.communicator.AddToChannel("wiznet", this.actor.ConnectionId, this.actor);
-                        }
-
-                        break;
-                    }
-
-                case "yell":
-                    {
-                        var sentence = string.Join(' ', args, 1, args.Length - 1);
-                        sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                        await this.communicator.SendToPlayer(this.actor.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
-                        await this.communicator.SendToArea(this.actor.Character.Location, this.actor.ConnectionId, $"{this.actor.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
-                        break;
-                    }
+                await action.Value.Value(actor, args, cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
             }
         }
 
@@ -494,6 +94,544 @@ namespace Legendary.Engine.Processors
                 "sw" or "southwest" => Direction.SouthWest,
                 _ => Direction.North,
             };
+        }
+
+        /// <summary>
+        /// Configures all of the actions based on the input. The numeric value in the KVP is the PRIORITY in qhich the command will
+        /// be executed. So, if someone types "n", it will check "north", "ne", "nw", and "newbie" in that order.
+        /// </summary>
+        private void ConfigureActions()
+        {
+            this.actions.Add("down", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("drop", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoDrop)));
+            this.actions.Add("east", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
+            this.actions.Add("get", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoGet)));
+            this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
+            this.actions.Add("help", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoHelp)));
+            this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoInventory)));
+            this.actions.Add("look", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoLook)));
+            this.actions.Add("newbie", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoNewbieChat)));
+            this.actions.Add("north", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("ne", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("nw", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("peace", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoPeace)));
+            this.actions.Add("pray", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoPray)));
+            this.actions.Add("quit", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoQuit)));
+            this.actions.Add("rest", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoRest)));
+            this.actions.Add("remove", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoRemove)));
+            this.actions.Add("save", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(8, new Func<UserData, string[], CancellationToken, Task>(this.DoSave)));
+            this.actions.Add("say", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(7, new Func<UserData, string[], CancellationToken, Task>(this.DoSay)));
+            this.actions.Add("score", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoScore)));
+            this.actions.Add("skills", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(5, new Func<UserData, string[], CancellationToken, Task>(this.DoSkills)));
+            this.actions.Add("sleep", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(6, new Func<UserData, string[], CancellationToken, Task>(this.DoSleep)));
+            this.actions.Add("south", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("se", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("sw", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("spells", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(8, new Func<UserData, string[], CancellationToken, Task>(this.DoSpells)));
+            this.actions.Add("subscribe", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(9, new Func<UserData, string[], CancellationToken, Task>(this.DoSubscribe)));
+            this.actions.Add("tell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoTell)));
+            this.actions.Add("time", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoTime)));
+            this.actions.Add("unsubscribe", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoUnsubscribe)));
+            this.actions.Add("up", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("west", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("wear", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoWear)));
+            this.actions.Add("who", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWho)));
+            this.actions.Add("wake", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoWake)));
+            this.actions.Add("wiznet", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoWiznet)));
+            this.actions.Add("yell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoYell)));
+        }
+
+        private async Task DoDrop(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Drop what?", cancellationToken);
+            }
+            else
+            {
+                await this.DropItem(actor, args[1], cancellationToken);
+            }
+        }
+
+        private async Task DoGet(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Get what?", cancellationToken);
+            }
+            else
+            {
+                await this.GetItem(actor, args[1], cancellationToken);
+            }
+        }
+
+        private async Task DoEquipment(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var equipment = ActionHelper.GetEquipment(actor.Character);
+            await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
+        }
+
+        private async Task DoGoTo(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.Level < 100)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+            }
+            else
+            {
+                if (args.Length < 2)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"Goto where?", cancellationToken);
+                }
+                else
+                {
+                    await this.GotoRoom(actor, args[1], cancellationToken);
+                }
+            }
+        }
+
+        private async Task DoHelp(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, "Help text.", cancellationToken);
+        }
+
+        private async Task DoInventory(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("<span class='inventory'>You are carrying:</span>");
+            foreach (var item in actor.Character.Inventory)
+            {
+                sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        private async Task DoLook(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length > 1)
+            {
+                await this.communicator.ShowPlayerToPlayer(actor, args[1], cancellationToken);
+            }
+            else
+            {
+                await this.communicator.ShowRoomToPlayer(actor, cancellationToken);
+            }
+        }
+
+        private async Task DoNewbieChat(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var sentence = string.Join(' ', args, 1, args.Length - 1);
+            sentence = char.ToUpper(sentence[0]) + sentence[1..];
+            var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
+            if (channel != null)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                await this.communicator.SendToChannel(channel, actor.ConnectionId, $"{actor.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+            }
+        }
+
+        private async Task DoPeace(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.Level < 100)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+            }
+            else
+            {
+                if (Communicator.Users != null)
+                {
+                    var users = Communicator.Users.Where(u => u.Value.Character.Location.RoomId == actor.Character.Location.RoomId);
+
+                    // Stop all the users from fighting
+                    foreach (var user in users)
+                    {
+                        user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                        user.Value.Character.FightingCharacter = null;
+                        user.Value.Character.FightingMobile = null;
+                    }
+
+                    // Stop all the mobiles from fighting
+                    var mobiles = this.communicator.GetMobilesInRoom(actor.Character.Location);
+                    if (mobiles != null)
+                    {
+                        foreach (var mob in mobiles)
+                        {
+                            mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                            mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
+                            mob.FightingMobile = null;
+                            mob.FightingCharacter = null;
+                        }
+                    }
+                }
+
+                await this.communicator.SendToPlayer(actor.Connection, "You stop all fighting in the room.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
+            }
+        }
+
+        private async Task DoPray(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var sentence = string.Join(' ', args, 1, args.Length - 1);
+            if (!string.IsNullOrWhiteSpace(sentence))
+            {
+                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "pray");
+                if (channel != null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"", cancellationToken);
+                    await this.communicator.SendToChannel(channel, actor.ConnectionId, $"{actor.Character.FirstName} prays \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Pray what?", cancellationToken);
+            }
+        }
+
+        private async Task DoQuit(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"You have disconnected.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} has left the realms.", cancellationToken);
+            await this.communicator.Quit(actor.Connection, actor.Character.FirstName ?? "Someone", cancellationToken);
+        }
+
+        private async Task DoRest(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} kicks back and rests.", cancellationToken);
+            actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
+        }
+
+        private async Task DoMove(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.MovePlayer(actor, ParseDirection(args[0]), cancellationToken);
+        }
+
+        private async Task DoSave(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SaveCharacter(actor);
+            await this.communicator.SendToPlayer(actor.Connection, $"Character saved.", cancellationToken);
+        }
+
+        private async Task DoSay(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var sentence = string.Join(' ', args, 1, args.Length - 1);
+            sentence = char.ToUpper(sentence[0]) + sentence[1..];
+            await this.communicator.SendToPlayer(actor.Connection, $"You say \"<span class='say'>{sentence}</b>\"", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
+
+        }
+
+        private async Task DoScore(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.ShowPlayerScore(actor, cancellationToken);
+        }
+
+        private async Task DoSkills(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("Your skills are:<br/>");
+
+            if (actor.Character.Skills.Count > 0)
+            {
+                foreach (var skill in actor.Character.Skills)
+                {
+                    builder.AppendLine($"{skill.SkillName} {skill.Proficiency}%");
+                }
+            }
+            else
+            {
+                builder.Append("You currently have no skills.");
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
+        }
+
+        private async Task DoSleep(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"You go to sleep.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} goes to sleep.", cancellationToken);
+            actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
+        }
+
+        private async Task DoSpells(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("Your spells are:<br/>");
+
+            if (actor.Character.Spells.Count > 0)
+            {
+                foreach (var spell in actor.Character.Spells)
+                {
+                    builder.AppendLine($"{spell.SpellName} {spell.Proficiency}%");
+                }
+            }
+            else
+            {
+                builder.Append("You currently have no spells.");
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
+        }
+
+        private async Task DoSubscribe(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var name = string.Join(' ', args, 1, args.Length - 1);
+            var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
+            if (channel != null)
+            {
+                if (channel.AddUser(actor.ConnectionId, actor))
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You have subscribed to the {channel.Name} channel.", cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"Unable to subscribe to the {channel.Name} channel.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Unable to subscribe to {name}. Channel does not exist.", cancellationToken);
+            }
+        }
+
+        private async Task DoTell(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 3)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Tell whom what?", cancellationToken);
+            }
+            else
+            {
+                var sentence = string.Join(' ', args, 2, args.Length - 2);
+                await this.Tell(actor, args[1], sentence, cancellationToken);
+            }
+        }
+
+        private async Task DoTime(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"The system time is {DateTime.UtcNow}.", cancellationToken);
+        }
+
+        private async Task DoUnsubscribe(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var name = string.Join(' ', args, 1, args.Length - 1);
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Unsubscribe from what?", cancellationToken);
+            }
+            else
+            {
+                var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
+                if (channel != null)
+                {
+                    if (channel.RemoveUser(actor.ConnectionId))
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You have unsubscribed from the {channel.Name} channel.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"Unable to unsubscribe from the {channel.Name} channel.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"Unable to unsubscribe from {name}. Channel does not exist.", cancellationToken);
+                }
+            }
+        }
+
+        private async Task DoWho(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (Communicator.Users != null)
+            {
+                foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
+                {
+                    var sb = new StringBuilder();
+                    sb.Append($"<span class='who'>{player?.Value.Character.FirstName}");
+
+                    if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
+                    {
+                        sb.Append($" {player?.Value.Character.LastName}");
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
+                    {
+                        sb.Append($" {player?.Value.Character.Title}");
+                    }
+
+                    sb.Append("</span");
+
+                    await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                }
+
+                await this.communicator.SendToPlayer(actor.Connection, $"There are {Communicator.Users?.Count} players connected.", cancellationToken);
+            }
+        }
+
+        private async Task DoWake(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"You wake and and stand up.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wakes and stands up.", cancellationToken);
+            actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Resting);
+            actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Sleeping);
+        }
+
+        private async Task DoRemove(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            // remove <argument>
+            // See if they are wearing the item.
+
+            if (args.Length > 1)
+            {
+                var itemName = args[1].ToLower();
+
+                if (itemName == "all")
+                {
+                    foreach (var target in actor.Character.Equipment)
+                    {
+                        // Un-equip each item and put back in inventory.
+                        actor.Character.Equipment.Remove(target);
+                        actor.Character.Inventory.Add(target);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Name.Contains(itemName));
+
+                    if (target != null)
+                    {
+                        // Un-equip the item and put back in inventory.
+                        actor.Character.Inventory.Add(target);
+                        actor.Character.Equipment.Remove(target);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Remove what?", cancellationToken);
+            }
+        }
+
+        private async Task DoWear(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            // wear <argument>
+            // See if they have it in their inventory.
+            if (args.Length > 1)
+            {
+                var itemName = args[1].ToLower();
+
+                if (itemName == "all")
+                {
+                    foreach (var target in actor.Character.Inventory)
+                    {
+                        foreach (var wearLocation in target.WearLocation)
+                        {
+                            var targetLocationItem = actor.Character.Equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
+
+                            if (targetLocationItem == null)
+                            {
+                                // Equip the item.
+                                actor.Character.Equipment.Add(target);
+                                actor.Character.Inventory.Remove(target);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You equip {target.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} equips {target.Name}.", cancellationToken);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+                    if (target != null)
+                    {
+                        var equipmentToReplace = new List<Item>();
+
+                        foreach (var wearLocation in target.WearLocation)
+                        {
+                            var targetLocationItem = actor.Character.Equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
+
+                            if (targetLocationItem == null)
+                            {
+                                // Equip the item.
+                                actor.Character.Equipment.Add(target);
+                                actor.Character.Inventory.Remove(target);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You equip {target.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} equips {target.Name}.", cancellationToken);
+                            }
+                            else
+                            {
+                                // Swap out the equipment.
+                                equipmentToReplace.Add(targetLocationItem);
+                                actor.Character.Equipment.Add(target);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You remove {targetLocationItem.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You equip {target.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {targetLocationItem.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} equips {target.Name}.", cancellationToken);
+                            }
+                        }
+
+                        // Remove the previously equipped items and place in inventory.
+                        equipmentToReplace.ForEach(e =>
+                        {
+                            actor.Character.Equipment.Remove(e);
+                            actor.Character.Inventory.Add(e);
+                        });
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Wear what?", cancellationToken);
+            }
+        }
+
+        private async Task DoWiznet(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            // TODO: Check if user is an IMM
+
+            // Sub/unsub to wiznet channel
+            if (this.communicator.IsSubscribed("wiznet", actor.ConnectionId, actor))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Unsubscribed from WIZNET.", cancellationToken);
+                this.communicator.RemoveFromChannel("wiznet", actor.ConnectionId, actor);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Welcome to WIZNET!", cancellationToken);
+                this.communicator.AddToChannel("wiznet", actor.ConnectionId, actor);
+            }
+        }
+
+        private async Task DoYell(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var sentence = string.Join(' ', args, 1, args.Length - 1);
+
+            if (!string.IsNullOrWhiteSpace(sentence))
+            {
+                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                await this.communicator.SendToPlayer(actor.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
+                await this.communicator.SendToArea(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Yell what?", cancellationToken);
+            }
         }
 
         /// <summary>
@@ -825,26 +963,15 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td class='player-armor' colspan='4'>Armor</td></tr>");
 
-            sb.Append($"<tr><td>Pierce:</td><td>{user.Character.Armor.Sum(a => a.Pierce)}%</td><td>Blunt:</td><td>{user.Character.Armor.Sum(a => a.Blunt)}%</td></tr>");
+            sb.Append($"<tr><td>Pierce:</td><td>{user.Character.Equipment.Sum(a => a.Pierce)}%</td><td>Blunt:</td><td>{user.Character.Equipment.Sum(a => a.Blunt)}%</td></tr>");
 
-            sb.Append($"<tr><td>Edged:</td><td>{user.Character.Armor.Sum(a => a.Edged)}%</td><td>Magic:</td><td>{user.Character.Armor.Sum(a => a.Magic)}%</td></tr>");
+            sb.Append($"<tr><td>Edged:</td><td>{user.Character.Equipment.Sum(a => a.Edged)}%</td><td>Magic:</td><td>{user.Character.Equipment.Sum(a => a.Magic)}%</td></tr>");
 
             sb.Append($"<tr><td colspan='4'>You are not affected by any skills or spells.</td></tr>");
 
             sb.Append("</table></div>");
 
             await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
-        }
-
-        /// <summary>
-        /// Shows the equipment the player is wearing.
-        /// </summary>
-        /// <param name="user">The connected user.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
-        private async Task ShowPlayerEquipment(UserData user, CancellationToken cancellationToken = default)
-        {
-
         }
     }
 }

@@ -117,5 +117,51 @@ namespace Legendary.Data
                 throw new Exception("Unable to create character.");
             }
         }
+
+        /// <inheritdoc/>
+        public async Task<Character?> CreateMobile(Character mobile)
+        {
+            var mobiles = this.dbConnection.Database?.GetCollection<Character>("Mobiles");
+
+            if (mobiles != null)
+            {
+                try
+                {
+                    await mobiles.InsertOneAsync(mobile);
+                    return mobile;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new Exception("Unable to create mobile.");
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<Item?> CreateItem(Item item)
+        {
+            var items = this.dbConnection.Database?.GetCollection<Item>("Items");
+
+            if (items != null)
+            {
+                try
+                {
+                    await items.InsertOneAsync(item);
+                    return item;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new Exception("Unable to create item.");
+            }
+        }
     }
 }

@@ -40,11 +40,13 @@
     <Folder Include="Views\Content\" />
     <Folder Include="Contracts\" />
     <Folder Include="wwwroot\fonts\" />
+    <Folder Include="Views\Creator\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />
     <None Remove="Newtonsoft.Json" />
     <None Remove="Contracts\" />
+    <None Remove="Views\Creator\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj">

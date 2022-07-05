@@ -83,10 +83,5 @@ namespace Legendary.Core.Types
         /// Faerie.
         /// </summary>
         Faerie = 13,
-
-        /// <summary>
-        /// Deity.
-        /// </summary>
-        Deity = 14,
     }
 }

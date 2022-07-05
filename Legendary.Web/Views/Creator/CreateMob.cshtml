@@ -1,14 +1,12 @@
-﻿@model StatModel
+﻿@model string
 
-<script type="text/javascript">
-    function check(input) {
+<script type="text/javascript">function check(input) {
         if (input.value != document.getElementById('password').value) {
             input.setCustomValidity('Passwords must match.');
         } else {
             input.setCustomValidity('');
         }
-    }
-</script>
+    }</script>
 
 @Html.AntiForgeryToken()
 
@@ -24,29 +22,6 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md">
-                                Your vital stats:
-                            </div>
-                            <div class="col-md">
-                                STR: @Model.Str
-                            </div>
-                            <div class="col-md">
-                                INT: @Model.Int
-                            </div>
-                            <div class="col-md">
-                                WIS: @Model.Wis
-                            </div>
-                            <div class="col-md">
-                                DEX: @Model.Dex
-                            </div>
-                            <div class="col-md">
-                                CON: @Model.Con
-                            </div>
-                            <div class="col-md">
-                                <input type="button" class="btn btn-primary" onClick="window.location.reload();" value="Reroll" />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
                                 <input type="text" class="charinput" placeholder="First Name" name="FirstName" required />
                             </div>
                             <div class="col-md">
@@ -55,12 +30,50 @@
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <input id="password" type="password" class="charinput" required placeholder="Password" />
-                            </div>
-                            <div class="col-md">
-                                <input id="passwordConfirm" oninput="check(this)" type="password" class="charinput" placeholder="Confirm Password" name="Password" required />
+                                <textarea name="LongDescription" class="descinput" placeholder="Enter Description" required></textarea>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <span class="input-label">STR</span>
+                                <input type="number" class="charinput" name="Str" value="12" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">WIS</span>
+                                <input type="number" class="charinput" name="Wis" value="12" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">INT</span>
+                                <input type="number" class="charinput" name="Int" value="12" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">DEX</span>
+                                <input type="number" class="charinput" name="Dex" value="12" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">CON</span>
+                                <input type="number" class="charinput" name="Con" value="12" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <span class="input-label">Level</span>
+                                <input type="number" class="charinput" name="Level" value="1" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">EXP</span>
+                                <input type="number" class="charinput" name="Experience" value="1000" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">Hit Dice</span>
+                                <input type="number" class="charinput" name="HitDice" value="1" />
+                            </div>
+                            <div class="col-md">
+                                <span class="input-label">Damage Dice</span>
+                                <input type="number" class="charinput" name="DamageDice" value="4" />
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md">
                                 <select name="Gender" required
@@ -93,14 +106,9 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <textarea name="LongDescription" class="descinput" placeholder="Enter Description" required></textarea>
-                            </div>
-                        </div>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Login")">Back</a></li>
-                            <li class="list-group-item"><p class="alert">@Model.Message</p></li>
+                            <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Creator")">Back</a></li>
+                            <li class="list-group-item"><p class="alert">@Model</p></li>
                         </ul>
                         <div class="card-footer">
                             &copy;2022 Legendary
@@ -109,6 +117,6 @@
                 </div>
             </form>
         </div>
-        
+
     </div>
 </div>

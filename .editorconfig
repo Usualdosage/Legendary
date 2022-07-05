@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# SA1310: Field names should not contain underscore
+dotnet_diagnostic.SA1310.severity = silent

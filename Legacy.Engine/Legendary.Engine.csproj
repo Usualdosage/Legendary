@@ -24,6 +24,7 @@
     <None Remove="Models\Spells\" />
     <None Remove="Processors\" />
     <None Remove="Extensions\" />
+    <None Remove="..\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />

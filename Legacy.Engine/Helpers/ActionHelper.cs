@@ -10,7 +10,12 @@
 namespace Legendary.Engine.Helpers
 {
     using System;
+    using System.Linq;
+    using System.Text;
+    using Legendary.Core.Attributes;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
 
     /// <summary>
@@ -33,6 +38,78 @@ namespace Legendary.Engine.Helpers
             this.communicator = communicator;
             this.random = random;
             this.combat = combat;
+        }
+
+        /// <summary>
+        /// Gets the equipment the actor is wearing.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <returns>String.</returns>
+        public static string GetEquipment(Character actor)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // Worn items.
+            var wearLocations = Enum.GetNames<WearLocation>();
+
+            sb.Append("<table class='wear-table'>");
+
+            foreach (var wearLocation in wearLocations)
+            {
+                var description = GetWearLocationDescription(wearLocation);
+
+                if (description.ToLower() == "none")
+                {
+                    continue;
+                }
+
+                sb.Append("<tr>");
+                var location = Enum.Parse<WearLocation>(wearLocation);
+                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name ?? "nothing."}</td>");
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</table>");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets the description of the wear location.
+        /// </summary>
+        /// <param name="wearLocation">The wear location.</param>
+        /// <returns>String.</returns>
+        public static string GetWearLocationDescription(string wearLocation)
+        {
+            try
+            {
+                var enumType = typeof(WearLocation);
+                var memberInfos =
+                enumType.GetMember(wearLocation);
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
+
+                if (valueAttributes != null)
+                {
+                    var descAttribute = valueAttributes[0] as WearDescription;
+                    if (descAttribute != null)
+                    {
+                        return descAttribute.Description;
+                    }
+                    else
+                    {
+                        return WearLocation.None.ToString();
+                    }
+                }
+                else
+                {
+                    return WearLocation.None.ToString();
+                }
+            }
+            catch (Exception exc)
+            {
+                return WearLocation.None.ToString();
+            }
         }
 
         /// <summary>
