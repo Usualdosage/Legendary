@@ -87,7 +87,6 @@ namespace Legendary.Web.Controllers
         /// <summary>
         /// Displays the create user page.
         /// </summary>
-        /// <param name="message">The create message.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult CreateUser()

@@ -48,7 +48,7 @@ namespace Legendary.Engine
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
-        private ILanguageProcesor languageProcessor;
+        private ILanguageProcessor languageProcessor;
         private IEnvironment? environment;
         private KeyValuePair<string, UserData> connectedUser;
 
@@ -88,7 +88,7 @@ namespace Legendary.Engine
             this.languageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.languageProcessor = new LanguageProcessor(this.random);
+            this.languageProcessor = new LanguageProcessor(this.languageGenerator);
         }
 
         /// <summary>
@@ -462,7 +462,8 @@ namespace Legendary.Engine
                         await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
 
-                    await this.CheckMobCommunication(user.Value.Character, room, message, cancellationToken);
+                    ThreadPool.QueueUserWorkItem(t =>
+                        this.CheckMobCommunication(user.Value.Character, room, message, cancellationToken).Wait());
                 }
             }
 
@@ -668,7 +669,9 @@ namespace Legendary.Engine
             {
                 foreach (var mobile in mobiles)
                 {
-                    var response = this.languageProcessor.Process(character, mobile, message);
+                    var situation = this.GetSituation(room, character, mobile);
+
+                    var response = await this.languageProcessor.Process(character, mobile, message, situation);
 
                     if (!string.IsNullOrWhiteSpace(response))
                     {
@@ -689,6 +692,20 @@ namespace Legendary.Engine
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Generates a situation based on the encounter.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="actor">The character.</param>
+        /// <param name="target">The mobile.</param>
+        /// <returns>string.</returns>
+        private string GetSituation(Room room, Character actor, Character target)
+        {
+            var gen1 = actor.Gender == Gender.Male ? "boy" : "girl";
+            var gen2 = target.Gender == Gender.Male ? "boy" : "girl";
+            return $"{gen1} and {gen2} talking to each other in the {room.Terrain}";
         }
 
         /// <summary>
@@ -773,18 +790,25 @@ namespace Legendary.Engine
                 }
                 else if (this.IsCasting(command))
                 {
-                    if (user.Character.HasSpell(args[1]))
+                    if (args.Length > 2)
                     {
-                        if (this.spellProcessor != null)
+                        if (user.Character.HasSpell(args[1]))
                         {
-                            await this.spellProcessor.DoSpell(args, command, cancellationToken);
-                            return;
+                            if (this.spellProcessor != null)
+                            {
+                                await this.spellProcessor.DoSpell(args, command, cancellationToken);
+                                return;
+                            }
+                            else
+                            {
+                                await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                                return;
+                            }
                         }
-                        else
-                        {
-                            await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
-                            return;
-                        }
+                    }
+                    else
+                    {
+                        await this.SendToPlayer(user.Connection, "Commune or cast what?", cancellationToken);
                     }
                 }
                 else

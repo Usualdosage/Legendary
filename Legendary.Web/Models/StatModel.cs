@@ -7,10 +7,10 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-using System;
-
 namespace Legendary.Web.Models
 {
+    using System;
+
     /// <summary>
     /// Model for generating character stats.
     /// </summary>

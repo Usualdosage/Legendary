@@ -109,10 +109,12 @@ namespace Legendary.Engine.Processors
         /// </summary>
         private void ConfigureActions()
         {
+            this.actions.Add("commands", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCommands)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("drop", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoDrop)));
             this.actions.Add("east", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("eat", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoEat)));
+            this.actions.Add("emote", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoEmote)));
             this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoGet)));
             this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
@@ -150,6 +152,22 @@ namespace Legendary.Engine.Processors
             this.actions.Add("yell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoYell)));
         }
 
+        private async Task DoCommands(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"Available Commands:<br/>", cancellationToken);
+
+            StringBuilder sb = new StringBuilder();
+
+            var commands = this.actions.OrderBy(a => a.Key);
+
+            foreach (var kvp in commands)
+            {
+                sb.Append($"<span class='command'>{kvp.Key}</span>");
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
         private async Task DoDrop(UserData actor, string[] args, CancellationToken cancellationToken)
         {
             if (args.Length < 2)
@@ -171,6 +189,24 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.EatItem(actor, args[1], cancellationToken);
+            }
+        }
+
+        private async Task DoEmote(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Emote what?", cancellationToken);
+            }
+            else
+            {
+                var sentence = string.Join(' ', args, 1, args.Length - 1);
+                if (!string.IsNullOrWhiteSpace(sentence))
+                {
+                    sentence = sentence.ToLower();
+                    await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName} {sentence}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} {sentence}.", cancellationToken);
+                }
             }
         }
 

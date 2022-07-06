@@ -26,6 +26,7 @@
     <None Remove="Extensions\" />
     <None Remove="..\.editorconfig" />
     <None Remove="JamesWright.PersonalityForge" />
+    <None Remove="RestSharp" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
@@ -50,6 +51,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="RestSharp" Version="108.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Data\language.json">

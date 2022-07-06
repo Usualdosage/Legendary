@@ -147,6 +147,13 @@ body {
 
 /* Descriptive Content */
 
+.command {
+    width: 100px;
+    display: inline-block;
+    padding: 5px;
+    color: aquamarine;
+}
+
 .player-info {
     position: fixed;
     top: 10px;

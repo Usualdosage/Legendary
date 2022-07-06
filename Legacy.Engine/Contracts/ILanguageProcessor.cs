@@ -1,4 +1,4 @@
-﻿// <copyright file="ILanguageProcesor.cs" company="Legendary™">
+﻿// <copyright file="ILanguageProcessor.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -15,15 +15,16 @@ namespace Legendary.Engine.Contracts
     /// <summary>
     /// Processes character speech and returns responses from mobiles.
     /// </summary>
-    public interface ILanguageProcesor
+    public interface ILanguageProcessor
     {
         /// <summary>
         /// Gets a message from the personality forge bot.
         /// </summary>
         /// <param name="character">The character.</param>
         /// <param name="mobile">The mobile.</param>
-        /// <param name="message">The message input.</param>
+        /// <param name="input">The message input.</param>
+        /// <param name="situation">The situation to train the AI on.</param>
         /// <returns>The result message.</returns>
-        string? Process(Character character, Mobile mobile, string message);
+        Task<string?> Process(Character character, Mobile mobile, string input, string situation);
     }
 }

@@ -12,104 +12,212 @@ namespace Legendary.Engine.Processors
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using System.Web;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
     using Newtonsoft.Json;
+    using RestSharp;
 
     /// <summary>
-    /// Processes character speech and returns responses from mobiles.
+    /// Processes an input, and returns an AI response.
     /// </summary>
-    public class LanguageProcessor : ILanguageProcesor
+    public class LanguageProcessor : ILanguageProcessor
     {
-        private readonly List<string> stopWords = new List<string>() { "able", "about", "above", "abst", "ac", "accordance", "according", "accordingly", "across", "act", "actually", "ad", "added", "adj", "ae", "af", "affected", "affecting", "affects", "after", "afterwards", "ag", "again", "against", "ah", "ain", "ain't", "aj", "al", "all", "allow", "allows", "almost", "alone", "along", "already", "also", "although", "always", "am", "among", "amongst", "amoungst", "amount", "an", "and", "announce", "another", "any", "anybody", "anyhow", "anymore", "anyone", "anything", "anyway", "anyways", "anywhere", "ao", "ap", "apart", "apparently", "appear", "appreciate", "appropriate", "approximately", "ar", "are", "aren", "arent", "aren't", "arise", "around", "as", "a's", "aside", "ask", "asking", "associated", "at", "au", "auth", "av", "available", "aw", "away", "awfully", "ax", "ay", "az", "b", "b1", "b2", "b3", "ba", "back", "bc", "bd", "be", "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "begin", "beginning", "beginnings", "begins", "behind", "being", "believe", "below", "beside", "besides", "best", "better", "between", "beyond", "bi", "bill", "biol", "bj", "bk", "bl", "bn", "both", "bottom", "bp", "br", "brief", "briefly", "bs", "bt", "bu", "but", "bx", "by", "c", "c1", "c2", "c3", "ca", "call", "came", "can", "cannot", "cant", "can't", "cause", "causes", "cc", "cd", "ce", "certain", "certainly", "cf", "cg", "ch", "changes", "ci", "cit", "cj", "cl", "clearly", "cm", "c'mon", "cn", "co", "com", "come", "comes", "con", "concerning", "consequently", "consider", "considering", "contain", "containing", "contains", "corresponding", "could", "couldn", "couldnt", "couldn't", "course", "cp", "cq", "cr", "cry", "cs", "c's", "ct", "cu", "currently", "cv", "cx", "cy", "cz", "d", "d2", "da", "date", "dc", "dd", "de", "definitely", "describe", "described", "despite", "detail", "df", "di", "did", "didn", "didn't", "different", "dj", "dk", "dl", "do", "does", "doesn", "doesn't", "doing", "don", "done", "don't", "down", "downwards", "dp", "dr", "ds", "dt", "du", "due", "during", "dx", "dy", "e", "e2", "e3", "ea", "each", "ec", "ed", "edu", "ee", "ef", "effect", "eg", "ei", "eight", "eighty", "either", "ej", "el", "eleven", "else", "elsewhere", "em", "empty", "en", "end", "ending", "enough", "entirely", "eo", "ep", "eq", "er", "es", "especially", "est", "et", "et-al", "etc", "eu", "ev", "even", "ever", "every", "everybody", "everyone", "everything", "everywhere", "ex", "exactly", "example", "except", "ey", "f", "f2", "fa", "far", "fc", "few", "ff", "fi", "fifteen", "fifth", "fify", "fill", "find", "fire", "first", "five", "fix", "fj", "fl", "fn", "fo", "followed", "following", "follows", "for", "former", "formerly", "forth", "forty", "found", "four", "fr", "from", "front", "fs", "ft", "fu", "full", "further", "furthermore", "fy", "g", "ga", "gave", "ge", "get", "gets", "getting", "gi", "give", "given", "gives", "giving", "gj", "gl", "go", "goes", "going", "gone", "got", "gotten", "gr", "greetings", "gs", "gy", "h", "h2", "h3", "had", "hadn", "hadn't", "happens", "hardly", "has", "hasn", "hasnt", "hasn't", "have", "haven", "haven't", "having", "he", "hed", "he'd", "he'll", "help", "hence", "her", "here", "hereafter", "hereby", "herein", "heres", "here's", "hereupon", "hers", "herself", "hes", "he's", "hh", "hid", "him", "himself", "his", "hither", "hj", "ho", "home", "hopefully", "how", "howbeit", "however", "how's", "hr", "hs", "http", "hu", "hundred", "hy", "i", "i2", "i3", "i4", "i6", "i7", "i8", "ia", "ib", "ibid", "ic", "id", "i'd", "ie", "if", "ig", "ignored", "ih", "ii", "ij", "il", "i'll", "im", "i'm", "immediate", "immediately", "importance", "important", "in", "inasmuch", "inc", "indeed", "index", "indicate", "indicated", "indicates", "information", "inner", "insofar", "instead", "interest", "into", "invention", "inward", "io", "ip", "iq", "ir", "is", "isn", "isn't", "it", "itd", "it'd", "it'll", "its", "it's", "itself", "iv", "i've", "ix", "iy", "iz", "j", "jj", "jr", "js", "jt", "ju", "just", "k", "ke", "keep", "keeps", "kept", "kg", "kj", "km", "know", "known", "knows", "ko", "l", "l2", "la", "largely", "last", "lately", "later", "latter", "latterly", "lb", "lc", "le", "least", "les", "less", "lest", "let", "lets", "let's", "lf", "like", "liked", "likely", "line", "little", "lj", "ll", "ll", "ln", "lo", "look", "looking", "looks", "los", "lr", "ls", "lt", "ltd", "m", "m2", "ma", "made", "mainly", "make", "makes", "many", "may", "maybe", "me", "mean", "means", "meantime", "meanwhile", "merely", "mg", "might", "mightn", "mightn't", "mill", "million", "mine", "miss", "ml", "mn", "mo", "more", "moreover", "most", "mostly", "move", "mr", "mrs", "ms", "mt", "mu", "much", "mug", "must", "mustn", "mustn't", "my", "myself", "n", "n2", "na", "name", "namely", "nay", "nc", "nd", "ne", "near", "nearly", "necessarily", "necessary", "need", "needn", "needn't", "needs", "neither", "never", "nevertheless", "new", "next", "ng", "ni", "nine", "ninety", "nj", "nl", "nn", "no", "nobody", "non", "none", "nonetheless", "noone", "nor", "normally", "nos", "not", "noted", "nothing", "novel", "now", "nowhere", "nr", "ns", "nt", "ny", "o", "oa", "ob", "obtain", "obtained", "obviously", "oc", "od", "of", "off", "often", "og", "oh", "oi", "oj", "ok", "okay", "ol", "old", "om", "omitted", "on", "once", "one", "ones", "only", "onto", "oo", "op", "oq", "or", "ord", "os", "ot", "other", "others", "otherwise", "ou", "ought", "our", "ours", "ourselves", "out", "outside", "over", "overall", "ow", "owing", "own", "ox", "oz", "p", "p1", "p2", "p3", "page", "pagecount", "pages", "par", "part", "particular", "particularly", "pas", "past", "pc", "pd", "pe", "per", "perhaps", "pf", "ph", "pi", "pj", "pk", "pl", "placed", "please", "plus", "pm", "pn", "po", "poorly", "possible", "possibly", "potentially", "pp", "pq", "pr", "predominantly", "present", "presumably", "previously", "primarily", "probably", "promptly", "proud", "provides", "ps", "pt", "pu", "put", "py", "q", "qj", "qu", "que", "quickly", "quite", "qv", "r", "r2", "ra", "ran", "rather", "rc", "rd", "re", "readily", "really", "reasonably", "recent", "recently", "ref", "refs", "regarding", "regardless", "regards", "related", "relatively", "research", "research-articl", "respectively", "resulted", "resulting", "results", "rf", "rh", "ri", "right", "rj", "rl", "rm", "rn", "ro", "rq", "rr", "rs", "rt", "ru", "run", "rv", "ry", "s", "s2", "sa", "said", "same", "saw", "say", "saying", "says", "sc", "sd", "se", "sec", "second", "secondly", "section", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "sf", "shall", "shan", "shan't", "she", "shed", "she'd", "she'll", "shes", "she's", "should", "shouldn", "shouldn't", "should've", "show", "showed", "shown", "showns", "shows", "si", "side", "significant", "significantly", "similar", "similarly", "since", "sincere", "six", "sixty", "sj", "sl", "slightly", "sm", "sn", "so", "some", "somebody", "somehow", "someone", "somethan", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "sp", "specifically", "specified", "specify", "specifying", "sq", "sr", "ss", "st", "still", "stop", "strongly", "sub", "substantially", "successfully", "such", "sufficiently", "suggest", "sup", "sure", "sy", "system", "sz", "t", "t1", "t2", "t3", "take", "taken", "taking", "tb", "tc", "td", "te", "tell", "ten", "tends", "tf", "th", "than", "thank", "thanks", "thanx", "that", "that'll", "thats", "that's", "that've", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "thereafter", "thereby", "thered", "therefore", "therein", "there'll", "thereof", "therere", "theres", "there's", "thereto", "thereupon", "there've", "these", "they", "theyd", "they'd", "they'll", "theyre", "they're", "they've", "thickv", "thin", "think", "third", "this", "thorough", "thoroughly", "those", "thou", "though", "thoughh", "thousand", "three", "throug", "through", "throughout", "thru", "thus", "ti", "til", "tip", "tj", "tl", "tm", "tn", "to", "together", "too", "took", "top", "toward", "towards", "tp", "tq", "tr", "tried", "tries", "truly", "try", "trying", "ts", "t's", "tt", "tv", "twelve", "twenty", "twice", "two", "tx", "u", "u201d", "ue", "ui", "uj", "uk", "um", "un", "under", "unfortunately", "unless", "unlike", "unlikely", "until", "unto", "uo", "up", "upon", "ups", "ur", "us", "use", "used", "useful", "usefully", "usefulness", "uses", "using", "usually", "ut", "v", "va", "value", "various", "vd", "ve", "ve", "very", "via", "viz", "vj", "vo", "vol", "vols", "volumtype", "vq", "vs", "vt", "vu", "w", "wa", "want", "wants", "was", "wasn", "wasnt", "wasn't", "way", "we", "wed", "we'd", "welcome", "well", "we'll", "well-b", "went", "were", "we're", "weren", "werent", "weren't", "we've", "what", "whatever", "what'll", "whats", "what's", "when", "whence", "whenever", "when's", "where", "whereafter", "whereas", "whereby", "wherein", "wheres", "where's", "whereupon", "wherever", "whether", "which", "while", "whim", "whither", "who", "whod", "whoever", "whole", "who'll", "whom", "whomever", "whos", "who's", "whose", "why", "why's", "wi", "widely", "will", "willing", "wish", "with", "within", "without", "wo", "won", "wonder", "wont", "won't", "words", "world", "would", "wouldn", "wouldnt", "wouldn't", "www", "x", "x1", "x2", "x3", "xf", "xi", "xj", "xk", "xl", "xn", "xo", "xs", "xt", "xv", "xx", "y", "y2", "yes", "yet", "yj", "yl", "you", "youd", "you'd", "you'll", "your", "youre", "you're", "yours", "yourself", "yourselves", "you've", "yr", "ys", "yt", "z", "zero", "zi", "zz" };
-
         private readonly IRandom random;
-        private readonly LanguageModel languageModel;
+        private readonly LanguageGenerator generator;
+        private readonly List<string> connectionError = new List<string>()
+        {
+            "I'm sorry, I didn't understand that.",
+            "I'm not sure what to say.",
+            "Hm. I can't think of a response to that.",
+            "Sorry, I'm not thinking straight right now.",
+            "I'm a little confused.",
+            "Maybe ask me that again? I'm not sure I heard you right.",
+            "I'm a little tired and not thinking straight right now.",
+        };
+
+        private List<string>? excludeWords;
+        private Dictionary<string, string>? replaceWords;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
         /// </summary>
+        /// <param name="generator">The language generator.</param>
         /// <param name="random">The random number generator.</param>
-        public LanguageProcessor(IRandom random)
+        public LanguageProcessor(LanguageGenerator generator, IRandom random)
         {
+            this.LoadParser();
+            this.generator = generator;
             this.random = random;
-            var content = File.ReadAllText(@"Data/language.json");
-            this.languageModel = JsonConvert.DeserializeObject<LanguageModel>(content);
         }
 
-        /// <inheritdoc/>
-        public string? Process(Character character, Mobile mobile, string message)
+        /// <summary>
+        /// Reloads the parser to capture any updates.
+        /// </summary>
+        public void LoadParser()
         {
-            if (this.languageModel != null)
+            var parserContent = File.ReadAllText(@"Data/parser.json");
+
+            var parser = JsonConvert.DeserializeObject<Parser>(parserContent);
+
+            if (parser != null)
             {
-                // Lowercase and strip the punctuation from the message.
-                var keywords = this.ProcessInputKeyword(message);
+                this.excludeWords = parser.Exclude;
+                this.replaceWords = parser.Replace;
+            }
+        }
 
-                bool? hasGreetingMatch =
-                    this.languageModel?.Greeting?.Input
-                    .Select(x => x)
-                    .Intersect(keywords)
-                    .Any();
+        /// <summary>
+        /// Processes the message.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="input">The input string.</param>
+        /// <param name="situation">The sitrep.</param>
+        /// <returns>string.</returns>
+        public async Task<string?> Process(Character character, Mobile mobile, string input, string situation)
+        {
+            if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && mobile != null && !string.IsNullOrWhiteSpace(mobile.FirstName))
+            {
+                return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-                bool? hasDepartureMatch =
-                    this.languageModel?.Departure?.Input
-                    .Select(x => x)
-                    .Intersect(keywords)
-                    .Any();
+        /// <summary>
+        /// Remove any HTML or links.
+        /// </summary>
+        /// <param name="input">The input to clean.</param>
+        /// <returns>Formatted input.</returns>
+        private static string CleanInput(string input, string actor)
+        {
+            var cleaned = Regex.Replace(input, @"http[^\s]+", string.Empty);
+            cleaned = Regex.Replace(cleaned, "<.*?>", string.Empty);
+            cleaned = cleaned.Replace(actor, string.Empty);
+            cleaned = HttpUtility.HtmlDecode(cleaned);
+            cleaned = cleaned.Replace("says", string.Empty);
+            return cleaned;
+        }
 
-                bool? hasConversationMatch =
-                    this.languageModel?.Conversation?.Input
-                    .Select(x => x)
-                    .Intersect(keywords)
-                    .Any();
+        private static string Punctuate(string input)
+        {
+            if (!char.IsPunctuation(input[^1]))
+            {
+                input += ".";
+            }
 
-                Conversation? conversation = null;
+            return input;
+        }
 
-                // We matched a greeting keyword, so check the mob's emotion.
-                if (this.languageModel?.Greeting != null && hasGreetingMatch.HasValue && hasGreetingMatch.Value == true)
+        private static string Unpunctuate(string input)
+        {
+            return Regex.Replace(input, @"[^\w\s]", string.Empty);
+        }
+
+        private string GetErrorMessage()
+        {
+            return this.connectionError[this.random.Next(0, this.connectionError.Count - 1)];
+        }
+
+        private async Task<string> Request(string input, string situation, string actor, string target)
+        {
+            try
+            {
+                using (var client = new RestClient($"https://waifu.p.rapidapi.com/path?user_id=sample_user_id&message={input}&from_name={actor}&to_name={target}&situation={situation}&translate_from=auto&translate_to=auto"))
                 {
-                    conversation = this.languageModel.Greeting.Output.Where(o => o.Emotion.Contains(mobile.Emotion)).FirstOrDefault();
-                }
-                else if (this.languageModel?.Departure != null && hasDepartureMatch.HasValue && hasDepartureMatch.Value == true)
-                {
-                    conversation = this.languageModel.Departure.Output.Where(o => o.Emotion.Contains(mobile.Emotion)).FirstOrDefault();
-                }
-                else if (this.languageModel?.Conversation != null && hasConversationMatch.HasValue && hasConversationMatch.Value == true)
-                {
-                    conversation = this.languageModel.Conversation.Output.Where(o => o.Emotion.Contains(mobile.Emotion)).FirstOrDefault();
-                }
-
-                if (conversation != null)
-                {
-                    // Pull a random response.
-                    int? randomInt = this.random.Next(0, conversation.Messages.Count - 1);
-                    var response = conversation.Messages[randomInt.Value];
-
-                    if (!string.IsNullOrWhiteSpace(response))
+                    var request = new RestRequest("/", Method.Post);
+                    request.AddHeader("content-type", "application/json");
+                    request.AddHeader("X-RapidAPI-Key", "d6bb62c61dmsh51e8d5bfeea7c44p169130jsnd3f6f238e340");
+                    request.AddHeader("X-RapidAPI-Host", "waifu.p.rapidapi.com");
+                    request.AddParameter("application/json", "{}", ParameterType.RequestBody);
+                    RestResponse response = await client.ExecuteAsync(request);
+                    if (response != null && !string.IsNullOrWhiteSpace(response.Content))
                     {
-                        return response;
+                        var results = response.Content;
+
+                        var words = results.Split(' ');
+
+                        StringBuilder sb = new StringBuilder();
+
+                        foreach (var word in words)
+                        {
+                            // Check to see if we want to replace an uppercase word with a random word. Don't replace actor or target.
+                            var replacementWord = this.Replace(word, actor, target);
+
+                            sb.Append(replacementWord);
+
+                            sb.Append(' ');
+                        }
+
+                        // Remove trailing space.
+                        sb.Remove(sb.Length - 1, 1);
+
+                        // Remove any HTML or links.
+                        var cleaned = Regex.Replace(sb.ToString(), @"http[^\s]+", string.Empty);
+                        cleaned = Regex.Replace(cleaned, "<.*?>", string.Empty);
+
+                        // Add any necessary punctuation.
+                        return Punctuate(cleaned);
                     }
                 }
 
-                return null;
+                return this.GetErrorMessage();
             }
-
-            return null;
+            catch
+            {
+                return this.GetErrorMessage();
+            }
         }
 
-        private List<string> ProcessInputKeyword(string input)
+        private string Replace(string word, string actor, string target)
         {
-            input = Regex.Replace(input, @"<[^>]*>", string.Empty);
+            // Lowercase and remove all punctuation for our test word. This word does not get returned, it's just for parsing tests.
+            var testWord = Unpunctuate(word.ToLower());
 
-            input = new string(input.ToCharArray().Where(c => !char.IsPunctuation(c)).ToArray()).ToLower();
+            // If it's a proper case word and it's not the name of the actor or the target.
+            if (char.IsUpper(word[0]) && word != actor && word != target)
+            {
+                if (this.replaceWords != null && this.replaceWords.ContainsKey(testWord))
+                {
+                    // Word should be replaced with another word.
+                    var replaceWith = this.replaceWords.First(r => r.Key == word.ToLower()).Value;
 
-            var words = input.Split(' ')
-                .ToList()
-                .Distinct();
+                    // Uppercase the word.
+                    return char.ToUpper(replaceWith[0]) + replaceWith[1..];
+                }
 
-            return words.Except(this.stopWords).ToList();
+                if (this.excludeWords != null && this.excludeWords.Contains(testWord))
+                {
+                    // Word is excluded from replacement.
+                    return word;
+                }
+                else
+                {
+                    // Word should be replaced with a random word. The generator returns only uppercase words.
+                    return this.generator.BuildSentence(testWord) + $"[{word}]";
+                }
+            }
+            else
+            {
+                // It's not proper cased, so just see if we want to use a replacement word.
+                if (this.replaceWords != null && this.replaceWords.ContainsKey(testWord))
+                {
+                    // Word should be replaced with another word.
+                    return this.replaceWords.First(r => r.Key == word.ToLower()).Value + $"[{word}]";
+                }
+                else
+                {
+                    // No changes, use the word as-is.
+                    return word;
+                }
+            }
         }
     }
 }
