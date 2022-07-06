@@ -81,6 +81,7 @@ html {
     font-size: 1.2em;
     padding: 10px;
     padding-top: 30px;
+    padding-bottom: 30px;
     overflow-y: scroll;
     bottom: 30px;
     position: absolute;
@@ -110,6 +111,11 @@ html {
     .loader i {
         color: cornflowerblue;
     }
+
+.error {
+    color: red;
+    font-family: Courier New, Courier, monospace;
+}
 
 .message {
     padding: 3px;

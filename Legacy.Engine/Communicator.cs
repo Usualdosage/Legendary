@@ -278,6 +278,11 @@ namespace Legendary.Engine
                             await this.SendToPlayer(user.Connection, $"You look at {mobile.FirstName}.", cancellationToken);
                             await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {mobile.FirstName}.", cancellationToken);
                             await this.SendToPlayer(user.Connection, this.GetPlayerInfo(mobile), cancellationToken);
+
+                            if (!string.IsNullOrWhiteSpace(mobile.Image))
+                            {
+                                await this.SendToPlayer(user.Connection, $"<div class='room-image'><img src='{mobile?.Image}'/></div>", cancellationToken);
+                            }
                         }
                         else
                         {

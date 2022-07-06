@@ -57,19 +57,27 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         public async Task DoAction(UserData actor, string[] args, string command, CancellationToken cancellationToken)
         {
-            // Get the matching actions for the command word.
-            var action = this.actions
-                .Where(a => a.Key.StartsWith(command))
-                .OrderBy(a => a.Value.Key)
-                .FirstOrDefault();
+            try
+            {
+                // Get the matching actions for the command word.
+                var action = this.actions
+                    .Where(a => a.Key.StartsWith(command))
+                    .OrderBy(a => a.Value.Key)
+                    .FirstOrDefault();
 
-            if (action.Value.Value != null)
-            {
-                await action.Value.Value(actor, args, cancellationToken);
+                if (action.Value.Value != null)
+                {
+                    await action.Value.Value(actor, args, cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                this.logger.Error(ex);
+                await this.communicator.SendToPlayer(actor.Connection, "<span class='error'>Unable to process command. This has been logged.</span>", cancellationToken);
             }
         }
 
@@ -104,7 +112,8 @@ namespace Legendary.Engine.Processors
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("drop", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoDrop)));
             this.actions.Add("east", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
+            this.actions.Add("eat", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoEat)));
+            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoGet)));
             this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
             this.actions.Add("help", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoHelp)));
@@ -150,6 +159,18 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.DropItem(actor, args[1], cancellationToken);
+            }
+        }
+
+        private async Task DoEat(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Eat what?", cancellationToken);
+            }
+            else
+            {
+                await this.EatItem(actor, args[1], cancellationToken);
             }
         }
 
@@ -738,6 +759,45 @@ namespace Legendary.Engine.Processors
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Eats an item, resetting the hunger counter.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="target">The item.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task EatItem(UserData user, string target, CancellationToken cancellationToken = default)
+        {
+            if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
+            {
+                await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
+                return;
+            }
+
+            foreach (var item in user.Character.Inventory)
+            {
+                if (item != null && item.ItemType == ItemType.Food)
+                {
+                    if (user.Character.Hunger.Current <= 2)
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You are too full to eat anything.", cancellationToken);
+                        return;
+                    }
+                    else if (user.Character.Hunger.Current >= 8)
+                    {
+                        user.Character.Inventory.Remove(item);
+                        await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
+                        await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
+                        user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 0));
+                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} eats {item.Name}.", cancellationToken);
+                        return;
+                    }
+                }
+            }
+
+            await this.communicator.SendToPlayer(user.Connection, $"You can't eat that.", cancellationToken);
         }
 
         /// <summary>
