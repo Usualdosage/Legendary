@@ -20,6 +20,7 @@
     <None Remove="MongoDB.Bson" />
     <None Remove="MongoDB.Driver" />
     <None Remove="Attributes\" />
+    <None Remove="JamesWright.PersonalityForge" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />

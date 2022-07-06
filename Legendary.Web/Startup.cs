@@ -10,15 +10,11 @@
 namespace Legendary.Web
 {
     using Legendary.Core.Contracts;
-    using Legendary.Core.Types;
     using Legendary.Data;
     using Legendary.Data.Contracts;
     using Legendary.Engine;
     using Legendary.Engine.Contracts;
-    using Legendary.Engine.Models;
-    using Legendary.Engine.Models.Skills;
     using Legendary.Networking;
-    using Legendary.Networking.Contracts;
     using Legendary.Networking.Models;
     using Legendary.Web.Contracts;
     using Legendary.Web.Models;
@@ -29,7 +25,6 @@ namespace Legendary.Web
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
-    using MongoDB.Bson.Serialization;
 
     /// <summary>
     /// Main entry point.

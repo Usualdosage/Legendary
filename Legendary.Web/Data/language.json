@@ -1,0 +1,44 @@
+﻿{
+  "greeting": {
+    "input": [ "hello", "hi", "hey", "hola", "howdy", "morning", "afternoon" ],
+    "output": [
+      {
+        "emotion": [ "neutral" ],
+        "messages": [ "Hi.", "Hello.", "Greetings." ]
+      },
+      {
+        "emotion": [ "happy" ],
+        "messages": [ "Good day to you.", "Hello there!", "Greetings!" ]
+      },
+      {
+        "emotion": [ "sad" ],
+        "messages": [ "I suppose.", "Hello.", "Hi." ]
+      },
+      {
+        "emotion": [ "angry" ],
+        "messages": [ "What?", "What do you want?", "Can I help you?", "I am not in the mood today." ]
+      }
+    ]
+  },
+  "departure": {
+    "input": [ "bye", "goodbye", "later" ],
+    "output": [
+      {
+        "emotion": [ "neutral" ],
+        "messages": [ "Goodbye.", "Bye.", "Greetings." ]
+      },
+      {
+        "emotion": [ "happy" ],
+        "messages": [ "Safe journey!", "May the Gods be with you!", "Goodbye!" ]
+      },
+      {
+        "emotion": [ "sad" ],
+        "messages": [ "Leaving, just like everyone else.", "Okay.", "Well, see ya I guess." ]
+      },
+      {
+        "emotion": [ "angry" ],
+        "messages": [ "Good riddance.", "Beat it.", "Yeah, get lost." ]
+      }
+    ]
+  }
+}

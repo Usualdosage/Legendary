@@ -35,7 +35,6 @@ namespace Legendary.Engine.Processors
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionProcessor"/> class.
         /// </summary>
-        /// <param name="actor">The this.actor.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
@@ -321,7 +320,6 @@ namespace Legendary.Engine.Processors
             sentence = char.ToUpper(sentence[0]) + sentence[1..];
             await this.communicator.SendToPlayer(actor.Connection, $"You say \"<span class='say'>{sentence}</b>\"", cancellationToken);
             await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
-
         }
 
         private async Task DoScore(UserData actor, string[] args, CancellationToken cancellationToken)
@@ -484,7 +482,6 @@ namespace Legendary.Engine.Processors
         {
             // remove <argument>
             // See if they are wearing the item.
-
             if (args.Length > 1)
             {
                 var itemName = args[1].ToLower();

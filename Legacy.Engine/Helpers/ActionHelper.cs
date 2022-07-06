@@ -106,7 +106,7 @@ namespace Legendary.Engine.Helpers
                     return WearLocation.None.ToString();
                 }
             }
-            catch (Exception exc)
+            catch
             {
                 return WearLocation.None.ToString();
             }

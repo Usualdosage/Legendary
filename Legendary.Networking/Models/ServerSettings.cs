@@ -9,7 +9,7 @@
 
 namespace Legendary.Networking.Models
 {
-    using Legendary.Networking.Contracts;
+    using Legendary.Core.Contracts;
 
     /// <summary>
     /// Used to house server settings loaded from a config file.
@@ -21,5 +21,11 @@ namespace Legendary.Networking.Models
 
         /// <inheritdoc/>
         public int? ApiPort { get; set; }
+
+        /// <inheritdoc/>
+        public string? ChatBotAPIKey { get; set; }
+
+        /// <inheritdoc/>
+        public string? ChatBotAPISecret { get; set; }
     }
 }

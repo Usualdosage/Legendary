@@ -10,10 +10,15 @@
 namespace Legendary.Networking
 {
     using System;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Threading.Tasks;
+    using System.Web;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
-    using Legendary.Networking.Contracts;
+    using Legendary.Networking.Models;
+    using Newtonsoft.Json;
     using RestSharp;
 
     /// <summary>

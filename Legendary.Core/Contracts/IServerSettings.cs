@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Networking.Contracts
+namespace Legendary.Core.Contracts
 {
     /// <summary>
     /// Implementation contract for server settings.
@@ -23,5 +23,15 @@ namespace Legendary.Networking.Contracts
         /// Gets or sets the port of the content API.
         /// </summary>
         int? ApiPort { get; set; }
+
+        /// <summary>
+        /// Gets or sets the API key for the chatbot.
+        /// </summary>
+        string? ChatBotAPIKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the secret for the chatbot.
+        /// </summary>
+        string? ChatBotAPISecret { get; set; }
     }
 }

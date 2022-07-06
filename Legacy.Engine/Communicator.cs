@@ -19,7 +19,6 @@ namespace Legendary.Engine
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
-    using Legendary.Core.Attributes;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -49,6 +48,7 @@ namespace Legendary.Engine
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
+        private ILanguageProcesor languageProcessor;
         private IEnvironment? environment;
         private KeyValuePair<string, UserData> connectedUser;
 
@@ -61,7 +61,6 @@ namespace Legendary.Engine
         /// <param name="dataService">The data service.</param>
         /// <param name="engine">Singleton instance of the game engine.</param>
         /// <param name="world">The world to use in this comm instance.</param>
-        /// <param name="actionProcessor">The action processor.</param>
         public Communicator(RequestDelegate requestDelegate, ILogger logger, IApiClient apiClient, IDataService dataService, IEngine engine, IWorld world)
         {
             this.logger = logger;
@@ -82,11 +81,14 @@ namespace Legendary.Engine
                     new CommChannel("wiznet", true, false),
                 };
 
+            this.engine.Tick += this.Engine_Tick;
+            this.engine.VioTick += this.Engine_VioTick;
+
             // Create the language generator.
             this.languageGenerator = new LanguageGenerator(this.random);
 
-            this.engine.Tick += this.Engine_Tick;
-            this.engine.VioTick += this.Engine_VioTick;
+            // Create the language processor.
+            this.languageProcessor = new LanguageProcessor(this.random);
         }
 
         /// <summary>
@@ -441,7 +443,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken ct = default)
+        public async Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
@@ -452,8 +454,10 @@ namespace Legendary.Engine
                 {
                     if (user.Key != socketId && user.Value.Character.Location.Equals(room))
                     {
-                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
+
+                    await this.CheckMobCommunication(user.Value.Character, room, message, cancellationToken);
                 }
             }
 
@@ -461,7 +465,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken ct = default)
+        public async Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
@@ -472,7 +476,7 @@ namespace Legendary.Engine
                 {
                     if (user.Key != socketId && user.Value.Character.Location.AreaId == room.AreaId)
                     {
-                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
                 }
             }
@@ -481,7 +485,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToChannel(CommChannel? channel, string socketId, string message, CancellationToken ct = default)
+        public async Task<CommResult> SendToChannel(CommChannel? channel, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == channel?.Name.ToLower());
 
@@ -491,7 +495,7 @@ namespace Legendary.Engine
                 {
                     if (sub.Value.ConnectionId != socketId)
                     {
-                        await this.SendToPlayer(sub.Value.Connection, message, ct);
+                        await this.SendToPlayer(sub.Value.Connection, message, cancellationToken);
                     }
                 }
             }
@@ -641,6 +645,45 @@ namespace Legendary.Engine
             sb.Append(ActionHelper.GetEquipment(target));
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Allows mobs with personalities to communicate to characters who say things.
+        /// </summary>
+        /// <param name="character">The speaking character.</param>
+        /// <param name="room">The room.</param>
+        /// <param name="message">The character's message.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default)
+        {
+            var mobiles = this.GetMobilesInRoom(room);
+
+            if (mobiles != null && mobiles.Count > 0)
+            {
+                foreach (var mobile in mobiles)
+                {
+                    var response = this.languageProcessor.Process(character, mobile, message);
+
+                    if (!string.IsNullOrWhiteSpace(response))
+                    {
+                        response = $"{mobile.FirstName} says \"<span class='say'>{response}</span>\"";
+                        var buffer = Encoding.UTF8.GetBytes(response);
+                        var segment = new ArraySegment<byte>(buffer);
+
+                        if (Users != null)
+                        {
+                            foreach (var user in Users)
+                            {
+                                if (user.Value.Character.Location.Equals(room))
+                                {
+                                    await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

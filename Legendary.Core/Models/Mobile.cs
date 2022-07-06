@@ -11,7 +11,6 @@ namespace Legendary.Core.Models
 {
     using System.Collections.Generic;
     using Legendary.Core.Types;
-    using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
 
     /// <summary>
@@ -27,5 +26,10 @@ namespace Legendary.Core.Models
         /// Gets or sets flags applied to the mobile.
         /// </summary>
         public IList<MobileFlags>? MobileFlags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the personality of the mobile.
+        /// </summary>
+        public Emotion? Emotion { get; set; }
     }
 }
