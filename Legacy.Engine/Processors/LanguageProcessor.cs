@@ -95,6 +95,7 @@ namespace Legendary.Engine.Processors
         /// Remove any HTML or links.
         /// </summary>
         /// <param name="input">The input to clean.</param>
+        /// <param name="actor">The actor.</param>
         /// <returns>Formatted input.</returns>
         private static string CleanInput(string input, string actor)
         {

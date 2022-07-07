@@ -1,4 +1,4 @@
-﻿// <copyright file="ContentController.cs" company="Legendary™">
+﻿// <copyright file="CreatorController.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at

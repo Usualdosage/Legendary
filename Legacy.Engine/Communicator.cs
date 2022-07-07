@@ -88,7 +88,7 @@ namespace Legendary.Engine
             this.languageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.languageProcessor = new LanguageProcessor(this.languageGenerator);
+            this.languageProcessor = new LanguageProcessor(this.languageGenerator, this.random);
         }
 
         /// <summary>

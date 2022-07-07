@@ -116,7 +116,6 @@ namespace Legendary.Web.Controllers
         /// <summary>
         /// Creates a character.
         /// </summary>
-        /// <param name="model">The stat model.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
         public async Task<IActionResult> CreateCharacter()

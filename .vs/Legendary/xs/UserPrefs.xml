@@ -3,55 +3,44 @@
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SpellProcessor.cs" relfile="Legacy.Engine/Processors/SpellProcessor.cs" line="96" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SpellProcessor.cs" relfile="Legacy.Engine/Processors/SpellProcessor.cs" line="102" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="165" column="1" />
+    <BreakpointStore>
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SpellProcessor.cs" relfile="Legacy.Engine/Processors/SpellProcessor.cs" line="96" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SpellProcessor.cs" relfile="Legacy.Engine/Processors/SpellProcessor.cs" line="102" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processors/ActionProcessor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Models/Emotes.cs">
     <Files>
-      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="513" Column="74" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="640" Column="27" />
-      <File FileName="Legendary.Web/Startup.cs" Line="120" Column="1" />
-      <File FileName="Legacy.Engine/Contracts/ICommunicator.cs" Line="24" Column="28" />
-      <File FileName="Legacy.Engine/Environment.cs" Line="36" Column="48" />
-      <File FileName="Legacy.Engine/Contracts/IEngine.cs" Line="33" Column="42" />
-      <File FileName="Legacy.Engine/Engine.cs" Line="9" Column="1" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="165" Column="1" />
-      <File FileName="Legacy.Engine/Helpers/ActionHelper.cs" Line="72" Column="35" />
-      <File FileName="Legendary.Core/Models/Item.cs" Line="117" Column="41" />
-      <File FileName="Legendary.Core/Models/Character.cs" Line="231" Column="22" />
-      <File FileName="Legendary.Core/Types/ItemType.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Core/Models/World.cs" Line="152" Column="1" />
-      <File FileName="Legendary.Data/DataService.cs" Line="35" Column="26" />
+      <File FileName="Legacy.Engine/Models/Parser.cs" Line="27" Column="44" />
+      <File FileName="Legendary.Web/Data/language.json" Line="1" Column="1" />
+      <File FileName="Legendary.Core/Models/Room.cs" Line="76" Column="21" />
+      <File FileName="Legendary.Core/Types/Terrain.cs" Line="15" Column="17" />
+      <File FileName="Legendary.Web/Models/StatModel.cs" Line="39" Column="1" />
+      <File FileName="Legacy.Engine/Models/Emote.cs" Line="25" Column="34" />
+      <File FileName="Legacy.Engine/Models/Emotes.cs" Line="33" Column="65" />
+      <File FileName="Legendary.Web/wwwroot/css/client.css" Line="155" Column="2" />
+      <File FileName="Legacy.Engine/Processors/SpellProcessor.cs" Line="51" Column="29" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
             <Node name="Legendary.Core" expanded="True">
-              <Node name="Attributes" expanded="True" />
-              <Node name="Contracts" expanded="True" />
-              <Node name="Extensions" expanded="True" />
               <Node name="Models" expanded="True" />
               <Node name="Types" expanded="True" />
             </Node>
-            <Node name="Legendary.Data" expanded="True">
-              <Node name="Contracts" expanded="True" />
-            </Node>
             <Node name="Legendary.Engine" expanded="True">
               <Node name="Contracts" expanded="True" />
-              <Node name="Extensions" expanded="True" />
               <Node name="Helpers" expanded="True" />
-              <Node name="Models" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="Emotes.cs" selected="True" />
+              </Node>
               <Node name="Processors" expanded="True" />
               <Node name="Types" expanded="True" />
             </Node>
             <Node name="Legendary.Web" expanded="True">
               <Node name="Controllers" expanded="True" />
+              <Node name="Data" expanded="True" />
               <Node name="Models" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="Home" expanded="True" />
-              </Node>
               <Node name="wwwroot" expanded="True">
                 <Node name="css" expanded="True" />
               </Node>
