@@ -255,9 +255,9 @@ namespace Legendary.Engine.Processors
                             // Add any necessary punctuation.
                             return FormatSentence(cleaned);
                         }
-                        catch (System.Exception ex)
+                        catch (System.Exception)
                         {
-                            return ex.Message.ToString();
+                            return string.Format($"Error: {response.Content}");
                         }
                     }
                 }
