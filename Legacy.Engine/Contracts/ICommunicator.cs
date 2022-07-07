@@ -143,6 +143,14 @@ namespace Legendary.Engine.Contracts
         Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Returns true if the target is in the provided room. 
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>True if the target is in the room.</returns>
+        bool IsInRoom(Room room, Character target);
+
+        /// <summary>
         /// Add a user to the specified channel (by name).
         /// </summary>
         /// <param name="channelName">The channel name.</param>

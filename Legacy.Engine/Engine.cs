@@ -11,6 +11,7 @@ namespace Legendary.Engine
 {
     using System;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;

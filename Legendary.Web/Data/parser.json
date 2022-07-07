@@ -80,7 +80,8 @@
     "ah",
     "ive",
     "he",
-    "his"
+    "his",
+    "doing"
   ],
   "replace": {
     "oil": "gold",
@@ -90,7 +91,13 @@
     "haha": "heh",
     "fuck": "screw",
     "cock": "unit",
-    "god": "gods"
+    "god": "gods",
+    "u": "you",
+    "i": "I",
+    "im": "I'm",
+    "didnt": "didn't",
+    "internet": "tavern",
+    "ur": "you're"
   }
 }
 

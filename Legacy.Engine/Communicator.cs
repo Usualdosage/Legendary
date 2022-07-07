@@ -88,7 +88,7 @@ namespace Legendary.Engine
             this.languageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.languageProcessor = new LanguageProcessor(this.languageGenerator, this.random);
+            this.languageProcessor = new LanguageProcessor(this.languageGenerator, this, this.random);
         }
 
         /// <summary>
@@ -248,6 +248,22 @@ namespace Legendary.Engine
             this.logger.Info(message);
             await this.Wizlog(message, ct);
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
+        }
+
+        /// <summary>
+        /// Returns true if the target is in the provided room.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>True if the target is in the room.</returns>
+        public bool IsInRoom(Room room, Character target)
+        {
+            if (Users != null)
+            {
+                return Users.Any(u => u.Value.Character.FirstName == target.FirstName && u.Value.Character.Location.RoomId == room.RoomId && u.Value.Character.Location.AreaId == room.AreaId);
+            }
+
+            return false;
         }
 
         /// <inheritdoc/>
@@ -686,6 +702,28 @@ namespace Legendary.Engine
                                 if (user.Value.Character.Location.Equals(room))
                                 {
                                     await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Mob did not want to communicate, so it may do an emote instead.
+                        response = this.languageProcessor.ProcessEmote(character, mobile, message);
+
+                        if (!string.IsNullOrWhiteSpace(response))
+                        {
+                            var buffer = Encoding.UTF8.GetBytes(response);
+                            var segment = new ArraySegment<byte>(buffer);
+
+                            if (Users != null)
+                            {
+                                foreach (var user in Users)
+                                {
+                                    if (user.Value.Character.Location.Equals(room))
+                                    {
+                                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                                    }
                                 }
                             }
                         }

@@ -31,5 +31,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the personality of the mobile.
         /// </summary>
         public Emotion? Emotion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the handle which player the mob is speaking with, tracking, and fighting.
+        /// </summary>
+        public Character? PlayerTarget { get; set; }
     }
 }

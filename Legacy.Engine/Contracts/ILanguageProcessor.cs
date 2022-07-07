@@ -26,5 +26,14 @@ namespace Legendary.Engine.Contracts
         /// <param name="situation">The situation to train the AI on.</param>
         /// <returns>The result message.</returns>
         Task<string?> Process(Character character, Mobile mobile, string input, string situation);
+
+        /// <summary>
+        /// If a mob doesn't perform a verbal response, it may execute an emote.
+        /// </summary>
+        /// <param name="character">The actor.</param>
+        /// <param name="mobile">The target.</param>
+        /// <param name="input">The input.</param>
+        /// <returns>String.</returns>
+        string? ProcessEmote(Character character, Mobile mobile, string input);
     }
 }

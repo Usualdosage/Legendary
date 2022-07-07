@@ -68,6 +68,9 @@ namespace Legendary.Engine
         /// <returns>New sentence.</returns>
         public string BuildSentence(string sentence)
         {
+            // Remove leading and following whitespace.
+            sentence = sentence.Trim();
+
             // Get rid of punctuation.
             Regex.Replace(sentence, @"[^\w\s]", string.Empty);
 

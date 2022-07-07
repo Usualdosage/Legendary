@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Processors
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -16,6 +17,7 @@ namespace Legendary.Engine.Processors
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web;
+    using Legendary.Core;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
@@ -28,18 +30,8 @@ namespace Legendary.Engine.Processors
     public class LanguageProcessor : ILanguageProcessor
     {
         private readonly IRandom random;
+        private readonly ICommunicator communicator;
         private readonly LanguageGenerator generator;
-        private readonly List<string> connectionError = new List<string>()
-        {
-            "I'm sorry, I didn't understand that.",
-            "I'm not sure what to say.",
-            "Hm. I can't think of a response to that.",
-            "Sorry, I'm not thinking straight right now.",
-            "I'm a little confused.",
-            "Maybe ask me that again? I'm not sure I heard you right.",
-            "I'm a little tired and not thinking straight right now.",
-        };
-
         private List<string>? excludeWords;
         private Dictionary<string, string>? replaceWords;
 
@@ -47,12 +39,14 @@ namespace Legendary.Engine.Processors
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
         /// </summary>
         /// <param name="generator">The language generator.</param>
+        /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public LanguageProcessor(LanguageGenerator generator, IRandom random)
+        public LanguageProcessor(LanguageGenerator generator, ICommunicator communicator, IRandom random)
         {
             this.LoadParser();
             this.generator = generator;
             this.random = random;
+            this.communicator = communicator;
         }
 
         /// <summary>
@@ -83,7 +77,42 @@ namespace Legendary.Engine.Processors
         {
             if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && mobile != null && !string.IsNullOrWhiteSpace(mobile.FirstName))
             {
-                return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
+                if (this.WillEngage(character, mobile, input))
+                {
+                    return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
+                }
+                else
+                {
+                    // Give it a 10% chance to say something about not wanting to talk right now if it doesn't engage.
+                    var chance = this.random.Next(0, 100);
+                    if (chance < 10)
+                    {
+                        return Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// If a mob doesn't perform a verbal response, it may execute an emote.
+        /// </summary>
+        /// <param name="character">The actor.</param>
+        /// <param name="mobile">The target.</param>
+        /// <param name="input">The input.</param>
+        /// <returns>String.</returns>
+        public string? ProcessEmote(Character character, Mobile mobile, string input)
+        {
+            if (this.random.Next(0, 100) < 10)
+            {
+                return null;
             }
             else
             {
@@ -107,11 +136,15 @@ namespace Legendary.Engine.Processors
             return cleaned;
         }
 
-        private static string Punctuate(string input)
+        private static string FormatSentence(string input)
         {
+            // Capitalize the first letter.
+            input = char.ToUpper(input[0]) + input[1..];
+
+            // If we don't have punctuation at the end, add a period by default.
             if (!char.IsPunctuation(input[^1]))
             {
-                input += ".";
+                input += '.';
             }
 
             return input;
@@ -122,9 +155,52 @@ namespace Legendary.Engine.Processors
             return Regex.Replace(input, @"[^\w\s]", string.Empty);
         }
 
+        private bool WillEngage(Character actor, Mobile target, string message)
+        {
+            // Base chance is 10%
+            bool engage = false;
+            int chance = 10;
+
+            if (target != null && !string.IsNullOrWhiteSpace(target.FirstName))
+            {
+                // If the person the mob was speaking to has left, reset.
+                if (target.PlayerTarget != null && !this.communicator.IsInRoom(target.Location, target.PlayerTarget))
+                {
+                    target.PlayerTarget = null;
+                }
+
+                // If the player and target are already engaged in conversation, there is a 60-80% chance it will speak.
+                if (target.PlayerTarget?.FirstName == actor.FirstName)
+                {
+                    chance += this.random.Next(60, 80);
+                }
+                else
+                {
+                    // Different person speaking to the mob, give it a 8-15% additional chance to speak to the new character.
+                    chance += this.random.Next(8, 15);
+                }
+
+                // If the input contains the target name, there is a 50-80% increase in the odds it will speak.
+                if (message.Contains(target.FirstName))
+                {
+                    chance += this.random.Next(50, 80);
+                }
+
+                // If we overmax chance, give a 1% rate of failure.
+                engage = this.random.Next(0, Math.Max(chance + 1, 100)) < chance;
+                if (engage)
+                {
+                    // Set a flag on the target and actor showing they are engaged in conversation.
+                    target.PlayerTarget = actor;
+                }
+            }
+
+            return engage;
+        }
+
         private string GetErrorMessage()
         {
-            return this.connectionError[this.random.Next(0, this.connectionError.Count - 1)];
+            return Constants.CONNECTION_ERROR[this.random.Next(0, Constants.CONNECTION_ERROR.Count - 1)];
         }
 
         private async Task<string> Request(string input, string situation, string actor, string target)
@@ -141,31 +217,38 @@ namespace Legendary.Engine.Processors
                     RestResponse response = await client.ExecuteAsync(request);
                     if (response != null && !string.IsNullOrWhiteSpace(response.Content))
                     {
-                        var results = response.Content;
-
-                        var words = results.Split(' ');
-
-                        StringBuilder sb = new StringBuilder();
-
-                        foreach (var word in words)
+                        try
                         {
-                            // Check to see if we want to replace an uppercase word with a random word. Don't replace actor or target.
-                            var replacementWord = this.Replace(word, actor, target);
+                            var results = response.Content;
 
-                            sb.Append(replacementWord);
+                            var words = results.Split(' ');
 
-                            sb.Append(' ');
+                            StringBuilder sb = new StringBuilder();
+
+                            foreach (var word in words)
+                            {
+                                // Check to see if we want to replace an uppercase word with a random word. Don't replace actor or target.
+                                var replacementWord = this.Replace(word, actor, target);
+
+                                sb.Append(replacementWord);
+
+                                sb.Append(' ');
+                            }
+
+                            // Remove trailing space.
+                            sb.Remove(sb.Length - 1, 1);
+
+                            // Remove any HTML or links.
+                            var cleaned = Regex.Replace(sb.ToString(), @"http[^\s]+", string.Empty);
+                            cleaned = Regex.Replace(cleaned, "<.*?>", string.Empty);
+
+                            // Add any necessary punctuation.
+                            return FormatSentence(cleaned);
                         }
-
-                        // Remove trailing space.
-                        sb.Remove(sb.Length - 1, 1);
-
-                        // Remove any HTML or links.
-                        var cleaned = Regex.Replace(sb.ToString(), @"http[^\s]+", string.Empty);
-                        cleaned = Regex.Replace(cleaned, "<.*?>", string.Empty);
-
-                        // Add any necessary punctuation.
-                        return Punctuate(cleaned);
+                        catch (System.Exception ex)
+                        {
+                            return ex.ToString();
+                        }
                     }
                 }
 
@@ -179,6 +262,12 @@ namespace Legendary.Engine.Processors
 
         private string Replace(string word, string actor, string target)
         {
+            // Ensure we're formatting an actual word.
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                return word;
+            }
+
             // Lowercase and remove all punctuation for our test word. This word does not get returned, it's just for parsing tests.
             var testWord = Unpunctuate(word.ToLower());
 
