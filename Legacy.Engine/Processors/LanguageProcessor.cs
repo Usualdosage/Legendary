@@ -112,7 +112,12 @@ namespace Legendary.Engine.Processors
         {
             if (this.random.Next(0, 100) < 10)
             {
-                return null;
+                var action = Constants.EMOTE_ACTION[this.random.Next(0, Constants.EMOTE_ACTION.Count - 1)];
+
+                action = action.Replace("{0}", mobile.FirstName);
+                action = action.Replace("{1}", mobile.Pronoun);
+
+                return action;
             }
             else
             {
@@ -221,6 +226,11 @@ namespace Legendary.Engine.Processors
                         {
                             var results = response.Content;
 
+                            if (string.IsNullOrWhiteSpace(results))
+                            {
+                                return string.Empty;
+                            }
+
                             var words = results.Split(' ');
 
                             StringBuilder sb = new StringBuilder();
@@ -247,7 +257,7 @@ namespace Legendary.Engine.Processors
                         }
                         catch (System.Exception ex)
                         {
-                            return ex.ToString();
+                            return ex.Message.ToString();
                         }
                     }
                 }

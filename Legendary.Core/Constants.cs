@@ -78,15 +78,21 @@ namespace Legendary.Core
         };
 
         /// <summary>
-        /// What mobiles will do when they are not talking to a user.
+        /// What mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
         /// </summary>
         public static readonly List<string> EMOTE_ACTION = new List<string>()
         {
-            "I don't feel like talking right now.",
-            "Ahem.",
-            "Pardon?",
-            "Did you say something to me?",
-            "What?",
+            "{0} looks around idly.",
+            "{0} shrugs to {1}self.",
+            "{0} smoothes the wrinkles out of {1} clothes.",
+            "{0} gazes solemnly at the sky.",
+            "{0} runs {1} fingers through {1} hair.",
+            "{0} bites {1} lip contemplatively.",
+            "{0} picks some dirt out of {1} fingernails.",
+            "{0} hums a little tune.",
+            "{0} looks at you curiously.",
+            "{0} whistles a little tune.",
+            "{0} says '<span class='say'>Looks like weather is coming.</span>'."
         };
     }
 }
