@@ -16,12 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set Environment Variables
-        env:
-          MONGOCONNECTION: ${{ secrets.MONGOCONNECTION }}
-          MONGODATABASE: ${{ secrets.MONGODATABASE }}
-          RAPIDAPIKEY: ${{ secrets.RAPIDAPIKEY }}
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
