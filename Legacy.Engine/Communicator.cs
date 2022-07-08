@@ -39,6 +39,7 @@ namespace Legendary.Engine
     {
         private readonly RequestDelegate requestDelegate;
         private readonly LanguageGenerator languageGenerator;
+        private readonly Combat combat;
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
         private readonly IDataService dataService;
@@ -50,8 +51,6 @@ namespace Legendary.Engine
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
         private ILanguageProcessor languageProcessor;
-        private IEnvironment? environment;
-        private KeyValuePair<string, UserData> connectedUser;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -83,6 +82,9 @@ namespace Legendary.Engine
                     new CommChannel("newbie", false, true),
                     new CommChannel("wiznet", true, false),
                 };
+
+            // Create the combat processor.
+            this.combat = new Combat(this.random);
 
             this.engine.Tick += this.Engine_Tick;
             this.engine.VioTick += this.Engine_VioTick;
@@ -138,6 +140,7 @@ namespace Legendary.Engine
 
                 // If the user is already connected, remove, and then re-add.
                 var connectedUser = Users?.FirstOrDefault(u => u.Value.Username == character.FirstName);
+
                 if (connectedUser?.Value != null)
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.";
@@ -171,11 +174,6 @@ namespace Legendary.Engine
 
                 // Show the room to the player.
                 await this.ShowRoomToPlayer(userData, cancellationToken);
-
-                this.connectedUser = new KeyValuePair<string, UserData>(socketId, userData);
-
-                // Create the environment handler for this user.
-                this.environment = new Environment(this, this.random, this.connectedUser);
 
                 while (true)
                 {
@@ -230,27 +228,35 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToPlayer(WebSocket socket, string message, CancellationToken ct = default)
+        public async Task<CommResult> SendToPlayer(WebSocket socket, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
-            await socket.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+            await socket.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
             return CommResult.Ok;
         }
 
         /// <inheritdoc/>
-        public async Task Quit(WebSocket socket, string? player, CancellationToken ct = default)
+        public async Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default)
         {
             var user = Users?.FirstOrDefault(u => u.Value.Username == player);
             if (user != null)
             {
-                Users?.TryRemove(user.Value);
+                if (user.Value.Value.Character.CharacterFlags.Contains(CharacterFlags.Fighting))
+                {
+                    await this.SendToPlayer(socket, "You can't quit, you're FIGHTING!", cancellationToken);
+                    return;
+                }
+                else
+                {
+                    Users?.TryRemove(user.Value);
+                }
             }
 
             string message = $"{DateTime.UtcNow}: {player} has quit.";
             this.logger.Info(message);
-            await this.Wizlog(message, ct);
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", ct);
+            await this.Wizlog(message, cancellationToken);
+            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", cancellationToken);
         }
 
         /// <summary>
@@ -267,6 +273,53 @@ namespace Legendary.Engine
             }
 
             return false;
+        }
+
+        /// <inheritdoc/>
+        public async Task Attack(UserData user, string player, CancellationToken cancellationToken = default)
+        {
+            // Update player stats
+            await this.ShowPlayerInfo(user, cancellationToken);
+
+            if (player == user.Character.FirstName || player == "self")
+            {
+                await this.SendToPlayer(user.Connection, "You can't attack yourself.", cancellationToken);
+            }
+            else
+            {
+                var target = Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == player.ToLower());
+
+                if (target == null || target.Value.Value == null)
+                {
+                    // Maybe a mobile
+                    var mobiles = this.GetMobilesInRoom(user.Character.Location);
+
+                    if (mobiles != null)
+                    {
+                        var mobile = mobiles.FirstOrDefault(m => m.FirstName?.ToLower() == player.ToLower());
+                        if (mobile != null)
+                        {
+                            await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
+                            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
+                            await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+
+                            // Start the fight.
+                            user.Character.CharacterFlags.Add(CharacterFlags.Fighting);
+                            mobile.CharacterFlags.Add(CharacterFlags.Fighting);
+                            mobile.Fighting = user.Character;
+                            user.Character.Fighting = mobile;
+                        }
+                        else
+                        {
+                            await this.SendToPlayer(user.Connection, "They are not here.", cancellationToken);
+                        }
+                    }
+                }
+                else
+                {
+                    await this.SendToPlayer(user.Connection, "You can't attack other players yet.", cancellationToken);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -902,6 +955,12 @@ namespace Legendary.Engine
                 userData.Character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
             }
 
+            // Give any user the hand to hand skill at standard percentage if they don't have it.
+            if (!userData.Character.HasSkill("handtohand"))
+            {
+                userData.Character.Skills.Add(new SkillProficiency(nameof(HandToHand), 50));
+            }
+
             // TODO: Remove this after testing.
             if (!userData.Character.HasSpell("fireball"))
             {
@@ -921,9 +980,57 @@ namespace Legendary.Engine
         /// <param name="e">The event args.</param>
         private async void Engine_VioTick(object? sender, EventArgs e)
         {
-            // var engineEventArgs = (EngineEventArgs)e;
+            if (Users != null)
+            {
+                foreach (var user in Users)
+                {
+                    var character = user.Value.Character;
 
-            // TODO: Handle combat here.
+                    if (character.CharacterFlags.Contains(CharacterFlags.Fighting) && character.Fighting != null)
+                    {
+                        this.logger.Debug($"{character.FirstName} is fighting {character.Fighting?.FirstName}.");
+
+                        // Calculate damage FROM character TO target
+                        var damFrom = this.combat.CalculateDamage(user.Value.Character, character.Fighting, new HandToHand(this, this.random, this.combat));
+
+                        var damFromVerb = this.combat.CalculateDamageVerb(damFrom);
+
+                        await this.SendToPlayer(user.Value.Connection, $"Your punch {damFromVerb} {character.Fighting?.FirstName}!");
+
+                        bool charIsDead = this.combat.ApplyDamage(character.Fighting, damFrom);
+
+                        // Calculate damage FROM target TO character
+                        var damTo = this.combat.CalculateDamage(character.Fighting, user.Value.Character, new HandToHand(this, this.random, this.combat));
+
+                        var damToVerb = this.combat.CalculateDamageVerb(damTo);
+
+                        await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName}'s punch {damToVerb} you!");
+
+                        bool mobIsDead = this.combat.ApplyDamage(character, damTo);
+
+                        // Update the player info
+                        await this.ShowPlayerInfo(user.Value);
+
+                        // Check dead
+                        if (charIsDead || mobIsDead)
+                        {
+                            character.Fighting?.CharacterFlags.Remove(CharacterFlags.Fighting);
+
+                            if (character.Fighting?.Fighting != null)
+                            {
+                                character.Fighting.Fighting = null;
+                            }
+                            
+                            character.CharacterFlags.Remove(CharacterFlags.Fighting);
+                            character.Fighting = null;
+
+                            // Send the death message to the room, players, and area
+                        }                         
+                        
+                        // TODO: Check experience
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -937,17 +1044,19 @@ namespace Legendary.Engine
             {
                 var engineEventArgs = (EngineEventArgs)e;
 
-                if (this.environment != null)
+                if (Users != null)
                 {
-                    await this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
-                }
+                    foreach (var user in Users)
+                    {
+                        if (user.Value != null)
+                        {
+                            // Update the player info
+                            await this.ShowPlayerInfo(user.Value);
 
-                if (this.connectedUser.Value != null)
-                {
-                    await this.ShowPlayerInfo(this.connectedUser.Value);
-
-                    // Autosave the user each tick.
-                    await this.SaveCharacter(this.connectedUser.Value);
+                            // Autosave the user each tick.
+                            await this.SaveCharacter(user.Value);
+                        }
+                    }
                 }
             }
             catch (Exception)

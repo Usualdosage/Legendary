@@ -85,6 +85,15 @@ namespace Legendary.Engine.Contracts
         Task<CommResult> SendToPlayer(WebSocket socket, string message, CancellationToken ct = default);
 
         /// <summary>
+        /// Allows one target to attack another.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="player">The target name.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task Attack(UserData user, string player, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sends a message to a specified target.
         /// </summary>
         /// <param name="socket">The socket to send to.</param>

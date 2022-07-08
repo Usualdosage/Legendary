@@ -119,7 +119,15 @@
     "pretty",
     "also",
     "only",
-    "fine"
+    "fine",
+    "goddammit",
+    "stop",
+    "hold",
+    "whyd",
+    "oohh",
+    "um",
+    "huh",
+    "eeh"
   ],
   "replace": {
     "oil": "gold",
@@ -144,7 +152,11 @@
     "ya...what": "hm?",
     "didja": "did you",
     "cool": "okay",
-    "earphones":  "magic",
+    "earphones": "magic",
+    "error:": "",
+    "gawd": "gods",
+    "jesus": "lord",
+    "christ":  "god"
   }
 }
 

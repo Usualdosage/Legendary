@@ -120,7 +120,9 @@ namespace Legendary.Engine.Processors
             this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
             this.actions.Add("help", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoHelp)));
             this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoInventory)));
+            this.actions.Add("kill", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCombat)));
             this.actions.Add("look", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoLook)));
+            this.actions.Add("murder", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCombat)));
             this.actions.Add("newbie", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoNewbieChat)));
             this.actions.Add("north", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("ne", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
@@ -150,6 +152,18 @@ namespace Legendary.Engine.Processors
             this.actions.Add("wake", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoWake)));
             this.actions.Add("wiznet", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoWiznet)));
             this.actions.Add("yell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoYell)));
+        }
+
+        private async Task DoCombat(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Who do you want to kill?", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.Attack(actor, args[1], cancellationToken);
+            }
         }
 
         private async Task DoCommands(UserData actor, string[] args, CancellationToken cancellationToken)
@@ -304,8 +318,8 @@ namespace Legendary.Engine.Processors
                     foreach (var user in users)
                     {
                         user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                        user.Value.Character.FightingCharacter = null;
-                        user.Value.Character.FightingMobile = null;
+                        user.Value.Character.Fighting = null;
+                        user.Value.Character.Fighting = null;
                     }
 
                     // Stop all the mobiles from fighting
@@ -316,8 +330,7 @@ namespace Legendary.Engine.Processors
                         {
                             mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
                             mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
-                            mob.FightingMobile = null;
-                            mob.FightingCharacter = null;
+                            mob.Fighting = null;
                         }
                     }
                 }

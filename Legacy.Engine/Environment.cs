@@ -21,7 +21,7 @@ namespace Legendary.Engine
     {
         private readonly ICommunicator communicator;
         private readonly IRandom random;
-        private readonly KeyValuePair<string, UserData> connectedUser;
+        private readonly UserData connectedUser;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Environment"/> class.
@@ -29,7 +29,7 @@ namespace Legendary.Engine
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="connectedUser">The connected user.</param>
-        public Environment(ICommunicator communicator, IRandom random, KeyValuePair<string, UserData> connectedUser)
+        public Environment(ICommunicator communicator, IRandom random, UserData connectedUser)
         {
             this.communicator = communicator;
             this.random = random;
@@ -48,18 +48,18 @@ namespace Legendary.Engine
             await this.ProcessWeather(this.connectedUser);
         }
 
-        private async Task ProcessTime(KeyValuePair<string, UserData> userData, int gameHour)
+        private async Task ProcessTime(UserData userData, int gameHour)
         {
             // TODO: Is the player inside?
-            var room = userData.Value.Character.Location;
+            var room = userData.Character.Location;
 
             if (gameHour == 6)
             {
-                await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "The sun rises in the east.");
+                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The sun rises in the east.");
             }
             else if (gameHour == 19)
             {
-                await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "The sun sets in the west.");
+                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The sun sets in the west.");
             }
             else
             {
@@ -71,9 +71,9 @@ namespace Legendary.Engine
         /// Processes messages about the weather each hour to the user.
         /// </summary>
         /// <returns>Task.</returns>
-        private async Task ProcessWeather(KeyValuePair<string, UserData> userData)
+        private async Task ProcessWeather(UserData userData)
         {
-            var room = userData.Value.Character.Location;
+            var room = userData.Character.Location;
 
             // TODO: Fix room flags, then check to see if the weather can be seen. Based on terrain.
             var weather = this.random.Next(1, 8);
@@ -83,19 +83,19 @@ namespace Legendary.Engine
                 default:
                     break;
                 case 1:
-                    await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "The stars in space seem to swirl around.");
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.");
                     break;
                 case 2:
-                    await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "A comet flies by.");
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.");
                     break;
                 case 3:
-                    await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "Somewhere in the distance, a star goes supernova.");
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.");
                     break;
                 case 4:
-                    await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "The bleakness of vast space stretches all around you.");
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.");
                     break;
                 case 5:
-                    await this.communicator.SendToPlayer(this.connectedUser.Value.Connection, "A cloud of primordial dust floats past you.");
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
                     break;
             }
         }

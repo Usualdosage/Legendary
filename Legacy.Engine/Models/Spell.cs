@@ -44,7 +44,7 @@ namespace Legendary.Engine.Models
         /// <returns>Task.</returns>
         public virtual async Task DamageToTarget(UserData actor, UserData target, string spellName, CancellationToken cancellationToken)
         {
-            var damage = this.Combat.CalculateDamage(actor, target, this);
+            var damage = this.Combat.CalculateDamage(actor.Character, target.Character, this);
             var damageVerb = this.Combat.CalculateDamageVerb(damage);
 
             // Do damage directly to the target.
@@ -68,13 +68,13 @@ namespace Legendary.Engine.Models
                     // Do damage to everything in the room that isn't the player, or in the player's group.
                     if (user.Value.Character.Location.RoomId == actor.Character.Location.RoomId && user.Value.Character.FirstName != actor.Character.FirstName)
                     {
-                        var damage = this.Combat.CalculateDamage(actor, user.Value, this);
+                        var damage = this.Combat.CalculateDamage(actor.Character, user.Value.Character, this);
                         var damageVerb = this.Combat.CalculateDamageVerb(damage);
 
                         await this.Communicator.SendToPlayer(actor.Connection, $"Your {spellName} {damageVerb} {user.Value.Character.FirstName}!", cancellationToken);
                         await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName}'s {spellName} {damageVerb} {user.Value.Character.FirstName}!", cancellationToken);
 
-                        this.Combat.ApplyDamage(user.Value, damage);
+                        this.Combat.ApplyDamage(user.Value.Character, damage);
                     }
                 }
             }
@@ -86,7 +86,7 @@ namespace Legendary.Engine.Models
             {
                 foreach (var mobile in mobiles)
                 {
-                    var damage = this.Combat.CalculateDamage(actor, mobile, this);
+                    var damage = this.Combat.CalculateDamage(actor.Character, mobile, this);
                     var damageVerb = this.Combat.CalculateDamageVerb(damage);
 
                     await this.Communicator.SendToPlayer(actor.Connection, $"Your fireball {damageVerb} {mobile.FirstName}!", cancellationToken);

@@ -34,6 +34,9 @@ namespace Legendary.Engine.Models.Skills
             this.DamageType = Core.Types.DamageType.Blunt;
             this.IsAffect = false;
             this.AffectDuration = 0;
+            this.DamageModifier = 0;
+            this.HitDice = 1;
+            this.DamageDice = 4;
         }
 
         /// <inheritdoc/>

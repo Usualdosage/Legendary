@@ -38,44 +38,17 @@ namespace Legendary.Engine
         /// <param name="target">The target.</param>
         /// <param name="action">The action.</param>
         /// <returns>Damage.</returns>
-        public int CalculateDamage(UserData actor, UserData target, IAction action)
+        public int CalculateDamage(Character? actor, Character? target, IAction action)
         {
+            if (actor == null || target == null)
+            {
+                return 0;
+            }
+
             // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
             // If the player is 20, target is 10, damage modifier is doubled.
             // If the player is 10, target is 20, damage modifier is halved.
-            double adjust = (actor.Character.Level / target.Character.Level) * action.DamageModifier;
-
-            var damage = 0;
-            for (var x = 0; x < action.HitDice; x++)
-            {
-                damage += this.random.Next(1, action.DamageDice);
-            }
-
-            if (this.DidSave(target, action))
-            {
-                // Save for half damage.
-                return (int)((damage + adjust) / 2);
-            }
-            else
-            {
-                // Whole numbers only.
-                return (int)(damage + adjust);
-            }
-        }
-
-        /// <summary>
-        /// Calculates the damage for an action by an actor against a mobile.
-        /// </summary>
-        /// <param name="actor">The actor.</param>
-        /// <param name="target">The target.</param>
-        /// <param name="action">The action.</param>
-        /// <returns>Damage.</returns>
-        public int CalculateDamage(UserData actor, Mobile target, IAction action)
-        {
-            // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
-            // If the player is 20, target is 10, damage modifier is doubled.
-            // If the player is 10, target is 20, damage modifier is halved.
-            double adjust = (actor.Character.Level / target.Level) * action.DamageModifier;
+            double adjust = (actor.Level / target.Level) * action.DamageModifier;
 
             var damage = 0;
             for (var x = 0; x < action.HitDice; x++)
@@ -100,18 +73,27 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="target">The target.</param>
         /// <param name="damage">The damage.</param>
-        public void ApplyDamage(UserData target, int damage)
+        /// <returns>True if the target is killed.</returns>
+        public bool ApplyDamage(Character? target, int damage)
         {
-            target.Character.Health.Current -= damage;
+            if (target == null)
+            {
+                return false;
+            }
+
+            target.Health.Current -= damage;
 
             // If below zero, character is dead. Set the appropriate flags.
-            if (target.Character.Health.Current < 0)
+            if (target.Health.Current < 0)
             {
-                target.Character.CharacterFlags?.RemoveIfExists(Core.Types.CharacterFlags.Fighting);
-                target.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
-                target.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
-                target.Character.Location = target.Character.Home ?? Room.Default;
+                target.CharacterFlags?.RemoveIfExists(Core.Types.CharacterFlags.Fighting);
+                target.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
+                target.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
+                target.Location = target.Home ?? Room.Default;
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>
@@ -120,7 +102,7 @@ namespace Legendary.Engine
         /// <param name="target">The target.</param>
         /// <param name="action">The action to save against.</param>
         /// <returns>True if the target saved.</returns>
-        public bool DidSave(UserData target, IAction action)
+        public bool DidSave(Character target, IAction action)
         {
             var saveThrow = this.random.Next(1, 20);
 
@@ -133,10 +115,10 @@ namespace Legendary.Engine
             switch (action.DamageType)
             {
                 default:
-                    return saveThrow < target.Character.Saves.Spell;
+                    return saveThrow < target.Saves.Spell;
                 case Core.Types.DamageType.Energy:
                 case Core.Types.DamageType.Negative:
-                    return saveThrow < target.Character.Saves.Negative;
+                    return saveThrow < target.Saves.Negative;
             }
         }
 
@@ -218,13 +200,13 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="target">The target.</param>
         /// <param name="action">The action.</param>
-        public void ApplyAffect(UserData target, IAction action)
+        public void ApplyAffect(Character target, IAction action)
         {
-            bool hasEffect = target.Character.AffectedBy.Any(a => a.Key == action);
+            bool hasEffect = target.AffectedBy.Any(a => a.Key == action);
 
             if (!hasEffect && action.AffectDuration.HasValue)
             {
-                target.Character.AffectedBy.Add(action, action.AffectDuration.Value);
+                target.AffectedBy.Add(action, action.AffectDuration.Value);
             }
         }
     }
