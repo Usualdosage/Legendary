@@ -143,7 +143,7 @@ namespace Legendary.Engine.Contracts
         Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Returns true if the target is in the provided room. 
+        /// Returns true if the target is in the provided room.
         /// </summary>
         /// <param name="room">The room.</param>
         /// <param name="target">The target.</param>

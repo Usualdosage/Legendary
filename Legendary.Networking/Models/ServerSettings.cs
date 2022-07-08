@@ -23,9 +23,6 @@ namespace Legendary.Networking.Models
         public int? ApiPort { get; set; }
 
         /// <inheritdoc/>
-        public string? ChatBotAPIKey { get; set; }
-
-        /// <inheritdoc/>
-        public string? ChatBotAPISecret { get; set; }
+        public string? RapidAPIKey { get; set; }
     }
 }

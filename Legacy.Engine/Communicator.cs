@@ -45,6 +45,7 @@ namespace Legendary.Engine
         private readonly IEngine engine;
         private readonly IRandom random;
         private readonly IWorld world;
+        private readonly IServerSettings serverSettings;
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
@@ -57,11 +58,12 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="requestDelegate">RequestDelegate.</param>
         /// <param name="logger">ILogger.</param>
+        /// <param name="serverSettings">The server settings.</param>
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="engine">Singleton instance of the game engine.</param>
         /// <param name="world">The world to use in this comm instance.</param>
-        public Communicator(RequestDelegate requestDelegate, ILogger logger, IApiClient apiClient, IDataService dataService, IEngine engine, IWorld world)
+        public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IEngine engine, IWorld world)
         {
             this.logger = logger;
             this.requestDelegate = requestDelegate;
@@ -69,6 +71,7 @@ namespace Legendary.Engine
             this.dataService = dataService;
             this.engine = engine;
             this.world = world;
+            this.serverSettings = serverSettings;
 
             // Create the random generator for weather and user effects.
             this.random = new Random();
@@ -88,7 +91,7 @@ namespace Legendary.Engine
             this.languageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.languageProcessor = new LanguageProcessor(this.languageGenerator, this, this.random);
+            this.languageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.languageGenerator, this, this.random);
         }
 
         /// <summary>

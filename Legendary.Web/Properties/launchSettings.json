@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -8,17 +8,20 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "Legendary.Web": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7777;http://localhost:7778",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MONGOCONNECTION": "mongodb+srv://legacyadmin:8PoB23w2iMiMGyK5@legacy.uigz5.mongodb.net/Legacy",
+        "MONGODATABASE": "Legacy",
+        "RAPIDAPIKEY": "d6bb62c61dmsh51e8d5bfeea7c44p169130jsnd3f6f238e340"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

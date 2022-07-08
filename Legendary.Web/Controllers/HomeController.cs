@@ -49,6 +49,15 @@ namespace Legendary.Web.Controllers
         }
 
         /// <summary>
+        /// Health check endpoint for Azure.
+        /// </summary>
+        /// <returns>JsonResult.</returns>
+        public JsonResult Health()
+        {
+            return this.Json("200: Ok.");
+        }
+
+        /// <summary>
         /// Displays the login page when index is called.
         /// </summary>
         /// <returns>IActionResult.</returns>
@@ -122,51 +131,67 @@ namespace Legendary.Web.Controllers
         {
             var form = this.Request.Form;
 
-            var stats = JsonConvert.DeserializeObject<StatModel>(this.TempData["StatModel"].ToString());
+            var tempDataStatModel = this.TempData["StatModel"]?.ToString();
 
-            // This field would only be submitted by a bot.
-            if (form["submittalfield"] != string.Empty)
+            if (tempDataStatModel != null)
             {
-                return this.CreateUser();
-            }
+                var stats = JsonConvert.DeserializeObject<StatModel>(tempDataStatModel);
 
-            // Make sure the character doesn't exist yet.
-            var existingCharacter = await this.dataService.FindCharacter(c => c.FirstName == form["FirstName"]);
-
-            if (existingCharacter == null)
-            {
-                var character = new Character()
+                if (stats != null)
                 {
-                    FirstName = form["FirstName"],
-                    LastName = form["LastName"],
-                    LongDescription = form["LongDescription"],
-                    Health = new MaxCurrent(30, 30),
-                    Movement = new MaxCurrent(30, 30),
-                    Mana = new MaxCurrent(30, 30),
-                    Str = new MaxCurrent(stats.Str, stats.Str),
-                    Int = new MaxCurrent(stats.Int, stats.Int),
-                    Wis = new MaxCurrent(stats.Wis, stats.Wis),
-                    Dex = new MaxCurrent(stats.Dex, stats.Dex),
-                    Con = new MaxCurrent(stats.Con, stats.Con),
-                    Gender = Enum.Parse<Gender>(form["Gender"]),
-                    Race = Enum.Parse<Race>(form["Race"]),
-                    Ethos = Enum.Parse<Ethos>(form["Ethos"]),
-                    Alignment = Enum.Parse<Alignment>(form["Alignment"]),
-                    Title = "the Adventurer",
-                };
+                    // This field would only be submitted by a bot.
+                    if (form["submittalfield"] != string.Empty)
+                    {
+                        return this.CreateUser();
+                    }
 
-                var pwHash = Crypt.ComputeSha256Hash(form["Password"]);
-                character.Password = pwHash;
+                    // Make sure the character doesn't exist yet.
+                    var existingCharacter = await this.dataService.FindCharacter(c => c.FirstName == form["FirstName"]);
 
-                character.CharacterId = Math.Abs(character.GetHashCode());
+                    if (existingCharacter == null)
+                    {
+                        var character = new Character()
+                        {
+                            FirstName = form["FirstName"],
+                            LastName = form["LastName"],
+                            LongDescription = form["LongDescription"],
+                            Health = new MaxCurrent(30, 30),
+                            Movement = new MaxCurrent(30, 30),
+                            Mana = new MaxCurrent(30, 30),
+                            Str = new MaxCurrent(stats.Str, stats.Str),
+                            Int = new MaxCurrent(stats.Int, stats.Int),
+                            Wis = new MaxCurrent(stats.Wis, stats.Wis),
+                            Dex = new MaxCurrent(stats.Dex, stats.Dex),
+                            Con = new MaxCurrent(stats.Con, stats.Con),
+                            Gender = Enum.Parse<Gender>(form["Gender"]),
+                            Race = Enum.Parse<Race>(form["Race"]),
+                            Ethos = Enum.Parse<Ethos>(form["Ethos"]),
+                            Alignment = Enum.Parse<Alignment>(form["Alignment"]),
+                            Title = "the Adventurer",
+                        };
 
-                await this.dataService.CreateCharacter(character);
+                        var pwHash = Crypt.ComputeSha256Hash(form["Password"]);
+                        character.Password = pwHash;
 
-                return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
+                        character.CharacterId = Math.Abs(character.GetHashCode());
+
+                        await this.dataService.CreateCharacter(character);
+
+                        return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
+                    }
+                    else
+                    {
+                        return this.View("Login", new LoginModel("That character already exists. Please login.", this.buildSettings));
+                    }
+                }
+                else
+                {
+                    return this.View("Login", new LoginModel("Stat model has been modified. Try again.", this.buildSettings));
+                }
             }
             else
             {
-                return this.View("Login", new LoginModel("That character already exists. Please login.", this.buildSettings));
+                return this.View("Login", new LoginModel("Stat model has been modified. Try again.", this.buildSettings));
             }
         }
 

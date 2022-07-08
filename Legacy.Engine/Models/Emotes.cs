@@ -31,6 +31,7 @@ namespace Legendary.Engine.Models
             { "yawn", new Emote("You yawn.", "{0} yawns.") },
             { "sigh", new Emote("You sigh.", "{0} sighs.") },
             { "shrug", new Emote("You shrug.", "{0} shrugs.") },
+            { "nod", new Emote("You nod.", "{0} nods.") },
         };
 
         /// <summary>

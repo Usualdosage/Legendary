@@ -18,6 +18,7 @@ namespace Legendary.Engine.Processors
     using System.Threading.Tasks;
     using System.Web;
     using Legendary.Core;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
@@ -29,8 +30,10 @@ namespace Legendary.Engine.Processors
     /// </summary>
     public class LanguageProcessor : ILanguageProcessor
     {
+        private readonly ILogger logger;
         private readonly IRandom random;
         private readonly ICommunicator communicator;
+        private readonly IServerSettings serverSettings;
         private readonly LanguageGenerator generator;
         private List<string>? excludeWords;
         private Dictionary<string, string>? replaceWords;
@@ -38,11 +41,15 @@ namespace Legendary.Engine.Processors
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
         /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="serverSettings">The server settings.</param>
         /// <param name="generator">The language generator.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public LanguageProcessor(LanguageGenerator generator, ICommunicator communicator, IRandom random)
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, LanguageGenerator generator, ICommunicator communicator, IRandom random)
         {
+            this.logger = logger;
+            this.serverSettings = serverSettings;
             this.LoadParser();
             this.generator = generator;
             this.random = random;
@@ -79,6 +86,7 @@ namespace Legendary.Engine.Processors
             {
                 if (this.WillEngage(character, mobile, input))
                 {
+                    this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.");
                     return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
                 }
                 else
@@ -87,16 +95,19 @@ namespace Legendary.Engine.Processors
                     var chance = this.random.Next(0, 100);
                     if (chance < 10)
                     {
+                        this.logger.Debug($"{mobile.FirstName} ignored {character.FirstName}.");
                         return Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)];
                     }
                     else
                     {
+                        this.logger.Debug($"{mobile.FirstName} took no action.");
                         return null;
                     }
                 }
             }
             else
             {
+                this.logger.Debug($"Target or mobile was null.");
                 return null;
             }
         }
@@ -112,6 +123,7 @@ namespace Legendary.Engine.Processors
         {
             if (this.random.Next(0, 100) < 10)
             {
+                this.logger.Debug($"{mobile.FirstName} did a random action.");
                 var action = Constants.EMOTE_ACTION[this.random.Next(0, Constants.EMOTE_ACTION.Count - 1)];
 
                 action = action.Replace("{0}", mobile.FirstName);
@@ -178,23 +190,39 @@ namespace Legendary.Engine.Processors
                 if (target.PlayerTarget?.FirstName == actor.FirstName)
                 {
                     chance += this.random.Next(60, 80);
+                    this.logger.Debug($"{target.FirstName} is engaged with {actor.FirstName}. Chance: {chance}.");
                 }
                 else
                 {
                     // Different person speaking to the mob, give it a 8-15% additional chance to speak to the new character.
                     chance += this.random.Next(8, 15);
+                    this.logger.Debug($"Someone else talked to {target.FirstName}. Chance: {chance}.");
+
+                    // Mob is engaged to a target, but someone else is speaking. 10% chance to engage with them instead.
+                    if (target.PlayerTarget != null || target.PlayerTarget?.FirstName != actor.FirstName)
+                    {
+                        if (this.random.Next(0, 100) < 20)
+                        {
+                            this.logger.Debug($"{target.FirstName} decided to engage {actor.FirstName}.");
+                            return true;
+                        }
+                    }
                 }
 
                 // If the input contains the target name, there is a 50-80% increase in the odds it will speak.
                 if (message.Contains(target.FirstName))
                 {
+                    this.logger.Debug($"{target.FirstName} mentioned by name by {actor.FirstName}. Chance: {chance}.");
                     chance += this.random.Next(50, 80);
                 }
 
                 // If we overmax chance, give a 1% rate of failure.
                 engage = this.random.Next(0, Math.Max(chance + 1, 100)) < chance;
+
                 if (engage)
                 {
+                    this.logger.Debug($"{target.FirstName} has become engaged with {actor.FirstName}. Chance: {chance}.");
+
                     // Set a flag on the target and actor showing they are engaged in conversation.
                     target.PlayerTarget = actor;
                 }
@@ -216,7 +244,7 @@ namespace Legendary.Engine.Processors
                 {
                     var request = new RestRequest("/", Method.Post);
                     request.AddHeader("content-type", "application/json");
-                    request.AddHeader("X-RapidAPI-Key", "d6bb62c61dmsh51e8d5bfeea7c44p169130jsnd3f6f238e340");
+                    request.AddHeader("X-RapidAPI-Key", this.serverSettings.RapidAPIKey ?? string.Empty);
                     request.AddHeader("X-RapidAPI-Host", "waifu.p.rapidapi.com");
                     request.AddParameter("application/json", "{}", ParameterType.RequestBody);
                     RestResponse response = await client.ExecuteAsync(request);

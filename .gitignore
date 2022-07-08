@@ -11,3 +11,5 @@ obj/
 *.user
 .DS_Store
 sqlnx.sqlite
+appsettings.json
+appsettings.Development.json

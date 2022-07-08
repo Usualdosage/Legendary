@@ -27,11 +27,6 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets the API key for the chatbot.
         /// </summary>
-        string? ChatBotAPIKey { get; set; }
-
-        /// <summary>
-        /// Gets or sets the secret for the chatbot.
-        /// </summary>
-        string? ChatBotAPISecret { get; set; }
+        string? RapidAPIKey { get; set; }
     }
 }

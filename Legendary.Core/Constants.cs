@@ -92,7 +92,7 @@ namespace Legendary.Core
             "{0} hums a little tune.",
             "{0} looks at you curiously.",
             "{0} whistles a little tune.",
-            "{0} says '<span class='say'>Looks like weather is coming.</span>'."
+            "{0} says '<span class='say'>Looks like weather is coming.</span>'.",
         };
     }
 }
