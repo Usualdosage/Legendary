@@ -204,5 +204,20 @@ namespace Legendary.Engine.Contracts
         /// <param name="location">The player location.</param>
         /// <returns>Room.</returns>
         Room? GetRoom(Room location);
+
+        /// <summary>
+        /// Allows mobs with personalities to communicate to characters who say things.
+        /// </summary>
+        /// <param name="character">The speaking character.</param>
+        /// <param name="room">The room.</param>
+        /// <param name="message">The character's message.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the language processor.
+        /// </summary>
+        ILanguageProcessor LanguageProcessor { get; }
     }
 }

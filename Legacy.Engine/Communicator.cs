@@ -50,7 +50,11 @@ namespace Legendary.Engine
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
-        private ILanguageProcessor languageProcessor;
+
+        /// <summary>
+        /// Gets the language processor.
+        /// </summary>
+        public ILanguageProcessor LanguageProcessor { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -62,13 +66,12 @@ namespace Legendary.Engine
         /// <param name="dataService">The data service.</param>
         /// <param name="engine">Singleton instance of the game engine.</param>
         /// <param name="world">The world to use in this comm instance.</param>
-        public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IEngine engine, IWorld world)
+        public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world)
         {
             this.logger = logger;
             this.requestDelegate = requestDelegate;
             this.apiClient = apiClient;
             this.dataService = dataService;
-            this.engine = engine;
             this.world = world;
             this.serverSettings = serverSettings;
 
@@ -83,17 +86,19 @@ namespace Legendary.Engine
                     new CommChannel("wiznet", true, false),
                 };
 
-            // Create the combat processor.
-            this.combat = new Combat(this.random);
-
+            // Start the engine.
+            this.engine = new Engine(this.logger, this.world);
             this.engine.Tick += this.Engine_Tick;
             this.engine.VioTick += this.Engine_VioTick;
+
+            // Create the combat processor.
+            this.combat = new Combat(this.random);
 
             // Create the language generator.
             this.languageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.languageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.languageGenerator, this, this.random);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.languageGenerator, this, this.random);
         }
 
         /// <summary>
@@ -136,7 +141,11 @@ namespace Legendary.Engine
                     throw new Exception(message);
                 }
 
+                // Configure the user and the environment.
+                // TODO: This seems kind of strange. Look into fixing this. Environment is just a handler.
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
+                var environment = new Environment(this, this.random, userData);
+                userData.Environment = environment;
 
                 // If the user is already connected, remove, and then re-add.
                 var connectedUser = Users?.FirstOrDefault(u => u.Value.Username == character.FirstName);
@@ -671,6 +680,20 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Generates a situation based on the encounter.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="actor">The character.</param>
+        /// <param name="target">The mobile.</param>
+        /// <returns>string.</returns>
+        public string GetSituation(Room room, Character actor, Character target)
+        {
+            var gen1 = actor.Gender == Gender.Male ? "boy" : "girl";
+            var gen2 = target.Gender == Gender.Male ? "boy" : "girl";
+            return $"{gen1} and {gen2} talking to each other in the {room.Terrain}";
+        }
+
+        /// <summary>
         /// Logs a message to wiznet.
         /// </summary>
         /// <param name="message">The message to log.</param>
@@ -733,7 +756,7 @@ namespace Legendary.Engine
         /// <param name="message">The character's message.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default)
+        public async Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default)
         {
             var mobiles = this.GetMobilesInRoom(room);
 
@@ -743,7 +766,7 @@ namespace Legendary.Engine
                 {
                     var situation = this.GetSituation(room, character, mobile);
 
-                    var response = await this.languageProcessor.Process(character, mobile, message, situation);
+                    var response = await this.LanguageProcessor.Process(character, mobile, message, situation);
 
                     if (!string.IsNullOrWhiteSpace(response))
                     {
@@ -765,7 +788,7 @@ namespace Legendary.Engine
                     else
                     {
                         // Mob did not want to communicate, so it may do an emote instead.
-                        response = this.languageProcessor.ProcessEmote(character, mobile, message);
+                        response = this.LanguageProcessor.ProcessEmote(character, mobile, message);
 
                         if (!string.IsNullOrWhiteSpace(response))
                         {
@@ -786,20 +809,6 @@ namespace Legendary.Engine
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Generates a situation based on the encounter.
-        /// </summary>
-        /// <param name="room">The room.</param>
-        /// <param name="actor">The character.</param>
-        /// <param name="target">The mobile.</param>
-        /// <returns>string.</returns>
-        private string GetSituation(Room room, Character actor, Character target)
-        {
-            var gen1 = actor.Gender == Gender.Male ? "boy" : "girl";
-            var gen2 = target.Gender == Gender.Male ? "boy" : "girl";
-            return $"{gen1} and {gen2} talking to each other in the {room.Terrain}";
         }
 
         /// <summary>
@@ -1014,20 +1023,39 @@ namespace Legendary.Engine
                         // Check dead
                         if (charIsDead || mobIsDead)
                         {
+                            // Send the death message to the room, players, and area
+                            if (charIsDead)
+                            {
+                                await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} has KILLED you!");
+
+                                if (character.Fighting != null)
+                                {
+                                    await this.SendToRoom(character.Fighting.Location, String.Empty, $"{character.Fighting?.FirstName} has KILLED {user.Value.Character.FirstName}!");
+                                }
+
+                                // TODO: Generate corpse, turn player into ghost, stuff like that.
+                            }
+
+                            if (mobIsDead)
+                            {
+                                await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} is DEAD!");
+                                await this.SendToRoom(user.Value.Character.Location, String.Empty, $"{character.Fighting?.FirstName} is DEAD!");
+
+                                // TODO: Generate corpse
+
+                                // TODO: Check experience
+                            }
+
                             character.Fighting?.CharacterFlags.Remove(CharacterFlags.Fighting);
 
                             if (character.Fighting?.Fighting != null)
                             {
                                 character.Fighting.Fighting = null;
                             }
-                            
+
                             character.CharacterFlags.Remove(CharacterFlags.Fighting);
                             character.Fighting = null;
-
-                            // Send the death message to the room, players, and area
                         }                         
-                        
-                        // TODO: Check experience
                     }
                 }
             }
@@ -1055,6 +1083,12 @@ namespace Legendary.Engine
 
                             // Autosave the user each tick.
                             await this.SaveCharacter(user.Value);
+
+                            // See what's going on around the player.
+                            if (user.Value.Environment != null)
+                            {
+                                await user.Value.Environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+                            }
                         }
                     }
                 }

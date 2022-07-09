@@ -18,7 +18,7 @@ namespace Legendary.Engine.Contracts
     public interface ILanguageProcessor
     {
         /// <summary>
-        /// Gets a message from the personality forge bot.
+        /// Gets a message from the bot.
         /// </summary>
         /// <param name="character">The character.</param>
         /// <param name="mobile">The mobile.</param>

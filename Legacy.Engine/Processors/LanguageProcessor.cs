@@ -155,6 +155,10 @@ namespace Legendary.Engine.Processors
 
         private static string FormatSentence(string input)
         {
+            input = input.Trim();
+
+            input = input.Replace("Error: ", string.Empty);
+
             // Capitalize the first letter.
             input = char.ToUpper(input[0]) + input[1..];
 
@@ -196,7 +200,7 @@ namespace Legendary.Engine.Processors
                 {
                     // Different person speaking to the mob, give it a 8-15% additional chance to speak to the new character.
                     chance += this.random.Next(8, 15);
-                    this.logger.Debug($"Someone else talked to {target.FirstName}. Chance: {chance}.");
+                    this.logger.Debug($"Someone distracted {target.FirstName}. Chance: {chance}.");
 
                     // Mob is engaged to a target, but someone else is speaking. 10% chance to engage with them instead.
                     if (target.PlayerTarget != null || target.PlayerTarget?.FirstName != actor.FirstName)

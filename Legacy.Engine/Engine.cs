@@ -53,29 +53,38 @@ namespace Legendary.Engine
         public async Task Initialize()
         {
             this.logger.Info("Populating the world with mobiles and items..");
+
             await this.world.Populate();
 
             this.logger.Info("Starting main loop...");
+
             var timer = new System.Threading.Timer(
                 t =>
                 {
-                    this.gameTicks++;
-
-                    this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
-
-                    // One "hour" game time, or 30 seconds.
-                    if (this.gameTicks == 30)
+                    try
                     {
-                        this.gameHour++;
-                        if (this.gameHour == 23)
+                        this.gameTicks++;
+
+                        this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
+
+                        // One "hour" game time, or 30 seconds.
+                        if (this.gameTicks == 30)
                         {
-                            this.gameHour = 0;
+                            this.gameHour++;
+                            if (this.gameHour == 23)
+                            {
+                                this.gameHour = 0;
+                            }
+
+                            this.gameTicks = 0;
+
+                            this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
                         }
-
-                        this.gameTicks = 0;
-
-                        this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
                     }
+                    catch (Exception ex)
+                    {
+                        logger.Debug(ex.ToString());
+                    }                    
                 },
                 null,
                 1000,
@@ -89,6 +98,7 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnTick(object sender, EngineEventArgs e)
         {
+            this.logger.Debug("TICK.");
             UpdateUsers();
             EventHandler? handler = this.Tick;
             handler?.Invoke(sender, e);

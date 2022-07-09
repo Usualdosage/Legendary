@@ -75,9 +75,6 @@ namespace Legendary.Web
             // Load the world.
             services.AddSingleton<IWorld>(sp => sp.GetRequiredService<IDataService>().LoadWorld());
 
-            // Initialize the engine.
-            services.AddSingleton<IEngine, Engine>();
-
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();

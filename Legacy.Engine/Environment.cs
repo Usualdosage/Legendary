@@ -11,6 +11,7 @@ namespace Legendary.Engine
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
 
@@ -46,6 +47,12 @@ namespace Legendary.Engine
         {
             await this.ProcessTime(this.connectedUser, gameHour);
             await this.ProcessWeather(this.connectedUser);
+            await this.ProcessMobiles(this.connectedUser);
+        }
+
+        private async Task ProcessMobiles(UserData userData)
+        {
+            await this.communicator.CheckMobCommunication(userData.Character, userData.Character.Location, "stands here");
         }
 
         private async Task ProcessTime(UserData userData, int gameHour)

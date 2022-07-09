@@ -127,7 +127,11 @@
     "oohh",
     "um",
     "huh",
-    "eeh"
+    "eeh",
+    "does",
+    "dontcha",
+    "something",
+    "hell"
   ],
   "replace": {
     "oil": "gold",
@@ -153,10 +157,14 @@
     "didja": "did you",
     "cool": "okay",
     "earphones": "magic",
-    "error:": "",
+    "error: ": " ",
     "gawd": "gods",
     "jesus": "lord",
-    "christ":  "god"
+    "christ": "god",
+    "tape":  "scroll",
+    "video": "scroll",
+    "videos": "scrolls",
+    "tapes": "scrolls"
   }
 }
 

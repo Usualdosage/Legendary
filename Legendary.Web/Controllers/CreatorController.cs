@@ -83,9 +83,9 @@ namespace Legendary.Web.Controllers
         /// </summary>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult CreateMob()
+        public IActionResult CreateMob(string? message)
         {
-            return this.View();
+            return this.View(message);
         }
 
         /// <summary>
