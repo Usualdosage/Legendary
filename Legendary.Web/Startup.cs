@@ -54,21 +54,23 @@ namespace Legendary.Web
             // Add services to the container.
             services.AddControllersWithViews();
 
-            // Load the configuration values for the database.
-            services.Configure<DatabaseSettings>(this.Configuration.GetSection(nameof(DatabaseSettings)));
-
-            // Load the configuration values for the server.
-            services.Configure<ServerSettings>(this.Configuration.GetSection(nameof(ServerSettings)));
-
             // Load the configuration values for the build.
             services.Configure<BuildSettings>(this.Configuration.GetSection(nameof(BuildSettings)));
 
             // Apply necessary DI containers for fully independent services.
             services.AddSingleton<ILogger, Logger>();
-            services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
+            services.AddSingleton<IDatabaseSettings>(new DatabaseSettings() {
+                ConnectionString = Configuration["MongoConnectionString"],
+                DatabaseName = Configuration["MongoDatabase"],
+                CollectionName = Configuration["MongoDatabase"],
+            });
+            services.AddSingleton<IServerSettings>(new ServerSettings() {
+                RapidAPIKey = Configuration["RapidAPIKey"],
+                ApiUrl = Configuration["ApiUrl"],
+                ApiPort = 80
+            });
             services.AddSingleton<IDBConnection, MongoConnection>();
             services.AddTransient<IDataService, DataService>();
-            services.AddSingleton<IServerSettings>(sp => sp.GetRequiredService<IOptions<ServerSettings>>().Value);
             services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
 

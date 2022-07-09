@@ -8,32 +8,32 @@
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SpellProcessor.cs" relfile="Legacy.Engine/Processors/SpellProcessor.cs" line="102" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processors/LanguageProcessor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Program.cs">
     <Files>
-      <File FileName="Legendary.Web/Data/parser.json" Line="112" Column="11" />
-      <File FileName="Legacy.Engine/Models/Emote.cs" Line="1" Column="1" />
-      <File FileName="Legacy.Engine/Models/Emotes.cs" Line="30" Column="76" />
-      <File FileName="Legacy.Engine/Models/Conversation.cs" Line="1" Column="1" />
-      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="241" Column="108" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="75" Column="1" />
-      <File FileName="Legendary.Web/appsettings.Development.json" Line="10" Column="100" />
+      <File FileName="Legendary.Web/Data/parser.json" Line="133" Column="17" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="759" Column="27" />
+      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="220" Column="56" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="981" Column="28" />
+      <File FileName="Legendary.Core/Models/UserData.cs" Line="59" Column="29" />
+      <File FileName="Legacy.Engine/Combat.cs" Line="96" Column="26" />
+      <File FileName="Legacy.Engine/Environment.cs" Line="61" Column="52" />
+      <File FileName="Legendary.Core/Contracts/IServerSettings.cs" Line="1" Column="1" />
+      <File FileName="Legendary.Core/Contracts/IEnvironment.cs" Line="15" Column="43" />
+      <File FileName="Legendary.Web/Startup.cs" Line="78" Column="41" />
+      <File FileName="Legacy.Engine/Contracts/ICommunicator.cs" Line="205" Column="37" />
+      <File FileName="Legacy.Engine/Contracts/ILanguageProcessor.cs" Line="22" Column="23" />
+      <File FileName="Legacy.Engine/Engine.cs" Line="102" Column="27" />
+      <File FileName="Legendary.Web/Program.cs" Line="40" Column="14" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
-            <Node name="Solution Items" expanded="True" />
-            <Node name="Legendary.Core" expanded="True" />
-            <Node name="Legendary.Engine" expanded="True">
-              <Node name="Contracts" expanded="True" />
-              <Node name="Processors" expanded="True" />
-              <Node name="Types" expanded="True" />
-            </Node>
             <Node name="Legendary.Web" expanded="True">
               <Node name="Controllers" expanded="True" />
               <Node name="Data" expanded="True" />
-              <Node name="wwwroot" expanded="True">
-                <Node name="css" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Creator" expanded="True" />
               </Node>
               <Node name="appsettings.json" expanded="True" />
             </Node>
