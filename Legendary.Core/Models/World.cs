@@ -11,6 +11,7 @@ namespace Legendary.Core.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
@@ -97,6 +98,40 @@ namespace Legendary.Core.Models
                 }
             }
         }
+
+        /// <inheritdoc/>
+        public async Task ProcessWorldChanges(ICommunicator communicator, IRandom random, CancellationToken cancellationToken = default)
+        {
+            foreach (var area in this.Areas)
+            {
+                foreach (var room in area.Rooms)
+                {
+                    // Decompose items.
+                    var items = room.Items.Where(i => i.RotTimer == 0);
+
+                    foreach (var item in items)
+                    {
+                        await communicator.SendToRoom(room, string.Empty, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                    }
+
+                    room.Items.RemoveAll(i => i.RotTimer == 0);
+
+                    // Maybe move any wandering mobiles.
+                    foreach (var mobile in room.Mobiles)
+                    {
+                        if (mobile.MobileFlags != null && mobile.MobileFlags.Contains(Types.MobileFlags.Wander))
+                        {
+                            if (!mobile.CharacterFlags.Contains(Types.CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(Types.CharacterFlags.Charmed))
+                            {
+                                // TODO: Get a random chance to move.
+
+                                // TODO: Get a random direction to move to.
+                            }
+                        }
+                    }
+                }
+            }
+       }
 
         /// <inheritdoc/>
         public async Task<Area?> FindArea(

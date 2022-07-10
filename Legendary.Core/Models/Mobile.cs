@@ -33,6 +33,11 @@ namespace Legendary.Core.Models
         public Emotion? Emotion { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether or not this mobile should use the AI language processor.
+        /// </summary>
+        public bool UseAI { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets the handle which player the mob is speaking with, tracking, and fighting.
         /// </summary>
         public Character? PlayerTarget { get; set; }

@@ -9,8 +9,10 @@
 
 namespace Legendary.Engine
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
@@ -45,9 +47,84 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         public async Task ProcessEnvironmentChanges(int gameTicks, int gameHour)
         {
+            this.ProcessRecovery(this.connectedUser);
             await this.ProcessTime(this.connectedUser, gameHour);
             await this.ProcessWeather(this.connectedUser);
             await this.ProcessMobiles(this.connectedUser);
+            await this.ProcessItemRot(this.connectedUser);
+        }
+
+        /// <summary>
+        /// Restores a portion of the players health/mana/movement each tick.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        private void ProcessRecovery(UserData user)
+        {
+            int standardHPRecover = Constants.STANDARD_HP_RECOVERY;
+            int standardManaRecover = Constants.STANDARD_MANA_RECOVERY;
+            int standardMoveRecover = Constants.STANDARD_MOVE_RECOVERY;
+
+            if (user.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
+            {
+                standardHPRecover *= Constants.REST_RECOVERY_MULTIPLIER;
+                standardManaRecover *= Constants.REST_RECOVERY_MULTIPLIER;
+                standardMoveRecover *= Constants.REST_RECOVERY_MULTIPLIER;
+            }
+            else if (user.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Sleeping))
+            {
+                standardHPRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
+                standardManaRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
+                standardMoveRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
+            }
+
+            var moveRestore = Math.Min(user.Character.Movement.Max - user.Character.Movement.Current, standardMoveRecover);
+            user.Character.Movement.Current += moveRestore;
+
+            var manaRestore = Math.Min(user.Character.Mana.Max - user.Character.Mana.Current, standardManaRecover);
+            user.Character.Mana.Current += manaRestore;
+
+            var hitRestore = Math.Min(user.Character.Health.Max - user.Character.Health.Current, standardHPRecover);
+            user.Character.Health.Current += hitRestore;
+        }
+
+        /// <summary>
+        /// Iterates over all user items that may decompose and removes them if they decay.
+        /// </summary>
+        /// <param name="userData">The user.</param>
+        /// <returns>Task.</returns>
+        private async Task ProcessItemRot(UserData userData)
+        {
+            // Update items in inventory.
+            foreach (var item in userData.Character.Inventory)
+            {
+                if (item.RotTimer != -1)
+                {
+                    item.RotTimer -= 1;
+
+                    if (item.RotTimer <= 0)
+                    {
+                        await this.communicator.SendToPlayer(this.connectedUser.Connection, $"{item.ShortDescription} disintegrates.");
+                    }
+                }
+            }
+
+            this.connectedUser.Character.Inventory.RemoveAll(a => a.RotTimer <= 0);
+
+            // Update items in equipment.
+            foreach (var item in userData.Character.Equipment)
+            {
+                if (item.RotTimer != -1)
+                {
+                    item.RotTimer -= 1;
+
+                    if (item.RotTimer <= 0)
+                    {
+                        await this.communicator.SendToPlayer(this.connectedUser.Connection, $"{item.ShortDescription} disintegrates.");
+                    }
+                }
+            }
+
+            this.connectedUser.Character.Equipment.RemoveAll(a => a.RotTimer <= 0);
         }
 
         private async Task ProcessMobiles(UserData userData)

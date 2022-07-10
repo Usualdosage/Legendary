@@ -13,7 +13,7 @@ namespace Legendary.Engine
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
-    using Legendary.Engine.Contracts;
+    using Legendary.Core.Contracts;
 
     /// <summary>
     /// Generates unique words from training data.

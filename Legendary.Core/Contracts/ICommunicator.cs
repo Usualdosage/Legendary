@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine.Contracts
+namespace Legendary.Core.Contracts
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Legendary.Engine.Contracts
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Models;
-    using Legendary.Engine.Types;
+    using Legendary.Core.Types;
     using Microsoft.AspNetCore.Http;
 
     /// <summary>

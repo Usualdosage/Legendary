@@ -443,7 +443,14 @@ progress {
     font-weight: bold;
 }
 
+.damage_0 {
+    color: #666;
+}
+
 .spellWords {
     color: deeppink;
     font-weight: bold;
+}
+
+.player-health {
 }

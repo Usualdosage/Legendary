@@ -11,9 +11,9 @@ namespace Legendary.Engine.Models
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
-    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.

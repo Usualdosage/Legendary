@@ -11,8 +11,8 @@ namespace Legendary.Engine.Models.Spells
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
-    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Casts the fireball spell.

@@ -58,9 +58,9 @@ namespace Legendary.Core.Models
         public string? LongDescription { get; set; }
 
         /// <summary>
-        /// Gets or sets the weight of the armor.
+        /// Gets or sets the weight of the item.
         /// </summary>
-        public int Weight { get; set; }
+        public long Weight { get; set; }
 
         /// <summary>
         ///  Gets or sets the durability of the armor.
@@ -126,5 +126,20 @@ namespace Legendary.Core.Models
         /// Gets or sets the location of the item.
         /// </summary>
         public Room? Location { get; set; }
+
+        /// <summary>
+        /// Gets or sets the items this item contains.
+        /// </summary>
+        public List<Item> Contains { get; set; } = new List<Item>();
+
+        /// <summary>
+        /// Gets or sets the value of the item.
+        /// </summary>
+        public long Value { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the time until this item rots into dust (in ticks).
+        /// </summary>
+        public int RotTimer { get; set; } = -1;
     }
 }

@@ -82,32 +82,40 @@ namespace Legendary.Engine.Processors
         /// <returns>string.</returns>
         public async Task<string?> Process(Character character, Mobile mobile, string input, string situation)
         {
-            if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && mobile != null && !string.IsNullOrWhiteSpace(mobile.FirstName))
+            if (mobile.UseAI)
             {
-                if (this.WillEngage(character, mobile, input))
+                if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && mobile != null && !string.IsNullOrWhiteSpace(mobile.FirstName))
                 {
-                    this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.");
-                    return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
-                }
-                else
-                {
-                    // Give it a 10% chance to say something about not wanting to talk right now if it doesn't engage.
-                    var chance = this.random.Next(0, 100);
-                    if (chance < 10)
+                    if (this.WillEngage(character, mobile, input))
                     {
-                        this.logger.Debug($"{mobile.FirstName} ignored {character.FirstName}.");
-                        return Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)];
+                        this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.");
+                        return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
                     }
                     else
                     {
-                        this.logger.Debug($"{mobile.FirstName} took no action.");
-                        return null;
+                        // Give it a 10% chance to say something about not wanting to talk right now if it doesn't engage.
+                        var chance = this.random.Next(0, 100);
+                        if (chance < 10)
+                        {
+                            this.logger.Debug($"{mobile.FirstName} ignored {character.FirstName}.");
+                            return Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)];
+                        }
+                        else
+                        {
+                            this.logger.Debug($"{mobile.FirstName} took no action.");
+                            return null;
+                        }
                     }
+                }
+                else
+                {
+                    this.logger.Debug($"Target or mobile was null.");
+                    return null;
                 }
             }
             else
             {
-                this.logger.Debug($"Target or mobile was null.");
+                // Use standard language processor.
                 return null;
             }
         }

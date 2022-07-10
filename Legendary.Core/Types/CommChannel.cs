@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine.Types
+namespace Legendary.Core.Types
 {
     using System.Collections.Concurrent;
     using Legendary.Core.Models;

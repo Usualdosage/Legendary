@@ -11,7 +11,7 @@ namespace Legendary.Engine
 {
     using System;
     using System.Security.Cryptography;
-    using Legendary.Engine.Contracts;
+    using Legendary.Core.Contracts;
 
     /// <summary>
     /// Concrete implementation of a random number generator.

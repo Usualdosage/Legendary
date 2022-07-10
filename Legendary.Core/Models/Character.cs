@@ -149,7 +149,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the inventory.
         /// </summary>
-        public IList<Item> Inventory { get; set; } = new List<Item>();
+        public List<Item> Inventory { get; set; } = new List<Item>();
 
         /// <summary>
         /// Gets or sets the player's strength.
@@ -202,7 +202,7 @@ namespace Legendary.Core.Models
                 {
                     default:
                     {
-                        return "their";
+                        return "them";
                     }
 
                     case Legendary.Core.Types.Gender.Female:
@@ -214,6 +214,33 @@ namespace Legendary.Core.Models
                     {
                         return "his";
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the pronoun associated with the character's gender.
+        /// </summary>
+        public string PronounSubjective
+        {
+            get
+            {
+                switch (this.Gender)
+                {
+                    default:
+                        {
+                            return "they";
+                        }
+
+                    case Legendary.Core.Types.Gender.Female:
+                        {
+                            return "she";
+                        }
+
+                    case Legendary.Core.Types.Gender.Male:
+                        {
+                            return "he";
+                        }
                 }
             }
         }
@@ -241,7 +268,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's equipment.
         /// </summary>
-        public IList<Item> Equipment { get; set; } = new List<Item>();
+        public List<Item> Equipment { get; set; } = new List<Item>();
 
         /// <summary>
         /// Gets or sets the player's followers.

@@ -43,5 +43,10 @@ namespace Legendary.Core.Types
         /// Container.
         /// </summary>
         Container = 6,
+
+        /// <summary>
+        /// Currency.
+        /// </summary>
+        Currency = 7,
     }
 }

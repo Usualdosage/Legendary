@@ -23,5 +23,10 @@ namespace Legendary.Core.Types
         /// Whether the mob is aggressive or not.
         /// </summary>
         Aggressive = 1,
+
+        /// <summary>
+        /// Change the mob will wander around.
+        /// </summary>
+        Wander = 2,
     }
 }

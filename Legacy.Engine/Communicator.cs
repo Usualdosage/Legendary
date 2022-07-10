@@ -19,6 +19,7 @@ namespace Legendary.Engine
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -86,7 +87,7 @@ namespace Legendary.Engine
             this.engine.VioTick += this.Engine_VioTick;
 
             // Create the combat processor.
-            this.combat = new Combat(this.random);
+            this.combat = new Combat(this, this.random, this.logger);
 
             // Create the language generator.
             this.languageGenerator = new LanguageGenerator(this.random);
@@ -140,8 +141,8 @@ namespace Legendary.Engine
                     throw new Exception(message);
                 }
 
-                // Configure the user and the environment.
-                // TODO: This seems kind of strange. Look into fixing this. Environment is just a handler.
+                // Configure the user and add the environment handler.
+                // TODO: We may want to handle environmental changes globally.
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
                 var environment = new Environment(this, this.random, userData);
                 userData.Environment = environment;
@@ -170,8 +171,8 @@ namespace Legendary.Engine
 
                 // Create instances of the action, skill, and spell processors.
                 // TODO: Can this be global somehow, so we don't have to create these for each character the logs in?
-                this.skillProcessor = new SkillProcessor(userData, this, this.random, new Combat(this.random));
-                this.spellProcessor = new SpellProcessor(userData, this, this.random, new Combat(this.random));
+                this.skillProcessor = new SkillProcessor(userData, this, this.random, this.combat);
+                this.spellProcessor = new SpellProcessor(userData, this, this.random, this.combat);
                 this.actionProcessor = new ActionProcessor(this, this.world, this.logger);
 
                 // Display the welcome content.
@@ -504,7 +505,7 @@ namespace Legendary.Engine
             sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
 
             // Condition
-            sb.Append($"<tr><td colspan='2' class='condition'>{this.GetPlayerCondition(user.Character)}</td></tr>");
+            sb.Append($"<tr><td colspan='2' class='condition'>{this.combat.GetPlayerCondition(user.Character)}</td></tr>");
 
             sb.Append("</table></div>");
 
@@ -804,39 +805,13 @@ namespace Legendary.Engine
             sb.Append($"<span class='player-desc-title'>{target.FirstName} {target.LastName}</span><br/>");
             sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
 
+            // How beat up they are.
+            sb.Append(this.combat.GetPlayerCondition(target));
+
             // Worn items.
             sb.Append(ActionHelper.GetEquipment(target));
 
             return sb.ToString();
-        }
-
-        /// <summary>
-        /// Shows the player's physical condition.
-        /// </summary>
-        /// <param name="target">The player.</param>
-        /// <returns>String.</returns>
-        private string GetPlayerCondition(Character target)
-        {
-            // Get the target's health as a percentage of their total health.
-            var percentage = target.Health.GetPercentage();
-
-            var message = percentage switch
-            {
-                <= 0 => "<span class='player-health'>is DEAD.</span>", // 0
-                > 0 and <= 10 => $"<span class='player-health'>is on {target.Pronoun} death bed.</span>", // 1-10
-                > 11 and <= 20 => "<span class='player-health'>is mortally wounded.</span>", // 11-20
-                > 21 and <= 30 => "<span class='player-health'>is seriously hurt.</span>", // 21-30
-                > 31 and <= 40 => "<span class='player-health'>has taken some severe damage.</span>", // 31-40
-                > 41 and <= 50 => "<span class='player-health'>is covered in major wounds.</span>", // 41-50
-                > 51 and <= 60 => "<span class='player-health'>is bleeding profusely from many wounds.</span>", // 51-60
-                > 61 and <= 70 => "<span class='player-health'>has some big wounds and nasty scratches.</span>", // 61-70
-                > 71 and <= 80 => "<span class='player-health'>has some abrasions and lacerations.</span>", // 71-80
-                > 81 and <= 90 => "<span class='player-health'>has some small wounds and bruises.</span>", // 81-90
-                > 91 and <= 99 => "<span class='player-health'>has some tiny scrapes.</span>", // 91-99
-                _ => "<span class='player-health'>is in perfect health.</span>" // 100
-            };
-
-            return $"{target.FirstName} {message}.";
         }
 
         /// <summary>
@@ -988,76 +963,7 @@ namespace Legendary.Engine
         /// <param name="e">The event args.</param>
         private async void Engine_VioTick(object? sender, EventArgs e)
         {
-            if (Users != null)
-            {
-                foreach (var user in Users)
-                {
-                    var character = user.Value.Character;
-
-                    if (character.CharacterFlags.Contains(CharacterFlags.Fighting) && character.Fighting != null)
-                    {
-                        this.logger.Debug($"{character.FirstName} is fighting {character.Fighting?.FirstName}.");
-
-                        // Calculate damage FROM character TO target
-                        var damFrom = this.combat.CalculateDamage(user.Value.Character, character.Fighting, new HandToHand(this, this.random, this.combat));
-
-                        var damFromVerb = this.combat.CalculateDamageVerb(damFrom);
-
-                        await this.SendToPlayer(user.Value.Connection, $"Your punch {damFromVerb} {character.Fighting?.FirstName}!");
-
-                        bool charIsDead = this.combat.ApplyDamage(character.Fighting, damFrom);
-
-                        // Calculate damage FROM target TO character
-                        var damTo = this.combat.CalculateDamage(character.Fighting, user.Value.Character, new HandToHand(this, this.random, this.combat));
-
-                        var damToVerb = this.combat.CalculateDamageVerb(damTo);
-
-                        await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName}'s punch {damToVerb} you!");
-
-                        bool mobIsDead = this.combat.ApplyDamage(character, damTo);
-
-                        // Update the player info
-                        await this.ShowPlayerInfo(user.Value);
-
-                        // Check dead
-                        if (charIsDead || mobIsDead)
-                        {
-                            // Send the death message to the room, players, and area
-                            if (charIsDead)
-                            {
-                                await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} has KILLED you!");
-
-                                if (character.Fighting != null)
-                                {
-                                    await this.SendToRoom(character.Fighting.Location, string.Empty, $"{character.Fighting?.FirstName} has KILLED {user.Value.Character.FirstName}!");
-                                }
-
-                                // TODO: Generate corpse, turn player into ghost, stuff like that.
-                            }
-
-                            if (mobIsDead)
-                            {
-                                await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} is DEAD!");
-                                await this.SendToRoom(user.Value.Character.Location, string.Empty, $"{character.Fighting?.FirstName} is DEAD!");
-
-                                // TODO: Generate corpse
-
-                                // TODO: Check experience
-                            }
-
-                            character.Fighting?.CharacterFlags.Remove(CharacterFlags.Fighting);
-
-                            if (character.Fighting?.Fighting != null)
-                            {
-                                character.Fighting.Fighting = null;
-                            }
-
-                            character.CharacterFlags.Remove(CharacterFlags.Fighting);
-                            character.Fighting = null;
-                        }
-                    }
-                }
-            }
+            await this.combat.HandleCombatTick(Users);
         }
 
         /// <summary>
@@ -1080,19 +986,22 @@ namespace Legendary.Engine
                             // Update the player info
                             await this.ShowPlayerInfo(user.Value);
 
-                            // Autosave the user each tick.
-                            await this.SaveCharacter(user.Value);
-
                             // See what's going on around the player.
                             if (user.Value.Environment != null)
                             {
                                 await user.Value.Environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
                             }
+
+                            // Autosave the user each tick.
+                            await this.SaveCharacter(user.Value);
                         }
                     }
                 }
+
+                // Handle any changes in the world (item rot, movement of mobs, etc).
+                await this.world.ProcessWorldChanges(this, this.random);
             }
-            catch (Exception)
+            catch
             {
                 this.logger.Warn("Attempted to send information to disconnected sockets. Continuing.");
             }
@@ -1140,16 +1049,16 @@ namespace Legendary.Engine
         /// Displays the welcome screen to the user.
         /// </summary>
         /// <param name="user">The player's data.</param>
-        /// <param name="ct">CancellationToken.</param>
-        private async Task ShowWelcomeScreen(UserData user, CancellationToken ct = default)
+        /// <param name="cancellationToken">CancellationToken.</param>
+        private async Task ShowWelcomeScreen(UserData user, CancellationToken cancellationToken = default)
         {
             var content = await this.apiClient.GetContent($"welcome?playerName={user.Character.FirstName}");
             if (content != null)
             {
-                await this.SendToPlayer(user.Connection, content, ct);
+                await this.SendToPlayer(user.Connection, content, cancellationToken);
             }
 
-            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} suddenly appears.", ct);
+            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} suddenly appears.", cancellationToken);
         }
 
         /// <summary>

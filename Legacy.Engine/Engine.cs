@@ -65,6 +65,7 @@ namespace Legendary.Engine
                     {
                         this.gameTicks++;
 
+                        // Fires each second to calculate combat.
                         this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
 
                         // One "hour" game time, or 30 seconds.
@@ -78,6 +79,7 @@ namespace Legendary.Engine
 
                             this.gameTicks = 0;
 
+                            // Raise the event to any listeners (e.g. Communicator).
                             this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
                         }
                     }
@@ -98,8 +100,6 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnTick(object sender, EngineEventArgs e)
         {
-            this.logger.Debug("TICK.");
-            UpdateUsers();
             EventHandler? handler = this.Tick;
             handler?.Invoke(sender, e);
         }
@@ -124,48 +124,6 @@ namespace Legendary.Engine
         {
             EventHandler? handler = this.EngineUpdate;
             handler?.Invoke(sender, e);
-        }
-
-        /// <summary>
-        /// Each tick, updates various attributes of each user.
-        /// </summary>
-        private static void UpdateUsers()
-        {
-            if (Communicator.Users != null)
-            {
-                foreach (var user in Communicator.Users)
-                {
-                    int standardHPRecover = Constants.STANDARD_HP_RECOVERY;
-                    int standardManaRecover = Constants.STANDARD_MANA_RECOVERY;
-                    int standardMoveRecover = Constants.STANDARD_MOVE_RECOVERY;
-
-                    if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
-                    {
-                        standardHPRecover *= Constants.REST_RECOVERY_MULTIPLIER;
-                        standardManaRecover *= Constants.REST_RECOVERY_MULTIPLIER;
-                        standardMoveRecover *= Constants.REST_RECOVERY_MULTIPLIER;
-                    }
-                    else if (user.Value.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Sleeping))
-                    {
-                        standardHPRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
-                        standardManaRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
-                        standardMoveRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
-                    }
-
-                    var moveRestore = Math.Min(user.Value.Character.Movement.Max - user.Value.Character.Movement.Current, standardMoveRecover);
-                    user.Value.Character.Movement.Current += moveRestore;
-
-                    var manaRestore = Math.Min(user.Value.Character.Mana.Max - user.Value.Character.Mana.Current, standardManaRecover);
-                    user.Value.Character.Mana.Current += manaRestore;
-
-                    var hitRestore = Math.Min(user.Value.Character.Health.Max - user.Value.Character.Health.Current, standardHPRecover);
-                    user.Value.Character.Health.Current += hitRestore;
-
-                    // TODO: Implement spell effects wearing off (e.g. poison).
-
-                    // TODO: Implement hunger and thirst counters.
-                }
-            }
         }
     }
 }

@@ -9,8 +9,8 @@
 
 namespace Legendary.Engine.Models
 {
+    using Legendary.Core.Contracts;
     using Legendary.Core.Types;
-    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.

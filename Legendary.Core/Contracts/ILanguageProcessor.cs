@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine.Contracts
+namespace Legendary.Core.Contracts
 {
     using System.Threading.Tasks;
     using Legendary.Core.Models;

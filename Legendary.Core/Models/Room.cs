@@ -78,12 +78,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the items in the room.
         /// </summary>
-        public IList<Item> Items { get; set; } = new List<Item>();
+        public List<Item> Items { get; set; } = new List<Item>();
 
         /// <summary>
         /// Gets or sets the mobiles in the room.
         /// </summary>
-        public IList<Mobile> Mobiles { get; set; } = new List<Mobile>();
+        public List<Mobile> Mobiles { get; set; } = new List<Mobile>();
 
         /// <summary>
         /// Gets or sets the items reset in the room.

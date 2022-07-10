@@ -11,8 +11,8 @@ namespace Legendary.Engine.Models.Skills
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
-    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Recalls the player to their hometown recall point.

@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine.Types
+namespace Legendary.Core.Types
 {
     /// <summary>
     /// Represents the result of a communication attempt between two parties.

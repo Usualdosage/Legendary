@@ -7,10 +7,8 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine.Contracts
+namespace Legendary.Core.Contracts
 {
-    using System.Security.Cryptography;
-
     /// <summary>
     /// Implementation context for a random number generator.
     /// </summary>

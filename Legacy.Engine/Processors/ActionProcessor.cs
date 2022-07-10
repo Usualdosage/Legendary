@@ -945,25 +945,25 @@ namespace Legendary.Engine.Processors
             switch (commResult)
             {
                 default:
-                case Types.CommResult.NotAvailable:
+                case CommResult.NotAvailable:
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"{target} can't hear you.", cancellationToken);
                         break;
                     }
 
-                case Types.CommResult.NotConnected:
+                case CommResult.NotConnected:
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"{target} is not here.", cancellationToken);
                         break;
                     }
 
-                case Types.CommResult.Ignored:
+                case CommResult.Ignored:
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"{target} is ignoring you.", cancellationToken);
                         break;
                     }
 
-                case Types.CommResult.Ok:
+                case CommResult.Ok:
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
                         break;

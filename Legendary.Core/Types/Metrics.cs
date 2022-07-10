@@ -18,9 +18,9 @@ namespace Legendary.Core.Types
     public class Metrics
     {
         /// <summary>
-        /// Gets or sets the total number of deaths the player has had.
+        /// Gets the total number of deaths the player has had.
         /// </summary>
-        public int TotalDeaths { get; set; } = 0;
+        public int TotalDeaths { get => this.MobDeaths + this.PlayerDeaths; }
 
         /// <summary>
         /// Gets or sets the total number of times the player has been killed by a mob.
