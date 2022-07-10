@@ -81,6 +81,7 @@ namespace Legendary.Web.Controllers
         /// <summary>
         /// Accesses the CreateMob page.
         /// </summary>
+        /// <param name="message">The message.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
         public IActionResult CreateMob(string? message)

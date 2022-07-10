@@ -54,7 +54,7 @@ namespace Legendary.Core.Models
         public Character Character { get; private set; }
 
         /// <summary>
-        /// Gets the character's environment.
+        /// Gets or sets the character's environment.
         /// </summary>
         public IEnvironment? Environment { get; set; }
 

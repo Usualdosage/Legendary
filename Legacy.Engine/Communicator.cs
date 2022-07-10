@@ -52,11 +52,6 @@ namespace Legendary.Engine
         private ActionProcessor? actionProcessor;
 
         /// <summary>
-        /// Gets the language processor.
-        /// </summary>
-        public ILanguageProcessor LanguageProcessor { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
         /// </summary>
         /// <param name="requestDelegate">RequestDelegate.</param>
@@ -64,7 +59,6 @@ namespace Legendary.Engine
         /// <param name="serverSettings">The server settings.</param>
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
-        /// <param name="engine">Singleton instance of the game engine.</param>
         /// <param name="world">The world to use in this comm instance.</param>
         public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world)
         {
@@ -105,6 +99,11 @@ namespace Legendary.Engine
         /// Gets a concurrent dictionary of all currently connected sockets.
         /// </summary>
         public static ConcurrentDictionary<string, UserData>? Users { get; private set; } = new ConcurrentDictionary<string, UserData>();
+
+        /// <summary>
+        /// Gets the language processor.
+        /// </summary>
+        public ILanguageProcessor LanguageProcessor { get; private set; }
 
         /// <summary>
         /// Gets the communication channels.
@@ -694,61 +693,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Logs a message to wiznet.
-        /// </summary>
-        /// <param name="message">The message to log.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
-        protected async Task<CommResult> Wizlog(string message, CancellationToken cancellationToken = default)
-        {
-            var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == "wiznet");
-
-            if (comm != null && !comm.IsMuted)
-            {
-                foreach (var sub in comm.Subscribers)
-                {
-                    await this.SendToPlayer(sub.Value.Connection, $"<span class='wizmessage'>{DateTime.UtcNow}: {message}</span>", cancellationToken);
-                }
-            }
-
-            return CommResult.Ok;
-        }
-
-        /// <summary>
-        /// Raises the InputReceived event.
-        /// </summary>
-        /// <param name="sender">The sender of the message (userdata).</param>
-        /// <param name="e">CommunicationEventArgs.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
-        protected virtual async Task OnInputReceived(object sender, CommunicationEventArgs e, CancellationToken cancellationToken = default)
-        {
-            var user = Users?.FirstOrDefault(u => u.Key == e.SocketId);
-            if (user != null && user.HasValue)
-            {
-                await this.ProcessMessage(user.Value.Value, e.Message, cancellationToken);
-            }
-        }
-
-        /// <summary>
-        /// Shows the player (or mobile) to another player.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <returns>String.</returns>
-        private string GetPlayerInfo(Character target)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append($"<span class='player-desc-title'>{target.FirstName} {target.LastName}</span><br/>");
-            sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
-
-            // Worn items.
-            sb.Append(ActionHelper.GetEquipment(target));
-
-            return sb.ToString();
-        }
-
-        /// <summary>
         /// Allows mobs with personalities to communicate to characters who say things.
         /// </summary>
         /// <param name="character">The speaking character.</param>
@@ -809,6 +753,61 @@ namespace Legendary.Engine
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Logs a message to wiznet.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        protected async Task<CommResult> Wizlog(string message, CancellationToken cancellationToken = default)
+        {
+            var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == "wiznet");
+
+            if (comm != null && !comm.IsMuted)
+            {
+                foreach (var sub in comm.Subscribers)
+                {
+                    await this.SendToPlayer(sub.Value.Connection, $"<span class='wizmessage'>{DateTime.UtcNow}: {message}</span>", cancellationToken);
+                }
+            }
+
+            return CommResult.Ok;
+        }
+
+        /// <summary>
+        /// Raises the InputReceived event.
+        /// </summary>
+        /// <param name="sender">The sender of the message (userdata).</param>
+        /// <param name="e">CommunicationEventArgs.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        protected virtual async Task OnInputReceived(object sender, CommunicationEventArgs e, CancellationToken cancellationToken = default)
+        {
+            var user = Users?.FirstOrDefault(u => u.Key == e.SocketId);
+            if (user != null && user.HasValue)
+            {
+                await this.ProcessMessage(user.Value.Value, e.Message, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Shows the player (or mobile) to another player.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>String.</returns>
+        private string GetPlayerInfo(Character target)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"<span class='player-desc-title'>{target.FirstName} {target.LastName}</span><br/>");
+            sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
+
+            // Worn items.
+            sb.Append(ActionHelper.GetEquipment(target));
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -1030,7 +1029,7 @@ namespace Legendary.Engine
 
                                 if (character.Fighting != null)
                                 {
-                                    await this.SendToRoom(character.Fighting.Location, String.Empty, $"{character.Fighting?.FirstName} has KILLED {user.Value.Character.FirstName}!");
+                                    await this.SendToRoom(character.Fighting.Location, string.Empty, $"{character.Fighting?.FirstName} has KILLED {user.Value.Character.FirstName}!");
                                 }
 
                                 // TODO: Generate corpse, turn player into ghost, stuff like that.
@@ -1039,7 +1038,7 @@ namespace Legendary.Engine
                             if (mobIsDead)
                             {
                                 await this.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} is DEAD!");
-                                await this.SendToRoom(user.Value.Character.Location, String.Empty, $"{character.Fighting?.FirstName} is DEAD!");
+                                await this.SendToRoom(user.Value.Character.Location, string.Empty, $"{character.Fighting?.FirstName} is DEAD!");
 
                                 // TODO: Generate corpse
 
@@ -1055,7 +1054,7 @@ namespace Legendary.Engine
 
                             character.CharacterFlags.Remove(CharacterFlags.Fighting);
                             character.Fighting = null;
-                        }                         
+                        }
                     }
                 }
             }

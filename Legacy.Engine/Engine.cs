@@ -83,8 +83,8 @@ namespace Legendary.Engine
                     }
                     catch (Exception ex)
                     {
-                        logger.Debug(ex.ToString());
-                    }                    
+                        this.logger.Debug(ex.ToString());
+                    }
                 },
                 null,
                 1000,

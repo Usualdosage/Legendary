@@ -29,6 +29,11 @@ namespace Legendary.Engine.Contracts
         IList<CommChannel> Channels { get; }
 
         /// <summary>
+        /// Gets the language processor.
+        /// </summary>
+        ILanguageProcessor LanguageProcessor { get; }
+
+        /// <summary>
         /// When invoked, handles adding/removing sockets.
         /// </summary>
         /// <param name="context">The HttpContext.</param>
@@ -214,10 +219,5 @@ namespace Legendary.Engine.Contracts
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Gets the language processor.
-        /// </summary>
-        ILanguageProcessor LanguageProcessor { get; }
     }
 }

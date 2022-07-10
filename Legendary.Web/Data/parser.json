@@ -131,7 +131,9 @@
     "does",
     "dontcha",
     "something",
-    "hell"
+    "hell",
+    "come",
+    "ohhhhh"
   ],
   "replace": {
     "oil": "gold",
@@ -164,7 +166,7 @@
     "tape":  "scroll",
     "video": "scroll",
     "videos": "scrolls",
-    "tapes": "scrolls"
+    "tapes": "scrolls",
+    "phone": "scroll"
   }
 }
-

@@ -266,7 +266,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character this character (or mob) is currently fighting.
         /// </summary>
-        public Character? Fighting{ get; set; }
+        public Character? Fighting { get; set; }
 
         /// <summary>
         /// Gets or sets the base-64 image for this character.
