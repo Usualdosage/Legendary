@@ -11,7 +11,6 @@ namespace Legendary.Web
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Hosting;
 
     /// <summary>
@@ -35,12 +34,9 @@ namespace Legendary.Web
         /// <returns>IHostBuilder.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            webBuilder.ConfigureAppConfiguration(config =>
-            {
-                var settings = config.Build();
-                var connection = settings.GetConnectionString("AppConfig");
-                config.AddAzureAppConfiguration(connection);
-            }).UseStartup<Startup>());
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }
