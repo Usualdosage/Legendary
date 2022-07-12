@@ -9,6 +9,7 @@
 
 namespace Legendary.Core.Extensions
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Legendary.Core.Types;
@@ -42,9 +43,19 @@ namespace Legendary.Core.Extensions
         /// <param name="flag">The flag to add.</param>
         public static void RemoveIfExists(this IList<CharacterFlags> list, CharacterFlags flag)
         {
-            if (list.Any(l => l == flag))
+            try
             {
-                list.Remove(flag);
+                if (list != null && list.Count > 0)
+                {
+                    if (list.Any(l => l == flag))
+                    {
+                        list.Remove(flag);
+                    }
+                }
+            }
+            catch
+            {
+                return;
             }
         }
 
@@ -55,9 +66,19 @@ namespace Legendary.Core.Extensions
         /// <param name="flag">The flag to add.</param>
         public static void RemoveIfExists(this IList<MobileFlags> list, MobileFlags flag)
         {
-            if (list.Any(l => l == flag))
+            try
             {
-                list.Remove(flag);
+                if (list != null && list.Count > 0)
+                {
+                    if (list.Any(l => l == flag))
+                    {
+                        list.Remove(flag);
+                    }
+                }
+            }
+            catch
+            {
+                return;
             }
         }
     }

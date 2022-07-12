@@ -21,6 +21,7 @@ namespace Legendary.Engine
     using System.Web;
     using Legendary.Core;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
@@ -166,11 +167,15 @@ namespace Legendary.Engine
                 await this.Wizlog(msg, cancellationToken);
                 this.logger.Info(msg);
 
+                // BUGFIX: Remove any fighting affects
+                userData.Character.Fighting = null;
+                userData.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip.ToString());
 
                 // Create instances of the action, skill, and spell processors.
-                // TODO: Can this be global somehow, so we don't have to create these for each character the logs in?
+                // TODO: Can these be global somehow, so we don't have to create these for each character the logs in?
                 this.skillProcessor = new SkillProcessor(userData, this, this.random, this.combat);
                 this.spellProcessor = new SpellProcessor(userData, this, this.random, this.combat);
                 this.actionProcessor = new ActionProcessor(this, this.world, this.logger);
@@ -243,6 +248,25 @@ namespace Legendary.Engine
             var segment = new ArraySegment<byte>(buffer);
             await socket.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
             return CommResult.Ok;
+        }
+
+        /// <inheritdoc/>
+        public async Task<CommResult> SendToPlayer(Character character, string message, CancellationToken cancellationToken = default)
+        {
+            if (character.IsNPC)
+            {
+                return CommResult.NotAvailable;
+            }
+
+            var userData = this.ResolveCharacter(character);
+            if (userData != null)
+            {
+                return await this.SendToPlayer(userData.Connection, message, cancellationToken);
+            }
+            else
+            {
+                return CommResult.NotConnected;
+            }
         }
 
         /// <inheritdoc/>
@@ -432,7 +456,7 @@ namespace Legendary.Engine
                         return;
                     }
 
-                    sb.Append($"<span class='item'>{item.ShortDescription}</span>");
+                    sb.Append($"<span class='item'>{item.LongDescription}</span>");
                 }
             }
 
@@ -552,6 +576,20 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public async Task<CommResult> SendToRoom(Room room, Character character, string message, CancellationToken cancellationToken = default)
+        {
+            var user = this.ResolveCharacter(character);
+            if (user != null)
+            {
+                return await this.SendToRoom(room, user.ConnectionId, message, cancellationToken);
+            }
+            else
+            {
+                return await this.SendToRoom(room, string.Empty, message, cancellationToken);
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
@@ -603,6 +641,19 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public UserData? ResolveCharacter(Character character)
+        {
+            if (!character.IsNPC && Users != null)
+            {
+                return Users.FirstOrDefault(u => u.Value.Character.FirstName == character.FirstName).Value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public void Dispose()
         {
             GC.SuppressFinalize(this);
@@ -616,6 +667,16 @@ namespace Legendary.Engine
         public async Task SaveCharacter(UserData userData)
         {
             await this.dataService.SaveCharacter(userData.Character);
+        }
+
+        /// <summary>
+        /// Saves the character to disk.
+        /// </summary>
+        /// <param name="character">The user character.</param>
+        /// <returns>Task.</returns>
+        public async Task SaveCharacter(Character character)
+        {
+            await this.dataService.SaveCharacter(character);
         }
 
         /// <inheritdoc/>
@@ -961,9 +1022,17 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private async void Engine_VioTick(object? sender, EventArgs e)
+        private void Engine_VioTick(object? sender, EventArgs e)
         {
-            await this.combat.HandleCombatTick(Users);
+            try
+            {
+                // We want this to block so if it takes longer than 1 second to kill a player, we don't get multiple deaths.
+                this.combat.HandleCombatTick().Wait();
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex);
+            }
         }
 
         /// <summary>

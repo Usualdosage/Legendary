@@ -41,6 +41,13 @@ namespace Legendary.Core.Contracts
         Task Invoke(HttpContext context);
 
         /// <summary>
+        /// Resolves a given player to the connected user, given that the character is a player, and not a mobile.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <returns>UserData.</returns>
+        UserData? ResolveCharacter(Character character);
+
+        /// <summary>
         /// Sends a global message to all connected sockets.
         /// </summary>
         /// <param name="message">The message.</param>
@@ -54,6 +61,13 @@ namespace Legendary.Core.Contracts
         /// <param name="userData">The player.</param>
         /// <returns>Task.</returns>
         Task SaveCharacter(UserData userData);
+
+        /// <summary>
+        /// Saves a player to the database.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <returns>Task.</returns>
+        Task SaveCharacter(Character character);
 
         /// <summary>
         /// Shows the room to the player.
@@ -85,9 +99,18 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="socket">The socket to send to.</param>
         /// <param name="message">The message.</param>
-        /// <param name="ct">CancellationToken.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToPlayer(WebSocket socket, string message, CancellationToken ct = default);
+        Task<CommResult> SendToPlayer(WebSocket socket, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a message to a player by resolving the socket from the character name.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task with result.</returns>
+        Task<CommResult> SendToPlayer(Character character, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Allows one target to attack another.
@@ -117,6 +140,16 @@ namespace Legendary.Core.Contracts
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
         Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a message to everyone in the room, EXCEPT the character.
+        /// </summary>
+        /// <param name="room">The room.</param>
+        /// <param name="character">The sender..</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
+        /// <returns>Task with result.</returns>
+        Task<CommResult> SendToRoom(Room room, Character character, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in an area, EXCEPT the sender.

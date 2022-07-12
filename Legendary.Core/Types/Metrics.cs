@@ -11,15 +11,18 @@ namespace Legendary.Core.Types
 {
     using System;
     using System.Collections.Generic;
+    using MongoDB.Bson.Serialization.Attributes;
 
     /// <summary>
     /// Tracks various metrics for a character.
     /// </summary>
+    [BsonIgnoreExtraElements]
     public class Metrics
     {
         /// <summary>
         /// Gets the total number of deaths the player has had.
         /// </summary>
+        [BsonIgnore]
         public int TotalDeaths { get => this.MobDeaths + this.PlayerDeaths; }
 
         /// <summary>

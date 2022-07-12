@@ -12,9 +12,12 @@ namespace Legendary.Data
     using System;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
+    using MongoDB.Bson.IO;
     using MongoDB.Driver;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Concrete implementation of an IDataService.
@@ -66,15 +69,29 @@ namespace Legendary.Data
         /// <inheritdoc/>
         public async Task<ReplaceOneResult> SaveCharacter(Character character)
         {
-            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-            FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == character.CharacterId);
-            if (characters != null)
+            try
             {
-                return await characters.ReplaceOneAsync(charToReplace, character);
+                var charToSave = character.RemoveCircularReferences();
+
+                if (charToSave.IsNPC)
+                {
+                    throw new Exception("Cannot replace an NPC!");
+                }
+
+                var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
+                FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == charToSave.CharacterId);
+                if (characters != null)
+                {
+                    return await characters.ReplaceOneAsync(charToReplace, charToSave);
+                }
+                else
+                {
+                    throw new Exception("No characters to replace!");
+                }
             }
-            else
+            catch (Exception exc)
             {
-                throw new Exception("No characters to replace!");
+                throw exc;
             }
         }
 

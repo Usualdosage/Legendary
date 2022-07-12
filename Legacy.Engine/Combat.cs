@@ -20,6 +20,7 @@ namespace Legendary.Engine
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
@@ -40,92 +41,140 @@ namespace Legendary.Engine
         public Combat(ICommunicator communicator, IRandom random, ILogger logger)
         {
             this.random = random;
-            this.communicator = communicator;
+            this.communicator = communicator;            
             this.logger = logger;
+        }
+
+        /// <summary>
+        /// Stops combat between two characters.
+        /// </summary>
+        /// <param name="actor">The first character.</param>
+        /// <param name="target">The second character.</param>
+        public void StopFighting(Character actor, Character? target)
+        {
+            actor.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+            actor.Fighting = null;
+
+            if (target != null)
+            {
+                target.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+                target.Fighting = null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the default combat action (martial) for the fighting character.
+        /// </summary>
+        /// <remarks>If they are wielding a weapon, gets that weapon type, and returns the skill for it. Othwerise, returns hand to hand.</remarks>
+        /// <param name="actor">The actor.</param>
+        /// <returns>IAction.</returns>
+        public IAction GetCombatAction(Character actor)
+        {
+            return new HandToHand(this.communicator, this.random, this);
+        }
+
+        /// <summary>
+        /// Does damage from the actor to the target.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        public async Task DoDamage(Character actor, Character target, CancellationToken cancellationToken)
+        {
+            // Get the action the character is using to fight.
+            IAction action = this.GetCombatAction(actor);
+
+            // Calculate damage FROM character TO target.
+            var damage = this.CalculateDamage(actor, target, action);
+
+            // Check if the armor blocked anything.
+            bool blocked = await this.CheckArmorBlock(actor, target, action, cancellationToken);
+
+            // Armor blocked it, so no damage taken.
+            if (blocked)
+            {
+                damage = 0;
+            }
+            else
+            {
+                // Calculate the damage verb.
+                var damFromVerb = this.CalculateDamageVerb(damage);
+
+                await this.communicator.SendToPlayer(actor, $"Your punch {damFromVerb} {target.FirstName}!", cancellationToken);
+                await this.communicator.SendToPlayer(target, $"{actor.FirstName}'s punch {damFromVerb} you!", cancellationToken);
+
+                // TODO: This is buggy.
+                //await this.communicator.SendToRoom(actor.Location, actor, $"{actor.FirstName}'s punch {damFromVerb} {actor.LastName}!", cancellationToken);
+
+                bool isDead = this.ApplyDamage(target, damage);
+
+                if (isDead)
+                {
+                    // Target is dead.
+                    this.StopFighting(actor, target);
+
+                    if (actor.IsNPC && target.IsNPC)
+                    {
+                        // Mob killed mob.
+                        await KillMobile(target, actor);
+                    }
+                    else if (target.IsNPC)
+                    {
+                        // Player killed mobile.
+                        await KillMobile(target, actor);
+                    }
+                    else
+                    {
+                        // Player killed player.
+                        var deadPlayer = this.communicator.ResolveCharacter(target);
+                        if (deadPlayer != null)
+                        {
+                            await KillPlayer(deadPlayer, actor, cancellationToken);
+                        }
+                    }
+
+                    // TODO: Calculate experience.
+                }
+                else
+                {
+                    // Show the opponent's condition.
+                    string? condition = this.GetPlayerCondition(target);
+
+                    if (!string.IsNullOrWhiteSpace(condition))
+                    {
+                        await this.communicator.SendToPlayer(actor, condition);
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Handles the combat tick globally for all users engaged in combat.
         /// </summary>
-        /// <param name="users">The global list of users.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task HandleCombatTick(ConcurrentDictionary<string, UserData>? users, CancellationToken cancellationToken = default)
+        public async Task HandleCombatTick(CancellationToken cancellationToken = default)
         {
-            if (users != null)
+            if (Communicator.Users != null)
             {
-                foreach (var user in users)
+                foreach (var user in Communicator.Users)
                 {
                     var character = user.Value.Character;
+                    var target = user.Value.Character.Fighting;
 
-                    if (character.CharacterFlags.Contains(CharacterFlags.Fighting) && character.Fighting != null)
+                    if (character != null && character.CharacterFlags.Contains(CharacterFlags.Fighting) && target != null)
                     {
-                        this.logger.Debug($"{character.FirstName} is fighting {character.Fighting?.FirstName}.");
+                        await this.DoDamage(character, target, cancellationToken);
 
-                        // Calculate damage FROM character TO target
-                        var damFrom = this.CalculateDamage(user.Value.Character, character.Fighting, new HandToHand(this.communicator, this.random, this));
-
-                        var damFromVerb = this.CalculateDamageVerb(damFrom);
-
-                        await this.communicator.SendToPlayer(user.Value.Connection, $"Your punch {damFromVerb} {character.Fighting?.FirstName}!");
-
-                        bool charIsDead = this.ApplyDamage(character.Fighting, damFrom);
-
-                        // Calculate damage FROM target TO character
-                        var damTo = this.CalculateDamage(character.Fighting, user.Value.Character, new HandToHand(this.communicator, this.random, this));
-
-                        var damToVerb = this.CalculateDamageVerb(damTo);
-
-                        await this.communicator.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName}'s punch {damToVerb} you!");
-
-                        bool targetIsDead = this.ApplyDamage(character, damTo);
-
-                        // Update the player info
-                        await this.communicator.ShowPlayerInfo(user.Value);
-
-                        // Show the opponent's condition.
-                        string? condition = this.GetPlayerCondition(character.Fighting);
-                        if (!string.IsNullOrWhiteSpace(condition))
+                        // If the target is an NPC, do damage from it to the player. Otherwise, for PvP, the loop will just pick up the next fighter.
+                        if (target.IsNPC)
                         {
-                            await this.communicator.SendToPlayer(user.Value.Connection, condition);
+                            await this.DoDamage(target, character, cancellationToken);
                         }
 
-                        // Check dead
-                        if (charIsDead || targetIsDead)
-                        {
-                            // Send the death message to the room, players, and area
-                            if (charIsDead)
-                            {
-                                await this.communicator.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} has KILLED you!");
-
-                                if (character.Fighting != null)
-                                {
-                                    await this.communicator.SendToRoom(character.Fighting.Location, string.Empty, $"{character.Fighting?.FirstName} has KILLED {user.Value.Character.FirstName}!");
-                                }
-
-                                await this.KillPlayer(user.Value, character.Fighting?.IsNPC ?? false);
-                            }
-
-                            if (targetIsDead)
-                            {
-                                await this.communicator.SendToPlayer(user.Value.Connection, $"{character.Fighting?.FirstName} is DEAD!");
-                                await this.communicator.SendToRoom(user.Value.Character.Location, string.Empty, $"{character.Fighting?.FirstName} is DEAD!");
-
-                                // TODO: Generate corpse
-
-                                // TODO: Check experience
-                            }
-
-                            character.Fighting?.CharacterFlags.Remove(CharacterFlags.Fighting);
-
-                            if (character.Fighting?.Fighting != null)
-                            {
-                                character.Fighting.Fighting = null;
-                            }
-
-                            character.CharacterFlags.Remove(CharacterFlags.Fighting);
-                            character.Fighting = null;
-                        }
+                        // Update the player info.
+                        await this.communicator.ShowPlayerInfo(user.Value);                   
                     }
                 }
             }
@@ -193,66 +242,51 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Kills a mobile.
+        /// </summary>
+        /// <param name="target">The mobile.</param>
+        /// <param name="killer">The killer of the mobile.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task KillMobile(Character target, Character killer, CancellationToken cancellationToken = default)
+        {
+            await this.communicator.SendToRoom(target.Location, string.Empty, $"{target.FirstName} is DEAD!");
+
+            var room = this.communicator.GetRoom(killer.Location);
+
+            if (room != null)
+            {
+                var mobile = (Mobile)killer;
+                room.Mobiles.Remove(mobile);
+                this.GenerateCorpse(room, target);
+            }
+        }
+
+        /// <summary>
         /// Kills a player.
         /// </summary>
         /// <param name="userData">The user data.</param>
-        /// <param name="isMobDeath">True if killed by mob.</param>
+        /// <param name="killer">The killer of the player.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task KillPlayer(UserData? userData, bool isMobDeath, CancellationToken cancellationToken = default)
+        public async Task KillPlayer(UserData? userData, Character killer, CancellationToken cancellationToken = default)
         {
             if (userData != null)
             {
-                // Remove fighting flags.
-                userData.Character.CharacterFlags?.RemoveIfExists(Core.Types.CharacterFlags.Fighting);
+                await this.communicator.SendToPlayer(userData.Connection, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
 
                 // Make dead and ghost.
                 userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
                 userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
 
-                // Create a corpse with their stuff in the room.
-                var playerInventory = userData.Character.Inventory;
-                var equipment = userData.Character.Equipment;
-                var currency = userData.Character.Currency;
+                var room = this.communicator.GetRoom(killer.Location);
 
-                var corpse = new Item()
-                {
-                    ItemType = ItemType.Container,
-                    Location = userData.Character.Location,
-                    Level = userData.Character.Level,
-                    ShortDescription = $"The corpse of {userData.Character.FirstName}",
-                    LongDescription = $"The corpse of {userData.Character.FirstName} is lying here.",
-                    WearLocation = new List<WearLocation>() { WearLocation.None },
-                    Weight = 200,
-                    RotTimer = 24,
-                };
-
-                // If the player had any money, add it to the corpse.
-                if (currency > 0)
-                {
-                    var currencyObj = new Item()
-                    {
-                        ItemType = ItemType.Currency,
-                        Value = currency,
-                        WearLocation = new List<WearLocation>() { WearLocation.None },
-                        Weight = currency / 10,
-                        ShortDescription = $"{currency} gold coins",
-                        LongDescription = $"{currency} gold coins are lying here.",
-                        Level = 0,
-                    };
-
-                    corpse.Contains.Add(currencyObj);
-                }
-
-                // Add the gear to the corpse.
-                corpse.Contains.AddRange(equipment);
-                corpse.Contains.AddRange(playerInventory);
-
-                // Add the corpse to the room.
-                Room? room = this.communicator.GetRoom(userData.Character.Location);
                 if (room != null)
                 {
-                    room.Items.Add(corpse);
+                    logger.Debug($"{killer.FirstName} has killed {userData.Character.FirstName} in room {room.RoomId}, area {room.AreaId}!");
+
+                    // Generate the corpse.
+                    this.GenerateCorpse(room, userData.Character);
                 }
 
                 // Remove all equipment and inventory.
@@ -264,7 +298,7 @@ namespace Legendary.Engine
                 userData.Character.Location = userData.Character.Home ?? Room.Default;
 
                 // Increment deaths.
-                if (isMobDeath)
+                if (killer.IsNPC)
                 {
                     userData.Character.Metrics.MobDeaths += 1;
                 }
@@ -283,6 +317,9 @@ namespace Legendary.Engine
 
                 // Save changes.
                 await this.communicator.SaveCharacter(userData);
+
+                // Show player info.
+                await this.communicator.ShowPlayerInfo(userData, cancellationToken);
 
                 // Show the player their new surroundings.
                 await this.communicator.ShowRoomToPlayer(userData, cancellationToken);
@@ -350,22 +387,94 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Applies the damage to the target. If damage brings them to below 0, sets the "dead" flags.
+        /// Checks to see if a player's armor blocks a particular attack. If it blocks, apply damage to the armor.
         /// </summary>
+        /// <param name="actor">The actor.</param>
         /// <param name="target">The target.</param>
-        /// <param name="damage">The damage.</param>
-        public void ApplyDamage(Mobile target, int damage)
+        /// <param name="action">The action.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>True if blocked.</returns>
+        public async Task<bool> CheckArmorBlock(Character actor, Character target, IAction action, CancellationToken cancellationToken)
         {
-            target.Health.Current -= damage;
-
-            // If below zero, character is dead. Set the appropriate flags.
-            if (target.Health.Current < 0)
+            if (target.Equipment.Count == 0)
             {
-                target.CharacterFlags?.RemoveIfExists(Core.Types.CharacterFlags.Fighting);
-                target.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
-                target.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
-                target.Location = target.Home ?? Room.Default;
+                return false;
             }
+
+            bool blocked = false;
+            var armorSavePct = this.random.Next(1, 100);
+
+            switch (action.DamageType)
+            {
+                default:
+                    var targetMagicPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Magic);
+                    if (armorSavePct < targetMagicPct)
+                    {
+                        blocked = true;
+                    }
+
+                    break;
+                case DamageType.Pierce:
+                    var targetPiercePct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Pierce);
+                    if (armorSavePct < targetPiercePct)
+                    {
+                        blocked = true;
+                    }
+
+                    break;
+                case DamageType.Slash:
+                    var targetSlashPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Edged);
+                    if (armorSavePct < targetSlashPct)
+                    {
+                        blocked = true;
+                    }
+
+                    break;
+                case DamageType.Blunt:
+                    var targetBluntPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Blunt);
+                    if (armorSavePct < targetBluntPct)
+                    {
+                        blocked = true;
+                    }
+
+                    break;
+            }
+
+            if (blocked)
+            {
+                // Get the random piece of player's armor that performed the block.
+                var allArmor = target.Equipment.Where(e => e.ItemType == ItemType.Armor).ToList();
+
+                if (allArmor.Count > 0)
+                {
+                    var armorIndex = this.random.Next(0, allArmor.Count - 1);
+                    var randomGear = allArmor[armorIndex];
+
+                    if (randomGear != null)
+                    {
+                        await this.communicator.SendToPlayer(actor, $"{target.FirstName} blocked your attack with their armor!", cancellationToken);
+                        await this.communicator.SendToPlayer(target, $"You absorbed {actor.FirstName}'s attack with {randomGear.Name}!", cancellationToken);
+
+                        randomGear.Durability.Current -= 1;
+
+                        if (randomGear.Durability.Current <= 0)
+                        {
+                            // It's destroyed.
+                            await this.communicator.SendToPlayer(actor, $"You destroyed {randomGear.Name}!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"{actor.FirstName} destroyed {randomGear.Name}.", cancellationToken);
+
+                            target.Equipment.Remove(randomGear);
+                        }
+
+                        if (!target.IsNPC)
+                        {
+                            await this.communicator.SaveCharacter(target);
+                        }
+                    }
+                }
+            }
+
+            return blocked;
         }
 
         /// <summary>
@@ -435,6 +544,62 @@ namespace Legendary.Engine
             {
                 target.AffectedBy.Add(action, action.AffectDuration.Value);
             }
+        }
+
+        /// <summary>
+        /// Generates a corpse of the victim and places it in the room.
+        /// </summary>
+        /// <param name="room">The room to generate the corpse in.</param>
+        /// <param name="victim"></param>
+        private void GenerateCorpse(Room room, Character victim)
+        {
+            var corpse = new Item()
+            {
+                ItemType = ItemType.Container,
+                Location = room,
+                Level = victim.Level,
+                ShortDescription = $"the corpse of {victim.FirstName}",
+                LongDescription = $"The corpse of {victim.FirstName} is rotting here.",
+                WearLocation = new List<WearLocation>() { WearLocation.None },
+                Weight = 200,
+                RotTimer = 24,
+            };
+
+            // Create a corpse with their stuff in the room.
+            var playerInventory = victim.Inventory;
+            var equipment = victim.Equipment;
+            var currency = victim.Currency;
+
+            // TODO: We have a serialization problem here with containers.
+
+            // If the player had any money, add it to the corpse.
+            //if (currency > 0)
+            //{
+            //    var currencyObj = new Item()
+            //    {
+            //        ItemType = ItemType.Currency,
+            //        Value = currency,
+            //        WearLocation = new List<WearLocation>() { WearLocation.None },
+            //        Weight = currency / 10,
+            //        ShortDescription = $"{currency} gold coins",
+            //        LongDescription = $"{currency} gold coins are lying here.",
+            //        Level = 0,
+            //    };
+
+            //    corpse.Contains.Add(currencyObj);
+            //}
+
+            //// Add the gear to the corpse.
+            //corpse.Contains.AddRange(equipment);
+            //corpse.Contains.AddRange(playerInventory);
+
+            // Add the corpse to the room.
+            room.Items.Add(corpse);            
+        }
+
+        private void Communicator_MessageToCharacter(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

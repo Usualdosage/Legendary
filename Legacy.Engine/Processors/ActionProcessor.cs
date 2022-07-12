@@ -601,26 +601,25 @@ namespace Legendary.Engine.Processors
 
                 if (itemName == "all")
                 {
-                    foreach (var target in actor.Character.Inventory)
-                    {
-                        foreach (var wearLocation in target.WearLocation)
-                        {
-                            var targetLocationItem = actor.Character.Equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
+                    // Get everything in the player's inventory that can be worn without replacing stuff that is already worn.
+                    var wornLocations = actor.Character.Equipment.Select(w => w.WearLocation).ToList();
+                    var inventoryCanWear = actor.Character.Inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
 
-                            if (targetLocationItem == null)
-                            {
-                                // Equip the item.
-                                actor.Character.Equipment.Add(target);
-                                actor.Character.Inventory.Remove(target);
-                                await this.communicator.SendToPlayer(actor.Connection, $"You equip {target.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} equips {target.Name}.", cancellationToken);
-                            }
-                        }
+                    foreach (var item in inventoryCanWear)
+                    {
+                        // Equip the item.
+                        actor.Character.Equipment.Add(item);
+                        actor.Character.Inventory.Remove(item);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You wear {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {item.Name}.", cancellationToken);
                     }
+
+                    await this.communicator.SaveCharacter(actor);
                 }
                 else
                 {
                     var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+
                     if (target != null)
                     {
                         var equipmentToReplace = new List<Item>();
@@ -634,8 +633,8 @@ namespace Legendary.Engine.Processors
                                 // Equip the item.
                                 actor.Character.Equipment.Add(target);
                                 actor.Character.Inventory.Remove(target);
-                                await this.communicator.SendToPlayer(actor.Connection, $"You equip {target.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} equips {target.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {target.Name}.", cancellationToken);
                             }
                             else
                             {
@@ -643,9 +642,9 @@ namespace Legendary.Engine.Processors
                                 equipmentToReplace.Add(targetLocationItem);
                                 actor.Character.Equipment.Add(target);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You remove {targetLocationItem.Name}.", cancellationToken);
-                                await this.communicator.SendToPlayer(actor.Connection, $"You equip {target.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {targetLocationItem.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} equips {target.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {target.Name}.", cancellationToken);
                             }
                         }
 
@@ -655,6 +654,8 @@ namespace Legendary.Engine.Processors
                             actor.Character.Equipment.Remove(e);
                             actor.Character.Inventory.Add(e);
                         });
+
+                        await this.communicator.SaveCharacter(actor);
                     }
                     else
                     {
