@@ -48,6 +48,13 @@ namespace Legendary.Core.Contracts
         UserData? ResolveCharacter(Character character);
 
         /// <summary>
+        /// Gets the item by item Id.
+        /// </summary>
+        /// <param name="itemId">Item id.</param>
+        /// <returns>Item.</returns>
+        Item ResolveItem(long itemId);
+
+        /// <summary>
         /// Sends a global message to all connected sockets.
         /// </summary>
         /// <param name="message">The message.</param>
@@ -142,14 +149,15 @@ namespace Legendary.Core.Contracts
         Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Sends a message to everyone in the room, EXCEPT the character.
+        /// Sends a message to everyone in the room, EXCEPT the actor and target.
         /// </summary>
         /// <param name="room">The room.</param>
-        /// <param name="character">The sender..</param>
+        /// <param name="actor">The sender.</param>
+        /// <param name="target">The target.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(Room room, Character character, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToRoom(Room room, Character actor, Character target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in an area, EXCEPT the sender.

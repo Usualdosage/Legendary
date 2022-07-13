@@ -89,8 +89,8 @@ namespace Legendary.Engine
                     }
                 },
                 null,
-                1000,
-                1000);
+                2000,
+                2000);
         }
 
         /// <summary>
@@ -100,8 +100,15 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnTick(object sender, EngineEventArgs e)
         {
-            EventHandler? handler = this.Tick;
-            handler?.Invoke(sender, e);
+            try
+            {
+                EventHandler? handler = this.Tick;
+                handler?.Invoke(sender, e);
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error(exc);
+            }
         }
 
         /// <summary>
@@ -111,8 +118,15 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnVioTick(object sender, EngineEventArgs e)
         {
-            EventHandler? handler = this.VioTick;
-            handler?.Invoke(sender, e);
+            try
+            {
+                EventHandler? handler = this.VioTick;
+                handler?.Invoke(sender, e);
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error(exc);
+            }
         }
 
         /// <summary>
@@ -122,8 +136,15 @@ namespace Legendary.Engine
         /// <param name="e">CommunicationEventArgs.</param>
         protected virtual void OnEngineUpdate(object sender, EngineEventArgs e)
         {
-            EventHandler? handler = this.EngineUpdate;
-            handler?.Invoke(sender, e);
+            try
+            {
+                EventHandler? handler = this.EngineUpdate;
+                handler?.Invoke(sender, e);
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error(exc);
+            }
         }
     }
 }

@@ -71,27 +71,28 @@ namespace Legendary.Data
         {
             try
             {
-                var charToSave = character.RemoveCircularReferences();
-
-                if (charToSave.IsNPC)
-                {
-                    throw new Exception("Cannot replace an NPC!");
-                }
-
                 var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-                FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == charToSave.CharacterId);
-                if (characters != null)
+
+                if (!character.IsNPC)
                 {
-                    return await characters.ReplaceOneAsync(charToReplace, charToSave);
+                    FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == character.CharacterId);
+                    if (characters != null)
+                    {
+                        return await characters.ReplaceOneAsync(charToReplace, character);
+                    }
+                    else
+                    {
+                        throw new Exception("No characters to replace!");
+                    }
                 }
                 else
                 {
-                    throw new Exception("No characters to replace!");
+                    return null;
                 }
             }
             catch (Exception exc)
-            {
-                throw exc;
+            {                
+                throw;
             }
         }
 

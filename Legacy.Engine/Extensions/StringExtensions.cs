@@ -10,6 +10,10 @@
 namespace Legendary.Engine.Extensions
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using Legendary.Core.Models;
 
     /// <summary>
     /// Extensions for strings.
@@ -33,6 +37,48 @@ namespace Legendary.Engine.Extensions
                 _ => string.Concat(input[0].ToString().ToUpper(), input.AsSpan(1))
             };
 #pragma warning restore SA1122 // Use string.Empty for empty strings
+        }
+
+        /// <summary>
+        /// Get the most likely name from a list of targets for a given input.
+        /// </summary>
+        /// <param name="targets">The list of targets.</param>
+        /// <param name="input">The string to match.</param>
+        /// <returns>Mobile.</returns>
+        public static Mobile? ParseTargetName(this List<Mobile> targets, string input)
+        {
+            var bestMatch = new Dictionary<int, Mobile>();
+
+            foreach (var target in targets)
+            {
+                List<string> allTokens = new List<string>();
+                var firstNameTokens = target.FirstName?.ToLower().Split(' ').ToList();
+                var lastNameTokens = target.LastName?.ToLower().Split(' ').ToList();
+
+                if (firstNameTokens != null)
+                {
+                    allTokens.AddRange(firstNameTokens);
+                }
+
+                if (lastNameTokens != null)
+                {
+                    allTokens.AddRange(lastNameTokens);
+                }
+
+                int matchCount = 0;
+
+                foreach (var token in allTokens)
+                {
+                    if (Regex.IsMatch(token, input))
+                    {
+                        matchCount += 1;
+                    }
+                }
+
+                bestMatch.Add(matchCount, target);
+            }
+
+            return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;
         }
     }
 }

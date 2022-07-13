@@ -128,11 +128,6 @@ namespace Legendary.Core.Models
         public Room? Location { get; set; }
 
         /// <summary>
-        /// Gets or sets the items this item contains.
-        /// </summary>
-        public List<Item> Contains { get; set; } = new List<Item>();
-
-        /// <summary>
         /// Gets or sets the value of the item.
         /// </summary>
         public long Value { get; set; } = 0;

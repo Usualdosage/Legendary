@@ -37,6 +37,7 @@ namespace Legendary.Engine.Models.Spells
             this.HitDice = 3;
             this.DamageDice = 6;
             this.DamageModifier = 200;
+            this.DamageNoun = "fiery blast";
         }
 
         /// <inheritdoc/>
@@ -46,7 +47,7 @@ namespace Legendary.Engine.Models.Spells
 
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}'", cancellationToken);
+                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
                 await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
             }
             else
@@ -61,11 +62,11 @@ namespace Legendary.Engine.Models.Spells
         {
             if (target == null)
             {
-                await this.DamageToRoom(actor, "fireball", cancellationToken);
+                await this.DamageToRoom(actor, cancellationToken);
             }
             else
             {
-                await this.DamageToTarget(actor, target, "fireball", cancellationToken);
+                await this.DamageToTarget(actor, target, cancellationToken);
             }
         }
 

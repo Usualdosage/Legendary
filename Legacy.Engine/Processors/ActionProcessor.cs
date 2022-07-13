@@ -20,6 +20,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
 
     /// <summary>
@@ -30,6 +31,7 @@ namespace Legendary.Engine.Processors
         private readonly ICommunicator communicator;
         private readonly IWorld world;
         private readonly ILogger logger;
+        private readonly ActionHelper actionHelper;
         private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
 
         /// <summary>
@@ -38,11 +40,14 @@ namespace Legendary.Engine.Processors
         /// <param name="communicator">The communicator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
-        public ActionProcessor(ICommunicator communicator, IWorld world, ILogger logger)
+        /// <param name="random">The Random Number generator.</param>
+        /// <param name="combat">The combat class.</param>
+        public ActionProcessor(ICommunicator communicator, IWorld world, ILogger logger, IRandom random, Combat combat)
         {
             this.communicator = communicator;
             this.world = world;
             this.logger = logger;
+            this.actionHelper = new ActionHelper(this.communicator, random, combat);
 
             this.ConfigureActions();
         }
@@ -149,6 +154,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("west", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("wear", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoWear)));
             this.actions.Add("who", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWho)));
+            this.actions.Add("wield", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWield)));
             this.actions.Add("wake", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoWake)));
             this.actions.Add("wiznet", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoWiznet)));
             this.actions.Add("yell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoYell)));
@@ -238,7 +244,7 @@ namespace Legendary.Engine.Processors
 
         private async Task DoEquipment(UserData actor, string[] args, CancellationToken cancellationToken)
         {
-            var equipment = ActionHelper.GetEquipment(actor.Character);
+            var equipment = this.actionHelper.GetEquipment(actor.Character);
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
         }
 
@@ -268,9 +274,12 @@ namespace Legendary.Engine.Processors
 
         private async Task DoInventory(UserData actor, string[] args, CancellationToken cancellationToken)
         {
+            List<Item> inventory = actor.Character.Inventory.ResolveItems(this.communicator);
+
             var sb = new StringBuilder();
+
             sb.AppendLine("<span class='inventory'>You are carrying:</span>");
-            foreach (var item in actor.Character.Inventory)
+            foreach (var item in inventory)
             {
                 sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
             }
@@ -282,6 +291,7 @@ namespace Legendary.Engine.Processors
         {
             if (args.Length > 1)
             {
+                // TODO: Need to be able to look IN stuff (e.g. "look in corpse")
                 await this.communicator.ShowPlayerToPlayer(actor, args[1], cancellationToken);
             }
             else
@@ -406,7 +416,7 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var skill in actor.Character.Skills)
                 {
-                    builder.AppendLine($"{skill.SkillName} {skill.Proficiency}%");
+                    builder.AppendLine($"<span class='skillspell'>{skill.SkillName} {skill.Proficiency}%</span>");
                 }
             }
             else
@@ -433,7 +443,7 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var spell in actor.Character.Spells)
                 {
-                    builder.AppendLine($"{spell.SpellName} {spell.Proficiency}%");
+                    builder.AppendLine($"<span class='skillspell'>{spell.SpellName} {spell.Proficiency}%</span>");
                 }
             }
             else
@@ -542,10 +552,17 @@ namespace Legendary.Engine.Processors
 
         private async Task DoWake(UserData actor, string[] args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"You wake and and stand up.", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wakes and stands up.", cancellationToken);
-            actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Resting);
-            actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Sleeping);
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting) || actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You wake and and stand up.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wakes and stands up.", cancellationToken);
+                actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Resting);
+                actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Sleeping);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You are already awake and standing.", cancellationToken);
+            }
         }
 
         private async Task DoRemove(UserData actor, string[] args, CancellationToken cancellationToken)
@@ -556,26 +573,28 @@ namespace Legendary.Engine.Processors
             {
                 var itemName = args[1].ToLower();
 
+                List<Item> equipment = actor.Character.Equipment.ResolveItems(this.communicator);
+
                 if (itemName == "all")
                 {
-                    foreach (var target in actor.Character.Equipment)
+                    foreach (var target in equipment)
                     {
                         // Un-equip each item and put back in inventory.
-                        actor.Character.Equipment.Remove(target);
-                        actor.Character.Inventory.Add(target);
+                        actor.Character.Equipment.Remove(target.ItemId);
+                        actor.Character.Inventory.Add(target.ItemId);
                         await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
                     }
                 }
                 else
                 {
-                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Name.Contains(itemName));
+                    var target = equipment.FirstOrDefault(i => i.Name.Contains(itemName));
 
                     if (target != null)
                     {
                         // Un-equip the item and put back in inventory.
-                        actor.Character.Inventory.Add(target);
-                        actor.Character.Equipment.Remove(target);
+                        actor.Character.Inventory.Add(target.ItemId);
+                        actor.Character.Equipment.Remove(target.ItemId);
                         await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
                     }
@@ -598,27 +617,33 @@ namespace Legendary.Engine.Processors
             if (args.Length > 1)
             {
                 var itemName = args[1].ToLower();
+                List<Item> equipment = actor.Character.Equipment.ResolveItems(this.communicator);
+                List<Item> inventory = actor.Character.Inventory.ResolveItems(this.communicator);
 
                 if (itemName == "all")
                 {
                     // Get everything in the player's inventory that can be worn without replacing stuff that is already worn.
-                    var wornLocations = actor.Character.Equipment.Select(w => w.WearLocation).ToList();
-                    var inventoryCanWear = actor.Character.Inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
+                    var wornLocations = equipment.Select(w => w.WearLocation).ToList();
+                    var inventoryCanWear = inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
 
                     foreach (var item in inventoryCanWear)
                     {
-                        // Equip the item.
-                        actor.Character.Equipment.Add(item);
-                        actor.Character.Inventory.Remove(item);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You wear {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {item.Name}.", cancellationToken);
+                        // You have to WIELD or DUAL WIELD weapons.
+                        if (item.ItemType != ItemType.Weapon)
+                        {
+                            // Equip the item.
+                            actor.Character.Equipment.Add(item.ItemId);
+                            actor.Character.Inventory.Remove(item.ItemId);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You wear {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {item.Name}.", cancellationToken);
+                        }
                     }
 
                     await this.communicator.SaveCharacter(actor);
                 }
                 else
                 {
-                    var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+                    var target = inventory.FirstOrDefault(i => i.Name.Contains(itemName));
 
                     if (target != null)
                     {
@@ -626,13 +651,13 @@ namespace Legendary.Engine.Processors
 
                         foreach (var wearLocation in target.WearLocation)
                         {
-                            var targetLocationItem = actor.Character.Equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
+                            var targetLocationItem = equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
 
                             if (targetLocationItem == null)
                             {
                                 // Equip the item.
-                                actor.Character.Equipment.Add(target);
-                                actor.Character.Inventory.Remove(target);
+                                actor.Character.Equipment.Add(target.ItemId);
+                                actor.Character.Inventory.Remove(target.ItemId);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {target.Name}.", cancellationToken);
                             }
@@ -640,7 +665,7 @@ namespace Legendary.Engine.Processors
                             {
                                 // Swap out the equipment.
                                 equipmentToReplace.Add(targetLocationItem);
-                                actor.Character.Equipment.Add(target);
+                                actor.Character.Equipment.Add(target.ItemId);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You remove {targetLocationItem.Name}.", cancellationToken);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {targetLocationItem.Name}.", cancellationToken);
@@ -651,8 +676,8 @@ namespace Legendary.Engine.Processors
                         // Remove the previously equipped items and place in inventory.
                         equipmentToReplace.ForEach(e =>
                         {
-                            actor.Character.Equipment.Remove(e);
-                            actor.Character.Inventory.Add(e);
+                            actor.Character.Equipment.Remove(e.ItemId);
+                            actor.Character.Inventory.Add(e.ItemId);
                         });
 
                         await this.communicator.SaveCharacter(actor);
@@ -666,6 +691,43 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Wear what?", cancellationToken);
+            }
+        }
+
+        private async Task DoWield(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            // wield <argument>
+            // See if they have it in their inventory.
+            if (args.Length > 1)
+            {
+                var itemName = args[1].ToLower();
+
+                List<Item> inventory = actor.Character.Inventory.ResolveItems(this.communicator);
+
+                var target = inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+
+                if (target != null)
+                {
+                    if (target.WearLocation.Contains(WearLocation.Wielded))
+                    {
+                        // Equip the item.
+                        actor.Character.Equipment.Add(target.ItemId);
+                        actor.Character.Inventory.Remove(target.ItemId);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You wield {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wields {target.Name}.", cancellationToken);
+                    }
+
+                    // TODO: Remove what was previously there and place in inventory.
+                    await this.communicator.SaveCharacter(actor);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Wield what?", cancellationToken);
             }
         }
 
@@ -761,7 +823,7 @@ namespace Legendary.Engine.Processors
                         {
                             if (item != null)
                             {
-                                user.Character.Inventory.Add(item);
+                                user.Character.Inventory.Add(item.ItemId);
                                 await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
@@ -790,7 +852,7 @@ namespace Legendary.Engine.Processors
                             if (item != null)
                             {
                                 count++;
-                                user.Character.Inventory.Add(item);
+                                user.Character.Inventory.Add(item.ItemId);
                                 await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
@@ -826,7 +888,9 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
-            foreach (var item in user.Character.Inventory)
+            List<Item> inventory = user.Character.Inventory.ResolveItems(this.communicator);
+
+            foreach (var item in inventory)
             {
                 if (item != null && item.ItemType == ItemType.Food)
                 {
@@ -837,7 +901,7 @@ namespace Legendary.Engine.Processors
                     }
                     else if (user.Character.Hunger.Current >= 8)
                     {
-                        user.Character.Inventory.Remove(item);
+                        user.Character.Inventory.Remove(item.ItemId);
                         await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
                         await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
                         user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 0));
@@ -875,7 +939,9 @@ namespace Legendary.Engine.Processors
                             return;
                         }
 
-                        foreach (var item in user.Character.Inventory)
+                        List<Item> inventory = user.Character.Inventory.ResolveItems(this.communicator);
+
+                        foreach (var item in inventory)
                         {
                             if (item != null)
                             {
@@ -888,7 +954,7 @@ namespace Legendary.Engine.Processors
 
                         foreach (var itemToRemove in itemsToRemove)
                         {
-                            user.Character.Inventory.Remove(itemToRemove);
+                            user.Character.Inventory.Remove(itemToRemove.ItemId);
                         }
                     }
                     else
@@ -903,7 +969,9 @@ namespace Legendary.Engine.Processors
 
                         var count = 0;
 
-                        foreach (var item in user.Character.Inventory)
+                        List<Item> inventory = user.Character.Inventory.ResolveItems(this.communicator);
+
+                        foreach (var item in inventory)
                         {
                             if (item != null)
                             {
@@ -922,7 +990,7 @@ namespace Legendary.Engine.Processors
 
                         foreach (var itemToRemove in itemsToRemove)
                         {
-                            user.Character.Inventory.Remove(itemToRemove);
+                            user.Character.Inventory.Remove(itemToRemove.ItemId);
                         }
                     }
                 }
@@ -1053,6 +1121,8 @@ namespace Legendary.Engine.Processors
 
             string homeTown = user.Character.Home?.Name ?? "nowhere";
 
+            List<Item> equipment = user.Character.Equipment.ResolveItems(this.communicator);
+
             sb.Append("<div class='player-score'><table><tr><td colspan='4'>");
             sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
             sb.Append($"<tr><td colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from {homeTown}.</td></tr>");
@@ -1070,9 +1140,9 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td class='player-armor' colspan='4'>Armor</td></tr>");
 
-            sb.Append($"<tr><td>Pierce:</td><td>{user.Character.Equipment.Sum(a => a.Pierce)}%</td><td>Blunt:</td><td>{user.Character.Equipment.Sum(a => a.Blunt)}%</td></tr>");
+            sb.Append($"<tr><td>Pierce:</td><td>{equipment.Sum(a => a?.Pierce)}%</td><td>Blunt:</td><td>{equipment.Sum(a => a?.Blunt)}%</td></tr>");
 
-            sb.Append($"<tr><td>Edged:</td><td>{user.Character.Equipment.Sum(a => a.Edged)}%</td><td>Magic:</td><td>{user.Character.Equipment.Sum(a => a.Magic)}%</td></tr>");
+            sb.Append($"<tr><td>Edged:</td><td>{equipment.Sum(a => a?.Edged)}%</td><td>Magic:</td><td>{equipment.Sum(a => a?.Magic)}%</td></tr>");
 
             sb.Append($"<tr><td colspan='4'>You are not affected by any skills or spells.</td></tr>");
 

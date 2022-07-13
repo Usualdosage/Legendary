@@ -16,18 +16,17 @@ namespace Legendary.Core.Extensions
     /// Extensions for handling JSON objects.
     /// </summary>
     public static class JSONExtensions
-	{
+    {
         /// <summary>
         /// Strips out circular references before BSON serializing to Mongo.
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="obj">The object.</param>
-        /// <returns>The type.</returns>
-		public static T RemoveCircularReferences<T>(this T obj)
+        /// <returns>The generic type.</returns>
+        public static T RemoveCircularReferences<T>(this T obj)
         {
             var stringContent = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }).ToString();
             return JsonConvert.DeserializeObject<T>(stringContent);
         }
-	}
+    }
 }
-

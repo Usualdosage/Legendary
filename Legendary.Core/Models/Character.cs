@@ -149,7 +149,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the inventory.
         /// </summary>
-        public List<Item> Inventory { get; set; } = new List<Item>();
+        public List<long> Inventory { get; set; } = new List<long>();
 
         /// <summary>
         /// Gets or sets the player's strength.
@@ -202,7 +202,7 @@ namespace Legendary.Core.Models
                 {
                     default:
                     {
-                        return "them";
+                        return "their";
                     }
 
                     case Legendary.Core.Types.Gender.Female:
@@ -268,7 +268,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's equipment.
         /// </summary>
-        public List<Item> Equipment { get; set; } = new List<Item>();
+        public List<long> Equipment { get; set; } = new List<long>();
 
         /// <summary>
         /// Gets or sets the player's followers.

@@ -36,6 +36,11 @@ namespace Legendary.Core.Contracts
         DamageType DamageType { get; set; }
 
         /// <summary>
+        /// Gets or sets the damage noun (e.g. "blast", "punch", etc).
+        /// </summary>
+        string? DamageNoun { get; set; }
+
+        /// <summary>
         /// Gets or sets the mana cost to use the action.
         /// </summary>
         int ManaCost { get; set; }

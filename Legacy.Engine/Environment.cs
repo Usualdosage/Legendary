@@ -94,37 +94,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessItemRot(UserData userData)
         {
-            // Update items in inventory.
-            foreach (var item in userData.Character.Inventory)
-            {
-                if (item.RotTimer != -1)
-                {
-                    item.RotTimer -= 1;
-
-                    if (item.RotTimer <= 0)
-                    {
-                        await this.communicator.SendToPlayer(this.connectedUser.Connection, $"{item.ShortDescription} disintegrates.");
-                    }
-                }
-            }
-
-            this.connectedUser.Character.Inventory.RemoveAll(a => a.RotTimer <= 0);
-
-            // Update items in equipment.
-            foreach (var item in userData.Character.Equipment)
-            {
-                if (item.RotTimer != -1)
-                {
-                    item.RotTimer -= 1;
-
-                    if (item.RotTimer <= 0)
-                    {
-                        await this.communicator.SendToPlayer(this.connectedUser.Connection, $"{item.ShortDescription} disintegrates.");
-                    }
-                }
-            }
-
-            this.connectedUser.Character.Equipment.RemoveAll(a => a.RotTimer <= 0);
+            // TODO
         }
 
         private async Task ProcessMobiles(UserData userData)

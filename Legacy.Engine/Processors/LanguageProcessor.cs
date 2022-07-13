@@ -15,6 +15,7 @@ namespace Legendary.Engine.Processors
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
     using Legendary.Core;
@@ -80,7 +81,7 @@ namespace Legendary.Engine.Processors
         /// <param name="input">The input string.</param>
         /// <param name="situation">The sitrep.</param>
         /// <returns>string.</returns>
-        public async Task<string?> Process(Character character, Mobile mobile, string input, string situation)
+        public string? Process(Character character, Mobile mobile, string input, string situation)
         {
             if (mobile.UseAI)
             {
@@ -89,7 +90,19 @@ namespace Legendary.Engine.Processors
                     if (this.WillEngage(character, mobile, input))
                     {
                         this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.");
-                        return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
+
+                        string? response = string.Empty;
+
+                        Thread thread = new Thread(() =>
+                        {
+                            response = this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName).Result;
+                        });
+
+                        thread.Start();
+                        thread.Join();
+                        return response;
+
+                        // return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
                     }
                     else
                     {
@@ -158,6 +171,7 @@ namespace Legendary.Engine.Processors
             cleaned = cleaned.Replace(actor, string.Empty);
             cleaned = HttpUtility.HtmlDecode(cleaned);
             cleaned = cleaned.Replace("says", string.Empty);
+            cleaned = cleaned.Replace("error:", string.Empty);
             return cleaned;
         }
 
@@ -165,7 +179,7 @@ namespace Legendary.Engine.Processors
         {
             input = input.Trim();
 
-            input = input.Replace("Error: ", string.Empty);
+            input = input.Replace("error: ", string.Empty);
 
             // Capitalize the first letter.
             input = char.ToUpper(input[0]) + input[1..];
@@ -201,19 +215,19 @@ namespace Legendary.Engine.Processors
                 // If the player and target are already engaged in conversation, there is a 60-80% chance it will speak.
                 if (target.PlayerTarget?.FirstName == actor.FirstName)
                 {
-                    chance += this.random.Next(60, 80);
+                    chance += this.random.Next(60, 85);
                     this.logger.Debug($"{target.FirstName} is engaged with {actor.FirstName}. Chance: {chance}.");
                 }
                 else
                 {
-                    // Different person speaking to the mob, give it a 8-15% additional chance to speak to the new character.
-                    chance += this.random.Next(8, 15);
-                    this.logger.Debug($"Someone distracted {target.FirstName}. Chance: {chance}.");
+                    // Different person speaking to the mob, give it a 10-25% additional chance to speak to the new character.
+                    chance += this.random.Next(10, 25);
+                    this.logger.Debug($"{target.FirstName} is distracted. Chance: {chance}.");
 
                     // Mob is engaged to a target, but someone else is speaking. 10% chance to engage with them instead.
                     if (target.PlayerTarget != null || target.PlayerTarget?.FirstName != actor.FirstName)
                     {
-                        if (this.random.Next(0, 100) < 20)
+                        if (this.random.Next(0, 100) < 30)
                         {
                             this.logger.Debug($"{target.FirstName} decided to engage {actor.FirstName}.");
                             return true;
@@ -297,7 +311,7 @@ namespace Legendary.Engine.Processors
                         }
                         catch (System.Exception)
                         {
-                            return string.Format($"Error: {response.Content}");
+                            return FormatSentence(response.Content);
                         }
                     }
                 }

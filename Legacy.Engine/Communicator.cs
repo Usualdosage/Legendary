@@ -16,6 +16,7 @@ namespace Legendary.Engine
     using System.Linq;
     using System.Net.WebSockets;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
@@ -26,6 +27,7 @@ namespace Legendary.Engine
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
@@ -52,6 +54,7 @@ namespace Legendary.Engine
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
+        private ActionHelper actionHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -95,6 +98,9 @@ namespace Legendary.Engine
 
             // Create the language processor.
             this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.languageGenerator, this, this.random);
+
+            // Create the action helper.
+            this.actionHelper = new ActionHelper(this, this.random, this.combat);
         }
 
         /// <summary>
@@ -178,7 +184,7 @@ namespace Legendary.Engine
                 // TODO: Can these be global somehow, so we don't have to create these for each character the logs in?
                 this.skillProcessor = new SkillProcessor(userData, this, this.random, this.combat);
                 this.spellProcessor = new SpellProcessor(userData, this, this.random, this.combat);
-                this.actionProcessor = new ActionProcessor(this, this.world, this.logger);
+                this.actionProcessor = new ActionProcessor(this, this.world, this.logger, this.random, this.combat);
 
                 // Display the welcome content.
                 await this.ShowWelcomeScreen(userData);
@@ -309,27 +315,27 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task Attack(UserData user, string player, CancellationToken cancellationToken = default)
+        public async Task Attack(UserData user, string targetName, CancellationToken cancellationToken = default)
         {
-            // Update player stats
-            await this.ShowPlayerInfo(user, cancellationToken);
+            targetName = targetName.ToLower();
 
-            if (player == user.Character.FirstName || player == "self")
+            if (targetName == user.Character.FirstName || targetName == "self")
             {
                 await this.SendToPlayer(user.Connection, "You can't attack yourself.", cancellationToken);
             }
             else
             {
-                var target = Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == player.ToLower());
+                var target = Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == targetName.ToLower());
 
                 if (target == null || target.Value.Value == null)
                 {
-                    // Maybe a mobile
+                    // Maybe a mobile?
                     var mobiles = this.GetMobilesInRoom(user.Character.Location);
 
                     if (mobiles != null)
                     {
-                        var mobile = mobiles.FirstOrDefault(m => m.FirstName?.ToLower() == player.ToLower());
+                        var mobile = mobiles.ParseTargetName(targetName);
+
                         if (mobile != null)
                         {
                             await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
@@ -337,14 +343,11 @@ namespace Legendary.Engine
                             await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
 
                             // Start the fight.
-                            user.Character.CharacterFlags.Add(CharacterFlags.Fighting);
-                            mobile.CharacterFlags.Add(CharacterFlags.Fighting);
-                            mobile.Fighting = user.Character;
-                            user.Character.Fighting = mobile;
+                            this.combat.StartFighting(user.Character, mobile);
                         }
                         else
                         {
-                            await this.SendToPlayer(user.Connection, "They are not here.", cancellationToken);
+                            await this.SendToPlayer(user.Connection, "They're not here.", cancellationToken);
                         }
                     }
                 }
@@ -356,12 +359,14 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task ShowPlayerToPlayer(UserData user, string player, CancellationToken cancellationToken = default)
+        public async Task ShowPlayerToPlayer(UserData user, string targetName, CancellationToken cancellationToken = default)
         {
+            targetName = targetName.ToLower();
+
             // Update player stats
             await this.ShowPlayerInfo(user, cancellationToken);
 
-            if (player == user.Character.FirstName || player == "self")
+            if (targetName == user.Character.FirstName || targetName == "self")
             {
                 await this.SendToPlayer(user.Connection, "You look at yourself.", cancellationToken);
                 await this.SendToPlayer(user.Connection, this.GetPlayerInfo(user.Character), cancellationToken);
@@ -369,15 +374,17 @@ namespace Legendary.Engine
             }
             else
             {
-                var target = Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == player.ToLower());
+                var target = Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == targetName);
 
                 if (target == null || target.Value.Value == null)
                 {
                     // Maybe a mobile
                     var mobiles = this.GetMobilesInRoom(user.Character.Location);
+
                     if (mobiles != null)
                     {
-                        var mobile = mobiles.FirstOrDefault(m => m.FirstName?.ToLower() == player.ToLower());
+                        var mobile = mobiles.ParseTargetName(targetName);
+
                         if (mobile != null)
                         {
                             await this.SendToPlayer(user.Connection, $"You look at {mobile.FirstName}.", cancellationToken);
@@ -456,7 +463,7 @@ namespace Legendary.Engine
                         return;
                     }
 
-                    sb.Append($"<span class='item'>{item.LongDescription}</span>");
+                    sb.Append($"<span class='item'>{item.ShortDescription}</span>");
                 }
             }
 
@@ -484,7 +491,7 @@ namespace Legendary.Engine
                         return;
                     }
 
-                    sb.Append($"<span class='mobile'>{mob.FirstName} is standing here.</span>");
+                    sb.Append($"<span class='mobile'>{mob.ShortDescription}</span>");
                 }
             }
 
@@ -560,33 +567,43 @@ namespace Legendary.Engine
 
             if (Users != null)
             {
-                foreach (var user in Users)
+                var usersInRoom = Users.Where(u => u.Value.Character.Location.Equals(room)).ToList();
+
+                foreach (var user in usersInRoom)
                 {
-                    if (user.Key != socketId && user.Value.Character.Location.Equals(room))
+                    if (user.Key != socketId)
                     {
                         await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
-
-                    ThreadPool.QueueUserWorkItem(t =>
-                        this.CheckMobCommunication(user.Value.Character, room, message, cancellationToken).Wait());
                 }
+
+                // Grab a random person in the room and see if the interact with any mobs in the room.
+                var luckyVictim = usersInRoom[this.random.Next(0, usersInRoom.Count - 1)];
+                await this.CheckMobCommunication(luckyVictim.Value.Character, room, message, cancellationToken);
             }
 
             return CommResult.Ok;
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToRoom(Room room, Character character, string message, CancellationToken cancellationToken = default)
+        public async Task<CommResult> SendToRoom(Room room, Character actor, Character target, string message, CancellationToken cancellationToken = default)
         {
-            var user = this.ResolveCharacter(character);
-            if (user != null)
+            var buffer = Encoding.UTF8.GetBytes(message);
+            var segment = new ArraySegment<byte>(buffer);
+
+            if (Users != null)
             {
-                return await this.SendToRoom(room, user.ConnectionId, message, cancellationToken);
+                foreach (var user in Users)
+                {
+                    // Send message to everyone in the room except the actor and the target (combat messages).
+                    if (user.Value.Character.Location.Equals(room) && user.Value.Character.FirstName != actor.FirstName && user.Value.Character.FirstName != target.FirstName)
+                    {
+                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                    }
+                }
             }
-            else
-            {
-                return await this.SendToRoom(room, string.Empty, message, cancellationToken);
-            }
+
+            return CommResult.Ok;
         }
 
         /// <inheritdoc/>
@@ -651,6 +668,12 @@ namespace Legendary.Engine
             {
                 return null;
             }
+        }
+
+        /// <inheritdoc/>
+        public Item ResolveItem(long itemId)
+        {
+            return this.world.Items.Single(i => i.ItemId == itemId);
         }
 
         /// <inheritdoc/>
@@ -772,7 +795,7 @@ namespace Legendary.Engine
                 {
                     var situation = this.GetSituation(room, character, mobile);
 
-                    var response = await this.LanguageProcessor.Process(character, mobile, message, situation);
+                    var response = this.LanguageProcessor.Process(character, mobile, message, situation);
 
                     if (!string.IsNullOrWhiteSpace(response))
                     {
@@ -782,12 +805,11 @@ namespace Legendary.Engine
 
                         if (Users != null)
                         {
-                            foreach (var user in Users)
+                            var usersInRoom = Users.Where(u => u.Value.Character.Location.Equals(room));
+
+                            foreach (var user in usersInRoom)
                             {
-                                if (user.Value.Character.Location.Equals(room))
-                                {
-                                    await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
-                                }
+                                await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                             }
                         }
                     }
@@ -870,7 +892,14 @@ namespace Legendary.Engine
             sb.Append(this.combat.GetPlayerCondition(target));
 
             // Worn items.
-            sb.Append(ActionHelper.GetEquipment(target));
+            if (target.IsNPC)
+            {
+                sb.Append(this.actionHelper.GetOnlyEquipment(target));
+            }
+            else
+            {
+                sb.Append(this.actionHelper.GetEquipment(target));
+            }
 
             return sb.ToString();
         }
@@ -928,7 +957,7 @@ namespace Legendary.Engine
                 }
                 else if (this.IsCasting(command))
                 {
-                    if (args.Length > 2)
+                    if (args.Length > 1)
                     {
                         if (user.Character.HasSpell(args[1]))
                         {
@@ -1000,15 +1029,20 @@ namespace Legendary.Engine
             }
 
             // Give any user the hand to hand skill at standard percentage if they don't have it.
-            if (!userData.Character.HasSkill("handtohand"))
+            if (!userData.Character.HasSkill("hand to hand"))
             {
-                userData.Character.Skills.Add(new SkillProficiency(nameof(HandToHand), 50));
+                userData.Character.Skills.Add(new SkillProficiency("Hand to Hand", 75));
             }
 
-            // TODO: Remove this after testing.
+            // TODO: Remove these after testing.
             if (!userData.Character.HasSpell("fireball"))
             {
                 userData.Character.Spells.Add(new SpellProficiency(nameof(Fireball), 75));
+            }
+
+            if (!userData.Character.HasSkill("edged weapons"))
+            {
+                userData.Character.Skills.Add(new SkillProficiency("Edged Weapons", 75));
             }
 
             userData.Character.Metrics = metrics;

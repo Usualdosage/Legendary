@@ -197,6 +197,13 @@ body {
     
 }
 
+.skillspell {
+    width: 250px;
+    display: inline-block;
+    text-align: left;
+    padding: 10px;
+}
+
 .condition {
     border-top: solid 1px #ccc;
 }

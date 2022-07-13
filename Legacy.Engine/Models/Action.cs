@@ -39,6 +39,9 @@ namespace Legendary.Engine.Models
         public string? Name { get; set; }
 
         /// <inheritdoc/>
+        public string? DamageNoun { get; set; }
+
+        /// <inheritdoc/>
         public bool IsAffect { get; set; }
 
         /// <inheritdoc/>

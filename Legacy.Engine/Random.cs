@@ -18,14 +18,14 @@ namespace Legendary.Engine
     /// </summary>
     public class Random : IRandom
     {
-        private readonly RandomNumberGenerator randomNumberGenerator;
+        private readonly System.Random random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Random"/> class.
         /// </summary>
         public Random()
         {
-            this.randomNumberGenerator = RandomNumberGenerator.Create();
+            this.random = new System.Random(DateTime.Now.Millisecond);
         }
 
         /// <inheritdoc/>
@@ -33,17 +33,7 @@ namespace Legendary.Engine
         {
             try
             {
-                // Match Next of Random where max is exclusive
-                max--;
-
-                // 4 bytes.
-                var bytes = new byte[sizeof(int)];
-                this.randomNumberGenerator.GetNonZeroBytes(bytes);
-                var val = BitConverter.ToInt32(bytes);
-
-                // Constrain our values to between our min and max.
-                var result = ((((val - min) % (max - min + 1)) + (max - min + 1)) % (max - min + 1)) + min;
-                return result;
+                return this.random.Next(min, max);
             }
             catch
             {

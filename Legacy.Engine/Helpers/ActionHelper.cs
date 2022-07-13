@@ -10,6 +10,7 @@
 namespace Legendary.Engine.Helpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using Legendary.Core.Attributes;
@@ -17,6 +18,7 @@ namespace Legendary.Engine.Helpers
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Helper for creating instances of skills and spells by reflection.
@@ -38,40 +40,6 @@ namespace Legendary.Engine.Helpers
             this.communicator = communicator;
             this.random = random;
             this.combat = combat;
-        }
-
-        /// <summary>
-        /// Gets the equipment the actor is wearing.
-        /// </summary>
-        /// <param name="actor">The actor.</param>
-        /// <returns>String.</returns>
-        public static string GetEquipment(Character actor)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            // Worn items.
-            var wearLocations = Enum.GetNames<WearLocation>();
-
-            sb.Append("<table class='wear-table'>");
-
-            foreach (var wearLocation in wearLocations)
-            {
-                var description = GetWearLocationDescription(wearLocation);
-
-                if (description.ToLower() == "none")
-                {
-                    continue;
-                }
-
-                sb.Append("<tr>");
-                var location = Enum.Parse<WearLocation>(wearLocation);
-                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name ?? "nothing."}</td>");
-                sb.Append("</tr>");
-            }
-
-            sb.Append("</table>");
-
-            return sb.ToString();
         }
 
         /// <summary>
@@ -110,6 +78,83 @@ namespace Legendary.Engine.Helpers
             {
                 return WearLocation.None.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets the equipment the actor is wearing.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <returns>String.</returns>
+        public string GetEquipment(Character actor)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // Worn items.
+            var wearLocations = Enum.GetNames<WearLocation>();
+
+            sb.Append("<table class='wear-table'>");
+
+            List<Item> equipment = actor.Equipment.ResolveItems(this.communicator);
+
+            foreach (var wearLocation in wearLocations)
+            {
+                var description = GetWearLocationDescription(wearLocation);
+
+                if (description.ToLower() == "none")
+                {
+                    continue;
+                }
+
+                sb.Append("<tr>");
+                var location = Enum.Parse<WearLocation>(wearLocation);
+                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name ?? "nothing."}</td>");
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</table>");
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets only the equipment the actor is wearing.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <returns>String.</returns>
+        public string GetOnlyEquipment(Character actor)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // Worn items.
+            var wearLocations = Enum.GetNames<WearLocation>();
+
+            sb.Append("<table class='wear-table'>");
+
+            List<Item> equipment = actor.Equipment.ResolveItems(this.communicator);
+
+            foreach (var wearLocation in wearLocations)
+            {
+                var description = GetWearLocationDescription(wearLocation);
+
+                if (description.ToLower() == "none")
+                {
+                    continue;
+                }
+
+                var location = Enum.Parse<WearLocation>(wearLocation);
+                var gear = equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name;
+
+                if (!string.IsNullOrWhiteSpace(gear))
+                {
+                    sb.Append("<tr>");
+                    sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{gear}</td>");
+                    sb.Append("</tr>");
+                }
+            }
+
+            sb.Append("</table>");
+
+            return sb.ToString();
         }
 
         /// <summary>
