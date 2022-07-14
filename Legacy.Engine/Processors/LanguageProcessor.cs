@@ -81,7 +81,7 @@ namespace Legendary.Engine.Processors
         /// <param name="input">The input string.</param>
         /// <param name="situation">The sitrep.</param>
         /// <returns>string.</returns>
-        public string? Process(Character character, Mobile mobile, string input, string situation)
+        public async Task<string?> Process(Character character, Mobile mobile, string input, string situation)
         {
             if (mobile.UseAI)
             {
@@ -91,18 +91,7 @@ namespace Legendary.Engine.Processors
                     {
                         this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.");
 
-                        string? response = string.Empty;
-
-                        Thread thread = new Thread(() =>
-                        {
-                            response = this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName).Result;
-                        });
-
-                        thread.Start();
-                        thread.Join();
-                        return response;
-
-                        // return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
+                        return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
                     }
                     else
                     {

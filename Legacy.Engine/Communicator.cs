@@ -560,9 +560,19 @@ namespace Legendary.Engine
                     }
                 }
 
-                // Grab a random person in the room and see if the interact with any mobs in the room.
-                var luckyVictim = usersInRoom[this.random.Next(0, usersInRoom.Count - 1)];
-                await this.CheckMobCommunication(luckyVictim.Value.Character, location, message, cancellationToken);
+                // Grab a random person in the room and see if they interact with any mobs in the room.
+                ThreadPool.QueueUserWorkItem(q =>
+                {
+                    try
+                    {
+                        var luckyVictim = usersInRoom[this.random.Next(0, usersInRoom.Count - 1)];
+                        this.CheckMobCommunication(luckyVictim.Value.Character, location, message, cancellationToken).Wait();
+                    }
+                    catch
+                    {
+                        this.logger.Warn("Mob tried to communicate with player but lost the socket handle.");
+                    }
+                });
             }
 
             return CommResult.Ok;
@@ -776,7 +786,7 @@ namespace Legendary.Engine
                 {
                     var situation = this.GetSituation(character, mobile);
 
-                    var response = this.LanguageProcessor.Process(character, mobile, message, situation);
+                    var response = await this.LanguageProcessor.Process(character, mobile, message, situation);
 
                     if (!string.IsNullOrWhiteSpace(response))
                     {
@@ -923,7 +933,7 @@ namespace Legendary.Engine
                 // Parse the command and see if the player is using one of their skills.
                 var command = args[0].ToLower();
 
-                if (user.Character.HasSkill(command))
+                if (command.Length > 2 && user.Character.HasSkill(command))
                 {
                     if (this.skillProcessor != null)
                     {
