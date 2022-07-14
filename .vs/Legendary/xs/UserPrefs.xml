@@ -1,29 +1,17 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Combat.cs" relfile="Legacy.Engine/Combat.cs" line="131" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="986" column="1" />
-    </BreakpointStore>
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Responses/CheckArmorResponse.cs">
+  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Combat.cs">
     <Files>
-      <File FileName="Legendary.Web/Startup.cs" Line="58" Column="107" />
-      <File FileName="Legendary.Web/Program.cs" Line="27" Column="1" />
-      <File FileName="Legendary.Web/appsettings.json" Line="7" Column="5" />
-      <File FileName="Legendary.Web/appsettings.Development.json" Line="13" Column="22" />
-      <File FileName="Legendary.Core/Models/World.cs" Line="179" Column="26" />
-      <File FileName="Legendary.Core/Models/Character.cs" Line="28" Column="23" />
-      <File FileName="Legendary.Core/Types/Metrics.cs" Line="29" Column="88" />
-      <File FileName="Legendary.Web/Data/parser.json" Line="171" Column="23" />
-      <File FileName="Legacy.Engine/Combat.cs" Line="120" Column="26" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="39" Column="36" />
-      <File FileName="Legacy.Engine/Engine.cs" Line="106" Column="1" />
-      <File FileName="Legendary.Core/Extensions/ListExtensions.cs" Line="82" Column="14" />
-      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="61" Column="55" />
-      <File FileName="Legacy.Engine/Responses/CheckArmorResponse.cs" Line="8" Column="1" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="192" Column="52" />
+      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="56" Column="1" />
+      <File FileName="Legacy.Engine/Models/Action.cs" Line="22" Column="27" />
+      <File FileName="Legendary.Web/wwwroot/css/client.css" Line="194" Column="2" />
+      <File FileName="Legacy.Engine/Models/Skill.cs" Line="18" Column="38" />
+      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="142" Column="39" />
+      <File FileName="Legacy.Engine/Models/Skills/EdgedWeapons.cs" Line="24" Column="23" />
+      <File FileName="Legacy.Engine/Combat.cs" Line="244" Column="14" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="277" Column="94" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -36,13 +24,28 @@
               <Node name="Models" expanded="True" />
               <Node name="Types" expanded="True" />
             </Node>
-            <Node name="Legendary.Data" expanded="True" />
+            <Node name="Legendary.Data" expanded="True">
+              <Node name="Contracts" expanded="True" />
+            </Node>
             <Node name="Legendary.Engine" expanded="True">
-              <Node name="Responses" expanded="True" />
+              <Node name="Extensions" expanded="True" />
+              <Node name="Helpers" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="Skills" expanded="True" />
+                <Node name="Spells" expanded="True" />
+              </Node>
+              <Node name="Processors" expanded="True" />
             </Node>
             <Node name="Legendary.Web" expanded="True">
               <Node name="Controllers" expanded="True" />
               <Node name="Data" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Creator" expanded="True" />
+                <Node name="Home" expanded="True" />
+              </Node>
+              <Node name="wwwroot" expanded="True">
+                <Node name="css" expanded="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -52,5 +55,14 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Combat.cs" relfile="Legacy.Engine/Combat.cs" line="610" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Data/DataService.cs" relfile="Legendary.Data/DataService.cs" line="95" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Random.cs" relfile="Legacy.Engine/Random.cs" line="40" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Combat.cs" relfile="Legacy.Engine/Combat.cs" line="230" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

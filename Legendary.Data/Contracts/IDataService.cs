@@ -41,7 +41,7 @@ namespace Legendary.Data.Contracts
         /// </summary>
         /// <param name="character">The chanracter.</param>
         /// <returns>ReplaceOneResult.</returns>
-        public Task<ReplaceOneResult> SaveCharacter(Character character);
+        public Task<ReplaceOneResult?> SaveCharacter(Character character);
 
         /// <summary>
         /// Creates a character.

@@ -99,7 +99,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the location.
         /// </summary>
-        public Room Location { get; set; } = new Room() { AreaId = 1, RoomId = 1 };
+        public KeyValuePair<long, long> Location { get; set; } = new KeyValuePair<long, long>(1, 1);
 
         /// <summary>
         /// Gets or sets a value indicating whether this is an NPC.
@@ -144,12 +144,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character's home room (recall point).
         /// </summary>
-        public Room Home { get; set; } = new Room() { AreaId = 1, RoomId = 1 };
+        public KeyValuePair<long, long> Home { get; set; } = new KeyValuePair<long, long>(1, 1);
 
         /// <summary>
         /// Gets or sets the inventory.
         /// </summary>
-        public List<long> Inventory { get; set; } = new List<long>();
+        public List<Item> Inventory { get; set; } = new List<Item>();
 
         /// <summary>
         /// Gets or sets the player's strength.
@@ -268,7 +268,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's equipment.
         /// </summary>
-        public List<long> Equipment { get; set; } = new List<long>();
+        public List<Item> Equipment { get; set; } = new List<Item>();
 
         /// <summary>
         /// Gets or sets the player's followers.

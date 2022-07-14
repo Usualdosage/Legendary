@@ -55,6 +55,13 @@ namespace Legendary.Core.Contracts
         Item ResolveItem(long itemId);
 
         /// <summary>
+        /// Gets a room by location.
+        /// </summary>
+        /// <param name="location">The area ID and room ID.</param>
+        /// <returns>Room.</returns>
+        Room ResolveRoom(KeyValuePair<long, long> location);
+
+        /// <summary>
         /// Sends a global message to all connected sockets.
         /// </summary>
         /// <param name="message">The message.</param>
@@ -141,33 +148,33 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the sender.
         /// </summary>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The room.</param>
         /// <param name="socketId">The socket ID of the sender.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToRoom(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the actor and target.
         /// </summary>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The location.</param>
         /// <param name="actor">The sender.</param>
         /// <param name="target">The target.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(Room room, Character actor, Character target, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in an area, EXCEPT the sender.
         /// </summary>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The location.</param>
         /// <param name="socketId">The socket ID of the sender.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToArea(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to a channel.
@@ -200,10 +207,10 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Returns true if the target is in the provided room.
         /// </summary>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The location.</param>
         /// <param name="target">The target.</param>
         /// <returns>True if the target is in the room.</returns>
-        bool IsInRoom(Room room, Character target);
+        bool IsInRoom(KeyValuePair<long, long> location, Character target);
 
         /// <summary>
         /// Add a user to the specified channel (by name).
@@ -235,30 +242,23 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="location">The location.</param>
         /// <returns>List of mobiles.</returns>
-        List<Mobile>? GetMobilesInRoom(Room location);
+        List<Mobile>? GetMobilesInRoom(KeyValuePair<long, long> location);
 
         /// <summary>
         /// Gets all of the items currently in the given location.
         /// </summary>
         /// <param name="location">The location.</param>
         /// <returns>List of items.</returns>
-        List<Item>? GetItemsInRoom(Room location);
-
-        /// <summary>
-        /// Gets the global reference to a room for a given location.
-        /// </summary>
-        /// <param name="location">The player location.</param>
-        /// <returns>Room.</returns>
-        Room? GetRoom(Room location);
+        List<Item>? GetItemsInRoom(KeyValuePair<long, long> location);
 
         /// <summary>
         /// Allows mobs with personalities to communicate to characters who say things.
         /// </summary>
         /// <param name="character">The speaking character.</param>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The location.</param>
         /// <param name="message">The character's message.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default);
+        Task CheckMobCommunication(Character character, KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default);
     }
 }

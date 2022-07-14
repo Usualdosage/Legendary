@@ -67,7 +67,7 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task<ReplaceOneResult> SaveCharacter(Character character)
+        public async Task<ReplaceOneResult?> SaveCharacter(Character character)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Legendary.Data
                 }
             }
             catch (Exception exc)
-            {                
+            {
                 throw;
             }
         }

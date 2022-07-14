@@ -94,8 +94,6 @@ namespace Legendary.Engine.Helpers
 
             sb.Append("<table class='wear-table'>");
 
-            List<Item> equipment = actor.Equipment.ResolveItems(this.communicator);
-
             foreach (var wearLocation in wearLocations)
             {
                 var description = GetWearLocationDescription(wearLocation);
@@ -107,7 +105,7 @@ namespace Legendary.Engine.Helpers
 
                 sb.Append("<tr>");
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name ?? "nothing."}</td>");
+                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name ?? "nothing."}</td>");
                 sb.Append("</tr>");
             }
 
@@ -130,8 +128,6 @@ namespace Legendary.Engine.Helpers
 
             sb.Append("<table class='wear-table'>");
 
-            List<Item> equipment = actor.Equipment.ResolveItems(this.communicator);
-
             foreach (var wearLocation in wearLocations)
             {
                 var description = GetWearLocationDescription(wearLocation);
@@ -142,7 +138,7 @@ namespace Legendary.Engine.Helpers
                 }
 
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                var gear = equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name;
+                var gear = actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name;
 
                 if (!string.IsNullOrWhiteSpace(gear))
                 {

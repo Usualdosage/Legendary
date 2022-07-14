@@ -51,7 +51,7 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="actor">The first character.</param>
         /// <param name="target">The second character.</param>
-        public void StopFighting(Character actor, Character? target)
+        public static void StopFighting(Character actor, Character? target)
         {
             actor.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
             actor.Fighting = null;
@@ -68,7 +68,7 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="actor">The first character.</param>
         /// <param name="target">The second character.</param>
-        public void StartFighting(Character actor, Character target)
+        public static void StartFighting(Character actor, Character target)
         {
             actor.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
             actor.Fighting = target;
@@ -86,10 +86,7 @@ namespace Legendary.Engine
         {
             // TODO: This needs work insofar as we can't return a skill if the player doesn't have it. Also, we need to return the %age chance so
             // we can randomize it.
-
-            List<Item> equipment = actor.Equipment.ResolveItems(this.communicator);
-
-            var wielded = equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Wielded));
+            var wielded = actor.Equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Wielded));
 
             if (wielded != null)
             {
@@ -148,7 +145,7 @@ namespace Legendary.Engine
                 if (isDead)
                 {
                     // Target is dead.
-                    this.StopFighting(actor, target);
+                    StopFighting(actor, target);
 
                     if (actor.IsNPC && target.IsNPC)
                     {
@@ -367,12 +364,12 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         public async Task KillMobile(Character target, Character killer, CancellationToken cancellationToken = default)
         {
-            this.StopFighting(target, killer);
+            StopFighting(target, killer);
 
             await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
             await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName} is DEAD!", cancellationToken);
 
-            var room = this.communicator.GetRoom(killer.Location);
+            var room = this.communicator.ResolveRoom(killer.Location);
 
             if (room != null)
             {
@@ -382,7 +379,7 @@ namespace Legendary.Engine
                 if (room.Mobiles.Contains(mobile))
                 {
                     room.Mobiles.Remove(mobile);
-                    this.GenerateCorpse(room, target);
+                    this.GenerateCorpse(killer.Location, target);
                 }
             }
         }
@@ -398,7 +395,7 @@ namespace Legendary.Engine
         {
             if (userData != null)
             {
-                this.StopFighting(userData.Character, killer);
+                StopFighting(userData.Character, killer);
 
                 await this.communicator.SendToPlayer(killer, $"You have KILLED {userData.Character.FirstName}!", cancellationToken);
                 await this.communicator.SendToPlayer(userData.Connection, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
@@ -408,23 +405,23 @@ namespace Legendary.Engine
                 userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
                 userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
 
-                var room = this.communicator.GetRoom(killer.Location);
+                var room = this.communicator.ResolveRoom(killer.Location);
 
                 if (room != null)
                 {
                     this.logger.Debug($"{killer.FirstName} has killed {userData.Character.FirstName} in room {room.RoomId}, area {room.AreaId}!");
 
                     // Generate the corpse.
-                    this.GenerateCorpse(room, userData.Character);
+                    this.GenerateCorpse(killer.Location, userData.Character);
                 }
 
                 // Remove all equipment and inventory.
-                userData.Character.Inventory = new List<long>();
-                userData.Character.Equipment = new List<long>();
+                userData.Character.Inventory = new List<Item>();
+                userData.Character.Equipment = new List<Item>();
                 userData.Character.Currency = 0;
 
                 // Send the character to their home.
-                userData.Character.Location = userData.Character.Home ?? Room.Default;
+                userData.Character.Location = userData.Character.Home;
 
                 // Increment deaths.
                 if (killer.IsNPC)
@@ -532,12 +529,11 @@ namespace Legendary.Engine
 
             bool blocked = false;
             var armorSavePct = this.random.Next(1, 100);
-            List<Item> equipment = target.Equipment.ResolveItems(this.communicator);
 
             switch (action.DamageType)
             {
                 default:
-                    var targetMagicPct = equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Magic);
+                    var targetMagicPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Magic);
                     if (armorSavePct < targetMagicPct)
                     {
                         blocked = true;
@@ -545,7 +541,7 @@ namespace Legendary.Engine
 
                     break;
                 case DamageType.Pierce:
-                    var targetPiercePct = equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Pierce);
+                    var targetPiercePct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Pierce);
                     if (armorSavePct < targetPiercePct)
                     {
                         blocked = true;
@@ -553,7 +549,7 @@ namespace Legendary.Engine
 
                     break;
                 case DamageType.Slash:
-                    var targetSlashPct = equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Edged);
+                    var targetSlashPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Edged);
                     if (armorSavePct < targetSlashPct)
                     {
                         blocked = true;
@@ -561,7 +557,7 @@ namespace Legendary.Engine
 
                     break;
                 case DamageType.Blunt:
-                    var targetBluntPct = equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Blunt);
+                    var targetBluntPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Blunt);
                     if (armorSavePct < targetBluntPct)
                     {
                         blocked = true;
@@ -575,7 +571,7 @@ namespace Legendary.Engine
                 try
                 {
                     // Get the random piece of player's armor that performed the block.
-                    var allArmor = equipment.Where(e => e.ItemType == ItemType.Armor).ToList();
+                    var allArmor = target.Equipment.Where(e => e.ItemType == ItemType.Armor).ToList();
 
                     if (allArmor.Count > 0)
                     {
@@ -595,7 +591,7 @@ namespace Legendary.Engine
                                 await this.communicator.SendToPlayer(actor, $"You destroyed {randomGear.Name}!", cancellationToken);
                                 await this.communicator.SendToPlayer(target, $"{actor.FirstName} destroyed {randomGear.Name}.", cancellationToken);
 
-                                target.Equipment.Remove(randomGear.ItemId);
+                                target.Equipment.Remove(randomGear);
                             }
 
                             if (!target.IsNPC)
@@ -692,16 +688,16 @@ namespace Legendary.Engine
         /// <summary>
         /// Generates a corpse of the victim and places it in the room.
         /// </summary>
-        /// <param name="room">The room to generate the corpse in.</param>
+        /// <param name="location">The room to generate the corpse in.</param>
         /// <param name="victim">The victim to generate the corpse from.</param>
-        private void GenerateCorpse(Room room, Character victim)
+        private void GenerateCorpse(KeyValuePair<long, long> location, Character victim)
         {
             try
             {
                 var corpse = new Item()
                 {
                     ItemType = ItemType.Container,
-                    Location = room,
+                    Location = location,
                     Level = victim.Level,
                     Name = $"the corpse of {victim.FirstName}",
                     ShortDescription = $"The corpse of {victim.FirstName} is rotting here.",
@@ -738,6 +734,7 @@ namespace Legendary.Engine
                 // corpse.Contains.AddRange(playerInventory);
 
                 // Add the corpse to the room.
+                var room = this.communicator.ResolveRoom(location);
                 room.Items.Add(corpse);
             }
             catch (Exception exc)

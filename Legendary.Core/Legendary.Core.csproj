@@ -22,6 +22,7 @@
     <None Remove="Attributes\" />
     <None Remove="JamesWright.PersonalityForge" />
     <None Remove="Microsoft.AspNetCore" />
+    <None Remove="Serializers\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
@@ -37,5 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
+    <Folder Include="Serializers\" />
   </ItemGroup>
 </Project>

@@ -80,7 +80,7 @@ namespace Legendary.Core.Models
                         var item = await this.FindItem(f => f.ItemId == reset);
                         if (item != null)
                         {
-                            item.Location = room;
+                            item.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
                             room.Items.Add(item);
                         }
                     }
@@ -91,7 +91,7 @@ namespace Legendary.Core.Models
                         var mobile = await this.FindMobile(f => f.CharacterId == reset);
                         if (mobile != null)
                         {
-                            mobile.Location = room;
+                            mobile.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
                             room.Mobiles.Add(mobile);
                         }
                     }
@@ -109,9 +109,11 @@ namespace Legendary.Core.Models
                     // Decompose items.
                     var items = room.Items.Where(i => i.RotTimer == 0);
 
+                    var location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
                     foreach (var item in items)
                     {
-                        await communicator.SendToRoom(room, string.Empty, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        await communicator.SendToRoom(location, string.Empty, $"{item.ShortDescription} disintegrates.", cancellationToken);
                     }
 
                     room.Items.RemoveAll(i => i.RotTimer == 0);

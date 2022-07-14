@@ -274,12 +274,10 @@ namespace Legendary.Engine.Processors
 
         private async Task DoInventory(UserData actor, string[] args, CancellationToken cancellationToken)
         {
-            List<Item> inventory = actor.Character.Inventory.ResolveItems(this.communicator);
-
             var sb = new StringBuilder();
 
             sb.AppendLine("<span class='inventory'>You are carrying:</span>");
-            foreach (var item in inventory)
+            foreach (var item in actor.Character.Inventory)
             {
                 sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
             }
@@ -322,7 +320,7 @@ namespace Legendary.Engine.Processors
             {
                 if (Communicator.Users != null)
                 {
-                    var users = Communicator.Users.Where(u => u.Value.Character.Location.RoomId == actor.Character.Location.RoomId);
+                    var users = Communicator.Users.Where(u => u.Value.Character.Location.InSamePlace(actor.Character.Location));
 
                     // Stop all the users from fighting
                     foreach (var user in users)
@@ -573,28 +571,26 @@ namespace Legendary.Engine.Processors
             {
                 var itemName = args[1].ToLower();
 
-                List<Item> equipment = actor.Character.Equipment.ResolveItems(this.communicator);
-
                 if (itemName == "all")
                 {
-                    foreach (var target in equipment)
+                    foreach (var target in actor.Character.Equipment)
                     {
                         // Un-equip each item and put back in inventory.
-                        actor.Character.Equipment.Remove(target.ItemId);
-                        actor.Character.Inventory.Add(target.ItemId);
+                        actor.Character.Equipment.Remove(target);
+                        actor.Character.Inventory.Add(target);
                         await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
                     }
                 }
                 else
                 {
-                    var target = equipment.FirstOrDefault(i => i.Name.Contains(itemName));
+                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Name.Contains(itemName));
 
                     if (target != null)
                     {
                         // Un-equip the item and put back in inventory.
-                        actor.Character.Inventory.Add(target.ItemId);
-                        actor.Character.Equipment.Remove(target.ItemId);
+                        actor.Character.Inventory.Add(target);
+                        actor.Character.Equipment.Remove(target);
                         await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
                     }
@@ -617,14 +613,12 @@ namespace Legendary.Engine.Processors
             if (args.Length > 1)
             {
                 var itemName = args[1].ToLower();
-                List<Item> equipment = actor.Character.Equipment.ResolveItems(this.communicator);
-                List<Item> inventory = actor.Character.Inventory.ResolveItems(this.communicator);
 
                 if (itemName == "all")
                 {
                     // Get everything in the player's inventory that can be worn without replacing stuff that is already worn.
-                    var wornLocations = equipment.Select(w => w.WearLocation).ToList();
-                    var inventoryCanWear = inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
+                    var wornLocations = actor.Character.Equipment.Select(w => w.WearLocation).ToList();
+                    var inventoryCanWear = actor.Character.Inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
 
                     foreach (var item in inventoryCanWear)
                     {
@@ -632,8 +626,8 @@ namespace Legendary.Engine.Processors
                         if (item.ItemType != ItemType.Weapon)
                         {
                             // Equip the item.
-                            actor.Character.Equipment.Add(item.ItemId);
-                            actor.Character.Inventory.Remove(item.ItemId);
+                            actor.Character.Equipment.Add(item);
+                            actor.Character.Inventory.Remove(item);
                             await this.communicator.SendToPlayer(actor.Connection, $"You wear {item.Name}.", cancellationToken);
                             await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {item.Name}.", cancellationToken);
                         }
@@ -643,7 +637,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    var target = inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+                    var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
 
                     if (target != null)
                     {
@@ -651,13 +645,13 @@ namespace Legendary.Engine.Processors
 
                         foreach (var wearLocation in target.WearLocation)
                         {
-                            var targetLocationItem = equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
+                            var targetLocationItem = actor.Character.Equipment.FirstOrDefault(a => a.WearLocation.Contains(wearLocation));
 
                             if (targetLocationItem == null)
                             {
                                 // Equip the item.
-                                actor.Character.Equipment.Add(target.ItemId);
-                                actor.Character.Inventory.Remove(target.ItemId);
+                                actor.Character.Equipment.Add(target);
+                                actor.Character.Inventory.Remove(target);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {target.Name}.", cancellationToken);
                             }
@@ -665,7 +659,7 @@ namespace Legendary.Engine.Processors
                             {
                                 // Swap out the equipment.
                                 equipmentToReplace.Add(targetLocationItem);
-                                actor.Character.Equipment.Add(target.ItemId);
+                                actor.Character.Equipment.Add(target);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You remove {targetLocationItem.Name}.", cancellationToken);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {targetLocationItem.Name}.", cancellationToken);
@@ -676,8 +670,8 @@ namespace Legendary.Engine.Processors
                         // Remove the previously equipped items and place in inventory.
                         equipmentToReplace.ForEach(e =>
                         {
-                            actor.Character.Equipment.Remove(e.ItemId);
-                            actor.Character.Inventory.Add(e.ItemId);
+                            actor.Character.Equipment.Remove(e);
+                            actor.Character.Inventory.Add(e);
                         });
 
                         await this.communicator.SaveCharacter(actor);
@@ -702,17 +696,15 @@ namespace Legendary.Engine.Processors
             {
                 var itemName = args[1].ToLower();
 
-                List<Item> inventory = actor.Character.Inventory.ResolveItems(this.communicator);
-
-                var target = inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+                var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
 
                 if (target != null)
                 {
                     if (target.WearLocation.Contains(WearLocation.Wielded))
                     {
                         // Equip the item.
-                        actor.Character.Equipment.Add(target.ItemId);
-                        actor.Character.Inventory.Remove(target.ItemId);
+                        actor.Character.Equipment.Add(target);
+                        actor.Character.Inventory.Remove(target);
                         await this.communicator.SendToPlayer(actor.Connection, $"You wield {target.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wields {target.Name}.", cancellationToken);
                     }
@@ -786,7 +778,7 @@ namespace Legendary.Engine.Processors
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} vanishes.", cancellationToken);
-                        user.Character.Location = targetRoom;
+                        user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
                         await this.communicator.ShowRoomToPlayer(user, cancellationToken);
                     }
                 }
@@ -802,73 +794,61 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         private async Task GetItem(UserData user, string target, CancellationToken cancellationToken = default)
         {
-            // TODO: This area call is probably not necessary as long as room IDs are unique.
-            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
-            if (area != null)
+            var room = this.communicator.ResolveRoom(user.Character.Location);
+
+            if (target.ToLower() == "all")
             {
-                var room = area.Rooms.FirstOrDefault(r => r.RoomId == user.Character.Location.RoomId);
-                if (room != null)
+                List<Item> itemsToRemove = new ();
+
+                if (room.Items == null || room.Items.Count == 0)
                 {
-                    if (target.ToLower() == "all")
+                    await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
+                    return;
+                }
+
+                foreach (var item in room.Items)
+                {
+                    if (item != null)
                     {
-                        List<Item> itemsToRemove = new ();
-
-                        if (room.Items == null || room.Items.Count == 0)
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
-                            return;
-                        }
-
-                        foreach (var item in room.Items)
-                        {
-                            if (item != null)
-                            {
-                                user.Character.Inventory.Add(item.ItemId);
-                                await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
-                                itemsToRemove.Add(item);
-                            }
-                        }
-
-                        foreach (var itemToRemove in itemsToRemove)
-                        {
-                            room.Items.Remove(itemToRemove);
-                        }
+                        user.Character.Inventory.Add(item.Clone());
+                        await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
+                        itemsToRemove.Add(item);
                     }
-                    else
-                    {
-                        if (room.Items == null || room.Items.Count == 0)
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
-                            return;
-                        }
+                }
 
-                        List<Item> itemsToRemove = new ();
+                foreach (var itemToRemove in itemsToRemove)
+                {
+                    room.Items.Remove(itemToRemove);
+                }
+            }
+            else
+            {
+                if (room.Items == null || room.Items.Count == 0)
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
+                    return;
+                }
 
-                        var count = 0;
+                List<Item> itemsToRemove = new ();
 
-                        foreach (var item in room.Items)
-                        {
-                            if (item != null)
-                            {
-                                count++;
-                                user.Character.Inventory.Add(item.ItemId);
-                                await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
-                                itemsToRemove.Add(item);
-                            }
-                        }
+                var item = room.Items.ParseItemName(target);
 
-                        if (count == 0)
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
-                        }
+                if (item != null)
+                {
+                    user.Character.Inventory.Add(item.Clone());
+                    await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
+                    await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
+                    itemsToRemove.Add(item);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
+                }
 
-                        foreach (var itemToRemove in itemsToRemove)
-                        {
-                            room.Items.Remove(itemToRemove);
-                        }
-                    }
+                foreach (var itemToRemove in itemsToRemove)
+                {
+                    room.Items.Remove(itemToRemove);
                 }
             }
         }
@@ -884,34 +864,33 @@ namespace Legendary.Engine.Processors
         {
             if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
             {
-                await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
+                await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to eat.", cancellationToken);
                 return;
             }
 
-            List<Item> inventory = user.Character.Inventory.ResolveItems(this.communicator);
+            var item = user.Character.Inventory.ParseItemName(target);
 
-            foreach (var item in inventory)
+            if (item != null && item.ItemType == ItemType.Food)
             {
-                if (item != null && item.ItemType == ItemType.Food)
+                if (user.Character.Hunger.Current <= 2)
                 {
-                    if (user.Character.Hunger.Current <= 2)
-                    {
-                        await this.communicator.SendToPlayer(user.Connection, $"You are too full to eat anything.", cancellationToken);
-                        return;
-                    }
-                    else if (user.Character.Hunger.Current >= 8)
-                    {
-                        user.Character.Inventory.Remove(item.ItemId);
-                        await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
-                        await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
-                        user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 0));
-                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} eats {item.Name}.", cancellationToken);
-                        return;
-                    }
+                    await this.communicator.SendToPlayer(user.Connection, $"You are too full to eat anything.", cancellationToken);
+                    return;
+                }
+                else if (user.Character.Hunger.Current >= 8)
+                {
+                    user.Character.Inventory.Remove(item);
+                    await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
+                    await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
+                    user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 0));
+                    await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} eats {item.Name}.", cancellationToken);
+                    return;
                 }
             }
-
-            await this.communicator.SendToPlayer(user.Connection, $"You can't eat that.", cancellationToken);
+            else
+            {
+                await this.communicator.SendToPlayer(user.Connection, $"You can't eat that.", cancellationToken);
+            }
         }
 
         /// <summary>
@@ -923,75 +902,63 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         private async Task DropItem(UserData user, string target, CancellationToken cancellationToken = default)
         {
-            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
-            if (area != null)
+            var room = this.communicator.ResolveRoom(user.Character.Location);
+
+            if (room != null)
             {
-                var room = area.Rooms.FirstOrDefault(r => r.RoomId == user.Character.Location.RoomId);
-                if (room != null)
+                if (target.ToLower() == "all")
                 {
-                    if (target.ToLower() == "all")
+                    List<Item> itemsToRemove = new ();
+
+                    if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
                     {
-                        List<Item> itemsToRemove = new ();
+                        await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
+                        return;
+                    }
 
-                        if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
+                    foreach (var item in user.Character.Inventory)
+                    {
+                        if (item != null)
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
-                            return;
+                            room.Items.Add(item.Clone());
+                            await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.", cancellationToken);
+                            itemsToRemove.Add(item);
                         }
+                    }
 
-                        List<Item> inventory = user.Character.Inventory.ResolveItems(this.communicator);
+                    foreach (var itemToRemove in itemsToRemove)
+                    {
+                        user.Character.Inventory.Remove(itemToRemove);
+                    }
+                }
+                else
+                {
+                    if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
+                        return;
+                    }
 
-                        foreach (var item in inventory)
-                        {
-                            if (item != null)
-                            {
-                                room.Items.Add(item);
-                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.", cancellationToken);
-                                itemsToRemove.Add(item);
-                            }
-                        }
+                    List<Item> itemsToRemove = new ();
 
-                        foreach (var itemToRemove in itemsToRemove)
-                        {
-                            user.Character.Inventory.Remove(itemToRemove.ItemId);
-                        }
+                    var item = user.Character.Inventory.ParseItemName(target);
+
+                    if (item != null)
+                    {
+                        room.Items.Add(item.Clone());
+                        await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.", cancellationToken);
+                        itemsToRemove.Add(item);
                     }
                     else
                     {
-                        if (user.Character.Inventory == null || user.Character.Inventory.Count == 0)
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"You don't have anything to drop.", cancellationToken);
-                            return;
-                        }
+                        await this.communicator.SendToPlayer(user.Connection, $"You don't have that.", cancellationToken);
+                    }
 
-                        List<Item> itemsToRemove = new ();
-
-                        var count = 0;
-
-                        List<Item> inventory = user.Character.Inventory.ResolveItems(this.communicator);
-
-                        foreach (var item in inventory)
-                        {
-                            if (item != null)
-                            {
-                                count++;
-                                room.Items.Add(item);
-                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} drops {item.Name}.", cancellationToken);
-                                itemsToRemove.Add(item);
-                            }
-                        }
-
-                        if (count == 0)
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"You don't have that.", cancellationToken);
-                        }
-
-                        foreach (var itemToRemove in itemsToRemove)
-                        {
-                            user.Character.Inventory.Remove(itemToRemove.ItemId);
-                        }
+                    foreach (var itemToRemove in itemsToRemove)
+                    {
+                        user.Character.Inventory.Remove(itemToRemove);
                     }
                 }
             }
@@ -1061,21 +1028,7 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
-            var area = await this.world.FindArea(a => a.AreaId == user.Character.Location.AreaId);
-
-            if (area == null)
-            {
-                this.logger.Warn($"MovePlayer: Null area found for user. {user} {user.Character.Location}!");
-                return;
-            }
-
-            var room = area.Rooms.FirstOrDefault(r => r.RoomId == user.Character.Location.RoomId);
-
-            if (room == null)
-            {
-                this.logger.Warn($"MovePlayer: Null room found for user. {user} {user.Character.Location}!");
-                return;
-            }
+            var room = this.communicator.ResolveRoom(user.Character.Location);
 
             Exit? exit = room.Exits?.FirstOrDefault(e => e.Direction == direction);
 
@@ -1088,14 +1041,14 @@ namespace Legendary.Engine.Processors
                 {
                     string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
                     await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>", cancellationToken);
-                    await this.communicator.SendToRoom(room, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.", cancellationToken);
+                    await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.", cancellationToken);
 
-                    user.Character.Location = newRoom;
+                    user.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
 
                     // TODO: Update this based on the terrain.
                     user.Character.Movement.Current -= 1;
 
-                    await this.communicator.SendToRoom(newRoom, user.ConnectionId, $"{user.Character.FirstName} enters.", cancellationToken);
+                    await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} enters.", cancellationToken);
                     await this.communicator.ShowRoomToPlayer(user, cancellationToken);
                 }
                 else
@@ -1119,13 +1072,11 @@ namespace Legendary.Engine.Processors
         {
             StringBuilder sb = new ();
 
-            string homeTown = user.Character.Home?.Name ?? "nowhere";
-
-            List<Item> equipment = user.Character.Equipment.ResolveItems(this.communicator);
+            List<Item> equipment = user.Character.Equipment;
 
             sb.Append("<div class='player-score'><table><tr><td colspan='4'>");
             sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
-            sb.Append($"<tr><td colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from {homeTown}.</td></tr>");
+            sb.Append($"<tr><td colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from The Void.</td></tr>");
             sb.Append($"<tr><td colspan='2'>You are {user.Character.Age} years of age.</td><td>Experience:</td><td>{user.Character.Experience}</td></tr>");
 
             sb.Append($"<tr><td>Health:</td><td>{user.Character.Health.Current}/{user.Character.Health.Max}</td><td>Str:</td><td>{user.Character.Str}</td></tr>");

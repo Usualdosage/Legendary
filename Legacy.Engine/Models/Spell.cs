@@ -44,7 +44,7 @@ namespace Legendary.Engine.Models
         /// <returns>Task.</returns>
         public virtual async Task DamageToTarget(UserData actor, UserData target, CancellationToken cancellationToken)
         {
-            this.Combat.StartFighting(actor.Character, target.Character);
+            Combat.StartFighting(actor.Character, target.Character);
             await this.Communicator.SendToArea(actor.Character.Location, string.Empty, $"{target.Character.FirstName} yells \"<span class='yell'>{actor.Character.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
             await this.Combat.DoDamage(actor.Character, target.Character, this, cancellationToken);
         }
@@ -62,9 +62,9 @@ namespace Legendary.Engine.Models
                 foreach (var user in Legendary.Engine.Communicator.Users)
                 {
                     // TODO: Do damage to everything in the room that isn't the player, or in the player's group.
-                    if (user.Value.Character.Location.RoomId == actor.Character.Location.RoomId && user.Value.Character.FirstName != actor.Character.FirstName)
+                    if (user.Value.Character.Location.InSamePlace(actor.Character.Location) && user.Value.Character.FirstName != actor.Character.FirstName)
                     {
-                        this.Combat.StartFighting(actor.Character, user.Value.Character);
+                        Combat.StartFighting(actor.Character, user.Value.Character);
                         await this.Combat.DoDamage(actor.Character, user.Value.Character, this, cancellationToken);
                     }
                 }
@@ -77,7 +77,7 @@ namespace Legendary.Engine.Models
             {
                 foreach (var mobile in mobiles)
                 {
-                    this.Combat.StartFighting(actor.Character, mobile);
+                    Combat.StartFighting(actor.Character, mobile);
                     await this.Combat.DoDamage(actor.Character, mobile, this, cancellationToken);
                 }
             }

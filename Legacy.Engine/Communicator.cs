@@ -301,14 +301,14 @@ namespace Legendary.Engine
         /// <summary>
         /// Returns true if the target is in the provided room.
         /// </summary>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The location.</param>
         /// <param name="target">The target.</param>
         /// <returns>True if the target is in the room.</returns>
-        public bool IsInRoom(Room room, Character target)
+        public bool IsInRoom(KeyValuePair<long, long> location, Character target)
         {
             if (Users != null)
             {
-                return Users.Any(u => u.Value.Character.FirstName == target.FirstName && u.Value.Character.Location.RoomId == room.RoomId && u.Value.Character.Location.AreaId == room.AreaId);
+                return Users.Any(u => u.Value.Character.FirstName == target.FirstName && u.Value.Character.Location.InSamePlace(location));
             }
 
             return false;
@@ -343,7 +343,7 @@ namespace Legendary.Engine
                             await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
 
                             // Start the fight.
-                            this.combat.StartFighting(user.Character, mobile);
+                            Combat.StartFighting(user.Character, mobile);
                         }
                         else
                         {
@@ -419,21 +419,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         public async Task ShowRoomToPlayer(UserData user, CancellationToken cancellationToken = default)
         {
-            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == user.Character.Location.AreaId);
-
-            if (area == null)
-            {
-                this.logger.Warn($"ShowRoomToPlayer: Null area found for user. {user} {user.Character.Location}!");
-                return;
-            }
-
-            var room = area.Rooms.FirstOrDefault(r => r.RoomId == user.Character.Location.RoomId);
-
-            if (room == null)
-            {
-                this.logger.Warn($"ShowRoomToPlayer: Null room found for user. {user} {user.Character.Location}!");
-                return;
-            }
+            var room = this.ResolveRoom(user.Character.Location);
 
             StringBuilder sb = new ();
 
@@ -498,14 +484,11 @@ namespace Legendary.Engine
             // Show other players
             if (Communicator.Users != null)
             {
-                foreach (var other in Communicator.Users)
+                var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(user.Character.Location) && u.Key != user.ConnectionId);
+
+                foreach (var other in usersInRoom)
                 {
-                    if (other.Key != user.ConnectionId &&
-                        other.Value.Character.Location.AreaId == user.Character.Location.AreaId &&
-                        other.Value.Character.Location.RoomId == user.Character.Location.RoomId)
-                    {
-                        sb.Append($"<span class='player'>{other.Value.Character.FirstName} is here.</span>");
-                    }
+                    sb.Append($"<span class='player'>{other.Value.Character.FirstName} is here.</span>");
                 }
             }
 
@@ -560,14 +543,14 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToRoom(Room room, string socketId, string message, CancellationToken cancellationToken = default)
+        public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
 
             if (Users != null)
             {
-                var usersInRoom = Users.Where(u => u.Value.Character.Location.Equals(room)).ToList();
+                var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(location)).ToList();
 
                 foreach (var user in usersInRoom)
                 {
@@ -579,14 +562,14 @@ namespace Legendary.Engine
 
                 // Grab a random person in the room and see if the interact with any mobs in the room.
                 var luckyVictim = usersInRoom[this.random.Next(0, usersInRoom.Count - 1)];
-                await this.CheckMobCommunication(luckyVictim.Value.Character, room, message, cancellationToken);
+                await this.CheckMobCommunication(luckyVictim.Value.Character, location, message, cancellationToken);
             }
 
             return CommResult.Ok;
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToRoom(Room room, Character actor, Character target, string message, CancellationToken cancellationToken = default)
+        public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character target, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
@@ -596,7 +579,7 @@ namespace Legendary.Engine
                 foreach (var user in Users)
                 {
                     // Send message to everyone in the room except the actor and the target (combat messages).
-                    if (user.Value.Character.Location.Equals(room) && user.Value.Character.FirstName != actor.FirstName && user.Value.Character.FirstName != target.FirstName)
+                    if (user.Value.Character.Location.InSamePlace(location) && user.Value.Character.FirstName != actor.FirstName && user.Value.Character.FirstName != target.FirstName)
                     {
                         await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
@@ -607,7 +590,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToArea(Room room, string socketId, string message, CancellationToken cancellationToken = default)
+        public async Task<CommResult> SendToArea(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
@@ -616,7 +599,7 @@ namespace Legendary.Engine
             {
                 foreach (var user in Users)
                 {
-                    if (user.Key != socketId && user.Value.Character.Location.AreaId == room.AreaId)
+                    if (user.Key != socketId && user.Value.Character.Location.Key == location.Key)
                     {
                         await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
@@ -674,6 +657,12 @@ namespace Legendary.Engine
         public Item ResolveItem(long itemId)
         {
             return this.world.Items.Single(i => i.ItemId == itemId);
+        }
+
+        /// <inheritdoc/>
+        public Room ResolveRoom(KeyValuePair<long, long> location)
+        {
+            return this.world.Areas.Single(a => a.AreaId == location.Key).Rooms.Single(r => r.RoomId == location.Value);
         }
 
         /// <inheritdoc/>
@@ -743,57 +732,49 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public Room? GetRoom(Room location)
+        public List<Mobile>? GetMobilesInRoom(KeyValuePair<long, long> location)
         {
-            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == location.AreaId);
-            return area?.Rooms.FirstOrDefault(r => r.RoomId == location.RoomId);
-        }
-
-        /// <inheritdoc/>
-        public List<Mobile>? GetMobilesInRoom(Room location)
-        {
-            var room = this.GetRoom(location);
+            var room = this.ResolveRoom(location);
             return room?.Mobiles.ToList();
         }
 
         /// <inheritdoc/>
-        public List<Item>? GetItemsInRoom(Room location)
+        public List<Item>? GetItemsInRoom(KeyValuePair<long, long> location)
         {
-            var room = this.GetRoom(location);
+            var room = this.ResolveRoom(location);
             return room?.Items.ToList();
         }
 
         /// <summary>
         /// Generates a situation based on the encounter.
         /// </summary>
-        /// <param name="room">The room.</param>
         /// <param name="actor">The character.</param>
         /// <param name="target">The mobile.</param>
         /// <returns>string.</returns>
-        public string GetSituation(Room room, Character actor, Character target)
+        public string GetSituation(Character actor, Character target)
         {
             var gen1 = actor.Gender == Gender.Male ? "boy" : "girl";
             var gen2 = target.Gender == Gender.Male ? "boy" : "girl";
-            return $"{gen1} and {gen2} talking to each other in the {room.Terrain}";
+            return $"{gen1} and {gen2} talking to each other";
         }
 
         /// <summary>
         /// Allows mobs with personalities to communicate to characters who say things.
         /// </summary>
         /// <param name="character">The speaking character.</param>
-        /// <param name="room">The room.</param>
+        /// <param name="location">The room.</param>
         /// <param name="message">The character's message.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task CheckMobCommunication(Character character, Room room, string message, CancellationToken cancellationToken = default)
+        public async Task CheckMobCommunication(Character character, KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default)
         {
-            var mobiles = this.GetMobilesInRoom(room);
+            var mobiles = this.GetMobilesInRoom(location);
 
             if (mobiles != null && mobiles.Count > 0)
             {
                 foreach (var mobile in mobiles)
                 {
-                    var situation = this.GetSituation(room, character, mobile);
+                    var situation = this.GetSituation(character, mobile);
 
                     var response = this.LanguageProcessor.Process(character, mobile, message, situation);
 
@@ -805,7 +786,7 @@ namespace Legendary.Engine
 
                         if (Users != null)
                         {
-                            var usersInRoom = Users.Where(u => u.Value.Character.Location.Equals(room));
+                            var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(location));
 
                             foreach (var user in usersInRoom)
                             {
@@ -827,7 +808,7 @@ namespace Legendary.Engine
                             {
                                 foreach (var user in Users)
                                 {
-                                    if (user.Value.Character.Location.Equals(room))
+                                    if (user.Value.Character.Location.InSamePlace(location))
                                     {
                                         await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                                     }

@@ -50,7 +50,7 @@ namespace Legendary.Engine.Models.Skills
             await Task.Run(
                 () =>
                 {
-                    actor.Character.Location = actor.Character.Home ?? Room.Default;
+                    actor.Character.Location = actor.Character.Home;
                 }, cancellationToken);
         }
 

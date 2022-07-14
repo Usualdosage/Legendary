@@ -22,11 +22,11 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the default room (for new characters).
         /// </summary>
-        public static Room Default
+        public static KeyValuePair<long, long> Default
         {
             get
             {
-                return new Room() { RoomId = 1, AreaId = 1 };
+                return new KeyValuePair<long, long>(1, 1);
             }
         }
 

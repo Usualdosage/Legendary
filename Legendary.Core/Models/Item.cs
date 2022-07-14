@@ -11,9 +11,12 @@ namespace Legendary.Core.Models
 {
     using System;
     using System.Collections.Generic;
+    using Legendary.Core.Contracts;
+    using Legendary.Core.Serializers;
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Represents a single item.
@@ -125,7 +128,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the location of the item.
         /// </summary>
-        public Room? Location { get; set; }
+        public KeyValuePair<long, long> Location { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the item.
