@@ -52,11 +52,11 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task Initialize()
         {
-            this.logger.Info("Populating the world with mobiles and items..");
+            this.logger.Info("Populating the world with mobiles and items..", null);
 
             await this.world.Populate();
 
-            this.logger.Info("Starting main loop...");
+            this.logger.Info("Starting main loop...", null);
 
             var timer = new System.Threading.Timer(
                 t =>
@@ -85,7 +85,7 @@ namespace Legendary.Engine
                     }
                     catch (Exception ex)
                     {
-                        this.logger.Debug(ex.ToString());
+                        this.logger.Debug(ex.ToString(), null);
                     }
                 },
                 null,
@@ -107,7 +107,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                this.logger.Error(exc);
+                this.logger.Error(exc, null);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                this.logger.Error(exc);
+                this.logger.Error(exc, null);
             }
         }
 
@@ -143,7 +143,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                this.logger.Error(exc);
+                this.logger.Error(exc, null);
             }
         }
     }

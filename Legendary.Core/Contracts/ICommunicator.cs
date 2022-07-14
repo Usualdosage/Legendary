@@ -62,6 +62,13 @@ namespace Legendary.Core.Contracts
         Room ResolveRoom(KeyValuePair<long, long> location);
 
         /// <summary>
+        /// Resolves which character someone is fighting. Could be a player or a mob.
+        /// </summary>
+        /// <param name="actor">The character.</param>
+        /// <returns>Character.</returns>
+        Character? ResolveFightingCharacter(Character actor);
+
+        /// <summary>
         /// Sends a global message to all connected sockets.
         /// </summary>
         /// <param name="message">The message.</param>

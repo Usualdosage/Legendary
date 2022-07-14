@@ -71,9 +71,9 @@ namespace Legendary.Engine
         public static void StartFighting(Character actor, Character target)
         {
             actor.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
-            actor.Fighting = target;
+            actor.Fighting = target.CharacterId;
             target.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
-            target.Fighting = actor;
+            target.Fighting = actor.CharacterId;
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace Legendary.Engine
                 foreach (var user in Communicator.Users)
                 {
                     var character = user.Value.Character;
-                    var target = user.Value.Character.Fighting;
+                    var target = this.communicator.ResolveFightingCharacter(character);
 
                     if (character != null && character.CharacterFlags.Contains(CharacterFlags.Fighting) && target != null)
                     {
@@ -409,7 +409,7 @@ namespace Legendary.Engine
 
                 if (room != null)
                 {
-                    this.logger.Debug($"{killer.FirstName} has killed {userData.Character.FirstName} in room {room.RoomId}, area {room.AreaId}!");
+                    this.logger.Info($"{killer.FirstName} has killed {userData.Character.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
 
                     // Generate the corpse.
                     this.GenerateCorpse(killer.Location, userData.Character);
@@ -593,17 +593,12 @@ namespace Legendary.Engine
 
                                 target.Equipment.Remove(randomGear);
                             }
-
-                            if (!target.IsNPC)
-                            {
-                                await this.communicator.SaveCharacter(target);
-                            }
                         }
                     }
                 }
                 catch (Exception exc)
                 {
-                    this.logger.Error(exc);
+                    this.logger.Error(exc, this.communicator);
                 }
             }
 
@@ -739,7 +734,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                this.logger.Error(exc);
+                this.logger.Error(exc, this.communicator);
             }
         }
     }

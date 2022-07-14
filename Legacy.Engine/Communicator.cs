@@ -143,7 +143,7 @@ namespace Legendary.Engine
                 if (character == null)
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.";
-                    this.logger.Info(message);
+                    this.logger.Info(message, this);
                     await this.Wizlog(message);
                     throw new Exception(message);
                 }
@@ -161,7 +161,7 @@ namespace Legendary.Engine
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.";
                     await this.Wizlog(message, cancellationToken);
-                    this.logger.Info(message);
+                    this.logger.Info(message, this);
                     await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!");
                     await this.Quit(connectedUser.Value.Value.Connection, connectedUser.Value.Value.Character.FirstName);
                     Users?.TryRemove(connectedUser.Value);
@@ -171,7 +171,7 @@ namespace Legendary.Engine
 
                 string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
                 await this.Wizlog(msg, cancellationToken);
-                this.logger.Info(msg);
+                this.logger.Info(msg, this);
 
                 // BUGFIX: Remove any fighting affects
                 userData.Character.Fighting = null;
@@ -223,7 +223,7 @@ namespace Legendary.Engine
 
                 string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
                 await this.Wizlog(logout, cancellationToken);
-                this.logger.Info(logout);
+                this.logger.Info(logout, this);
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
                 currentSocket.Dispose();
@@ -293,7 +293,7 @@ namespace Legendary.Engine
             }
 
             string message = $"{DateTime.UtcNow}: {player} has quit.";
-            this.logger.Info(message);
+            this.logger.Info(message, this);
             await this.Wizlog(message, cancellationToken);
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", cancellationToken);
         }
@@ -445,7 +445,7 @@ namespace Legendary.Engine
                 {
                     if (item == null)
                     {
-                        this.logger.Warn($"ShowRoomToPlayer: Null item found for item!");
+                        this.logger.Warn($"ShowRoomToPlayer: Null item found for item!", this);
                         return;
                     }
 
@@ -473,7 +473,7 @@ namespace Legendary.Engine
                 {
                     if (mob == null)
                     {
-                        this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!");
+                        this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!", this);
                         return;
                     }
 
@@ -570,7 +570,7 @@ namespace Legendary.Engine
                     }
                     catch
                     {
-                        this.logger.Warn("Mob tried to communicate with player but lost the socket handle.");
+                        this.logger.Warn("Mob tried to communicate with player but lost the socket handle.", this);
                     }
                 });
             }
@@ -664,6 +664,29 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public Character? ResolveFightingCharacter(Character actor)
+        {
+            if (actor.Fighting != null)
+            {
+                var user = Users?.FirstOrDefault(u => u.Value.Character.CharacterId == actor.Fighting).Value;
+
+                if (user != null)
+                {
+                    return user?.Character;
+                }
+                else
+                {
+                    var mobilesInRoom = this.GetMobilesInRoom(actor.Location);
+                    return mobilesInRoom?.FirstOrDefault(m => m.CharacterId == actor.Fighting);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public Item ResolveItem(long itemId)
         {
             return this.world.Items.Single(i => i.ItemId == itemId);
@@ -698,7 +721,14 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         public async Task SaveCharacter(Character character)
         {
-            await this.dataService.SaveCharacter(character);
+            try
+            {
+                await this.dataService.SaveCharacter(character);
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error(exc, this);
+            }
         }
 
         /// <inheritdoc/>
@@ -1056,7 +1086,7 @@ namespace Legendary.Engine
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex);
+                this.logger.Error(ex, this);
             }
         }
 
@@ -1097,7 +1127,7 @@ namespace Legendary.Engine
             }
             catch
             {
-                this.logger.Warn("Attempted to send information to disconnected sockets. Continuing.");
+                this.logger.Warn("Attempted to send information to disconnected sockets. Continuing.", this);
             }
         }
 

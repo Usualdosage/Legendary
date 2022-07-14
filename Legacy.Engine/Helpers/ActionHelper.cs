@@ -57,7 +57,7 @@ namespace Legendary.Engine.Helpers
                 var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
                 var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
 
-                if (valueAttributes != null)
+                if (valueAttributes != null && valueAttributes.Count() > 0)
                 {
                     var descAttribute = valueAttributes[0] as WearDescription;
                     if (descAttribute != null)

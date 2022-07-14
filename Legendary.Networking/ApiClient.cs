@@ -59,7 +59,7 @@ namespace Legendary.Networking
             }
             catch (Exception exc)
             {
-                this.logger.Error(exc);
+                this.logger.Error(exc, null);
                 return $"<h3>An Exception Occurred</h3><p>{exc}</p>";
             }
         }
@@ -80,7 +80,7 @@ namespace Legendary.Networking
             }
             catch (Exception exc)
             {
-                this.logger.Error(exc);
+                this.logger.Error(exc, null);
                 return string.Empty;
             }
         }

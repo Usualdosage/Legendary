@@ -10,6 +10,7 @@
 namespace Legendary.Engine.Contracts
 {
     using System;
+    using Legendary.Core.Contracts;
 
     /// <summary>
     /// Implementation contract for a logger.
@@ -20,44 +21,51 @@ namespace Legendary.Engine.Contracts
         /// Logs a message.
         /// </summary>
         /// <param name="message">The message.</param>
-        void Debug(string message);
+        /// <param name="communicator">The communicator.</param>
+        void Debug(string message, ICommunicator? communicator);
 
         /// <summary>
         /// Logs a message.
         /// </summary>
         /// <param name="message">The message.</param>
-        void Info(string message);
+        /// <param name="communicator">The communicator.</param>
+        void Info(string message, ICommunicator? communicator);
 
         /// <summary>
         /// Logs a message.
         /// </summary>
         /// <param name="message">The message.</param>
-        void Warn(string message);
+        /// <param name="communicator">The communicator.</param>
+        void Warn(string message, ICommunicator? communicator);
 
         /// <summary>
         /// Logs a message and an exception.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
-        void Warn(string message, Exception exception);
+        /// <param name="communicator">The communicator.</param>
+        void Warn(string message, Exception exception, ICommunicator? communicator);
 
         /// <summary>
         /// Logs a message and an exception.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
-        void Error(string message, Exception exception);
+        /// <param name="communicator">The communicator.</param>
+        void Error(string message, Exception exception, ICommunicator? communicator);
 
         /// <summary>
         /// Logs an exception.
         /// </summary>
         /// <param name="exception">The exception.</param>
-        void Error(Exception exception);
+        /// <param name="communicator">The communicator.</param>
+        void Error(Exception exception, ICommunicator? communicator);
 
         /// <summary>
         /// Logs an error message.
         /// </summary>
         /// <param name="message">The message.</param>
-        void Error(string message);
+        /// <param name="communicator">The communicator.</param>
+        void Error(string message, ICommunicator? communicator);
     }
 }

@@ -81,7 +81,7 @@ namespace Legendary.Engine.Processors
             }
             catch (Exception ex)
             {
-                this.logger.Error(ex);
+                this.logger.Error(ex, this.communicator);
                 await this.communicator.SendToPlayer(actor.Connection, "<span class='error'>Unable to process command. This has been logged.</span>", cancellationToken);
             }
         }

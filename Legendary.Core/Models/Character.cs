@@ -273,7 +273,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's followers.
         /// </summary>
-        public IList<Character> Followers { get; set; } = new List<Character>();
+        public IList<long> Followers { get; set; } = new List<long>();
 
         /// <summary>
         /// Gets or sets the character the player is following.
@@ -293,7 +293,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character this character (or mob) is currently fighting.
         /// </summary>
-        public Character? Fighting { get; set; }
+        public long? Fighting { get; set; }
 
         /// <summary>
         /// Gets or sets the base-64 image for this character.

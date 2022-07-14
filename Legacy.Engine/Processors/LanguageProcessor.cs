@@ -89,7 +89,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (this.WillEngage(character, mobile, input))
                     {
-                        this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.");
+                        this.logger.Debug($"{mobile.FirstName} will engage with {character.FirstName}.", this.communicator);
 
                         return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
                     }
@@ -99,19 +99,19 @@ namespace Legendary.Engine.Processors
                         var chance = this.random.Next(0, 100);
                         if (chance < 10)
                         {
-                            this.logger.Debug($"{mobile.FirstName} ignored {character.FirstName}.");
+                            this.logger.Debug($"{mobile.FirstName} ignored {character.FirstName}.", this.communicator);
                             return Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)];
                         }
                         else
                         {
-                            this.logger.Debug($"{mobile.FirstName} took no action.");
+                            this.logger.Debug($"{mobile.FirstName} took no action.", this.communicator);
                             return null;
                         }
                     }
                 }
                 else
                 {
-                    this.logger.Debug($"Target or mobile was null.");
+                    this.logger.Debug($"Target or mobile was null.", this.communicator);
                     return null;
                 }
             }
@@ -133,7 +133,7 @@ namespace Legendary.Engine.Processors
         {
             if (this.random.Next(0, 100) < 10)
             {
-                this.logger.Debug($"{mobile.FirstName} did a random action.");
+                this.logger.Debug($"{mobile.FirstName} did a random action.", this.communicator);
                 var action = Constants.EMOTE_ACTION[this.random.Next(0, Constants.EMOTE_ACTION.Count - 1)];
 
                 action = action.Replace("{0}", mobile.FirstName);
@@ -205,20 +205,20 @@ namespace Legendary.Engine.Processors
                 if (target.PlayerTarget?.FirstName == actor.FirstName)
                 {
                     chance += this.random.Next(60, 85);
-                    this.logger.Debug($"{target.FirstName} is engaged with {actor.FirstName}. Chance: {chance}.");
+                    this.logger.Debug($"{target.FirstName} is engaged with {actor.FirstName}. Chance: {chance}.", this.communicator);
                 }
                 else
                 {
                     // Different person speaking to the mob, give it a 10-25% additional chance to speak to the new character.
                     chance += this.random.Next(10, 25);
-                    this.logger.Debug($"{target.FirstName} is distracted. Chance: {chance}.");
+                    this.logger.Debug($"{target.FirstName} is distracted. Chance: {chance}.", this.communicator);
 
                     // Mob is engaged to a target, but someone else is speaking. 10% chance to engage with them instead.
                     if (target.PlayerTarget != null || target.PlayerTarget?.FirstName != actor.FirstName)
                     {
                         if (this.random.Next(0, 100) < 30)
                         {
-                            this.logger.Debug($"{target.FirstName} decided to engage {actor.FirstName}.");
+                            this.logger.Debug($"{target.FirstName} decided to engage {actor.FirstName}.", this.communicator);
                             return true;
                         }
                     }
@@ -227,7 +227,7 @@ namespace Legendary.Engine.Processors
                 // If the input contains the target name, there is a 50-80% increase in the odds it will speak.
                 if (message.Contains(target.FirstName))
                 {
-                    this.logger.Debug($"{target.FirstName} mentioned by name by {actor.FirstName}. Chance: {chance}.");
+                    this.logger.Debug($"{target.FirstName} mentioned by name by {actor.FirstName}. Chance: {chance}.", this.communicator);
                     chance += this.random.Next(50, 80);
                 }
 
@@ -236,7 +236,7 @@ namespace Legendary.Engine.Processors
 
                 if (engage)
                 {
-                    this.logger.Debug($"{target.FirstName} has become engaged with {actor.FirstName}. Chance: {chance}.");
+                    this.logger.Debug($"{target.FirstName} has become engaged with {actor.FirstName}. Chance: {chance}.", this.communicator);
 
                     // Set a flag on the target and actor showing they are engaged in conversation.
                     target.PlayerTarget = actor;
@@ -344,7 +344,9 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     // Word should be replaced with a random word. The generator returns only uppercase words.
-                    return this.generator.BuildSentence(testWord) + $"[{word}]";
+                    this.logger.Debug($"Replaced word from {actor} '{word}' with '{testWord}' while speaking with {target}.", this.communicator);
+
+                    return this.generator.BuildSentence(testWord);
                 }
             }
             else
