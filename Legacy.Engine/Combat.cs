@@ -209,7 +209,7 @@ namespace Legendary.Engine
                         }
 
                         // Update the player info.
-                        await this.communicator.ShowPlayerInfo(user.Value);
+                        await this.communicator.ShowPlayerInfo(user.Value, cancellationToken);
                     }
                 }
             }
@@ -229,7 +229,20 @@ namespace Legendary.Engine
                 return 0;
             }
 
-            // TODO: We need to calculate the hitdice and damdice based on the WEAPON if this isn't hand to hand.
+            int hitDice = 0;
+            int damDice = 0;
+
+            // If it's a spell, use the spell's hit/dam, otherwise, use the hit/dam of the character.
+            if (action.ActionType == ActionType.Spell)
+            {
+                hitDice = action.HitDice;
+                damDice = action.DamageDice;
+            }
+            else
+            {
+                hitDice = actor.HitDice;
+                damDice = actor.DamageDice;
+            }
 
             // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
             // If the player is 20, target is 10, damage modifier is doubled.
@@ -237,9 +250,9 @@ namespace Legendary.Engine
             double adjust = (actor.Level / target.Level) * action.DamageModifier;
 
             var damage = 0;
-            for (var x = 0; x < action.HitDice; x++)
+            for (var x = 0; x < hitDice; x++)
             {
-                damage += this.random.Next(1, action.DamageDice);
+                damage += this.random.Next(1, damDice);
             }
 
             if (this.DidSave(target, action))
@@ -487,32 +500,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Determines whether the target saved vs the attack type.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="action">The action to save against.</param>
-        /// <returns>True if the target saved.</returns>
-        public bool DidSave(Character target, IAction action)
-        {
-            var saveThrow = this.random.Next(1, 20);
-
-            // Critical failure.
-            if (saveThrow == 1)
-            {
-                return false;
-            }
-
-            switch (action.DamageType)
-            {
-                default:
-                    return saveThrow < target.Saves.Spell;
-                case Core.Types.DamageType.Energy:
-                case Core.Types.DamageType.Negative:
-                    return saveThrow < target.Saves.Negative;
-            }
-        }
-
-        /// <summary>
         /// Checks to see if a player's armor blocks a particular attack. If it blocks, apply damage to the armor.
         /// </summary>
         /// <param name="actor">The actor.</param>
@@ -534,6 +521,7 @@ namespace Legendary.Engine
             {
                 default:
                     var targetMagicPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Magic);
+                    targetMagicPct += target.AffectedBy.Sum(a => a.Magic ?? 0);
                     if (armorSavePct < targetMagicPct)
                     {
                         blocked = true;
@@ -542,6 +530,7 @@ namespace Legendary.Engine
                     break;
                 case DamageType.Pierce:
                     var targetPiercePct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Pierce);
+                    targetPiercePct += target.AffectedBy.Sum(a => a.Pierce ?? 0);
                     if (armorSavePct < targetPiercePct)
                     {
                         blocked = true;
@@ -550,6 +539,7 @@ namespace Legendary.Engine
                     break;
                 case DamageType.Slash:
                     var targetSlashPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Edged);
+                    targetSlashPct += target.AffectedBy.Sum(a => a.Slash ?? 0);
                     if (armorSavePct < targetSlashPct)
                     {
                         blocked = true;
@@ -558,6 +548,7 @@ namespace Legendary.Engine
                     break;
                 case DamageType.Blunt:
                     var targetBluntPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Blunt);
+                    targetBluntPct += target.AffectedBy.Sum(a => a.Blunt ?? 0);
                     if (armorSavePct < targetBluntPct)
                     {
                         blocked = true;
@@ -611,7 +602,7 @@ namespace Legendary.Engine
         /// <param name="target">The target.</param>
         /// <param name="action">The action to save against.</param>
         /// <returns>True if the target saved.</returns>
-        public bool DidSave(Mobile target, IAction action)
+        public bool DidSave(Character target, IAction action)
         {
             var saveThrow = this.random.Next(1, 20);
 
@@ -621,14 +612,37 @@ namespace Legendary.Engine
                 return false;
             }
 
+            int saves = 0;
+
             switch (action.DamageType)
             {
                 default:
-                    return saveThrow < target.Saves.Spell;
+                    {
+                        saves = target.SaveSpell;
+                        break;
+                    }
+
                 case Core.Types.DamageType.Energy:
                 case Core.Types.DamageType.Negative:
-                    return saveThrow < target.Saves.Negative;
+                    {
+                        saves = target.SaveNegative;
+                        break;
+                    }
+
+                case Core.Types.DamageType.Afflictive:
+                    {
+                        saves = target.SaveAfflictive;
+                        break;
+                    }
+
+                case Core.Types.DamageType.Maledictive:
+                    {
+                        saves = target.SaveMaledictive;
+                        break;
+                    }
             }
+
+            return saveThrow < saves;
         }
 
         /// <summary>
@@ -663,21 +677,6 @@ namespace Legendary.Engine
             };
 
             return message;
-        }
-
-        /// <summary>
-        /// If the action has an affect, applies that affect to the target.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="action">The action.</param>
-        public void ApplyAffect(Character target, IAction action)
-        {
-            bool hasEffect = target.AffectedBy.Any(a => a.Key == action);
-
-            if (!hasEffect && action.AffectDuration.HasValue)
-            {
-                target.AffectedBy.Add(action, action.AffectDuration.Value);
-            }
         }
 
         /// <summary>

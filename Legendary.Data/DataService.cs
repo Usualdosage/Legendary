@@ -12,6 +12,7 @@ namespace Legendary.Data
     using System;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
@@ -25,14 +26,17 @@ namespace Legendary.Data
     public class DataService : IDataService
     {
         private readonly IDBConnection dbConnection;
+        private readonly IRandom random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService"/> class.
         /// </summary>
         /// <param name="dbConnection">The database connection.</param>
-        public DataService(IDBConnection dbConnection)
+        /// <param name="random">The random number generator.</param>
+        public DataService(IDBConnection dbConnection, IRandom random)
         {
             this.dbConnection = dbConnection;
+            this.random = random;
         }
 
         /// <inheritdoc/>
@@ -53,7 +57,7 @@ namespace Legendary.Data
 
                 if (areas != null && characters != null && items != null && mobiles != null)
                 {
-                    return new World(areas, characters, items, mobiles);
+                    return new World(areas, characters, items, mobiles, this.random);
                 }
                 else
                 {
@@ -90,7 +94,7 @@ namespace Legendary.Data
                     return null;
                 }
             }
-            catch (Exception exc)
+            catch
             {
                 throw;
             }

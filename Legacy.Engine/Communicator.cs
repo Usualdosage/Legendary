@@ -15,6 +15,7 @@ namespace Legendary.Engine
     using System.IO;
     using System.Linq;
     using System.Net.WebSockets;
+    using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -65,7 +66,8 @@ namespace Legendary.Engine
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="world">The world to use in this comm instance.</param>
-        public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world)
+        /// <param name="random">The random number generator.</param>
+        public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world, IRandom random)
         {
             this.logger = logger;
             this.requestDelegate = requestDelegate;
@@ -73,9 +75,7 @@ namespace Legendary.Engine
             this.dataService = dataService;
             this.world = world;
             this.serverSettings = serverSettings;
-
-            // Create the random generator for weather and user effects.
-            this.random = new Random();
+            this.random = random;
 
             // Add public channels.
             this.Channels = new List<CommChannel>()
@@ -144,7 +144,6 @@ namespace Legendary.Engine
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) {ip} was not found.";
                     this.logger.Info(message, this);
-                    await this.Wizlog(message);
                     throw new Exception(message);
                 }
 
@@ -160,7 +159,6 @@ namespace Legendary.Engine
                 if (connectedUser?.Value != null)
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.";
-                    await this.Wizlog(message, cancellationToken);
                     this.logger.Info(message, this);
                     await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!");
                     await this.Quit(connectedUser.Value.Value.Connection, connectedUser.Value.Value.Character.FirstName);
@@ -170,7 +168,6 @@ namespace Legendary.Engine
                 Users?.TryAdd(socketId, userData);
 
                 string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
-                await this.Wizlog(msg, cancellationToken);
                 this.logger.Info(msg, this);
 
                 // BUGFIX: Remove any fighting affects
@@ -202,17 +199,25 @@ namespace Legendary.Engine
                         break;
                     }
 
-                    // Handle input from socket.
-                    var response = await this.ReceiveStringAsync(userData, cancellationToken);
-
-                    if (string.IsNullOrEmpty(response))
+                    try
                     {
-                        if (currentSocket.State != WebSocketState.Open)
-                        {
-                            break;
-                        }
+                        // Handle input from socket.
+                        var response = await this.ReceiveStringAsync(userData, cancellationToken);
 
-                        continue;
+                        if (string.IsNullOrEmpty(response))
+                        {
+                            if (currentSocket.State != WebSocketState.Open)
+                            {
+                                break;
+                            }
+
+                            continue;
+                        }
+                    }
+                    catch
+                    {
+                        this.logger.Info("A socket was closed or in an error state.", this);
+                        break;
                     }
                 }
 
@@ -222,7 +227,6 @@ namespace Legendary.Engine
                 this.RemoveFromChannels(socketId, dummy);
 
                 string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
-                await this.Wizlog(logout, cancellationToken);
                 this.logger.Info(logout, this);
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
@@ -294,16 +298,10 @@ namespace Legendary.Engine
 
             string message = $"{DateTime.UtcNow}: {player} has quit.";
             this.logger.Info(message, this);
-            await this.Wizlog(message, cancellationToken);
             await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", cancellationToken);
         }
 
-        /// <summary>
-        /// Returns true if the target is in the provided room.
-        /// </summary>
-        /// <param name="location">The location.</param>
-        /// <param name="target">The target.</param>
-        /// <returns>True if the target is in the room.</returns>
+        /// <inheritdoc/>
         public bool IsInRoom(KeyValuePair<long, long> location, Character target)
         {
             if (Users != null)
@@ -353,7 +351,14 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    await this.SendToPlayer(user.Connection, "You can't attack other players yet.", cancellationToken);
+                    this.logger.Info($"{user.Character.FirstName} has attacked {target.Value.Value.Character.FirstName} in room {user.Character.Location.Value}.", this);
+
+                    await this.SendToPlayer(user.Connection, $"You attack {target.Value.Value.Character.FirstName}!", cancellationToken);
+                    await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {target.Value.Value.Character.FirstName}!", cancellationToken);
+                    await this.SendToArea(user.Character.Location, string.Empty, $"{target.Value.Value.Character.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+
+                    // Start the fight.
+                    Combat.StartFighting(user.Character, target.Value.Value.Character);
                 }
             }
         }
@@ -861,27 +866,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Logs a message to wiznet.
-        /// </summary>
-        /// <param name="message">The message to log.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
-        protected async Task<CommResult> Wizlog(string message, CancellationToken cancellationToken = default)
-        {
-            var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == "wiznet");
-
-            if (comm != null && !comm.IsMuted)
-            {
-                foreach (var sub in comm.Subscribers)
-                {
-                    await this.SendToPlayer(sub.Value.Connection, $"<span class='wizmessage'>{DateTime.UtcNow}: {message}</span>", cancellationToken);
-                }
-            }
-
-            return CommResult.Ok;
-        }
-
-        /// <summary>
         /// Raises the InputReceived event.
         /// </summary>
         /// <param name="sender">The sender of the message (userdata).</param>
@@ -993,6 +977,11 @@ namespace Legendary.Engine
                                 return;
                             }
                         }
+                        else
+                        {
+                            await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                            return;
+                        }
                     }
                     else
                     {
@@ -1095,7 +1084,7 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        private async void Engine_Tick(object? sender, EventArgs e)
+        private void Engine_Tick(object? sender, EventArgs e)
         {
             try
             {
@@ -1108,22 +1097,22 @@ namespace Legendary.Engine
                         if (user.Value != null)
                         {
                             // Update the player info
-                            await this.ShowPlayerInfo(user.Value);
+                            this.ShowPlayerInfo(user.Value).Wait();
 
                             // See what's going on around the player.
                             if (user.Value.Environment != null)
                             {
-                                await user.Value.Environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+                                user.Value.Environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
                             }
 
                             // Autosave the user each tick.
-                            await this.SaveCharacter(user.Value);
+                            this.SaveCharacter(user.Value).Wait();
                         }
                     }
                 }
 
                 // Handle any changes in the world (item rot, movement of mobs, etc).
-                await this.world.ProcessWorldChanges(this, this.random);
+                this.world.ProcessWorldChanges(this, this.random).Wait();
             }
             catch
             {

@@ -174,11 +174,6 @@ body {
     font-family: 'BeyondWonderland', 'Comforter', cursive;
 }
 
-.player-armor {
-    font-size: 1.4em;
-    font-weight: bold;
-}
-
 .wear-table {
     border: none;
     width: 400px;
@@ -448,21 +443,29 @@ progress {
     display: block;
 }
 
-/* Combat Things */
+.player-affect {
+    text-indent: 10px;
+}
 
+.player-section {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.player-health {
+}
+
+/* Combat Things */
 .damage {
     color: indianred;
     font-weight: bold;
 }
 
 .damage_0 {
-    color: #666;
+    color: #aaa;
 }
 
 .spellWords {
     color: deeppink;
     font-weight: bold;
-}
-
-.player-health {
 }

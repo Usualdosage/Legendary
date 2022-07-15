@@ -41,23 +41,6 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
-        {
-            var spellWords = this.LanguageGenerator.BuildSentence("fireball");
-
-            if (target == null)
-            {
-                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
-            }
-            else
-            {
-                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}' at {target?.Character.FirstName}.", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand toward {target?.Character.FirstName} and utters the word, '{spellWords}'", cancellationToken);
-            }
-        }
-
-        /// <inheritdoc/>
         public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
         {
             if (target == null)
@@ -68,12 +51,6 @@ namespace Legendary.Engine.Models.Spells
             {
                 await this.DamageToTarget(actor, target, cancellationToken);
             }
-        }
-
-        /// <inheritdoc/>
-        public override Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
         }
     }
 }

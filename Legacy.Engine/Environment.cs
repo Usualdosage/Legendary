@@ -11,11 +11,13 @@ namespace Legendary.Engine
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Microsoft.CodeAnalysis;
 
     /// <summary>
     /// Represents the user environment.
@@ -44,21 +46,22 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="gameTicks">The game ticks.</param>
         /// <param name="gameHour">The game hour.</param>
-        /// <returns>Task.</returns>
-        public async Task ProcessEnvironmentChanges(int gameTicks, int gameHour)
+        public void ProcessEnvironmentChanges(int gameTicks, int gameHour)
         {
-            this.ProcessRecovery(this.connectedUser);
-            await this.ProcessTime(this.connectedUser, gameHour);
-            await this.ProcessWeather(this.connectedUser);
-            await this.ProcessMobiles(this.connectedUser);
-            await this.ProcessItemRot(this.connectedUser);
+            ProcessRecovery(this.connectedUser);
+
+            List<Task> tasks = new List<Task>();
+
+            tasks.Add(this.ProcessTime(this.connectedUser, gameHour));
+            tasks.Add(this.ProcessWeather(this.connectedUser));
+            tasks.Add(this.ProcessMobiles(this.connectedUser));
+            tasks.Add(this.ProcessItemRot(this.connectedUser));
+            tasks.Add(this.ProcessAffects(this.connectedUser));
+
+            Task.WaitAll(tasks.ToArray());
         }
 
-        /// <summary>
-        /// Restores a portion of the players health/mana/movement each tick.
-        /// </summary>
-        /// <param name="user">The user.</param>
-        private void ProcessRecovery(UserData user)
+        private static void ProcessRecovery(UserData user)
         {
             int standardHPRecover = Constants.STANDARD_HP_RECOVERY;
             int standardManaRecover = Constants.STANDARD_MANA_RECOVERY;
@@ -87,6 +90,22 @@ namespace Legendary.Engine
             user.Character.Health.Current += hitRestore;
         }
 
+        private async Task ProcessAffects(UserData user)
+        {
+            List<Effect> effectsToRemove = new List<Effect>();
+            foreach (var effect in user.Character.AffectedBy)
+            {
+                effect.Duration -= 1;
+
+                if (effect.Duration < 0)
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                }
+            }
+
+            user.Character.AffectedBy.RemoveAll(e => e.Duration < 0);
+        }
+
         /// <summary>
         /// Iterates over all user items that may decompose and removes them if they decay.
         /// </summary>
@@ -94,18 +113,53 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessItemRot(UserData userData)
         {
-            // TODO
+            foreach (var item in userData.Character.Inventory)
+            {
+                if (item.RotTimer == -1)
+                {
+                    continue;
+                }
+                else
+                {
+                    item.RotTimer -= 1;
+
+                    if (item.RotTimer == 0)
+                    {
+                        await this.communicator.SendToRoom(userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
+                    }
+                }
+            }
+
+            userData.Character.Inventory.RemoveAll(i => i.RotTimer == 0);
+
+            foreach (var item in userData.Character.Equipment)
+            {
+                if (item.RotTimer == -1)
+                {
+                    continue;
+                }
+                else
+                {
+                    item.RotTimer -= 1;
+
+                    if (item.RotTimer == 0)
+                    {
+                        await this.communicator.SendToRoom(userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
+                    }
+                }
+            }
+
+            userData.Character.Equipment.RemoveAll(i => i.RotTimer == 0);
         }
 
         private async Task ProcessMobiles(UserData userData)
         {
-            await this.communicator.CheckMobCommunication(userData.Character, userData.Character.Location, "stands here");
+            await this.communicator.CheckMobCommunication(userData.Character, userData.Character.Location, "is standing here");
         }
 
         private async Task ProcessTime(UserData userData, int gameHour)
         {
-            // TODO: Is the player inside?
-            var room = userData.Character.Location;
+            var room = this.communicator.ResolveRoom(userData.Character.Location);
 
             if (gameHour == 6)
             {
@@ -127,29 +181,60 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessWeather(UserData userData)
         {
-            var room = userData.Character.Location;
+            // TODO: Finish the weather.
+            var room = this.communicator.ResolveRoom(userData.Character.Location);
 
-            // TODO: Fix room flags, then check to see if the weather can be seen. Based on terrain.
             var weather = this.random.Next(1, 8);
 
-            switch (weather)
+            switch (room.Terrain)
             {
-                default:
+                case Core.Types.Terrain.Air:
                     break;
-                case 1:
-                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.");
+                case Core.Types.Terrain.Beach:
                     break;
-                case 2:
-                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.");
+                case Core.Types.Terrain.City:
                     break;
-                case 3:
-                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.");
+                case Core.Types.Terrain.Desert:
                     break;
-                case 4:
-                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.");
+                case Core.Types.Terrain.Ethereal:
+                    {
+                        switch (weather)
+                        {
+                            default:
+                                break;
+                            case 1:
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.");
+                                break;
+                            case 2:
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.");
+                                break;
+                            case 3:
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.");
+                                break;
+                            case 4:
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.");
+                                break;
+                            case 5:
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
+                                break;
+                        }
+
+                        break;
+                    }
+
+                case Core.Types.Terrain.Forest:
                     break;
-                case 5:
-                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
+                case Core.Types.Terrain.Grasslands:
+                    break;
+                case Core.Types.Terrain.Hills:
+                    break;
+                case Core.Types.Terrain.Jungle:
+                    break;
+                case Core.Types.Terrain.Mountains:
+                    break;
+                case Core.Types.Terrain.Snow:
+                    break;
+                case Core.Types.Terrain.Swamp:
                     break;
             }
         }

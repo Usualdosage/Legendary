@@ -23,6 +23,18 @@ namespace Legendary.Core.Models
     [BsonIgnoreExtraElements]
     public class Character
     {
+        private MaxCurrent str = new MaxCurrent(10, 10);
+        private MaxCurrent intg = new MaxCurrent(10, 10);
+        private MaxCurrent wis = new MaxCurrent(10, 10);
+        private MaxCurrent dex = new MaxCurrent(10, 10);
+        private MaxCurrent con = new MaxCurrent(10, 10);
+
+        private int saveDeath = 8;
+        private int saveSpell = 8;
+        private int saveMaledictive = 8;
+        private int saveNegative = 8;
+        private int saveAfflictive = 8;
+
         /// <summary>
         /// Gets or sets the Id.
         /// </summary>
@@ -154,32 +166,131 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's strength.
         /// </summary>
-        public MaxCurrent Str { get; set; } = new MaxCurrent(10, 10);
+        public MaxCurrent Str
+        {
+            get
+            {
+                return new MaxCurrent(this.str.Max, this.str.Current + this.AffectedBy.Sum(a => a.Str ?? 0));
+            }
+
+            set
+            {
+                this.str = value;
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the player's intelligence.
+        /// Gets or sets the player's strength.
         /// </summary>
-        public MaxCurrent Int { get; set; } = new MaxCurrent(10, 10);
+        public MaxCurrent Int
+        {
+            get
+            {
+                return new MaxCurrent(this.intg.Max, this.intg.Current + this.AffectedBy.Sum(a => a.Int ?? 0));
+            }
+
+            set
+            {
+                this.intg = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the player's wisdom.
         /// </summary>
-        public MaxCurrent Wis { get; set; } = new MaxCurrent(10, 10);
+        public MaxCurrent Wis
+        {
+            get
+            {
+                return new MaxCurrent(this.wis.Max, this.wis.Current + this.AffectedBy.Sum(a => a.Wis ?? 0));
+            }
+
+            set
+            {
+                this.wis = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the player's dexterity.
         /// </summary>
-        public MaxCurrent Dex { get; set; } = new MaxCurrent(10, 10);
+        public MaxCurrent Dex
+        {
+            get
+            {
+                return new MaxCurrent(this.dex.Max, this.dex.Current + this.AffectedBy.Sum(a => a.Dex ?? 0));
+            }
+
+            set
+            {
+                this.dex = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the player's constitution.
         /// </summary>
-        public MaxCurrent Con { get; set; } = new MaxCurrent(10, 10);
+        public MaxCurrent Con
+        {
+            get
+            {
+                return new MaxCurrent(this.con.Max, this.con.Current + this.AffectedBy.Sum(a => a.Con ?? 0));
+            }
+
+            set
+            {
+                this.con = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the alignment.
         /// </summary>
         public Alignment Alignment { get; set; } = Alignment.Neutral;
+
+        /// <summary>
+        /// Gets the hit dice.
+        /// </summary>
+        public int HitDice
+        {
+            get
+            {
+                double hitDice = Constants.STANDARD_PLAYER_HITDICE;
+
+                // Players get an additional .5 hit dice, rounded up, for each dexterity over 12.
+                hitDice += Math.Round((this.Dex.Current - 12) * .5, 0);
+
+                // Sum up all hit dice modifiers for their equipment they are wearing.
+                hitDice += this.Equipment.Sum(s => s.HitDice);
+
+                // Sum up any hit modifiers the user has as an effect.
+                hitDice += this.AffectedBy.Sum(s => s.HitDice ?? 0);
+
+                return (int)hitDice;
+            }
+        }
+
+        /// <summary>
+        /// Gets the damage dice.
+        /// </summary>
+        public int DamageDice
+        {
+            get
+            {
+                double damDice = Constants.STANDARD_PLAYER_DAMDICE;
+
+                // Players get an additional .5 damage dice, rounded up, for each strength over 12.
+                damDice += Math.Round((this.Str.Current - 12) * .5, 0);
+
+                // Sum up all damage dice modifiers for their equipment they are wearing.
+                damDice += this.Equipment.Sum(s => s.DamageDice);
+
+                // Sum up any damage modifiers the user has as an effect.
+                damDice += this.AffectedBy.Sum(s => s.DamageDice ?? 0);
+
+                return (int)damDice;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the ethos.
@@ -283,12 +394,87 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.
         /// </summary>
-        public IDictionary<IAction, int> AffectedBy { get; set; } = new Dictionary<IAction, int>();
+        public List<Effect> AffectedBy { get; set; } = new List<Effect>();
 
         /// <summary>
-        /// Gets or sets the player's saving spells.
+        /// Gets or sets the save vs. spell.
         /// </summary>
-        public Saves Saves { get; set; } = new Saves();
+        public int SaveSpell
+        {
+            get
+            {
+                return this.saveSpell + this.AffectedBy.Sum(a => a.Spell ?? 0);
+            }
+
+            set
+            {
+                this.saveSpell = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the save vs. negative.
+        /// </summary>
+        public int SaveNegative
+        {
+            get
+            {
+                return this.saveNegative + this.AffectedBy.Sum(a => a.Negative ?? 0);
+            }
+
+            set
+            {
+                this.saveNegative = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the save vs. maledictive.
+        /// </summary>
+        public int SaveMaledictive
+        {
+            get
+            {
+                return this.saveMaledictive + this.AffectedBy.Sum(a => a.Maledictive ?? 0);
+            }
+
+            set
+            {
+                this.saveMaledictive = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the save vs. afflictive.
+        /// </summary>
+        public int SaveAfflictive
+        {
+            get
+            {
+                return this.saveAfflictive + this.AffectedBy.Sum(a => a.Afflictive ?? 0);
+            }
+
+            set
+            {
+                this.saveAfflictive = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the save vs. death.
+        /// </summary>
+        public int SaveDeath
+        {
+            get
+            {
+                return this.saveDeath + this.AffectedBy.Sum(a => a.Death ?? 0);
+            }
+
+            set
+            {
+                this.saveDeath = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the character this character (or mob) is currently fighting.
@@ -338,6 +524,16 @@ namespace Legendary.Core.Models
         public SpellProficiency? GetSpellProficiency(string name)
         {
             return this.Spells.FirstOrDefault(sk => sk.SpellName?.ToLower() == name.ToLower());
+        }
+
+        /// <summary>
+        /// Gets whether this character is affected by an action.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <returns>True if affected.</returns>
+        public bool IsAffectedBy(IAction action)
+        {
+            return this.AffectedBy.Any(a => a.Name == action.Name);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Legendary.Engine.Models
         }
 
         /// <inheritdoc/>
-        public string? Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <inheritdoc/>
         public string? DamageNoun { get; set; }
@@ -100,9 +100,20 @@ namespace Legendary.Engine.Models
         }
 
         /// <inheritdoc/>
-        public virtual Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public virtual async Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            var spellWords = this.LanguageGenerator.BuildSentence(this.Name);
+
+            if (target == null)
+            {
+                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
+            }
+            else
+            {
+                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}' at {target?.Character.FirstName}.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand toward {target?.Character.FirstName} and utters the word, '{spellWords}'", cancellationToken);
+            }
         }
 
         /// <inheritdoc/>
@@ -111,6 +122,7 @@ namespace Legendary.Engine.Models
         /// <inheritdoc/>
         public virtual Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
         {
+            actor.Character.Mana.Current -= this.ManaCost;
             return Task.CompletedTask;
         }
     }

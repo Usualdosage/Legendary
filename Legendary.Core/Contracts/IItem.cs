@@ -1,4 +1,4 @@
-﻿// <copyright file="Item.cs" company="Legendary™">
+﻿// <copyright file="IItem.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -7,26 +7,23 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Core.Models
+namespace Legendary.Core.Contracts
 {
     using System;
     using System.Collections.Generic;
-    using Legendary.Core.Contracts;
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
-    using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents a single item.
+    /// Implementation contract for an item.
     /// </summary>
-    [BsonIgnoreExtraElements]
-    public class Item : IItem
+    public interface IItem
     {
         /// <summary>
-        /// Gets the unique ID of this character for generating a unique character ID.
+        /// Gets the unique ID of this item for generating a unique item ID.
         /// </summary>
-        public Guid UniqueId { get => Guid.NewGuid(); }
+        Guid UniqueId { get; }
 
         /// <summary>
         /// Gets or sets the ID of the item.
@@ -42,106 +39,101 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
-        public string Name { get; set; } = string.Empty;
+        string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the level.
         /// </summary>
-        public int Level { get; set; }
+        int Level { get; set; }
 
         /// <summary>
         /// Gets or sets the short description.
         /// </summary>
-        public string? ShortDescription { get; set; }
+        string? ShortDescription { get; set; }
 
         /// <summary>
         /// Gets or sets the long description.
         /// </summary>
-        public string? LongDescription { get; set; }
+        string? LongDescription { get; set; }
 
         /// <summary>
         /// Gets or sets the weight of the item.
         /// </summary>
-        public long Weight { get; set; }
+        long Weight { get; set; }
 
         /// <summary>
         ///  Gets or sets the durability of the armor.
         /// </summary>
-        public MaxCurrent Durability { get; set; } = new MaxCurrent(0, 0);
+        MaxCurrent Durability { get; set; }
 
         /// <summary>
         /// Gets or sets the percent chance to block piercing attacks.
         /// </summary>
-        public int Pierce { get; set; } = 0;
+        int Pierce { get; set; }
 
         /// <summary>
         /// Gets or sets the percent chance to block blunt attacks.
         /// </summary>
-        public int Blunt { get; set; } = 0;
+        int Blunt { get; set; }
 
         /// <summary>
         /// Gets or sets the percent chance to block edged attacks.
         /// </summary>
-        public int Edged { get; set; } = 0;
+        int Edged { get; set; }
 
         /// <summary>
         /// Gets or sets the percent chance to block magic attacks.
         /// </summary>
-        public int Magic { get; set; } = 0;
+        int Magic { get; set; }
 
         /// <summary>
         /// Gets or sets the item type.
         /// </summary>
-        public ItemType ItemType { get; set; }
+        ItemType ItemType { get; set; }
 
         /// <summary>
         /// Gets or sets the hit dice.
         /// </summary>
-        public int HitDice { get; set; } = 0;
+        int HitDice { get; set; }
 
         /// <summary>
         /// Gets or sets the damage dice.
         /// </summary>
-        public int DamageDice { get; set; } = 0;
+        int DamageDice { get; set; }
 
         /// <summary>
         /// Gets or sets the damage modifier.
         /// </summary>
-        public int Modifier { get; set; } = 0;
+        int Modifier { get; set; }
 
         /// <summary>
         /// Gets or sets the damage type.
         /// </summary>
-        public DamageType DamageType { get; set; }
+        DamageType DamageType { get; set; }
 
         /// <summary>
         /// Gets or sets the armor flags.
         /// </summary>
-        public IList<ItemFlags> ItemFlags { get; set; } = new List<ItemFlags>();
+        IList<ItemFlags> ItemFlags { get; set; }
 
         /// <summary>
         /// Gets or sets the wear location(s) of this equipment.
         /// </summary>
-        public IList<WearLocation> WearLocation { get; set; } = new List<WearLocation>();
+        IList<WearLocation> WearLocation { get; set; }
 
         /// <summary>
         /// Gets or sets the location of the item.
         /// </summary>
-        public KeyValuePair<long, long> Location { get; set; }
+        KeyValuePair<long, long> Location { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the item.
         /// </summary>
-        public long Value { get; set; } = 0;
+        long Value { get; set; }
 
         /// <summary>
         /// Gets or sets the time until this item rots into dust (in ticks).
         /// </summary>
-        public int RotTimer { get; set; } = -1;
-
-        /// <summary>
-        /// Gets or sets a list of things this item contains (if it's a container).
-        /// </summary>
-        public List<IItem>? Contains { get; set; }
+        int RotTimer { get; set; }
     }
 }

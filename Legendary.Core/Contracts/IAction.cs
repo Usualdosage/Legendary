@@ -23,7 +23,7 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets the name of the action.
         /// </summary>
-        string? Name { get; set; }
+        string Name { get; set; }
 
         /// <summary>
         /// Gets the action type.

@@ -68,5 +68,15 @@ namespace Legendary.Core.Types
         /// Negative.
         /// </summary>
         Negative = 10,
+
+        /// <summary>
+        /// Afflictive.
+        /// </summary>
+        Afflictive = 11,
+
+        /// <summary>
+        /// Maledictive.
+        /// </summary>
+        Maledictive = 12,
     }
 }

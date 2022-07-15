@@ -15,6 +15,7 @@ namespace Legendary.Engine.Processors
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
@@ -606,6 +607,14 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        private async Task EquipItem(UserData actor, string verb, Item item, CancellationToken cancellationToken)
+        {
+            // Equip the item.
+            actor.Character.Equipment.Add(item);
+            await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} {verb}s {item.Name}.", cancellationToken);
+        }
+
         private async Task DoWear(UserData actor, string[] args, CancellationToken cancellationToken)
         {
             // wear <argument>
@@ -622,14 +631,13 @@ namespace Legendary.Engine.Processors
 
                     foreach (var item in inventoryCanWear)
                     {
-                        // You have to WIELD or DUAL WIELD weapons.
-                        if (item.ItemType != ItemType.Weapon)
+                        if (item.WearLocation.Contains(WearLocation.None) || item.WearLocation.Contains(WearLocation.Inventory))
                         {
-                            // Equip the item.
-                            actor.Character.Equipment.Add(item);
-                            actor.Character.Inventory.Remove(item);
-                            await this.communicator.SendToPlayer(actor.Connection, $"You wear {item.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {item.Name}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't wear {item.Name}.", cancellationToken);
+                        }
+                        else if (item.ItemType != ItemType.Weapon)
+                        {
+                            await this.EquipItem(actor, "wear", item, cancellationToken);
                         }
                     }
 
@@ -641,6 +649,12 @@ namespace Legendary.Engine.Processors
 
                     if (target != null)
                     {
+                        if (target.WearLocation.Contains(WearLocation.None) || target.WearLocation.Contains(WearLocation.Inventory))
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't wear {target.Name}.", cancellationToken);
+                            return;
+                        }
+
                         var equipmentToReplace = new List<Item>();
 
                         foreach (var wearLocation in target.WearLocation)
@@ -650,20 +664,17 @@ namespace Legendary.Engine.Processors
                             if (targetLocationItem == null)
                             {
                                 // Equip the item.
-                                actor.Character.Equipment.Add(target);
                                 actor.Character.Inventory.Remove(target);
-                                await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {target.Name}.", cancellationToken);
+                                await this.EquipItem(actor, "wear", target, cancellationToken);
                             }
                             else
                             {
                                 // Swap out the equipment.
                                 equipmentToReplace.Add(targetLocationItem);
-                                actor.Character.Equipment.Add(target);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You remove {targetLocationItem.Name}.", cancellationToken);
-                                await this.communicator.SendToPlayer(actor.Connection, $"You wear {target.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {targetLocationItem.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wears {target.Name}.", cancellationToken);
+
+                                await this.EquipItem(actor, "wear", target, cancellationToken);
                             }
                         }
 
@@ -702,15 +713,25 @@ namespace Legendary.Engine.Processors
                 {
                     if (target.WearLocation.Contains(WearLocation.Wielded))
                     {
-                        // Equip the item.
-                        actor.Character.Equipment.Add(target);
-                        actor.Character.Inventory.Remove(target);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You wield {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} wields {target.Name}.", cancellationToken);
-                    }
+                        var targetLocationItem = actor.Character.Equipment.FirstOrDefault(a => a.WearLocation.Contains(WearLocation.Wielded));
 
-                    // TODO: Remove what was previously there and place in inventory.
-                    await this.communicator.SaveCharacter(actor);
+                        if (targetLocationItem == null)
+                        {
+                            // Equip the item.
+                            actor.Character.Inventory.Remove(target);
+                            await this.EquipItem(actor, "wield", target, cancellationToken);
+                        }
+                        else
+                        {
+                            // Swap out the equipment.
+                            await this.communicator.SendToPlayer(actor.Connection, $"You stops wielding {targetLocationItem.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} stops wielding {targetLocationItem.Name}.", cancellationToken);
+                            actor.Character.Equipment.Remove(targetLocationItem);
+                            actor.Character.Inventory.Add(targetLocationItem);
+
+                            await this.EquipItem(actor, "wield", target, cancellationToken);
+                        }
+                    }
                 }
                 else
                 {
@@ -810,10 +831,17 @@ namespace Legendary.Engine.Processors
                 {
                     if (item != null)
                     {
-                        user.Character.Inventory.Add(item.Clone());
-                        await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
-                        itemsToRemove.Add(item);
+                        if (item.WearLocation.Contains(WearLocation.None))
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"You can't get {item.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            user.Character.Inventory.Add(item.Clone());
+                            await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
+                            itemsToRemove.Add(item);
+                        }
                     }
                 }
 
@@ -836,10 +864,18 @@ namespace Legendary.Engine.Processors
 
                 if (item != null)
                 {
-                    user.Character.Inventory.Add(item.Clone());
-                    await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
-                    await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
-                    itemsToRemove.Add(item);
+                    if (item.WearLocation.Contains(WearLocation.None))
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You can't get {item.Name}.", cancellationToken);
+                        return;
+                    }
+                    else
+                    {
+                        user.Character.Inventory.Add(item.Clone());
+                        await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} gets {item.Name}.", cancellationToken);
+                        itemsToRemove.Add(item);
+                    }
                 }
                 else
                 {
@@ -1045,8 +1081,7 @@ namespace Legendary.Engine.Processors
 
                     user.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
 
-                    // TODO: Update this based on the terrain.
-                    user.Character.Movement.Current -= 1;
+                    user.Character.Movement.Current -= this.GetTerrainMovementPenalty(newRoom);
 
                     await this.communicator.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} enters.", cancellationToken);
                     await this.communicator.ShowRoomToPlayer(user, cancellationToken);
@@ -1062,6 +1097,25 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        private int GetTerrainMovementPenalty(Room room)
+        {
+            switch (room.Terrain)
+            {
+                default:
+                    return 1;
+                case Core.Types.Terrain.Beach:
+                case Core.Types.Terrain.Desert:
+                case Core.Types.Terrain.Jungle:
+                    return 2;
+                case Core.Types.Terrain.Ethereal:
+                    return 0;
+                case Core.Types.Terrain.Swamp:
+                case Core.Types.Terrain.Mountains:
+                case Core.Types.Terrain.Snow:
+                    return 3;
+            }
+        }
+
         /// <summary>
         /// Shows the players score information.
         /// </summary>
@@ -1073,11 +1127,22 @@ namespace Legendary.Engine.Processors
             StringBuilder sb = new ();
 
             List<Item> equipment = user.Character.Equipment;
+            List<Effect> effects = user.Character.AffectedBy;
+
+            int pierceTotal = equipment.Sum(a => a?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
+            int slashTotal = equipment.Sum(a => a?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
+            int bluntTotal = equipment.Sum(a => a?.Blunt ?? 0) + effects.Sum(a => a?.Blunt ?? 0);
+            int magicTotal = equipment.Sum(a => a?.Magic ?? 0) + effects.Sum(a => a?.Magic ?? 0);
 
             sb.Append("<div class='player-score'><table><tr><td colspan='4'>");
+
             sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
+
             sb.Append($"<tr><td colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from The Void.</td></tr>");
+
             sb.Append($"<tr><td colspan='2'>You are {user.Character.Age} years of age.</td><td>Experience:</td><td>{user.Character.Experience}</td></tr>");
+
+            sb.Append($"<tr><td class='player-section' colspan='4'>Vital Statistics</td></tr>");
 
             sb.Append($"<tr><td>Health:</td><td>{user.Character.Health.Current}/{user.Character.Health.Max}</td><td>Str:</td><td>{user.Character.Str}</td></tr>");
 
@@ -1089,13 +1154,29 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td colspan='2'>&nbsp;</td><td>Con:</td><td>{user.Character.Con}</td></tr>");
 
-            sb.Append($"<tr><td class='player-armor' colspan='4'>Armor</td></tr>");
+            sb.Append($"<tr><td class='player-section' colspan='4'>Combat Rolls</td></tr>");
 
-            sb.Append($"<tr><td>Pierce:</td><td>{equipment.Sum(a => a?.Pierce)}%</td><td>Blunt:</td><td>{equipment.Sum(a => a?.Blunt)}%</td></tr>");
+            sb.Append($"<tr><td>Hit dice:</td><td>{user.Character.HitDice}</td><td>Damage dice:</td><td>{user.Character.DamageDice}</td></tr>");
 
-            sb.Append($"<tr><td>Edged:</td><td>{equipment.Sum(a => a?.Edged)}%</td><td>Magic:</td><td>{equipment.Sum(a => a?.Magic)}%</td></tr>");
+            sb.Append($"<tr><td class='player-section' colspan='4'>Armor</td></tr>");
 
-            sb.Append($"<tr><td colspan='4'>You are not affected by any skills or spells.</td></tr>");
+            sb.Append($"<tr><td>Pierce:</td><td>{pierceTotal}%</td><td>Blunt:</td><td>{bluntTotal}%</td></tr>");
+
+            sb.Append($"<tr><td>Edged:</td><td>{slashTotal}%</td><td>Magic:</td><td>{magicTotal}%</td></tr>");
+
+            sb.Append($"<tr><td class='player-armor' colspan='4'>Spell Affects</td></tr>");
+
+            if (user.Character.AffectedBy.Count > 0)
+            {
+                foreach (var effect in user.Character.AffectedBy)
+                {
+                    sb.Append($"<tr><td colspan='4' class='player-affect'>- {effect.Name} for {effect.Duration} hours.</td></tr>");
+                }
+            }
+            else
+            {
+                sb.Append($"<tr><td colspan='4'>You are not affected by anything.</td></tr>");
+            }
 
             sb.Append("</table></div>");
 

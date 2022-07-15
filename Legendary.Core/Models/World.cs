@@ -16,6 +16,7 @@ namespace Legendary.Core.Models
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
     using MongoDB.Driver;
 
     /// <summary>
@@ -27,6 +28,7 @@ namespace Legendary.Core.Models
         private readonly IMongoCollection<Character> characters;
         private readonly IMongoCollection<Item> items;
         private readonly IMongoCollection<Mobile> mobiles;
+        private readonly IRandom random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
@@ -35,12 +37,14 @@ namespace Legendary.Core.Models
         /// <param name="characters">The characters.</param>
         /// <param name="items">The items.</param>
         /// <param name="mobiles">The mobs.</param>
-        public World(IMongoCollection<Area> areas, IMongoCollection<Character> characters, IMongoCollection<Item> items, IMongoCollection<Mobile> mobiles)
+        /// <param name="random">The random number generator.</param>
+        public World(IMongoCollection<Area> areas, IMongoCollection<Character> characters, IMongoCollection<Item> items, IMongoCollection<Mobile> mobiles, IRandom random)
         {
             this.areas = areas;
             this.characters = characters;
             this.items = items;
             this.mobiles = mobiles;
+            this.random = random;
 
             this.Areas = new HashSet<Area>(this.GetAllAreas());
             this.Items = new HashSet<Item>(this.GetAllItems());
@@ -125,9 +129,34 @@ namespace Legendary.Core.Models
                         {
                             if (!mobile.CharacterFlags.Contains(Types.CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(Types.CharacterFlags.Charmed))
                             {
-                                // TODO: Get a random chance to move.
+                                if (mobile.MobileFlags.Any(a => a == Types.MobileFlags.Wander))
+                                {
+                                    // Mobiles have a 20% chance each tick to move around.
+                                    var move = this.random.Next(0, 100);
 
-                                // TODO: Get a random direction to move to.
+                                    if (move <= 90)
+                                    {
+                                        var randomExitNumber = this.random.Next(0, room.Exits.Count);
+
+                                        var exit = room.Exits[randomExitNumber];
+
+                                        var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
+                                        var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
+
+                                        if (newArea != null && newRoom != null)
+                                        {
+                                            string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                                            await communicator.SendToRoom(mobile.Location, string.Empty, $"{mobile.FirstName} leaves {dir}.", cancellationToken);
+
+                                            room.Mobiles.Remove(mobile);
+                                            mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+                                            var placeInRoom = communicator.ResolveRoom(mobile.Location);
+                                            placeInRoom.Mobiles.Add(mobile);
+
+                                            await communicator.SendToRoom(mobile.Location, string.Empty, $"{mobile.FirstName} enters.", cancellationToken);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

@@ -52,6 +52,16 @@ namespace Legendary.Core
         public const int SLEEP_RECOVERY_MULTIPLIER = 5;
 
         /// <summary>
+        /// The standard hit dice for any player.
+        /// </summary>
+        public const int STANDARD_PLAYER_HITDICE = 1;
+
+        /// <summary>
+        /// The standard damage dice for any player.
+        /// </summary>
+        public const int STANDARD_PLAYER_DAMDICE = 4;
+
+        /// <summary>
         /// What mobiles will say when they have a connection error to the AI server.
         /// </summary>
         public static readonly List<string> CONNECTION_ERROR = new List<string>()
