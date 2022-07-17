@@ -1,5 +1,6 @@
 ﻿
-class LegacyClient {
+class LegendaryClient {
+
     constructor() {
     }
 
@@ -8,6 +9,8 @@ class LegacyClient {
         var wsUri = protocol + "//" + window.location.host;
         var socket = new WebSocket(wsUri);
         let commands = [];
+        const $console = $("#console");
+        const $roomImage = $(".loader").remove();
 
         socket.onopen = e => {
             console.log("Connected to Legendary!", e);
@@ -23,38 +26,76 @@ class LegacyClient {
 
         socket.onmessage = function (e) {
 
-            var $roomImage = $(".loader").remove();
+            var message = e.data.toString();
 
-            var $console = $("#console");
+            if (message.startsWith("[AUDIO]")) {
+            
+                var audioParts = message.split('|');
+                var channel = audioParts[1];
+                var sound = audioParts[2];
 
-            $console.append("<span class='message'>" + e.data + "</span>");
+                var audioChannel = "channel" + channel;
+                var audioElem = document.getElementById(audioChannel);
+                audioElem.addEventListener("ended", () => {
+                    audioElem.currentTime = 0;       
+                });
 
-            // Autoscroll
+                if (audioElem != null) {
+                    // If it's not playing, go ahead and start.
+                    if (audioElem.currentTime === 0) {
+                        audioElem.setAttribute("src", sound);
 
-            $console.prop("scrollTop", $console.prop("scrollHeight"));
+                        var promise = audioElem.play();
 
-            // Autotrim if there are more than 250 messages
-
-            var $remove = $(".message");
-
-            if ($remove.length > 250) {
-                $remove[0].remove();
+                        if (promise !== undefined) {
+                            promise.then(_ => {
+                                if (channel === 0) {
+                                    audioElem.volume = 0.2;
+                                }
+                                else {
+                                    audioElem.volume = 1.0;
+                                }
+                            }).catch(error => {
+                                // Autoplay was prevented, no sound for you.
+                            });
+                        }
+                    }
+                    else {
+                        return;
+                    }
+                }
+                return;
             }
+            else {
+                $console.append("<span class='message'>" + message + "</span>");
 
-            // Remove all but 1 of the room images (they stack)
+                // Autoscroll
 
-            var $roomImage = $(".room-image");
+                $console.prop("scrollTop", $console.prop("scrollHeight"));
 
-            for (var x = 0; x < $roomImage.length - 1; x++) {
-                $roomImage[x].remove();
-            }
+                // Autotrim if there are more than 250 messages
 
-            // Remove all but 1 of the player info panels (they stack)
+                var $remove = $(".message");
 
-            var $playerInfo = $(".player-info");
+                if ($remove.length > 250) {
+                    $remove[0].remove();
+                }
 
-            for (var x = 0; x < $playerInfo.length - 1; x++) {
-                $playerInfo[x].remove();
+                // Remove all but 1 of the room images (they stack)
+
+                var $roomImage = $(".room-image");
+
+                for (var x = 0; x < $roomImage.length - 1; x++) {
+                    $roomImage[x].remove();
+                }
+
+                // Remove all but 1 of the player info panels (they stack)
+
+                var $playerInfo = $(".player-info");
+
+                for (var x = 0; x < $playerInfo.length - 1; x++) {
+                    $playerInfo[x].remove();
+                }
             }
         };
 

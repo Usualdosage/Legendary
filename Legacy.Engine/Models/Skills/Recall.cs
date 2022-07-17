@@ -41,7 +41,7 @@ namespace Legendary.Engine.Models.Skills
         public override async Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
         {
             await this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.", cancellationToken);
-            await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.", cancellationToken);
+            await this.Communicator.SendToRoom(null, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.", cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -50,6 +50,7 @@ namespace Legendary.Engine.Models.Skills
             await Task.Run(
                 () =>
                 {
+                    this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/recall.mp3", cancellationToken);
                     actor.Character.Location = actor.Character.Home;
                 }, cancellationToken);
         }

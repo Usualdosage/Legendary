@@ -41,6 +41,16 @@ namespace Legendary.Core.Contracts
         Task Invoke(HttpContext context);
 
         /// <summary>
+        /// Send a sound file to the console.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="channel">The sound channel.</param>
+        /// <param name="sound">The url of the sound.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task PlaySound(Character user, AudioChannel channel, string sound, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Resolves a given player to the connected user, given that the character is a player, and not a mobile.
         /// </summary>
         /// <param name="character">The character.</param>
@@ -155,12 +165,13 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the sender.
         /// </summary>
+        /// <param name="sender">The sender.</param>
         /// <param name="location">The room.</param>
         /// <param name="socketId">The socket ID of the sender.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToRoom(Character? sender, KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the actor and target.
@@ -250,6 +261,13 @@ namespace Legendary.Core.Contracts
         /// <param name="location">The location.</param>
         /// <returns>List of mobiles.</returns>
         List<Mobile>? GetMobilesInRoom(KeyValuePair<long, long> location);
+
+        /// <summary>
+        /// Gets all of the mobiles currently in the given area.
+        /// </summary>
+        /// <param name="areaId">The area.</param>
+        /// <returns>List of mobiles.</returns>
+        List<Mobile>? GetMobilesInArea(long areaId);
 
         /// <summary>
         /// Gets all of the items currently in the given location.

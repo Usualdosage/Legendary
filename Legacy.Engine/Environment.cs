@@ -125,7 +125,7 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
+                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
                     }
                 }
             }
@@ -144,7 +144,7 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
+                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
                     }
                 }
             }

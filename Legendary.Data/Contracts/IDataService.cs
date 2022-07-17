@@ -12,6 +12,7 @@ namespace Legendary.Data.Contracts
     using System;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using MongoDB.Driver;
 
@@ -21,10 +22,24 @@ namespace Legendary.Data.Contracts
     public interface IDataService
     {
         /// <summary>
-        /// Loads the world into memory.
+        /// Gets the areas.
         /// </summary>
-        /// <returns>The current world.</returns>
-        public World LoadWorld();
+        public IMongoCollection<Area>? Areas { get; }
+
+        /// <summary>
+        /// Gets the items.
+        /// </summary>
+        public IMongoCollection<Item>? Items { get; }
+
+        /// <summary>
+        /// Gets the mobiles.
+        /// </summary>
+        public IMongoCollection<Mobile>? Mobiles { get; }
+
+        /// <summary>
+        /// Gets the characters.
+        /// </summary>
+        public IMongoCollection<Character>? Characters { get; }
 
         /// <summary>
         /// Finds a character using the given filter.
@@ -62,7 +77,7 @@ namespace Legendary.Data.Contracts
         /// </summary>
         /// <param name="mobile">The mobile.</param>
         /// <returns>Task.</returns>
-        Task<Character?> CreateMobile(Character mobile);
+        Task<Mobile?> CreateMobile(Mobile mobile);
 
         /// <summary>
         /// Tests that this instance can connect to Mongo.

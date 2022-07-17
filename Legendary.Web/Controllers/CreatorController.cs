@@ -95,7 +95,7 @@ namespace Legendary.Web.Controllers
         /// <param name="mob">The mob.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateMob(Character mob)
+        public async Task<IActionResult> CreateMob(Mobile mob)
         {
             if (mob != null)
             {

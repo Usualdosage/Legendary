@@ -47,6 +47,13 @@ namespace Legendary.Core.Contracts
         Task ProcessWorldChanges(ICommunicator communicator, IRandom random, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Cleanup. Remove all mobiles who have moved, and any items that have rotted.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task CleanupWorld(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Calls the IMongoCollection Find extension method.
         /// </summary>
         /// <param name="filter">The filter.</param>
@@ -184,11 +191,6 @@ namespace Legendary.Core.Contracts
             Item replacement,
             ReplaceOptions? options = null,
             CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Reload the in-memory collections from the database.
-        /// </summary>
-        void Reload();
 
         /// <summary>
         /// Loads items and mobs based on resets.

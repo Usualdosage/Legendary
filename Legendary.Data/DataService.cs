@@ -37,7 +37,29 @@ namespace Legendary.Data
         {
             this.dbConnection = dbConnection;
             this.random = random;
+
+            this.TestConnection();
         }
+
+        /// <summary>
+        /// Gets the areas.
+        /// </summary>
+        public IMongoCollection<Area>? Areas { get => this.dbConnection.Database?.GetCollection<Area>("Areas"); }
+
+        /// <summary>
+        /// Gets the characters.
+        /// </summary>
+        public IMongoCollection<Character>? Characters { get => this.dbConnection.Database?.GetCollection<Character>("Characters"); }
+
+        /// <summary>
+        /// Gets the items.
+        /// </summary>
+        public IMongoCollection<Item>? Items { get => this.dbConnection.Database?.GetCollection<Item>("Items"); }
+
+        /// <summary>
+        /// Gets the mobiles.
+        /// </summary>
+        public IMongoCollection<Mobile>? Mobiles { get => this.dbConnection.Database?.GetCollection<Mobile>("Mobiles"); }
 
         /// <inheritdoc/>
         public bool TestConnection()
@@ -46,43 +68,16 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public World LoadWorld()
-        {
-            if (this.TestConnection())
-            {
-                var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-                var areas = this.dbConnection.Database?.GetCollection<Area>("Areas");
-                var items = this.dbConnection.Database?.GetCollection<Item>("Items");
-                var mobiles = this.dbConnection.Database?.GetCollection<Mobile>("Mobiles");
-
-                if (areas != null && characters != null && items != null && mobiles != null)
-                {
-                    return new World(areas, characters, items, mobiles, this.random);
-                }
-                else
-                {
-                    throw new Exception("Error loading world. Missing at least one collection.");
-                }
-            }
-            else
-            {
-                throw new Exception("A connection to the database could not be established.");
-            }
-        }
-
-        /// <inheritdoc/>
         public async Task<ReplaceOneResult?> SaveCharacter(Character character)
         {
             try
             {
-                var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-
                 if (!character.IsNPC)
                 {
                     FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == character.CharacterId);
-                    if (characters != null)
+                    if (this.Characters != null)
                     {
-                        return await characters.ReplaceOneAsync(charToReplace, character);
+                        return await this.Characters.ReplaceOneAsync(charToReplace, character);
                     }
                     else
                     {
@@ -107,8 +102,7 @@ namespace Legendary.Data
         {
             try
             {
-                var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-                return await characters.Find(filter, options)
+                return await this.Characters.Find(filter, options)
                     .FirstOrDefaultAsync();
             }
             catch (Exception exc)
@@ -120,13 +114,11 @@ namespace Legendary.Data
         /// <inheritdoc/>
         public async Task<Character?> CreateCharacter(Character character)
         {
-            var characters = this.dbConnection.Database?.GetCollection<Character>("Characters");
-
-            if (characters != null)
+            if (this.Characters != null)
             {
                 try
                 {
-                    await characters.InsertOneAsync(character);
+                    await this.Characters.InsertOneAsync(character);
                     return character;
                 }
                 catch
@@ -141,15 +133,13 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task<Character?> CreateMobile(Character mobile)
+        public async Task<Mobile?> CreateMobile(Mobile mobile)
         {
-            var mobiles = this.dbConnection.Database?.GetCollection<Character>("Mobiles");
-
-            if (mobiles != null)
+            if (this.Mobiles != null)
             {
                 try
                 {
-                    await mobiles.InsertOneAsync(mobile);
+                    await this.Mobiles.InsertOneAsync(mobile);
                     return mobile;
                 }
                 catch
@@ -166,13 +156,11 @@ namespace Legendary.Data
         /// <inheritdoc/>
         public async Task<Item?> CreateItem(Item item)
         {
-            var items = this.dbConnection.Database?.GetCollection<Item>("Items");
-
-            if (items != null)
+            if (this.Items != null)
             {
                 try
                 {
-                    await items.InsertOneAsync(item);
+                    await this.Items.InsertOneAsync(item);
                     return item;
                 }
                 catch

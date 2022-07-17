@@ -56,9 +56,11 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/armor.mp3", cancellationToken);
+
                     actor.Character.AffectedBy.Add(effect);
                     await this.Communicator.SendToPlayer(actor.Connection, $"You are protected by magical armor.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} is protected by magical armor.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} is protected by magical armor.", cancellationToken);
                 }
             }
             else
@@ -69,9 +71,12 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/armor.mp3", cancellationToken);
+                    await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/armor.mp3", cancellationToken);
+
                     target?.Character.AffectedBy.Add(effect);
                     await this.Communicator.SendToPlayer(actor.Connection, $"{target?.Character.FirstName} is protected by your magical armor.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Character.Location, actor.ConnectionId, $"{target?.Character.FirstName} is protected by {target?.Character.FirstName}'s armor.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{target?.Character.FirstName} is protected by {target?.Character.FirstName}'s armor.", cancellationToken);
                 }
             }
         }

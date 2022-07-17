@@ -35,15 +35,22 @@ namespace Legendary.Web
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">IConfiguration object.</param>
-        public Startup(IConfiguration configuration)
+        /// <param name="hostingEnvironment">The hosting environment.</param>
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             this.Configuration = configuration;
+            this.WebHostEnvironment = webHostEnvironment;
         }
 
         /// <summary>
         /// Gets the IConfiguration interface.
         /// </summary>
         public IConfiguration Configuration { get; private set; }
+
+        /// <summary>
+        /// Gets the IHostingEnvironment.
+        /// </summary>
+        public IWebHostEnvironment WebHostEnvironment { get; private set; }
 
         /// <summary>
         /// Adds services to the dependency injection container.
@@ -70,7 +77,7 @@ namespace Legendary.Web
             services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
 
             // Load the world.
-            services.AddSingleton<IWorld>(sp => sp.GetRequiredService<IDataService>().LoadWorld());
+            services.AddSingleton<IWorld, World>();
 
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -35,6 +35,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
 
     /// <summary>
@@ -52,6 +53,7 @@ namespace Legendary.Engine
         private readonly IRandom random;
         private readonly IWorld world;
         private readonly IServerSettings serverSettings;
+        private readonly IWebHostEnvironment webHostEnvironment;
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
@@ -61,14 +63,16 @@ namespace Legendary.Engine
         /// Initializes a new instance of the <see cref="Communicator"/> class.
         /// </summary>
         /// <param name="requestDelegate">RequestDelegate.</param>
+        /// <param name="webHostEnvironment">The hosting environment.</param>
         /// <param name="logger">ILogger.</param>
         /// <param name="serverSettings">The server settings.</param>
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="world">The world to use in this comm instance.</param>
         /// <param name="random">The random number generator.</param>
-        public Communicator(RequestDelegate requestDelegate, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world, IRandom random)
+        public Communicator(RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world, IRandom random)
         {
+            this.webHostEnvironment = webHostEnvironment;
             this.logger = logger;
             this.requestDelegate = requestDelegate;
             this.apiClient = apiClient;
@@ -337,7 +341,7 @@ namespace Legendary.Engine
                         if (mobile != null)
                         {
                             await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
-                            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
+                            await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
                             await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
 
                             // Start the fight.
@@ -354,7 +358,7 @@ namespace Legendary.Engine
                     this.logger.Info($"{user.Character.FirstName} has attacked {target.Value.Value.Character.FirstName} in room {user.Character.Location.Value}.", this);
 
                     await this.SendToPlayer(user.Connection, $"You attack {target.Value.Value.Character.FirstName}!", cancellationToken);
-                    await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {target.Value.Value.Character.FirstName}!", cancellationToken);
+                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {target.Value.Value.Character.FirstName}!", cancellationToken);
                     await this.SendToArea(user.Character.Location, string.Empty, $"{target.Value.Value.Character.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
 
                     // Start the fight.
@@ -375,7 +379,7 @@ namespace Legendary.Engine
             {
                 await this.SendToPlayer(user.Connection, "You look at yourself.", cancellationToken);
                 await this.SendToPlayer(user.Connection, this.GetPlayerInfo(user.Character), cancellationToken);
-                await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {user.Character.Pronoun}self.", cancellationToken);
+                await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {user.Character.Pronoun}self.", cancellationToken);
             }
             else
             {
@@ -393,7 +397,7 @@ namespace Legendary.Engine
                         if (mobile != null)
                         {
                             await this.SendToPlayer(user.Connection, $"You look at {mobile.FirstName}.", cancellationToken);
-                            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {mobile.FirstName}.", cancellationToken);
+                            await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {mobile.FirstName}.", cancellationToken);
                             await this.SendToPlayer(user.Connection, this.GetPlayerInfo(mobile), cancellationToken);
 
                             if (!string.IsNullOrWhiteSpace(mobile.Image))
@@ -410,7 +414,7 @@ namespace Legendary.Engine
                 else
                 {
                     await this.SendToPlayer(target.Value.Value.Connection, $"{user.Character.FirstName} looks at you.", cancellationToken);
-                    await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
+                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
                     await this.SendToPlayer(user.Connection, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
                 }
             }
@@ -501,6 +505,13 @@ namespace Legendary.Engine
 
             // Update player stats
             await this.ShowPlayerInfo(user, cancellationToken);
+
+            // Play the music.
+            if (room != null)
+            {
+                var soundIndex = this.random.Next(0, 2);
+                await this.PlaySound(user.Character, 0, $"../audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3", cancellationToken);
+            }
         }
 
         /// <inheritdoc/>
@@ -548,7 +559,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default)
+        public async Task<CommResult> SendToRoom(Character? sender, KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
@@ -566,18 +577,20 @@ namespace Legendary.Engine
                 }
 
                 // Grab a random person in the room and see if they interact with any mobs in the room.
-                ThreadPool.QueueUserWorkItem(q =>
+                if (sender != null && !sender.IsNPC)
                 {
-                    try
+                    ThreadPool.QueueUserWorkItem(q =>
                     {
-                        var luckyVictim = usersInRoom[this.random.Next(0, usersInRoom.Count - 1)];
-                        this.CheckMobCommunication(luckyVictim.Value.Character, location, message, cancellationToken).Wait();
-                    }
-                    catch
-                    {
-                        this.logger.Warn("Mob tried to communicate with player but lost the socket handle.", this);
-                    }
-                });
+                        try
+                        {
+                            this.CheckMobCommunication(sender, location, message, cancellationToken).Wait();
+                        }
+                        catch (Exception exc)
+                        {
+                            this.logger.Warn($"Mob tried to communicate with player but lost the socket handle: {exc.Message}", this);
+                        }
+                    });
+                }
             }
 
             return CommResult.Ok;
@@ -784,6 +797,19 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public List<Mobile>? GetMobilesInArea(long areaId)
+        {
+            List<Mobile> mobiles = new List<Mobile>();
+            var area = this.world.Areas.FirstOrDefault(a => a.AreaId == areaId);
+            if (area != null)
+            {
+                mobiles = area.Rooms.SelectMany(r => r.Mobiles).ToList();
+            }
+
+            return mobiles;
+        }
+
+        /// <inheritdoc/>
         public List<Item>? GetItemsInRoom(KeyValuePair<long, long> location)
         {
             var room = this.ResolveRoom(location);
@@ -826,18 +852,7 @@ namespace Legendary.Engine
                     if (!string.IsNullOrWhiteSpace(response))
                     {
                         response = $"{mobile.FirstName} says \"<span class='say'>{response}</span>\"";
-                        var buffer = Encoding.UTF8.GetBytes(response);
-                        var segment = new ArraySegment<byte>(buffer);
-
-                        if (Users != null)
-                        {
-                            var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(location));
-
-                            foreach (var user in usersInRoom)
-                            {
-                                await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
-                            }
-                        }
+                        await this.SendToRoom(mobile, mobile.Location, string.Empty, response, cancellationToken);
                     }
                     else
                     {
@@ -846,22 +861,43 @@ namespace Legendary.Engine
 
                         if (!string.IsNullOrWhiteSpace(response))
                         {
-                            var buffer = Encoding.UTF8.GetBytes(response);
-                            var segment = new ArraySegment<byte>(buffer);
-
-                            if (Users != null)
-                            {
-                                foreach (var user in Users)
-                                {
-                                    if (user.Value.Character.Location.InSamePlace(location))
-                                    {
-                                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
-                                    }
-                                }
-                            }
+                            await this.SendToRoom(mobile, mobile.Location, string.Empty, response, cancellationToken);
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Play a sound to the specific user.
+        /// </summary>
+        /// <param name="user">The player data.</param>
+        /// <param name="channel">The audio channel.</param>
+        /// <param name="sound">The sound URL.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task PlaySound(Character user, AudioChannel channel, string sound, CancellationToken cancellationToken = default)
+        {
+            if (user.IsNPC)
+            {
+                return;
+            }
+
+            if ((int)channel > 5 || (int)channel < 0)
+            {
+                return;
+            }
+
+            var contentRootPath = this.webHostEnvironment.ContentRootPath;
+            var soundFile = Path.Combine(contentRootPath, sound);
+
+            if (File.Exists(soundFile.Replace("../", "/wwwroot/")))
+            {
+                await this.SendToPlayer(user, $"[AUDIO]|{(int)channel}|{sound}", cancellationToken);
+            }
+            else
+            {
+                return;
             }
         }
 
@@ -940,7 +976,7 @@ namespace Legendary.Engine
             if (emote != null)
             {
                 await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
-                await this.SendToRoom(user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
+                await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
             }
             else
             {
@@ -1019,8 +1055,13 @@ namespace Legendary.Engine
         /// <param name="userData">The user to update.</param>
         /// <param name="ipAddress">The remote IP address.</param>
         /// <returns>Task.</returns>
-        private async Task UpdateMetrics(UserData userData, string ipAddress)
+        private async Task UpdateMetrics(UserData userData, string? ipAddress)
         {
+            if (string.IsNullOrWhiteSpace(ipAddress))
+            {
+                return;
+            }
+
             var metrics = userData.Character.Metrics;
 
             // Log the IP address to the character
@@ -1114,9 +1155,9 @@ namespace Legendary.Engine
                 // Handle any changes in the world (item rot, movement of mobs, etc).
                 this.world.ProcessWorldChanges(this, this.random).Wait();
             }
-            catch
+            catch (Exception exc)
             {
-                this.logger.Warn("Attempted to send information to disconnected sockets. Continuing.", this);
+                this.logger.Warn($"Attempted to send information to disconnected sockets. Continuing. Error: {exc.Message}", this);
             }
         }
 
@@ -1171,7 +1212,7 @@ namespace Legendary.Engine
                 await this.SendToPlayer(user.Connection, content, cancellationToken);
             }
 
-            await this.SendToRoom(user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} suddenly appears.", cancellationToken);
+            await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} suddenly appears.", cancellationToken);
         }
 
         /// <summary>

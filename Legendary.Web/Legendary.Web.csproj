@@ -34,6 +34,9 @@
     <Content Remove="wwwroot\img\rooms\" />
     <Content Remove="wwwroot\fonts\" />
     <Content Remove="stylecop.json" />
+    <Content Remove="wwwroot\audio\" />
+    <Content Remove="wwwroot\audio\music\" />
+    <Content Remove="wwwroot\audio\soundfx\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
@@ -43,6 +46,9 @@
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="Views\Creator\" />
     <Folder Include="Data\" />
+    <Folder Include="wwwroot\audio\" />
+    <Folder Include="wwwroot\audio\music\" />
+    <Folder Include="wwwroot\audio\soundfx\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />

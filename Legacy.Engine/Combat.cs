@@ -136,6 +136,9 @@ namespace Legendary.Engine
                 // Calculate the damage verb.
                 var damFromVerb = this.CalculateDamageVerb(damage, blocked);
 
+                await this.communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
+                await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
+
                 await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
                 await this.communicator.SendToPlayer(target, $"{actor.FirstName}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
                 await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName}'s {combatAction.DamageNoun} {damFromVerb} {actor.LastName}!", cancellationToken);
@@ -412,7 +415,9 @@ namespace Legendary.Engine
 
                 await this.communicator.SendToPlayer(killer, $"You have KILLED {userData.Character.FirstName}!", cancellationToken);
                 await this.communicator.SendToPlayer(userData.Connection, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
-                await this.communicator.SendToRoom(killer.Location, userData.ConnectionId, $"{userData.Character.FirstName} is DEAD!");
+                await this.communicator.SendToRoom(killer, killer.Location, userData.ConnectionId, $"{userData.Character.FirstName} is DEAD!");
+
+                await this.communicator.PlaySound(userData.Character, Core.Types.AudioChannel.Actor, "../audio/soundfx/death.mp3", cancellationToken);
 
                 // Make dead and ghost.
                 userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
@@ -677,6 +682,23 @@ namespace Legendary.Engine
             };
 
             return message;
+        }
+
+        /// <summary>
+        /// Gets the hit sound effect based on the damage noun.
+        /// </summary>
+        /// <param name="damageNoun">The damage noun.</param>
+        /// <returns>URL to audio.</returns>
+        private static string GetSoundEffect(string? damageNoun)
+        {
+            switch (damageNoun?.ToLower())
+            {
+                default:
+                case "punch":
+                    return "../audio/soundfx/punch.mp3";
+                case "slash":
+                    return "../audio/soundfx/slash.mp3";
+            }
         }
 
         /// <summary>

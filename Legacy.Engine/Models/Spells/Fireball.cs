@@ -43,12 +43,16 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
         {
+            await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/fireball.mp3", cancellationToken);
+
             if (target == null)
             {
                 await this.DamageToRoom(actor, cancellationToken);
             }
             else
             {
+                await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/fireball.mp3", cancellationToken);
+
                 await this.DamageToTarget(actor, target, cancellationToken);
             }
         }
