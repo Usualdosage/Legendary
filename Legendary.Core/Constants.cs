@@ -62,6 +62,11 @@ namespace Legendary.Core
         public const int STANDARD_PLAYER_DAMDICE = 4;
 
         /// <summary>
+        /// Gets the level at which a player is considered immortal (staff).
+        /// </summary>
+        public const int WIZLEVEL = 100;
+
+        /// <summary>
         /// What mobiles will say when they have a connection error to the AI server.
         /// </summary>
         public static readonly List<string> CONNECTION_ERROR = new List<string>()

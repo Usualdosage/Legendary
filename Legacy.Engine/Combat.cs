@@ -15,6 +15,7 @@ namespace Legendary.Engine
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
@@ -173,6 +174,9 @@ namespace Legendary.Engine
                     // Add the experience to the player.
                     var experience = this.CalculateExperience(actor, target);
                     await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+
+                    // See if the player advanced a level.
+                    var advance = this.communicator.CheckLevelAdvance(actor, cancellationToken);
                 }
                 else
                 {
@@ -417,7 +421,7 @@ namespace Legendary.Engine
                 await this.communicator.SendToPlayer(userData.Connection, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
                 await this.communicator.SendToRoom(killer, killer.Location, userData.ConnectionId, $"{userData.Character.FirstName} is DEAD!");
 
-                await this.communicator.PlaySound(userData.Character, Core.Types.AudioChannel.Actor, "../audio/soundfx/death.mp3", cancellationToken);
+                await this.communicator.PlaySound(userData.Character, Core.Types.AudioChannel.Actor, Sounds.DEATH, cancellationToken);
 
                 // Make dead and ghost.
                 userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
@@ -695,9 +699,9 @@ namespace Legendary.Engine
             {
                 default:
                 case "punch":
-                    return "../audio/soundfx/punch.mp3";
+                    return Sounds.PUNCH;
                 case "slash":
-                    return "../audio/soundfx/slash.mp3";
+                    return Sounds.SLASH;
             }
         }
 

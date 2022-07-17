@@ -20,6 +20,7 @@ namespace Legendary.Engine.Models
         private static readonly Dictionary<string, Emote> Actions = new ()
         {
             { "giggle", new Emote("You giggle.", "{0} giggles.") },
+            { "chuckle", new Emote("You chuckle.", "{0} chuckles lightly.") },
             { "grin", new Emote("You grin.", "{0} grins.") },
             { "laugh", new Emote("You laugh.", "{0} laughs.") },
             { "twiddle", new Emote("You twiddle your thumbs.", "{0} twiddles their thumbs.") },

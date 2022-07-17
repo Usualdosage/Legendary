@@ -797,6 +797,22 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location)
+        {
+            var room = this.ResolveRoom(location);
+            if (Users != null)
+            {
+                return Users.Where(u => u.Value.Character.Location.Key == location.Key
+                    && u.Value.Character.Location.Value == location.Value
+                    && u.Value.Character.FirstName != actor.FirstName).Select(u => u.Value.Character).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public List<Mobile>? GetMobilesInArea(long areaId)
         {
             List<Mobile> mobiles = new List<Mobile>();
@@ -868,14 +884,7 @@ namespace Legendary.Engine
             }
         }
 
-        /// <summary>
-        /// Play a sound to the specific user.
-        /// </summary>
-        /// <param name="user">The player data.</param>
-        /// <param name="channel">The audio channel.</param>
-        /// <param name="sound">The sound URL.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
+        /// <inheritdoc/>
         public async Task PlaySound(Character user, AudioChannel channel, string sound, CancellationToken cancellationToken = default)
         {
             if (user.IsNPC)
@@ -901,6 +910,43 @@ namespace Legendary.Engine
             }
         }
 
+        /// <inheritdoc/>
+        public async Task PlaySoundToRoom(Character actor, Character? target, string sound, CancellationToken cancellationToken = default)
+        {
+            var players = this.GetPlayersInRoom(actor, actor.Location);
+
+            if (players != null)
+            {
+                foreach (var player in players)
+                {
+                    if (target != null && target.FirstName == player.FirstName)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        await this.PlaySound(player, AudioChannel.Target, sound, cancellationToken);
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> CheckLevelAdvance(Character character, CancellationToken cancellationToken = default)
+        {
+            // TODO: This will need some tweaking.
+            var level = character.Level;
+            var experience = character.Experience;
+            bool didAdvance = (level * 1500) > experience;
+
+            if (didAdvance)
+            {
+                await this.IncreaseLevel(character, cancellationToken);
+            }
+
+            return didAdvance;
+        }
+
         /// <summary>
         /// Raises the InputReceived event.
         /// </summary>
@@ -915,6 +961,43 @@ namespace Legendary.Engine
             {
                 await this.ProcessMessage(user.Value.Value, e.Message, cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Advances the user one level.
+        /// </summary>
+        /// <param name="character">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task IncreaseLevel(Character character, CancellationToken cancellationToken = default)
+        {
+            character.Level += 1;
+
+            // HP is based on con
+            var hp = this.random.Next(8 + this.random.Next(1, 4), (int)character.Con.Current);
+
+            // Movement is based on dex
+            var move = this.random.Next(8 + this.random.Next(1, 4), (int)character.Dex.Current);
+
+            // Mana is based on wis
+            var mana = this.random.Next(8 + this.random.Next(1, 4), (int)character.Wis.Current);
+
+            character.Health.Max += hp;
+            character.Mana.Max += mana;
+            character.Movement.Max += move;
+
+            // Calculate the advance trains and practices.
+            var trains = character.Int.Max / 4;
+            var pracs = character.Wis.Max / 4;
+
+            character.Trains += (int)trains;
+            character.Practices += (int)pracs;
+
+            // Save all the changes.
+            await this.SaveCharacter(character);
+
+            await this.SendToPlayer(character, $"You advanced a level! You gained {hp} health, {mana} mana, and {move} movement. You have {character.Trains} training sessions and {character.Practices} practices.", cancellationToken);
+            await this.PlaySound(character, AudioChannel.Actor, Sounds.LEVELUP, cancellationToken);
         }
 
         /// <summary>
@@ -1088,7 +1171,12 @@ namespace Legendary.Engine
             // TODO: Remove these after testing.
             if (!userData.Character.HasSpell("fireball"))
             {
-                userData.Character.Spells.Add(new SpellProficiency(nameof(Fireball), 75));
+                userData.Character.Spells.Add(new SpellProficiency("Fireball", 75));
+            }
+
+            if (!userData.Character.HasSpell("lightning bolt"))
+            {
+                userData.Character.Spells.Add(new SpellProficiency("Lightning Bolt", 75));
             }
 
             if (!userData.Character.HasSkill("edged weapons"))

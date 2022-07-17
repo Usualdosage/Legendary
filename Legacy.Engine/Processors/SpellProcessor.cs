@@ -58,7 +58,7 @@ namespace Legendary.Engine.Processors
 
             if (proficiency != null && proficiency.Proficiency > 0)
             {
-                var spell = this.actionHelper.CreateActionInstance<Spell>("Legendary.Engine.Models.Spells", spellName.FirstCharToUpper());
+                var spell = this.actionHelper.CreateActionInstance<Spell>("Legendary.Engine.Models.Spells", proficiency.SpellName.Replace(" ", string.Empty));
 
                 if (spell != null)
                 {

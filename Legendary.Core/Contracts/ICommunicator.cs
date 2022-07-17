@@ -51,6 +51,16 @@ namespace Legendary.Core.Contracts
         Task PlaySound(Character user, AudioChannel channel, string sound, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Plays a sound to everyone in the room except the actor and the target.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="sound">The sound.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task PlaySoundToRoom(Character actor, Character? target, string sound, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Resolves a given player to the connected user, given that the character is a player, and not a mobile.
         /// </summary>
         /// <param name="character">The character.</param>
@@ -151,6 +161,14 @@ namespace Legendary.Core.Contracts
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         Task Attack(UserData user, string player, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Checks to see if the player advances after experience granted. If so, plays a sound and advances the level.
+        /// </summary>
+        /// <param name="character">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>True if player advances.</returns>
+        Task<bool> CheckLevelAdvance(Character character, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to a specified target.
@@ -261,6 +279,14 @@ namespace Legendary.Core.Contracts
         /// <param name="location">The location.</param>
         /// <returns>List of mobiles.</returns>
         List<Mobile>? GetMobilesInRoom(KeyValuePair<long, long> location);
+
+        /// <summary>
+        /// Gets all players in a given location.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="location">The location.</param>
+        /// <returns>List of players.</returns>
+        List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location);
 
         /// <summary>
         /// Gets all of the mobiles currently in the given area.

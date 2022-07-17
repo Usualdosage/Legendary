@@ -11,6 +11,7 @@ namespace Legendary.Engine.Models.Spells
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
 
@@ -56,7 +57,8 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
-                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/armor.mp3", cancellationToken);
+                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySoundToRoom(actor.Character, target?.Character, Sounds.ARMOR, cancellationToken);
 
                     actor.Character.AffectedBy.Add(effect);
                     await this.Communicator.SendToPlayer(actor.Connection, $"You are protected by magical armor.", cancellationToken);
@@ -71,8 +73,9 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
-                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/armor.mp3", cancellationToken);
-                    await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/armor.mp3", cancellationToken);
+                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySoundToRoom(actor.Character, target?.Character, Sounds.ARMOR, cancellationToken);
 
                     target?.Character.AffectedBy.Add(effect);
                     await this.Communicator.SendToPlayer(actor.Connection, $"{target?.Character.FirstName} is protected by your magical armor.", cancellationToken);

@@ -119,6 +119,16 @@ namespace Legendary.Core.Models
         public virtual bool IsNPC { get; set; } = false;
 
         /// <summary>
+        /// Gets or sets the number of practice sessions.
+        /// </summary>
+        public int Practices { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets number of training sessions.
+        /// </summary>
+        public int Trains { get; set; } = 0;
+
+        /// <summary>
         /// Gets or sets the character flags.
         /// </summary>
         public IList<CharacterFlags> CharacterFlags { get; set; } = new List<CharacterFlags>();
@@ -503,7 +513,7 @@ namespace Legendary.Core.Models
         /// <returns>The skill proficiency, if exists.</returns>
         public SkillProficiency? GetSkillProficiency(string name)
         {
-            return this.Skills.FirstOrDefault(sk => sk.SkillName?.ToLower() == name.ToLower());
+            return this.Skills.FirstOrDefault(sk => sk.SkillName.ToLower().StartsWith(name.ToLower()));
         }
 
         /// <summary>
@@ -523,7 +533,7 @@ namespace Legendary.Core.Models
         /// <returns>The spell proficiency, if exists.</returns>
         public SpellProficiency? GetSpellProficiency(string name)
         {
-            return this.Spells.FirstOrDefault(sk => sk.SpellName?.ToLower() == name.ToLower());
+            return this.Spells.FirstOrDefault(sk => sk.SpellName.ToLower().StartsWith(name.ToLower()));
         }
 
         /// <summary>

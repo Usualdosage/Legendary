@@ -35,6 +35,7 @@ namespace Legendary.Engine.Processors
         private readonly ILogger logger;
         private readonly ActionHelper actionHelper;
         private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
+        private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionProcessor"/> class.
@@ -52,6 +53,7 @@ namespace Legendary.Engine.Processors
             this.actionHelper = new ActionHelper(this.communicator, random, combat);
 
             this.ConfigureActions();
+            this.ConfigureWizActions();
         }
 
         /// <summary>
@@ -66,6 +68,22 @@ namespace Legendary.Engine.Processors
         {
             try
             {
+                // If the player is a wiz, try those commands first.
+                if (actor.Character.Level >= Constants.WIZLEVEL)
+                {
+                    // Get the matching actions for the wizard command word.
+                    var wizAction = this.wizActions
+                        .Where(a => a.Key.StartsWith(command))
+                        .OrderBy(a => a.Value.Key)
+                        .FirstOrDefault();
+
+                    if (wizAction.Value.Value != null)
+                    {
+                        await wizAction.Value.Value(actor, args, cancellationToken);
+                        return;
+                    }
+                }
+
                 // Get the matching actions for the command word.
                 var action = this.actions
                     .Where(a => a.Key.StartsWith(command))
@@ -130,11 +148,22 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Configures all of the wizard (immortal) actions. Actions from this list cannot be accessed by mortal players.
+        /// </summary>
+        private void ConfigureWizActions()
+        {
+            this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
+            this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoPeace)));
+            this.wizActions.Add("wiznet", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoWiznet)));
+        }
+
+        /// <summary>
         /// Configures all of the actions based on the input. The numeric value in the KVP is the PRIORITY in qhich the command will
         /// be executed. So, if someone types "n", it will check "north", "ne", "nw", and "newbie" in that order.
         /// </summary>
         private void ConfigureActions()
         {
+            this.actions.Add("affects", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoAffects)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCommands)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("drop", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoDrop)));
@@ -143,7 +172,6 @@ namespace Legendary.Engine.Processors
             this.actions.Add("emote", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoEmote)));
             this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoGet)));
-            this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
             this.actions.Add("help", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoHelp)));
             this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoInventory)));
             this.actions.Add("kill", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCombat)));
@@ -153,7 +181,6 @@ namespace Legendary.Engine.Processors
             this.actions.Add("north", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("ne", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
             this.actions.Add("nw", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("peace", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoPeace)));
             this.actions.Add("pray", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoPray)));
             this.actions.Add("quit", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoQuit)));
             this.actions.Add("rest", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoRest)));
@@ -178,8 +205,26 @@ namespace Legendary.Engine.Processors
             this.actions.Add("who", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWho)));
             this.actions.Add("wield", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWield)));
             this.actions.Add("wake", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoWake)));
-            this.actions.Add("wiznet", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoWiznet)));
             this.actions.Add("yell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoYell)));
+        }
+
+        private async Task DoAffects(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (actor.Character.AffectedBy.Count > 0)
+            {
+                foreach (var effect in actor.Character.AffectedBy)
+                {
+                    sb.Append($"<span class='player-affect'> - {effect.Name} for {effect.Duration} hours.</span>");
+                }
+            }
+            else
+            {
+                sb.Append($"<span class='player-affect'>You are not affected by anything.</span>");
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
         private async Task DoCombat(UserData actor, string[] args, CancellationToken cancellationToken)
