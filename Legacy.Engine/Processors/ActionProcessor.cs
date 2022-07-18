@@ -68,22 +68,6 @@ namespace Legendary.Engine.Processors
         {
             try
             {
-                // If the player is a wiz, try those commands first.
-                if (actor.Character.Level >= Constants.WIZLEVEL)
-                {
-                    // Get the matching actions for the wizard command word.
-                    var wizAction = this.wizActions
-                        .Where(a => a.Key.StartsWith(command))
-                        .OrderBy(a => a.Value.Key)
-                        .FirstOrDefault();
-
-                    if (wizAction.Value.Value != null)
-                    {
-                        await wizAction.Value.Value(actor, args, cancellationToken);
-                        return;
-                    }
-                }
-
                 // Get the matching actions for the command word.
                 var action = this.actions
                     .Where(a => a.Key.StartsWith(command))
@@ -96,7 +80,29 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                    // If the player is a wiz, try those commands first.
+                    if (actor.Character.Level >= Constants.WIZLEVEL)
+                    {
+                        // Get the matching actions for the wizard command word.
+                        var wizAction = this.wizActions
+                            .Where(a => a.Key.StartsWith(command))
+                            .OrderBy(a => a.Value.Key)
+                            .FirstOrDefault();
+
+                        if (wizAction.Value.Value != null)
+                        {
+                            await wizAction.Value.Value(actor, args, cancellationToken);
+                            return;
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                    }
                 }
             }
             catch (Exception ex)

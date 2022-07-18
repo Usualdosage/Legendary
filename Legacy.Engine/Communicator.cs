@@ -181,6 +181,9 @@ namespace Legendary.Engine
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip.ToString());
 
+                // TODO: Just all all skills and spells for now.
+                this.ApplySkillsAndSpells(userData);
+
                 // Create instances of the action, skill, and spell processors.
                 // TODO: Can these be global somehow, so we don't have to create these for each character the logs in?
                 this.skillProcessor = new SkillProcessor(userData, this, this.random, this.combat);
@@ -380,6 +383,11 @@ namespace Legendary.Engine
                 await this.SendToPlayer(user.Connection, "You look at yourself.", cancellationToken);
                 await this.SendToPlayer(user.Connection, this.GetPlayerInfo(user.Character), cancellationToken);
                 await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {user.Character.Pronoun}self.", cancellationToken);
+
+                if (!string.IsNullOrWhiteSpace(user.Character.Image))
+                {
+                    await this.SendToPlayer(user.Connection, $"<div class='room-image'><img src='{user.Character.Image}'/></div>", cancellationToken);
+                }
             }
             else
             {
@@ -416,6 +424,11 @@ namespace Legendary.Engine
                     await this.SendToPlayer(target.Value.Value.Connection, $"{user.Character.FirstName} looks at you.", cancellationToken);
                     await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
                     await this.SendToPlayer(user.Connection, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
+
+                    if (!string.IsNullOrWhiteSpace(target.Value.Value.Character.Image))
+                    {
+                        await this.SendToPlayer(user.Connection, $"<div class='room-image'><img src='{target.Value.Value.Character.Image}'/></div>", cancellationToken);
+                    }
                 }
             }
         }
@@ -1133,6 +1146,44 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Applies all skills and spells to a character.
+        /// </summary>
+        /// <param name="userData">The user.</param>
+        private void ApplySkillsAndSpells(UserData userData)
+        {
+            // Give any user the Recall skill at max percentage if they don't have it.
+            if (!userData.Character.HasSkill("recall"))
+            {
+                userData.Character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
+            }
+
+            if (!userData.Character.HasSkill("hand to hand"))
+            {
+                userData.Character.Skills.Add(new SkillProficiency("Hand to Hand", 75));
+            }
+
+            if (!userData.Character.HasSpell("fireball"))
+            {
+                userData.Character.Spells.Add(new SpellProficiency("Fireball", 75));
+            }
+
+            if (!userData.Character.HasSpell("lightning bolt"))
+            {
+                userData.Character.Spells.Add(new SpellProficiency("Lightning Bolt", 75));
+            }
+
+            if (!userData.Character.HasSkill("edged weapons"))
+            {
+                userData.Character.Skills.Add(new SkillProficiency("Edged Weapons", 75));
+            }
+
+            if (!userData.Character.HasSkill("cure light"))
+            {
+                userData.Character.Spells.Add(new SpellProficiency("Cure Light", 75));
+            }
+        }
+
+        /// <summary>
         /// Updates the user's metrics on login.
         /// </summary>
         /// <param name="userData">The user to update.</param>
@@ -1156,33 +1207,7 @@ namespace Legendary.Engine
             // Update last login.
             metrics.LastLogin = DateTime.UtcNow;
 
-            // Give any user the Recall skill at max percentage if they don't have it.
-            if (!userData.Character.HasSkill("recall"))
-            {
-                userData.Character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
-            }
-
-            // Give any user the hand to hand skill at standard percentage if they don't have it.
-            if (!userData.Character.HasSkill("hand to hand"))
-            {
-                userData.Character.Skills.Add(new SkillProficiency("Hand to Hand", 75));
-            }
-
-            // TODO: Remove these after testing.
-            if (!userData.Character.HasSpell("fireball"))
-            {
-                userData.Character.Spells.Add(new SpellProficiency("Fireball", 75));
-            }
-
-            if (!userData.Character.HasSpell("lightning bolt"))
-            {
-                userData.Character.Spells.Add(new SpellProficiency("Lightning Bolt", 75));
-            }
-
-            if (!userData.Character.HasSkill("edged weapons"))
-            {
-                userData.Character.Skills.Add(new SkillProficiency("Edged Weapons", 75));
-            }
+           
 
             userData.Character.Metrics = metrics;
 

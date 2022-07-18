@@ -55,5 +55,10 @@ namespace Legendary.Core
         /// Level up MP3.
         /// </summary>
         public const string LEVELUP = "../audio/soundfx/levelup.mp3";
+
+        /// <summary>
+        /// Cure MP3.
+        /// </summary>
+        public const string CURELIGHT = "../audio/soundfx/curelight.mp3";
     }
 }
