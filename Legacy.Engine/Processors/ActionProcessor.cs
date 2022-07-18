@@ -1163,6 +1163,8 @@ namespace Legendary.Engine.Processors
                     await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>", cancellationToken);
                     await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.", cancellationToken);
 
+                    await this.communicator.PlaySound(user.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
+
                     user.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
 
                     user.Character.Movement.Current -= GetTerrainMovementPenalty(newRoom);

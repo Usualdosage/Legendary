@@ -33,6 +33,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
+    using Legendary.Engine.Models.SpellTrees;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
@@ -1146,40 +1147,73 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Applies all skills and spells to a character.
+        /// Applies all skills and spells to a character. This is just for testing.
         /// </summary>
         /// <param name="userData">The user.</param>
         private void ApplySkillsAndSpells(UserData userData)
         {
-            // Give any user the Recall skill at max percentage if they don't have it.
-            if (!userData.Character.HasSkill("recall"))
+            var engine = Assembly.Load("Legendary.Engine");
+
+            var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
+
+            foreach (var tree in spellTrees)
             {
-                userData.Character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
+                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.combat);
+
+                var groupProps = tree.GetProperties();
+
+                for (var x = 1; x <= 5; x++)
+                {
+                    var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                    if (spellGroup != null)
+                    {
+                        var obj = spellGroup.GetValue(treeInstance);
+                        if (obj != null)
+                        {
+                            var group = (Dictionary<IAction, int>)obj;
+
+                            foreach (var kvp in group)
+                            {
+                                if (!userData.Character.HasSpell(kvp.Key.Name.ToLower()))
+                                {
+                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Key.Name, 75));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            if (!userData.Character.HasSkill("hand to hand"))
-            {
-                userData.Character.Skills.Add(new SkillProficiency("Hand to Hand", 75));
-            }
+            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
 
-            if (!userData.Character.HasSpell("fireball"))
+            foreach (var tree in skillTrees)
             {
-                userData.Character.Spells.Add(new SpellProficiency("Fireball", 75));
-            }
+                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.combat);
 
-            if (!userData.Character.HasSpell("lightning bolt"))
-            {
-                userData.Character.Spells.Add(new SpellProficiency("Lightning Bolt", 75));
-            }
+                var groupProps = tree.GetProperties();
 
-            if (!userData.Character.HasSkill("edged weapons"))
-            {
-                userData.Character.Skills.Add(new SkillProficiency("Edged Weapons", 75));
-            }
+                for (var x = 1; x <= 5; x++)
+                {
+                    var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
 
-            if (!userData.Character.HasSkill("cure light"))
-            {
-                userData.Character.Spells.Add(new SpellProficiency("Cure Light", 75));
+                    if (spellGroup != null)
+                    {
+                        var obj = spellGroup.GetValue(treeInstance);
+                        if (obj != null)
+                        {
+                            var group = (Dictionary<IAction, int>)obj;
+
+                            foreach (var kvp in group)
+                            {
+                                if (!userData.Character.HasSkill(kvp.Key.Name.ToLower()))
+                                {
+                                    userData.Character.Skills.Add(new SkillProficiency(kvp.Key.Name, 75));
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

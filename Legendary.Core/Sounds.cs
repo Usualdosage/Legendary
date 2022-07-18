@@ -60,5 +60,45 @@ namespace Legendary.Core
         /// Cure MP3.
         /// </summary>
         public const string CURELIGHT = "../audio/soundfx/curelight.mp3";
+
+        /// <summary>
+        /// Walk MP3.
+        /// </summary>
+        public const string WALK = "../audio/soundfx/walk.mp3";
+
+        /// <summary>
+        /// Rain MP3.
+        /// </summary>
+        public const string RAIN = "../audio/weather/rain.mp3";
+
+        /// <summary>
+        /// Storm MP3.
+        /// </summary>
+        public const string STORM = "../audio/weather/storm.mp3";
+
+        /// <summary>
+        /// Space MP3.
+        /// </summary>
+        public const string SPACE = "../audio/weather/space.mp3";
+
+        /// <summary>
+        /// Wind MP3.
+        /// </summary>
+        public const string WIND = "../audio/weather/wind.mp3";
+
+        /// <summary>
+        /// Forest MP3.
+        /// </summary>
+        public const string FOREST = "../audio/weather/forest.mp3";
+
+        /// <summary>
+        /// Fountain MP3.
+        /// </summary>
+        public const string CITY_FOUNTAIN = "../audio/weather/city_fountain.mp3";
+
+        /// <summary>
+        /// City MP3.
+        /// </summary>
+        public const string CITY = "../audio/weather/city.mp3";
     }
 }

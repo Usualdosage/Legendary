@@ -16,7 +16,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Models;
 
     /// <summary>
-    /// Casts the fireball spell.
+    /// Casts the lightning bolt spell.
     /// </summary>
     public class LightningBolt : Spell
     {

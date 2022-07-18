@@ -30,6 +30,8 @@
     <None Remove="RestSharp" />
     <None Remove="Microsoft.AspNetCore.Hosting" />
     <None Remove="Microsoft.AspNetCore.Hosting.Abstractions" />
+    <None Remove="Models\SpellTrees\" />
+    <None Remove="Models\SkillTrees\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
@@ -45,6 +47,8 @@
     <Folder Include="Models\Spells\" />
     <Folder Include="Processors\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Models\SpellTrees\" />
+    <Folder Include="Models\SkillTrees\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj" />

@@ -19,7 +19,7 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Background.
         /// </summary>
-        Background= 0,
+        Background = 0,
 
         /// <summary>
         /// Actor.
@@ -40,5 +40,25 @@ namespace Legendary.Core.Types
         /// Other (Room).
         /// </summary>
         Spell = 4,
+
+        /// <summary>
+        /// Weather sounds.
+        /// </summary>
+        Weather = 5,
+
+        /// <summary>
+        /// Background sound effects.
+        /// </summary>
+        BackgroundSFX = 6,
+
+        /// <summary>
+        /// Unused.
+        /// </summary>
+        Unused1 = 7,
+
+        /// <summary>
+        /// Unused.
+        /// </summary>
+        Unused2 = 8,
     }
 }
