@@ -42,11 +42,11 @@ namespace Legendary.Engine.Models
         /// <param name="target">The target.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public virtual async Task DamageToTarget(UserData actor, UserData target, CancellationToken cancellationToken)
+        public virtual async Task DamageToTarget(Character actor, Character target, CancellationToken cancellationToken)
         {
-            Combat.StartFighting(actor.Character, target.Character);
-            await this.Communicator.SendToArea(actor.Character.Location, string.Empty, $"{target.Character.FirstName} yells \"<span class='yell'>{actor.Character.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
-            await this.Combat.DoDamage(actor.Character, target.Character, this, cancellationToken);
+            Combat.StartFighting(actor, target);
+            await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName} yells \"<span class='yell'>{actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
+            await this.Combat.DoDamage(actor, target, this, cancellationToken);
         }
 
         /// <summary>
@@ -55,30 +55,30 @@ namespace Legendary.Engine.Models
         /// <param name="actor">The caster.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public virtual async Task DamageToRoom(UserData actor, CancellationToken cancellationToken)
+        public virtual async Task DamageToRoom(Character actor, CancellationToken cancellationToken)
         {
             if (Legendary.Engine.Communicator.Users != null)
             {
                 foreach (var user in Legendary.Engine.Communicator.Users)
                 {
                     // TODO: Do damage to everything in the room that isn't the player, or in the player's group.
-                    if (user.Value.Character.Location.InSamePlace(actor.Character.Location) && user.Value.Character.FirstName != actor.Character.FirstName)
+                    if (user.Value.Character.Location.InSamePlace(actor.Location) && user.Value.Character.FirstName != actor.FirstName)
                     {
-                        Combat.StartFighting(actor.Character, user.Value.Character);
-                        await this.Combat.DoDamage(actor.Character, user.Value.Character, this, cancellationToken);
+                        Combat.StartFighting(actor, user.Value.Character);
+                        await this.Combat.DoDamage(actor, user.Value.Character, this, cancellationToken);
                     }
                 }
             }
 
             // Do damage to all mobiles in the room.
-            var mobiles = this.Communicator.GetMobilesInRoom(actor.Character.Location);
+            var mobiles = this.Communicator.GetMobilesInRoom(actor.Location);
 
             if (mobiles != null)
             {
                 foreach (var mobile in mobiles)
                 {
-                    Combat.StartFighting(actor.Character, mobile);
-                    await this.Combat.DoDamage(actor.Character, mobile, this, cancellationToken);
+                    Combat.StartFighting(actor, mobile);
+                    await this.Combat.DoDamage(actor, mobile, this, cancellationToken);
                 }
             }
         }

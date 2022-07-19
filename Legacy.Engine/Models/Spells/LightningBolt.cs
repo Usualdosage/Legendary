@@ -29,7 +29,7 @@ namespace Legendary.Engine.Models.Spells
         public LightningBolt(ICommunicator communicator, IRandom random, Combat combat)
             : base(communicator, random, combat)
         {
-            this.Name = "LightningBolt";
+            this.Name = "Lightning Bolt";
             this.ManaCost = 50;
             this.CanInvoke = true;
             this.DamageType = Core.Types.DamageType.Energy;
@@ -42,9 +42,9 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
+            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
 
             if (target == null)
             {
@@ -52,12 +52,12 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
+                await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
 
                 await this.DamageToTarget(actor, target, cancellationToken);
             }
 
-            await this.Communicator.PlaySoundToRoom(actor.Character, target?.Character, Sounds.LIGHTNINGBOLT, cancellationToken);
+            await this.Communicator.PlaySoundToRoom(actor, target, Sounds.LIGHTNINGBOLT, cancellationToken);
         }
     }
 }

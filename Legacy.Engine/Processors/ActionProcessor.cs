@@ -12,6 +12,7 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -34,6 +35,8 @@ namespace Legendary.Engine.Processors
         private readonly IWorld world;
         private readonly ILogger logger;
         private readonly ActionHelper actionHelper;
+        private readonly IRandom random;
+        private readonly Combat combat;
         private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
         private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
 
@@ -50,6 +53,8 @@ namespace Legendary.Engine.Processors
             this.communicator = communicator;
             this.world = world;
             this.logger = logger;
+            this.random = random;
+            this.combat = combat;
             this.actionHelper = new ActionHelper(this.communicator, random, combat);
 
             this.ConfigureActions();
@@ -363,11 +368,11 @@ namespace Legendary.Engine.Processors
             if (args.Length > 1)
             {
                 // TODO: Need to be able to look IN stuff (e.g. "look in corpse")
-                await this.communicator.ShowPlayerToPlayer(actor, args[1], cancellationToken);
+                await this.communicator.ShowPlayerToPlayer(actor.Character, args[1], cancellationToken);
             }
             else
             {
-                await this.communicator.ShowRoomToPlayer(actor, cancellationToken);
+                await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
             }
         }
 
@@ -481,19 +486,61 @@ namespace Legendary.Engine.Processors
         private async Task DoSkills(UserData actor, string[] args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("Your skills are:<br/>");
+            builder.Append("<div class='skillgroups'>");
+            var engine = Assembly.Load("Legendary.Engine");
 
-            if (actor.Character.Skills.Count > 0)
+            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
+
+            foreach (var tree in skillTrees)
             {
-                foreach (var skill in actor.Character.Skills)
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+
+                if (treeInstance != null && treeInstance is IActionTree instance)
                 {
-                    builder.AppendLine($"<span class='skillspell'>{skill.SkillName} {skill.Proficiency}%</span>");
+                    var groupProps = tree.GetProperties();
+
+                    builder.Append($"<div><span class='skillgroup'>{instance.Name}</span>");
+
+                    bool hasSkillInGroup = false;
+
+                    for (var x = 1; x <= 5; x++)
+                    {
+                        var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                        if (spellGroup != null)
+                        {
+                            var obj = spellGroup.GetValue(treeInstance);
+
+                            if (obj != null)
+                            {
+                                var group = (Dictionary<IAction, int>)obj;
+
+                                foreach (var kvp in group)
+                                {
+                                    if (actor.Character.HasSkill(kvp.Key.Name.ToLower()))
+                                    {
+                                        var proficiency = actor.Character.GetSkillProficiency(kvp.Key.Name.ToLower());
+                                        if (proficiency != null)
+                                        {
+                                            builder.Append($"<span class='skillinfo'>{proficiency.SkillName} {proficiency.Proficiency}% <progress class='skillprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
+                                            hasSkillInGroup = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!hasSkillInGroup)
+                    {
+                        builder.Append($"<span class='skillinfo'>No skills in this group.</span>");
+                    }
                 }
+
+                builder.Append("</div>");
             }
-            else
-            {
-                builder.Append("You currently have no skills.");
-            }
+
+            builder.Append("</div>");
 
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
@@ -508,19 +555,61 @@ namespace Legendary.Engine.Processors
         private async Task DoSpells(UserData actor, string[] args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("Your spells are:<br/>");
+            builder.Append("<div class='spellgroups'>");
+            var engine = Assembly.Load("Legendary.Engine");
 
-            if (actor.Character.Spells.Count > 0)
+            var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
+
+            foreach (var tree in spellTrees)
             {
-                foreach (var spell in actor.Character.Spells)
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+
+                if (treeInstance != null && treeInstance is IActionTree instance)
                 {
-                    builder.AppendLine($"<span class='skillspell'>{spell.SpellName} {spell.Proficiency}%</span>");
+                    var groupProps = tree.GetProperties();
+
+                    builder.Append($"<div><span class='spellgroup'>{instance.Name}</span>");
+
+                    bool hasSkillInGroup = false;
+
+                    for (var x = 1; x <= 5; x++)
+                    {
+                        var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                        if (spellGroup != null)
+                        {
+                            var obj = spellGroup.GetValue(treeInstance);
+
+                            if (obj != null)
+                            {
+                                var group = (Dictionary<IAction, int>)obj;
+
+                                foreach (var kvp in group)
+                                {
+                                    if (actor.Character.HasSpell(kvp.Key.Name.ToLower()))
+                                    {
+                                        var proficiency = actor.Character.GetSpellProficiency(kvp.Key.Name.ToLower());
+                                        if (proficiency != null)
+                                        {
+                                            builder.Append($"<span class='spellinfo'>{proficiency.SpellName} {proficiency.Proficiency}% <progress class='spellprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
+                                            hasSkillInGroup = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!hasSkillInGroup)
+                    {
+                        builder.Append($"<span class='spellinfo'>No spells in this group.</span>");
+                    }
                 }
+
+                builder.Append("</div>");
             }
-            else
-            {
-                builder.Append("You currently have no spells.");
-            }
+
+            builder.Append("</div>");
 
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
@@ -920,7 +1009,7 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(null, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} vanishes.", cancellationToken);
                         user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
-                        await this.communicator.ShowRoomToPlayer(user, cancellationToken);
+                        await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
                     }
                 }
             }
@@ -1170,7 +1259,7 @@ namespace Legendary.Engine.Processors
                     user.Character.Movement.Current -= GetTerrainMovementPenalty(newRoom);
 
                     await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} enters.", cancellationToken);
-                    await this.communicator.ShowRoomToPlayer(user, cancellationToken);
+                    await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
                 }
                 else
                 {

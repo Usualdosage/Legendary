@@ -198,7 +198,7 @@ namespace Legendary.Engine
                 this.AddToChannels(socketId, userData);
 
                 // Show the room to the player.
-                await this.ShowRoomToPlayer(userData, cancellationToken);
+                await this.ShowRoomToPlayer(userData.Character, cancellationToken);
 
                 while (true)
                 {
@@ -372,22 +372,22 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task ShowPlayerToPlayer(UserData user, string targetName, CancellationToken cancellationToken = default)
+        public async Task ShowPlayerToPlayer(Character actor, string targetName, CancellationToken cancellationToken = default)
         {
             targetName = targetName.ToLower();
 
             // Update player stats
-            await this.ShowPlayerInfo(user, cancellationToken);
+            await this.ShowPlayerInfo(actor, cancellationToken);
 
-            if (targetName == user.Character.FirstName || targetName == "self")
+            if (targetName == actor.FirstName || targetName == "self")
             {
-                await this.SendToPlayer(user.Connection, "You look at yourself.", cancellationToken);
-                await this.SendToPlayer(user.Connection, this.GetPlayerInfo(user.Character), cancellationToken);
-                await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {user.Character.Pronoun}self.", cancellationToken);
+                await this.SendToPlayer(actor, "You look at yourself.", cancellationToken);
+                await this.SendToPlayer(actor, this.GetPlayerInfo(actor), cancellationToken);
+                await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} looks at {actor.Pronoun}self.", cancellationToken);
 
-                if (!string.IsNullOrWhiteSpace(user.Character.Image))
+                if (!string.IsNullOrWhiteSpace(actor.Image))
                 {
-                    await this.SendToPlayer(user.Connection, $"<div class='room-image'><img src='{user.Character.Image}'/></div>", cancellationToken);
+                    await this.SendToPlayer(actor, $"<div class='room-image'><img src='{actor.Image}'/></div>", cancellationToken);
                 }
             }
             else
@@ -397,7 +397,7 @@ namespace Legendary.Engine
                 if (target == null || target.Value.Value == null)
                 {
                     // Maybe a mobile
-                    var mobiles = this.GetMobilesInRoom(user.Character.Location);
+                    var mobiles = this.GetMobilesInRoom(actor.Location);
 
                     if (mobiles != null)
                     {
@@ -405,30 +405,30 @@ namespace Legendary.Engine
 
                         if (mobile != null)
                         {
-                            await this.SendToPlayer(user.Connection, $"You look at {mobile.FirstName}.", cancellationToken);
-                            await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {mobile.FirstName}.", cancellationToken);
-                            await this.SendToPlayer(user.Connection, this.GetPlayerInfo(mobile), cancellationToken);
+                            await this.SendToPlayer(actor, $"You look at {mobile.FirstName}.", cancellationToken);
+                            await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} looks at {mobile.FirstName}.", cancellationToken);
+                            await this.SendToPlayer(actor, this.GetPlayerInfo(mobile), cancellationToken);
 
                             if (!string.IsNullOrWhiteSpace(mobile.Image))
                             {
-                                await this.SendToPlayer(user.Connection, $"<div class='room-image'><img src='{mobile?.Image}'/></div>", cancellationToken);
+                                await this.SendToPlayer(actor, $"<div class='room-image'><img src='{mobile?.Image}'/></div>", cancellationToken);
                             }
                         }
                         else
                         {
-                            await this.SendToPlayer(user.Connection, "They are not here.", cancellationToken);
+                            await this.SendToPlayer(actor, "They are not here.", cancellationToken);
                         }
                     }
                 }
                 else
                 {
-                    await this.SendToPlayer(target.Value.Value.Connection, $"{user.Character.FirstName} looks at you.", cancellationToken);
-                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
-                    await this.SendToPlayer(user.Connection, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
+                    await this.SendToPlayer(target.Value.Value.Connection, $"{actor.FirstName} looks at you.", cancellationToken);
+                    await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
+                    await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
 
                     if (!string.IsNullOrWhiteSpace(target.Value.Value.Character.Image))
                     {
-                        await this.SendToPlayer(user.Connection, $"<div class='room-image'><img src='{target.Value.Value.Character.Image}'/></div>", cancellationToken);
+                        await this.SendToPlayer(actor, $"<div class='room-image'><img src='{target.Value.Value.Character.Image}'/></div>", cancellationToken);
                     }
                 }
             }
@@ -437,12 +437,12 @@ namespace Legendary.Engine
         /// <summary>
         /// Shows the information in a room to a single player.
         /// </summary>
-        /// <param name="user">The connected user.</param>
+        /// <param name="actor">The actor.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task ShowRoomToPlayer(UserData user, CancellationToken cancellationToken = default)
+        public async Task ShowRoomToPlayer(Character actor, CancellationToken cancellationToken = default)
         {
-            var room = this.ResolveRoom(user.Character.Location);
+            var room = this.ResolveRoom(actor.Location);
 
             StringBuilder sb = new ();
 
@@ -507,7 +507,7 @@ namespace Legendary.Engine
             // Show other players
             if (Communicator.Users != null)
             {
-                var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(user.Character.Location) && u.Key != user.ConnectionId);
+                var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(actor.Location) && u.Value.Character.FirstName != actor.FirstName);
 
                 foreach (var other in usersInRoom)
                 {
@@ -515,45 +515,45 @@ namespace Legendary.Engine
                 }
             }
 
-            await this.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
+            await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
 
             // Update player stats
-            await this.ShowPlayerInfo(user, cancellationToken);
+            await this.ShowPlayerInfo(actor, cancellationToken);
 
             // Play the music.
             if (room != null)
             {
                 var soundIndex = this.random.Next(0, 2);
-                await this.PlaySound(user.Character, 0, $"../audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3", cancellationToken);
+                await this.PlaySound(actor, 0, $"../audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3", cancellationToken);
             }
         }
 
         /// <inheritdoc/>
-        public async Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default)
+        public async Task ShowPlayerInfo(Character actor, CancellationToken cancellationToken = default)
         {
             StringBuilder sb = new ();
 
             sb.Append("<div class='player-info'><table><tr><td colspan='2'>");
-            sb.Append($"<span class='player-title'>{user.Character.FirstName} {user.Character.LastName}</span></td></tr>");
+            sb.Append($"<span class='player-title'>{actor.FirstName} {actor.LastName}</span></td></tr>");
 
             // Health bar
-            double healthPct = (user.Character.Health.Current / user.Character.Health.Max) * 100;
+            double healthPct = (actor.Health.Current / actor.Health.Max) * 100;
             sb.Append($"<tr><td>Health</td><td><progress id='health' max='100' value='{healthPct}'>{healthPct}%</progress></td></tr>");
 
             // Mana bar
-            double manaPct = (user.Character.Mana.Current / user.Character.Mana.Max) * 100;
+            double manaPct = (actor.Mana.Current / actor.Mana.Max) * 100;
             sb.Append($"<tr><td>Mana</td><td><progress id='mana' max='100' value='{manaPct}'>{manaPct}%</progress></td></tr>");
 
             // Movement bar
-            double movePct = (user.Character.Movement.Current / user.Character.Movement.Max) * 100;
+            double movePct = (actor.Movement.Current / actor.Movement.Max) * 100;
             sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
 
             // Condition
-            sb.Append($"<tr><td colspan='2' class='condition'>{this.combat.GetPlayerCondition(user.Character)}</td></tr>");
+            sb.Append($"<tr><td colspan='2' class='condition'>{this.combat.GetPlayerCondition(actor)}</td></tr>");
 
             sb.Append("</table></div>");
 
-            await this.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
+            await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -611,7 +611,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character target, string message, CancellationToken cancellationToken = default)
+        public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character? target, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
             var segment = new ArraySegment<byte>(buffer);
@@ -621,7 +621,7 @@ namespace Legendary.Engine
                 foreach (var user in Users)
                 {
                     // Send message to everyone in the room except the actor and the target (combat messages).
-                    if (user.Value.Character.Location.InSamePlace(location) && user.Value.Character.FirstName != actor.FirstName && user.Value.Character.FirstName != target.FirstName)
+                    if (user.Value.Character.Location.InSamePlace(location) && user.Value.Character.FirstName != actor.FirstName && user.Value.Character.FirstName != target?.FirstName)
                     {
                         await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                     }
@@ -1241,8 +1241,6 @@ namespace Legendary.Engine
             // Update last login.
             metrics.LastLogin = DateTime.UtcNow;
 
-           
-
             userData.Character.Metrics = metrics;
 
             // Save the changes.
@@ -1285,7 +1283,7 @@ namespace Legendary.Engine
                         if (user.Value != null)
                         {
                             // Update the player info
-                            this.ShowPlayerInfo(user.Value).Wait();
+                            this.ShowPlayerInfo(user.Value.Character).Wait();
 
                             // See what's going on around the player.
                             if (user.Value.Environment != null)

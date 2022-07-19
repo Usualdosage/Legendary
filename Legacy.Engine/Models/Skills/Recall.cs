@@ -38,25 +38,25 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override async Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
-            await this.Communicator.SendToPlayer(actor.Connection, "You close your eyes and recall to your hometown.", cancellationToken);
-            await this.Communicator.SendToRoom(null, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} disappears in a puff of smoke.", cancellationToken);
+            await this.Communicator.SendToPlayer(actor, "You close your eyes and recall to your hometown.", cancellationToken);
+            await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} disappears in a puff of smoke.", cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
             await Task.Run(
                 () =>
                 {
-                    this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, "../audio/soundfx/recall.mp3", cancellationToken);
-                    actor.Character.Location = actor.Character.Home;
+                    this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, "../audio/soundfx/recall.mp3", cancellationToken);
+                    actor.Location = actor.Home;
                 }, cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override async Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
             await this.Communicator.ShowRoomToPlayer(actor, cancellationToken);
         }

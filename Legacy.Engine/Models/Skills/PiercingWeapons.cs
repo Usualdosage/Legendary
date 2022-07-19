@@ -41,19 +41,7 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public override Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public override Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public override Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

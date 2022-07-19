@@ -106,34 +106,34 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Saves a player to the database.
         /// </summary>
-        /// <param name="character">The character.</param>
+        /// <param name="actor">The actor.</param>
         /// <returns>Task.</returns>
-        Task SaveCharacter(Character character);
+        Task SaveCharacter(Character actor);
 
         /// <summary>
         /// Shows the room to the player.
         /// </summary>
-        /// <param name="user">The player.</param>
+        /// <param name="actor">The actor.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ShowRoomToPlayer(UserData user, CancellationToken cancellationToken = default);
+        Task ShowRoomToPlayer(Character actor, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Shows/updates the player information box.
         /// </summary>
-        /// <param name="user">The user.</param>
+        /// <param name="actor">The actor.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ShowPlayerInfo(UserData user, CancellationToken cancellationToken = default);
+        Task ShowPlayerInfo(Character actor, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Shows a target player or mobile to the actor.
         /// </summary>
-        /// <param name="user">The user.</param>
+        /// <param name="actor">The actor.</param>
         /// <param name="target">The target.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ShowPlayerToPlayer(UserData user, string target, CancellationToken cancellationToken = default);
+        Task ShowPlayerToPlayer(Character actor, string target, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to a specified socket.
@@ -200,7 +200,7 @@ namespace Legendary.Core.Contracts
         /// <param name="message">The message to send.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character target, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character? target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in an area, EXCEPT the sender.

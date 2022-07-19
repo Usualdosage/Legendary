@@ -41,21 +41,15 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public override Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public override Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public override Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
+            await base.PostAction(actor, target, cancellationToken);
         }
     }
 }

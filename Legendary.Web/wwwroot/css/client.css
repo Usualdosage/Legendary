@@ -460,6 +460,36 @@ progress {
 .player-health {
 }
 
+/* Skills and Spells */
+.skillgroups, .spellgroups {
+    width: 1280px;
+    display: inline-block;
+}
+
+    .skillgroups div, .spellgroups div {
+        margin-bottom: 20px;
+    }
+
+.skillgroup, .spellgroup {
+    width: 100%;
+    font-family: 'Balgruf';
+    display: block;
+    border-bottom: solid 1px #222;
+    margin-bottom: 5px;
+}
+
+.skillinfo, .spellinfo {
+    width: 300px;
+    display: inline-block;
+    text-indent: 20px;
+}
+
+.skillprogress, .spellprogress {
+    display: inline-block;
+    width: 40px;
+    height: 12px;
+}
+
 /* Combat Things */
 .damage {
     color: indianred;

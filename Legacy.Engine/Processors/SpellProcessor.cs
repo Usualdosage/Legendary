@@ -79,11 +79,18 @@ namespace Legendary.Engine.Processors
                     // We may or may not have a target. The skill will figure that bit out.
                     var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
 
-                    if (await spell.IsSuccess(this.actor, target?.Value, proficiency.Proficiency, cancellationToken))
+                    if (await spell.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
-                        await spell.PreAction(this.actor, target?.Value, cancellationToken);
-                        await spell.Act(this.actor, target?.Value, cancellationToken);
-                        await spell.PostAction(this.actor, target?.Value, cancellationToken);
+                        try
+                        {
+                            await spell.PreAction(this.actor.Character, target?.Value?.Character, cancellationToken);
+                            await spell.Act(this.actor.Character, target?.Value?.Character, cancellationToken);
+                            await spell.PostAction(this.actor.Character, target?.Value?.Character, cancellationToken);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            throw ex;
+                        }
                     }
                     else
                     {

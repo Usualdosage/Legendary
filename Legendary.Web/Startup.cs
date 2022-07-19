@@ -35,7 +35,7 @@ namespace Legendary.Web
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
         /// <param name="configuration">IConfiguration object.</param>
-        /// <param name="hostingEnvironment">The hosting environment.</param>
+        /// <param name="webHostEnvironment">The hosting environment.</param>
         public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             this.Configuration = configuration;

@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -89,7 +90,7 @@ namespace Legendary.Engine.Models
         public LanguageGenerator LanguageGenerator { get; private set; }
 
         /// <inheritdoc/>
-        public virtual async Task<bool> IsSuccess(UserData actor, UserData? target, int proficiency, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> IsSuccess(int proficiency, CancellationToken cancellationToken = default)
         {
             return await Task.Run(() =>
             {
@@ -100,30 +101,71 @@ namespace Legendary.Engine.Models
         }
 
         /// <inheritdoc/>
-        public virtual async Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public virtual async Task CheckImprove(Character actor, CancellationToken cancellationToken = default)
+        {
+            int maxImprove = (int)Math.Max(2, actor.Int.Current / 4);
+
+            if (this.ActionType == ActionType.Skill)
+            {
+                var skillProficiency = actor.GetSkillProficiency(this.Name);
+                if (skillProficiency != null)
+                {
+                    skillProficiency.Progress += this.Random.Next(0, maxImprove);
+
+                    if (skillProficiency.Progress >= 100)
+                    {
+                        skillProficiency.Proficiency += 1;
+                        skillProficiency.Progress = 0;
+                        await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+                        await this.Communicator.SaveCharacter(actor);
+                    }
+                }
+            }
+
+            if (this.ActionType == ActionType.Spell)
+            {
+                var spellProficiency = actor.GetSpellProficiency(this.Name);
+                if (spellProficiency != null)
+                {
+                    spellProficiency.Progress += this.Random.Next(0, maxImprove);
+
+                    if (spellProficiency.Progress >= 100)
+                    {
+                        spellProficiency.Proficiency += 1;
+                        spellProficiency.Progress = 0;
+                        await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+                        await this.Communicator.SaveCharacter(actor);
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public virtual async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
             var spellWords = this.LanguageGenerator.BuildSentence(this.Name);
 
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
+                await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} extends {actor.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
             }
             else
             {
-                await this.Communicator.SendToPlayer(actor.Connection, $"You extend your hand and utter the word, '{spellWords}' at {target?.Character.FirstName}.", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} extends {actor.Character.Pronoun} hand toward {target?.Character.FirstName} and utters the word, '{spellWords}'", cancellationToken);
+                await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}' at {target?.FirstName}.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} extends {actor.Pronoun} hand toward {target?.FirstName} and utters the word, '{spellWords}'", cancellationToken);
             }
         }
 
         /// <inheritdoc/>
-        public abstract Task Act(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        public abstract Task Act(Character actor, Character? target, CancellationToken cancellationToken = default);
 
         /// <inheritdoc/>
-        public virtual Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default)
+        public virtual async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
-            actor.Character.Mana.Current -= this.ManaCost;
-            return Task.CompletedTask;
+            actor.Mana.Current -= this.ManaCost;
+
+            await this.CheckImprove(actor, cancellationToken);
         }
     }
 }

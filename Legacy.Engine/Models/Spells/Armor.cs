@@ -37,49 +37,49 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
             var effect = new Effect()
             {
                 Name = this.Name,
-                Duration = actor.Character.Level / 10,
-                Pierce = actor.Character.Level / 10,
-                Blunt = actor.Character.Level / 10,
-                Magic = actor.Character.Level / 10,
-                Slash = actor.Character.Level / 10,
+                Duration = actor.Level / 10,
+                Pierce = actor.Level / 10,
+                Blunt = actor.Level / 10,
+                Magic = actor.Level / 10,
+                Slash = actor.Level / 10,
             };
 
             if (target == null)
             {
-                if (actor.Character.IsAffectedBy(this))
+                if (actor.IsAffectedBy(this))
                 {
-                    await this.Communicator.SendToPlayer(actor.Connection, $"You are already armored.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, $"You are already armored.", cancellationToken);
                 }
                 else
                 {
-                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
-                    await this.Communicator.PlaySoundToRoom(actor.Character, target?.Character, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
 
-                    actor.Character.AffectedBy.Add(effect);
-                    await this.Communicator.SendToPlayer(actor.Connection, $"You are protected by magical armor.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} is protected by magical armor.", cancellationToken);
+                    actor.AffectedBy.Add(effect);
+                    await this.Communicator.SendToPlayer(actor, $"You are protected by magical armor.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} is protected by magical armor.", cancellationToken);
                 }
             }
             else
             {
-                if (actor.Character.IsAffectedBy(this))
+                if (actor.IsAffectedBy(this))
                 {
-                    await this.Communicator.SendToPlayer(actor.Connection, $"{target?.Character.FirstName} is are already armored.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName} is are already armored.", cancellationToken);
                 }
                 else
                 {
-                    await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
-                    await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
-                    await this.Communicator.PlaySoundToRoom(actor.Character, target?.Character, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                    await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
 
-                    target?.Character.AffectedBy.Add(effect);
-                    await this.Communicator.SendToPlayer(actor.Connection, $"{target?.Character.FirstName} is protected by your magical armor.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{target?.Character.FirstName} is protected by {target?.Character.FirstName}'s armor.", cancellationToken);
+                    target?.AffectedBy.Add(effect);
+                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName} is protected by your magical armor.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName} is protected by {target?.FirstName}'s armor.", cancellationToken);
                 }
             }
         }

@@ -29,7 +29,7 @@ namespace Legendary.Engine.Models.Spells
         public CureSerious(ICommunicator communicator, IRandom random, Combat combat)
             : base(communicator, random, combat)
         {
-            this.Name = "CureSerious";
+            this.Name = "Cure Serious";
             this.ManaCost = 20;
             this.CanInvoke = true;
             this.IsAffect = false;
@@ -37,23 +37,23 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
 
-            var result = this.Random.Next(2, 16) + (actor.Character.Level / 10);
+            var result = this.Random.Next(2, 16) + (actor.Level / 10);
 
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor.Character, "You feel much better!", cancellationToken);
-                await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                actor.Character.Health.Current += result;
+                await this.Communicator.SendToPlayer(actor, "You feel much better!", cancellationToken);
+                await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                actor.Health.Current += result;
             }
             else
             {
-                await this.Communicator.SendToPlayer(target.Character, "You feel much better!", cancellationToken);
-                await this.Communicator.PlaySound(target.Character, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                actor.Character.Health.Current += result;
+                await this.Communicator.SendToPlayer(target, "You feel much better!", cancellationToken);
+                await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                actor.Health.Current += result;
             }
         }
     }

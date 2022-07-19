@@ -29,7 +29,7 @@ namespace Legendary.Engine.Models.Spells
         public CureLight(ICommunicator communicator, IRandom random, Combat combat)
             : base(communicator, random, combat)
         {
-            this.Name = "CureLight";
+            this.Name = "Cure Light";
             this.ManaCost = 10;
             this.CanInvoke = true;
             this.IsAffect = false;
@@ -37,21 +37,21 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(UserData actor, UserData? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
 
-            var result = this.Random.Next(1, 8) + (actor.Character.Level / 10);
+            var result = this.Random.Next(1, 8) + (actor.Level / 10);
 
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor.Character, "You feel a little better.", cancellationToken);
-                await this.Communicator.PlaySound(actor.Character, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                actor.Character.Health.Current += result;
+                await this.Communicator.SendToPlayer(actor, "You feel a little better.", cancellationToken);
+                await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                actor.Health.Current += result;
             }
             else
             {
-                await this.Communicator.SendToPlayer(actor.Character, "You can't cast this spell on others.", cancellationToken);
+                await this.Communicator.SendToPlayer(actor, "You can't cast this spell on others.", cancellationToken);
             }
         }
     }

@@ -78,12 +78,10 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Determines if the action was executed successfully. This should be called BEFORE PreAction.
         /// </summary>
-        /// <param name="actor">The one who performs the skill.</param>
-        /// <param name="target">The target of the skill.</param>
         /// <param name="proficiency">The action proficiency.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task<bool> IsSuccess(UserData actor, UserData? target, int proficiency, CancellationToken cancellationToken = default);
+        Task<bool> IsSuccess(int proficiency, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Performs the skill action.
@@ -92,7 +90,15 @@ namespace Legendary.Core.Contracts
         /// <param name="target">The target of the skill.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        abstract Task Act(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        abstract Task Act(Character actor, Character? target, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Each time the action is used, checks the improvement of the action.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task CheckImprove(Character actor, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets or sets the action to execute before the main action effect.
@@ -101,7 +107,7 @@ namespace Legendary.Core.Contracts
         /// <param name="target">The target of the skill.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task PreAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets or sets the action to execute after the main action effect.
@@ -110,6 +116,6 @@ namespace Legendary.Core.Contracts
         /// <param name="target">The target of the skill.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task PostAction(UserData actor, UserData? target, CancellationToken cancellationToken = default);
+        Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default);
     }
 }
