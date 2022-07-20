@@ -178,6 +178,7 @@ namespace Legendary.Engine
         /// <summary>
         /// Processes messages about the weather each hour to the user.
         /// </summary>
+        /// <param name="userData">The user.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         private async Task ProcessWeather(UserData userData, CancellationToken cancellationToken = default)
@@ -220,7 +221,7 @@ namespace Legendary.Engine
                                 await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                             case 5:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.", cancellationToken);
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
                                 await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                         }

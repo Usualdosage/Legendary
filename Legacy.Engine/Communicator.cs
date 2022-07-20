@@ -180,7 +180,7 @@ namespace Legendary.Engine
                 userData.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
 
                 // Update the user metrics
-                await this.UpdateMetrics(userData, ip.ToString());
+                await this.UpdateMetrics(userData, ip?.ToString());
 
                 // TODO: Just all all skills and spells for now.
                 this.ApplySkillsAndSpells(userData);
@@ -422,7 +422,7 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    await this.SendToPlayer(target.Value.Value.Connection, $"{actor.FirstName} looks at you.", cancellationToken);
+                    await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName} looks at you.", cancellationToken);
                     await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
                     await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
 

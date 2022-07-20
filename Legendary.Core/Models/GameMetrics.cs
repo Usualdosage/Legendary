@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine.Models
+namespace Legendary.Core.Models
 {
     using System;
 

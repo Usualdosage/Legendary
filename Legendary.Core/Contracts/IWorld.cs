@@ -38,6 +38,11 @@ namespace Legendary.Core.Contracts
         HashSet<Mobile> Mobiles { get; }
 
         /// <summary>
+        /// Gets the game metrics.
+        /// </summary>
+        GameMetrics? GameMetrics { get; }
+
+        /// <summary>
         /// Processes changes to the world such as item decay, mob movement, etc.
         /// </summary>
         /// <param name="communicator">The communicator.</param>

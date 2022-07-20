@@ -87,9 +87,9 @@ namespace Legendary.Engine.Processors
                             await spell.Act(this.actor.Character, target?.Value?.Character, cancellationToken);
                             await spell.PostAction(this.actor.Character, target?.Value?.Character, cancellationToken);
                         }
-                        catch (System.Exception ex)
+                        catch
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                     else
