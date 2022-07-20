@@ -32,40 +32,26 @@ namespace Legendary.Data
             }
 
             this.databaseSettings = databaseSettings;
+
+            var settings = MongoClientSettings.FromConnectionString(this.databaseSettings.ConnectionString);
+            this.Client = new MongoClient(settings);
+            this.Database = this.Client.GetDatabase(this.databaseSettings.DatabaseName);
         }
 
         /// <summary>
         /// Gets or sets the database.
         /// </summary>
-        public IMongoDatabase? Database { get; set; }
+        public IMongoDatabase Database { get; set; }
 
         /// <summary>
         /// Gets or sets the client.
         /// </summary>
-        public MongoClient? Client { get; set; }
+        public MongoClient Client { get; set; }
 
         /// <inheritdoc/>
         public void Dispose()
         {
-            this.Client = null;
-            this.Database = null;
             GC.SuppressFinalize(this);
-        }
-
-        /// <inheritdoc/>
-        public bool TestConnection()
-        {
-            try
-            {
-                var settings = MongoClientSettings.FromConnectionString(this.databaseSettings.ConnectionString);
-                this.Client = new MongoClient(settings);
-                this.Database = this.Client.GetDatabase(this.databaseSettings.DatabaseName);
-                return this.Database != null;
-            }
-            catch
-            {
-                throw;
-            }
         }
     }
 }

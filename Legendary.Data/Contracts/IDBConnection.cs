@@ -20,12 +20,6 @@ namespace Legendary.Data.Contracts
         /// <summary>
         /// Gets or sets the database.
         /// </summary>
-        IMongoDatabase? Database { get; set; }
-
-        /// <summary>
-        /// Checks to see if a connection can be made to the specified database.
-        /// </summary>
-        /// <returns>True if able to connect, else false.</returns>
-        bool TestConnection();
+        IMongoDatabase Database { get; set; }
     }
 }

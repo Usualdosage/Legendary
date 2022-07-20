@@ -12,7 +12,6 @@ namespace Legendary.Data.Contracts
     using System;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using MongoDB.Driver;
 
@@ -24,22 +23,22 @@ namespace Legendary.Data.Contracts
         /// <summary>
         /// Gets the areas.
         /// </summary>
-        public IMongoCollection<Area>? Areas { get; }
+        public IMongoCollection<Area> Areas { get; }
 
         /// <summary>
         /// Gets the items.
         /// </summary>
-        public IMongoCollection<Item>? Items { get; }
+        public IMongoCollection<Item> Items { get; }
 
         /// <summary>
         /// Gets the mobiles.
         /// </summary>
-        public IMongoCollection<Mobile>? Mobiles { get; }
+        public IMongoCollection<Mobile> Mobiles { get; }
 
         /// <summary>
         /// Gets the characters.
         /// </summary>
-        public IMongoCollection<Character>? Characters { get; }
+        public IMongoCollection<Character> Characters { get; }
 
         /// <summary>
         /// Finds a character using the given filter.
@@ -78,11 +77,5 @@ namespace Legendary.Data.Contracts
         /// <param name="mobile">The mobile.</param>
         /// <returns>Task.</returns>
         Task<Mobile?> CreateMobile(Mobile mobile);
-
-        /// <summary>
-        /// Tests that this instance can connect to Mongo.
-        /// </summary>
-        /// <returns>True if succeeded, false if not.</returns>
-        bool TestConnection();
     }
 }

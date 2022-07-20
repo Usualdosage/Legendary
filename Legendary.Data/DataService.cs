@@ -12,13 +12,9 @@ namespace Legendary.Data
     using System;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Legendary.Core.Contracts;
-    using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
-    using MongoDB.Bson.IO;
     using MongoDB.Driver;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Concrete implementation of an IDataService.
@@ -26,46 +22,35 @@ namespace Legendary.Data
     public class DataService : IDataService
     {
         private readonly IDBConnection dbConnection;
-        private readonly IRandom random;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService"/> class.
         /// </summary>
         /// <param name="dbConnection">The database connection.</param>
-        /// <param name="random">The random number generator.</param>
-        public DataService(IDBConnection dbConnection, IRandom random)
+        public DataService(IDBConnection dbConnection)
         {
             this.dbConnection = dbConnection;
-            this.random = random;
-
-            this.TestConnection();
         }
 
         /// <summary>
         /// Gets the areas.
         /// </summary>
-        public IMongoCollection<Area>? Areas { get => this.dbConnection.Database?.GetCollection<Area>("Areas"); }
+        public IMongoCollection<Area> Areas { get => this.dbConnection.Database.GetCollection<Area>("Areas"); }
 
         /// <summary>
         /// Gets the characters.
         /// </summary>
-        public IMongoCollection<Character>? Characters { get => this.dbConnection.Database?.GetCollection<Character>("Characters"); }
+        public IMongoCollection<Character> Characters { get => this.dbConnection.Database.GetCollection<Character>("Characters"); }
 
         /// <summary>
         /// Gets the items.
         /// </summary>
-        public IMongoCollection<Item>? Items { get => this.dbConnection.Database?.GetCollection<Item>("Items"); }
+        public IMongoCollection<Item> Items { get => this.dbConnection.Database.GetCollection<Item>("Items"); }
 
         /// <summary>
         /// Gets the mobiles.
         /// </summary>
-        public IMongoCollection<Mobile>? Mobiles { get => this.dbConnection.Database?.GetCollection<Mobile>("Mobiles"); }
-
-        /// <inheritdoc/>
-        public bool TestConnection()
-        {
-            return this.dbConnection.TestConnection();
-        }
+        public IMongoCollection<Mobile> Mobiles { get => this.dbConnection.Database.GetCollection<Mobile>("Mobiles"); }
 
         /// <inheritdoc/>
         public async Task<ReplaceOneResult?> SaveCharacter(Character character)
