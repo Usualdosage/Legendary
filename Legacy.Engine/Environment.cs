@@ -178,8 +178,9 @@ namespace Legendary.Engine
         /// <summary>
         /// Processes messages about the weather each hour to the user.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task ProcessWeather(UserData userData)
+        private async Task ProcessWeather(UserData userData, CancellationToken cancellationToken = default)
         {
             // TODO: Finish the weather.
             var room = this.communicator.ResolveRoom(userData.Character.Location);
@@ -203,19 +204,24 @@ namespace Legendary.Engine
                             default:
                                 break;
                             case 1:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.");
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.", cancellationToken);
+                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                             case 2:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.");
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.", cancellationToken);
+                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                             case 3:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.");
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.", cancellationToken);
+                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                             case 4:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.");
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.", cancellationToken);
+                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                             case 5:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
+                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.", cancellationToken);
+                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
                                 break;
                         }
 

@@ -108,15 +108,33 @@ namespace Legendary.Engine.Models
             if (this.ActionType == ActionType.Skill)
             {
                 var skillProficiency = actor.GetSkillProficiency(this.Name);
+
                 if (skillProficiency != null)
                 {
-                    skillProficiency.Progress += this.Random.Next(0, maxImprove);
+                    if (skillProficiency.Proficiency == 100)
+                    {
+                        return;
+                    }
+
+                    // The lower the skill percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
+                    int modifier = (int)(1 / (skillProficiency.Proficiency / 5) * 100);
+
+                    skillProficiency.Progress += this.Random.Next(0, maxImprove) + modifier;
 
                     if (skillProficiency.Progress >= 100)
                     {
                         skillProficiency.Proficiency += 1;
                         skillProficiency.Progress = 0;
-                        await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+
+                        if (skillProficiency.Proficiency == 100)
+                        {
+                            await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+                        }
+
                         await this.Communicator.SaveCharacter(actor);
                     }
                 }
@@ -125,16 +143,32 @@ namespace Legendary.Engine.Models
             if (this.ActionType == ActionType.Spell)
             {
                 var spellProficiency = actor.GetSpellProficiency(this.Name);
+
                 if (spellProficiency != null)
                 {
-                    spellProficiency.Progress += this.Random.Next(0, maxImprove);
+                    if (spellProficiency.Proficiency == 100)
+                    {
+                        return;
+                    }
+
+                    // The lower the spell percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
+                    int modifier = (int)(1 / (spellProficiency.Proficiency / 5) * 100);
+
+                    spellProficiency.Progress += this.Random.Next(0, maxImprove) + modifier;
 
                     if (spellProficiency.Progress >= 100)
                     {
                         spellProficiency.Proficiency += 1;
                         spellProficiency.Progress = 0;
-                        await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
-                        await this.Communicator.SaveCharacter(actor);
+
+                        if (spellProficiency.Proficiency == 100)
+                        {
+                            await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+                        }
                     }
                 }
             }

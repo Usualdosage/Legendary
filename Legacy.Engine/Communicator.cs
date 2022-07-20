@@ -520,11 +520,19 @@ namespace Legendary.Engine
             // Update player stats
             await this.ShowPlayerInfo(actor, cancellationToken);
 
-            // Play the music.
+            // Play the music according to the terrain.
             if (room != null)
             {
-                var soundIndex = this.random.Next(0, 2);
-                await this.PlaySound(actor, 0, $"../audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3", cancellationToken);
+                var soundIndex = this.random.Next(0, 4);
+                await this.PlaySound(actor, AudioChannel.Background, $"../audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3", cancellationToken);
+
+                // 40% chance to play the terrain SFX (e.g. forest, city)
+                var randomSfx = this.random.Next(0, 10);
+
+                if (randomSfx <= 4)
+                {
+                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"../audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3", cancellationToken);
+                }
             }
         }
 
@@ -906,7 +914,7 @@ namespace Legendary.Engine
                 return;
             }
 
-            if ((int)channel > 5 || (int)channel < 0)
+            if ((int)channel > 7 || (int)channel < 0)
             {
                 return;
             }

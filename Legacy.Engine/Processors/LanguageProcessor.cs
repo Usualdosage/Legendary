@@ -201,22 +201,23 @@ namespace Legendary.Engine.Processors
                     target.PlayerTarget = null;
                 }
 
-                // If the player and target are already engaged in conversation, there is a 60-80% chance it will speak.
+                // If the player and target are already engaged in conversation, there is a 70-90% chance it will speak.
                 if (target.PlayerTarget?.FirstName == actor.FirstName)
                 {
-                    chance += this.random.Next(60, 85);
+                    chance += this.random.Next(70, 90);
                     this.logger.Debug($"{target.FirstName} is engaged with {actor.FirstName}. Chance: {chance}.", this.communicator);
                 }
                 else
                 {
                     // Different person speaking to the mob, give it a 10-25% additional chance to speak to the new character.
                     chance += this.random.Next(10, 25);
+
                     this.logger.Debug($"{target.FirstName} is distracted. Chance: {chance}.", this.communicator);
 
                     // Mob is engaged to a target, but someone else is speaking. 10% chance to engage with them instead.
                     if (target.PlayerTarget != null || target.PlayerTarget?.FirstName != actor.FirstName)
                     {
-                        if (this.random.Next(0, 100) < 30)
+                        if (this.random.Next(0, 100) < 35)
                         {
                             this.logger.Debug($"{target.FirstName} decided to engage {actor.FirstName}.", this.communicator);
                             return true;
@@ -228,7 +229,7 @@ namespace Legendary.Engine.Processors
                 if (message.Contains(target.FirstName))
                 {
                     this.logger.Debug($"{target.FirstName} mentioned by name by {actor.FirstName}. Chance: {chance}.", this.communicator);
-                    chance += this.random.Next(50, 80);
+                    chance += this.random.Next(55, 85);
                 }
 
                 // If we overmax chance, give a 1% rate of failure.
