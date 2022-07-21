@@ -1,5 +1,17 @@
 ﻿@model UserModel
 
+<div class="audio-controls">
+    <div>Audio Controls <button onclick="toggleMute()"><i id="muteButton" class="fa-solid fa-volume-high"></i></button></div>
+    <div>
+        <span>Music</span><input type="range" min="1" max="100" value="30" class="slider" onchange="changeBgAudio(this)" id="audioBackground">
+    </div>
+    <div>
+        <span>Effects</span><input type="range" min="1" max="100" value="100" class="slider" onchange="changeSfxAudio(this)" id="audioSFX">
+    </div>
+    <div>
+    </div>
+</div>
+
 <div class="audio-channels">
     <audio id="channel0"></audio>
     <audio id="channel1"></audio>

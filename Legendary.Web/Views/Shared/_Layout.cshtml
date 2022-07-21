@@ -11,12 +11,14 @@
           type="image/png"
           href="/favicon.png">
     <link rel="stylesheet" href="~/css/client.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/controls.css" asp-append-version="true" />
 </head>
 <body>
     @RenderBody()
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/client.js" asp-append-version="true"></script>
+    <script src="~/js/controls.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
