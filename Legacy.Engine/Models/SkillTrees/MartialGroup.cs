@@ -46,6 +46,7 @@ namespace Legendary.Engine.Models.SkillTrees
             get => new Dictionary<IAction, int>()
             {
                 { new HandToHand(this.communicator, this.random, this.combat), 1 },
+                { new Recall(this.communicator, this.random, this.combat), 1 },
             };
         }
 

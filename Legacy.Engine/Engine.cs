@@ -28,6 +28,11 @@ namespace Legendary.Engine
         private int gameHour = 0;
 
         /// <summary>
+        /// Master game timer.
+        /// </summary>
+        private System.Threading.Timer? timer;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Engine"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
@@ -52,14 +57,18 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task Initialize()
         {
-            this.logger.Info("Populating the world with mobiles and items..", null);
+            this.logger.Info("Updating the game metrics...", null);
+
+            await this.world.UpdateGameMetrics(null);
+
+            this.logger.Info("Populating the world with mobiles and items...", null);
 
             await this.world.Populate();
 
             this.logger.Info("Starting main loop...", null);
 
-            var timer = new System.Threading.Timer(
-                t =>
+            this.timer = new System.Threading.Timer(
+                async t =>
                 {
                     try
                     {
@@ -72,12 +81,14 @@ namespace Legendary.Engine
                         if (this.gameTicks == 30)
                         {
                             this.gameHour++;
-                            if (this.gameHour == 23)
+                            if (this.gameHour == 24)
                             {
                                 this.gameHour = 0;
                             }
 
                             this.gameTicks = 0;
+
+                            await this.world.UpdateGameMetrics(null);
 
                             // Raise the event to any listeners (e.g. Communicator).
                             this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
@@ -85,7 +96,11 @@ namespace Legendary.Engine
                     }
                     catch (Exception ex)
                     {
+                        await this.world.UpdateGameMetrics(ex);
                         this.logger.Debug(ex.ToString(), null);
+
+                        // If we hit an exception, we need to restart the timer.
+                        this.timer?.Change(2000, 2000);
                     }
                 },
                 null,

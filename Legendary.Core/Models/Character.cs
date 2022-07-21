@@ -134,6 +134,11 @@ namespace Legendary.Core.Models
         public IList<CharacterFlags> CharacterFlags { get; set; } = new List<CharacterFlags>();
 
         /// <summary>
+        /// Gets or sets the chararacter the player last spoke to.
+        /// </summary>
+        public string? LastComm { get; set; }
+
+        /// <summary>
         /// Gets or sets the health.
         /// </summary>
         public MaxCurrent Health { get; set; } = new MaxCurrent(0, 0);

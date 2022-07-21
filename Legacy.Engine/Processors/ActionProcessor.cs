@@ -196,6 +196,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("quit", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoQuit)));
             this.actions.Add("rest", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoRest)));
             this.actions.Add("remove", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoRemove)));
+            this.actions.Add("reply", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoReply)));
             this.actions.Add("save", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(8, new Func<UserData, string[], CancellationToken, Task>(this.DoSave)));
             this.actions.Add("say", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(7, new Func<UserData, string[], CancellationToken, Task>(this.DoSay)));
             this.actions.Add("score", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoScore)));
@@ -648,9 +649,36 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        private async Task DoReply(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            if (args.Length < 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Reply what?", cancellationToken);
+            }
+            else
+            {
+                if (actor.Character.LastComm != null)
+                {
+                    var sentence = string.Join(' ', args, 2, args.Length - 2);
+                    await this.Tell(actor, actor.Character.LastComm, sentence, cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You have no one to reply to.", cancellationToken);
+                }
+            }
+        }
+
         private async Task DoTime(UserData actor, string[] args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"The system time is {DateTime.UtcNow}.", cancellationToken);
+            var metrics = this.world.GameMetrics;
+
+            if (metrics != null)
+            {
+                var timeInfo = DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second);
+
+                await this.communicator.SendToPlayer(actor.Connection, $"{timeInfo}", cancellationToken);
+            }
         }
 
         private async Task DoUnsubscribe(UserData actor, string[] args, CancellationToken cancellationToken)
@@ -1194,6 +1222,7 @@ namespace Legendary.Engine.Processors
             target = char.ToUpper(target[0]) + target[1..];
 
             var commResult = await this.communicator.SendToPlayer(user.Connection, target, $"{user.Character.FirstName} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
+
             switch (commResult)
             {
                 default:
@@ -1218,6 +1247,8 @@ namespace Legendary.Engine.Processors
                 case CommResult.Ok:
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
+                        user.Character.LastComm = target;
+                        await this.communicator.SaveCharacter(user.Character);
                         break;
                     }
             }

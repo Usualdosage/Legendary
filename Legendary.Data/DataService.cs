@@ -11,7 +11,9 @@ namespace Legendary.Data
 {
     using System;
     using System.Linq.Expressions;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Data.Contracts;
     using MongoDB.Driver;
@@ -22,6 +24,9 @@ namespace Legendary.Data
     public class DataService : IDataService
     {
         private readonly IDBConnection dbConnection;
+
+        private readonly ReplaceOptions replaceOptions = new () { IsUpsert = true };
+        private readonly InsertOneOptions insertOptions = new () { Comment = "Insert options." };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataService"/> class.
@@ -52,17 +57,23 @@ namespace Legendary.Data
         /// </summary>
         public IMongoCollection<Mobile> Mobiles { get => this.dbConnection.Database.GetCollection<Mobile>("Mobiles"); }
 
+        /// <summary>
+        /// Gets the game metrics.
+        /// </summary>
+        public IMongoCollection<GameMetrics> GameMetrics { get => this.dbConnection.Database.GetCollection<GameMetrics>("GameMetrics"); }
+
         /// <inheritdoc/>
-        public async Task<ReplaceOneResult?> SaveCharacter(Character character)
+        public async Task<ReplaceOneResult?> SaveCharacter(Character character, CancellationToken cancellationToken)
         {
             try
             {
                 if (!character.IsNPC)
                 {
                     FilterDefinition<Character> charToReplace = new ExpressionFilterDefinition<Character>(d => d.CharacterId == character.CharacterId);
+
                     if (this.Characters != null)
                     {
-                        return await this.Characters.ReplaceOneAsync(charToReplace, character);
+                        return await this.Characters.ReplaceOneAsync(charToReplace, character, this.replaceOptions, cancellationToken);
                     }
                     else
                     {
@@ -92,18 +103,31 @@ namespace Legendary.Data
             }
             catch (Exception exc)
             {
-                throw new Exception($"Unable to connect to the database. {exc}");
+                throw new Exception($"Unable to load character. {exc}");
             }
         }
 
         /// <inheritdoc/>
-        public async Task<Character?> CreateCharacter(Character character)
+        public async Task<GameMetrics?> GetGameMetrics()
+        {
+            try
+            {
+                return await this.GameMetrics.Find(f => f.Id == 1).FirstOrDefaultAsync();
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Unable to load game metrics. {exc}");
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<Character?> CreateCharacter(Character character, CancellationToken cancellationToken)
         {
             if (this.Characters != null)
             {
                 try
                 {
-                    await this.Characters.InsertOneAsync(character);
+                    await this.Characters.InsertOneAsync(character, this.insertOptions, cancellationToken);
                     return character;
                 }
                 catch
@@ -118,13 +142,13 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task<Mobile?> CreateMobile(Mobile mobile)
+        public async Task<Mobile?> CreateMobile(Mobile mobile, CancellationToken cancellationToken)
         {
             if (this.Mobiles != null)
             {
                 try
                 {
-                    await this.Mobiles.InsertOneAsync(mobile);
+                    await this.Mobiles.InsertOneAsync(mobile, this.insertOptions, cancellationToken);
                     return mobile;
                 }
                 catch
@@ -139,13 +163,13 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task<Item?> CreateItem(Item item)
+        public async Task<Item?> CreateItem(Item item, CancellationToken cancellationToken)
         {
             if (this.Items != null)
             {
                 try
                 {
-                    await this.Items.InsertOneAsync(item);
+                    await this.Items.InsertOneAsync(item, this.insertOptions, cancellationToken);
                     return item;
                 }
                 catch
@@ -156,6 +180,30 @@ namespace Legendary.Data
             else
             {
                 throw new Exception("Unable to create item.");
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<GameMetrics?> SaveGameMetrics(GameMetrics metrics, CancellationToken cancellationToken)
+        {
+            if (this.GameMetrics != null)
+            {
+                try
+                {
+                    FilterDefinition<GameMetrics> metricsToReplace = new ExpressionFilterDefinition<GameMetrics>(c => c.Id == 1);
+
+                    await this.GameMetrics.ReplaceOneAsync(metricsToReplace, metrics, this.replaceOptions, cancellationToken);
+
+                    return metrics;
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                throw new Exception("Unable to update game metrics.");
             }
         }
     }

@@ -45,6 +45,7 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new Dictionary<IAction, int>()
             {
+                { new Armor(this.communicator, this.random, this.combat), 1 },
                 { new CureLight(this.communicator, this.random, this.combat), 1 },
             };
         }

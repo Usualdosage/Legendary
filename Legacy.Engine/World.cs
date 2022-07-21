@@ -20,7 +20,6 @@ namespace Legendary.Engine
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
-    using Legendary.Engine.Models;
     using MongoDB.Driver;
 
     /// <summary>
@@ -60,7 +59,7 @@ namespace Legendary.Engine
         public HashSet<Mobile> Mobiles { get; private set; }
 
         /// <inheritdoc/>
-        public GameMetrics? GameMetrics { get; private set; } = null;
+        public GameMetrics? GameMetrics { get; internal set; } = null;
 
         /// <inheritdoc/>
         public async Task Populate()
@@ -115,6 +114,59 @@ namespace Legendary.Engine
             catch (Exception exc)
             {
                 this.logger.Error(exc, null);
+                throw;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task UpdateGameMetrics(Exception? lastException, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var metrics = await this.dataService.GetGameMetrics();
+
+                if (metrics == null)
+                {
+                    metrics = new GameMetrics();
+                }
+
+                // Update hour, day, month, and year.
+                metrics.CurrentHour++;
+
+                if (metrics.CurrentHour == 24)
+                {
+                    metrics.CurrentHour = 0;
+                    metrics.CurrentDay++;
+
+                    if (metrics.CurrentDay == 31)
+                    {
+                        metrics.CurrentMonth++;
+
+                        if (metrics.CurrentMonth == 13)
+                        {
+                            metrics.CurrentYear++;
+                        }
+                    }
+                }
+
+                metrics.HostURL = "https://legendary-mud.azurewebsites.net";
+                metrics.LastError = lastException;
+                metrics.LastStartupDateTime ??= DateTime.UtcNow;
+                metrics.MaxPlayers = this.dataService.Characters.CountDocuments(c => c.CharacterId > 0, cancellationToken: cancellationToken);
+                metrics.TotalAreas = this.Areas.Count;
+                metrics.TotalMobiles = this.Mobiles.Count;
+                metrics.TotalItems = this.Items.Count;
+                metrics.TotalRooms = this.Areas.Sum(a => a.Rooms.Count);
+
+                // Update the local cached version.
+                this.GameMetrics = metrics;
+
+                // TODO
+                // metrics.MostKills = this.dataService.Characters.Find(c => c.Metrics != null && c.Metrics.PlayerKills > 0).SortByDescending(s => s.Metrics.PlayerKills).FirstOrDefault(cancellationToken: cancellationToken).FirstName;
+                await this.dataService.SaveGameMetrics(metrics, cancellationToken);
+            }
+            catch
+            {
                 throw;
             }
         }

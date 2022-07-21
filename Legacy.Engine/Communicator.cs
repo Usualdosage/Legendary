@@ -187,8 +187,8 @@ namespace Legendary.Engine
 
                 // Create instances of the action, skill, and spell processors.
                 // TODO: Can these be global somehow, so we don't have to create these for each character the logs in?
-                this.skillProcessor = new SkillProcessor(userData, this, this.random, this.combat);
-                this.spellProcessor = new SpellProcessor(userData, this, this.random, this.combat);
+                this.skillProcessor = new SkillProcessor(this, this.random, this.combat, this.logger);
+                this.spellProcessor = new SpellProcessor(this, this.random, this.combat, this.logger);
                 this.actionProcessor = new ActionProcessor(this, this.world, this.logger, this.random, this.combat);
 
                 // Display the welcome content.
@@ -986,6 +986,20 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Checks to see if this player is casting something.
+        /// </summary>
+        /// <param name="command">The first argument.</param>
+        /// <returns>True if casting.</returns>
+        private static bool IsCasting(string command)
+        {
+            return command switch
+            {
+                "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
+                _ => false
+            };
+        }
+
+        /// <summary>
         /// Advances the user one level.
         /// </summary>
         /// <param name="character">The user.</param>
@@ -1092,7 +1106,7 @@ namespace Legendary.Engine
                 {
                     if (this.skillProcessor != null)
                     {
-                        await this.skillProcessor.DoSkill(args, command, cancellationToken);
+                        await this.skillProcessor.DoSkill(user, args, command, cancellationToken);
                         return;
                     }
                     else
@@ -1101,7 +1115,7 @@ namespace Legendary.Engine
                         return;
                     }
                 }
-                else if (this.IsCasting(command))
+                else if (IsCasting(command))
                 {
                     if (args.Length > 1)
                     {
@@ -1109,7 +1123,7 @@ namespace Legendary.Engine
                         {
                             if (this.spellProcessor != null)
                             {
-                                await this.spellProcessor.DoSpell(args, command, cancellationToken);
+                                await this.spellProcessor.DoSpell(user, args, command, cancellationToken);
                                 return;
                             }
                             else
@@ -1138,20 +1152,6 @@ namespace Legendary.Engine
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Checks to see if this player is casting something.
-        /// </summary>
-        /// <param name="command">The first argument.</param>
-        /// <returns>True if casting.</returns>
-        private bool IsCasting(string command)
-        {
-            return command switch
-            {
-                "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
-                _ => false
-            };
         }
 
         /// <summary>

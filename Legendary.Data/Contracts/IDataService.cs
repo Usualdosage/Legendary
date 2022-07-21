@@ -11,6 +11,7 @@ namespace Legendary.Data.Contracts
 {
     using System;
     using System.Linq.Expressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Models;
     using MongoDB.Driver;
@@ -51,31 +52,49 @@ namespace Legendary.Data.Contracts
             FindOptions? options = null);
 
         /// <summary>
+        /// Gets the GameMetrics object.
+        /// </summary>
+        /// <returns>Task.</returns>
+        public Task<GameMetrics?> GetGameMetrics();
+
+        /// <summary>
         /// Saves the character to the database.
         /// </summary>
-        /// <param name="character">The chanracter.</param>
+        /// <param name="character">The character.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>ReplaceOneResult.</returns>
-        public Task<ReplaceOneResult?> SaveCharacter(Character character);
+        public Task<ReplaceOneResult?> SaveCharacter(Character character, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a character.
         /// </summary>
         /// <param name="character">The character.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task<Character?> CreateCharacter(Character character);
+        Task<Character?> CreateCharacter(Character character, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates an item.
         /// </summary>
         /// <param name="item">The item.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task<Item?> CreateItem(Item item);
+        Task<Item?> CreateItem(Item item, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Creates a mobile.
         /// </summary>
         /// <param name="mobile">The mobile.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task<Mobile?> CreateMobile(Mobile mobile);
+        Task<Mobile?> CreateMobile(Mobile mobile, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Saves the game metrics.
+        /// </summary>
+        /// <param name="metrics">The metrics.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task<GameMetrics?> SaveGameMetrics(GameMetrics metrics, CancellationToken cancellationToken = default);
     }
 }
