@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Processors
 {
+    using System;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -79,9 +80,16 @@ namespace Legendary.Engine.Processors
 
                     if (await skill.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
-                        await skill.PreAction(actor.Character, target?.Value.Character, cancellationToken);
-                        await skill.Act(actor.Character, target?.Value.Character, cancellationToken);
-                        await skill.PostAction(actor.Character, target?.Value.Character, cancellationToken);
+                        try
+                        {
+                            await skill.PreAction(actor.Character, target?.Value?.Character, cancellationToken);
+                            await skill.Act(actor.Character, target?.Value?.Character, cancellationToken);
+                            await skill.PostAction(actor.Character, target?.Value?.Character, cancellationToken);
+                        }
+                        catch
+                        {
+                            throw;
+                        }
                     }
                     else
                     {

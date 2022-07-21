@@ -9,7 +9,6 @@
 
 namespace Legendary.Engine.Models.Skills
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -30,7 +29,7 @@ namespace Legendary.Engine.Models.Skills
             : base(communicator, random, combat)
         {
             this.Name = "Recall";
-            this.ManaCost = 5;
+            this.ManaCost = 0;
             this.CanInvoke = true;
             this.DamageType = Core.Types.DamageType.None;
             this.IsAffect = false;
@@ -47,18 +46,16 @@ namespace Legendary.Engine.Models.Skills
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            await Task.Run(
-                () =>
-                {
-                    this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, "../audio/soundfx/recall.mp3", cancellationToken);
-                    actor.Location = actor.Home;
-                }, cancellationToken);
+            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, "../audio/soundfx/recall.mp3", cancellationToken);
+            actor.Location = actor.Home;
         }
 
         /// <inheritdoc/>
         public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
             await this.Communicator.ShowRoomToPlayer(actor, cancellationToken);
+
+            await this.CheckImprove(actor, cancellationToken);
         }
     }
 }

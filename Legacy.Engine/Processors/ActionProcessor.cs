@@ -85,7 +85,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    // If the player is a wiz, try those commands first.
+                    // If the player is a wiz, try those commands.
                     if (actor.Character.Level >= Constants.WIZLEVEL)
                     {
                         // Get the matching actions for the wizard command word.
@@ -659,7 +659,7 @@ namespace Legendary.Engine.Processors
             {
                 if (actor.Character.LastComm != null)
                 {
-                    var sentence = string.Join(' ', args, 2, args.Length - 2);
+                    var sentence = string.Join(' ', args, 1, args.Length - 1);
                     await this.Tell(actor, actor.Character.LastComm, sentence, cancellationToken);
                 }
                 else
@@ -1247,8 +1247,17 @@ namespace Legendary.Engine.Processors
                 case CommResult.Ok:
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
+
                         user.Character.LastComm = target;
                         await this.communicator.SaveCharacter(user.Character);
+
+                        var targetChar = this.communicator.ResolveCharacter(target);
+                        if (targetChar != null)
+                        {
+                            targetChar.Character.LastComm = user.Character.FirstName;
+                            await this.communicator.SaveCharacter(targetChar.Character);
+                        }
+
                         break;
                     }
             }

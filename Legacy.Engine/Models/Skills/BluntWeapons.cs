@@ -39,17 +39,5 @@ namespace Legendary.Engine.Models.Skills
             this.DamageDice = 0;
             this.DamageNoun = "pound";
         }
-
-        /// <inheritdoc/>
-        public override Task Act(Character actor, Character? target, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            await base.PostAction(actor, target, cancellationToken);
-        }
     }
 }

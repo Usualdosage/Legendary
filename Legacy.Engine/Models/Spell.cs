@@ -35,6 +35,31 @@ namespace Legendary.Engine.Models
         /// <inheritdoc/>
         public override ActionType ActionType => ActionType.Spell;
 
+        /// <inheritdoc/>
+        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        {
+            var spellWords = this.LanguageGenerator.BuildSentence(this.Name);
+
+            if (target == null)
+            {
+                await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} extends {actor.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
+            }
+            else
+            {
+                await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}' at {target?.FirstName}.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} extends {actor.Pronoun} hand toward {target?.FirstName} and utters the word, '{spellWords}'", cancellationToken);
+            }
+        }
+
+        /// <inheritdoc/>
+        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        {
+            actor.Mana.Current -= this.ManaCost;
+
+            await this.CheckImprove(actor, cancellationToken);
+        }
+
         /// <summary>
         /// Invokes damage on a single target.
         /// </summary>

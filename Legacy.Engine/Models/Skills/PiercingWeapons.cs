@@ -39,11 +39,5 @@ namespace Legendary.Engine.Models.Skills
             this.DamageDice = 0;
             this.DamageNoun = "pierce";
         }
-
-        /// <inheritdoc/>
-        public override Task Act(Character actor, Character? target, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
     }
 }

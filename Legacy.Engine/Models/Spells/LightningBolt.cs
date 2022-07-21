@@ -38,7 +38,7 @@ namespace Legendary.Engine.Models.Spells
             this.HitDice = 3;
             this.DamageDice = 8;
             this.DamageModifier = 100;
-            this.DamageNoun = "lightning bolt";
+            this.DamageNoun = "blast of lightning";
         }
 
         /// <inheritdoc/>
@@ -48,7 +48,7 @@ namespace Legendary.Engine.Models.Spells
 
             if (target == null)
             {
-                await this.DamageToRoom(actor, cancellationToken);
+                await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
             }
             else
             {

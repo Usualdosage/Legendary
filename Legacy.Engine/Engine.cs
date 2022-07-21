@@ -11,9 +11,7 @@ namespace Legendary.Engine
 {
     using System;
     using System.Threading.Tasks;
-    using Legendary.Core;
     using Legendary.Core.Contracts;
-    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
 
@@ -57,6 +55,8 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task Initialize()
         {
+            this.logger.Info("Legendary is starting up...", null);
+
             this.logger.Info("Updating the game metrics...", null);
 
             await this.world.UpdateGameMetrics(null);
@@ -80,6 +80,8 @@ namespace Legendary.Engine
                         // One "hour" game time, or 30 seconds.
                         if (this.gameTicks == 30)
                         {
+                            this.logger.Debug("TICK.", null);
+
                             this.gameHour++;
                             if (this.gameHour == 24)
                             {
@@ -96,8 +98,9 @@ namespace Legendary.Engine
                     }
                     catch (Exception ex)
                     {
-                        await this.world.UpdateGameMetrics(ex);
                         this.logger.Debug(ex.ToString(), null);
+
+                        await this.world.UpdateGameMetrics(ex);
 
                         // If we hit an exception, we need to restart the timer.
                         this.timer?.Change(2000, 2000);

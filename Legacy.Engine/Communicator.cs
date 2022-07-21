@@ -626,13 +626,12 @@ namespace Legendary.Engine
 
             if (Users != null)
             {
-                foreach (var user in Users)
+                // Send message to everyone in the room except the actor and the target (combat messages).
+                var usersToSendTo = Users.Where(u => u.Value.Character.Location.InSamePlace(location) && u.Value.Character.FirstName != actor.FirstName && u.Value.Character.FirstName != target?.FirstName);
+
+                foreach (var user in usersToSendTo)
                 {
-                    // Send message to everyone in the room except the actor and the target (combat messages).
-                    if (user.Value.Character.Location.InSamePlace(location) && user.Value.Character.FirstName != actor.FirstName && user.Value.Character.FirstName != target?.FirstName)
-                    {
-                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
-                    }
+                    await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
                 }
             }
 
@@ -696,6 +695,19 @@ namespace Legendary.Engine
             if (!character.IsNPC && Users != null)
             {
                 return Users.FirstOrDefault(u => u.Value.Character.FirstName == character.FirstName).Value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public UserData? ResolveCharacter(string name)
+        {
+            if (Users != null)
+            {
+                return Users.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == name.ToLower()).Value;
             }
             else
             {

@@ -39,11 +39,5 @@ namespace Legendary.Engine.Models.Skills
             this.DamageDice = 4;
             this.DamageNoun = "punch";
         }
-
-        /// <inheritdoc/>
-        public override Task Act(Character actor, Character? target, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
     }
 }

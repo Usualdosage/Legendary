@@ -78,10 +78,10 @@ namespace Legendary.Engine.Processors
 
                     var targetName = args.Length > 2 ? args[2] : string.Empty;
 
-                    // We may or may not have a target. The skill will figure that bit out.
+                    // We may or may not have a target. The spell will figure that bit out.
                     var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
 
-                    this.logger.Debug($"DEBUG: Spell {command} cast by {actor.Character.FirstName} at {targetName}", this.communicator);
+                    this.logger.Info($"DEBUG: Spell {command} cast by {actor.Character.FirstName} at {targetName}", this.communicator);
 
                     if (await spell.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
