@@ -241,6 +241,12 @@ progress {
     background-color: blue !important;
 }
 
+.scan {
+    display: block;
+    text-indent: 20px;
+    padding: 3px;
+}
+
 /* Room Data */
 
 .room-title {

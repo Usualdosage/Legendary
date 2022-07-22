@@ -870,6 +870,21 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public List<Character>? GetPlayersInRoom(KeyValuePair<long, long> location)
+        {
+            var room = this.ResolveRoom(location);
+            if (Users != null)
+            {
+                return Users.Where(u => u.Value.Character.Location.Key == location.Key
+                    && u.Value.Character.Location.Value == location.Value).Select(u => u.Value.Character).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public List<Mobile>? GetMobilesInArea(long areaId)
         {
             List<Mobile> mobiles = new List<Mobile>();

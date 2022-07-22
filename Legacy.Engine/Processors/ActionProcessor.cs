@@ -12,7 +12,9 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
+    using System.Runtime.ConstrainedExecution;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -182,6 +184,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("eat", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoEat)));
             this.actions.Add("emote", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoEmote)));
             this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
+            this.actions.Add("flee", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoFlee)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoGet)));
             this.actions.Add("help", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoHelp)));
             this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoInventory)));
@@ -199,6 +202,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("reply", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoReply)));
             this.actions.Add("save", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(8, new Func<UserData, string[], CancellationToken, Task>(this.DoSave)));
             this.actions.Add("say", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(7, new Func<UserData, string[], CancellationToken, Task>(this.DoSay)));
+            this.actions.Add("scan", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoScan)));
             this.actions.Add("score", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoScore)));
             this.actions.Add("skills", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(5, new Func<UserData, string[], CancellationToken, Task>(this.DoSkills)));
             this.actions.Add("sleep", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(6, new Func<UserData, string[], CancellationToken, Task>(this.DoSleep)));
@@ -305,6 +309,49 @@ namespace Legendary.Engine.Processors
                     sentence = sentence.ToLower();
                     await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName} {sentence}.", cancellationToken);
                     await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} {sentence}.", cancellationToken);
+                }
+            }
+        }
+
+        private async Task DoFlee(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            if (room.Exits.Count == 0)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You couldn't escape!", cancellationToken);
+            }
+            else
+            {
+                if (Communicator.Users != null)
+                {
+                    // If the player is fighting another player, remove all fighting flags from them. If it's a mob, leave them.
+                    var fightingUser = Communicator.Users.Where(u => u.Value.Character.CharacterId == actor.Character.Fighting).FirstOrDefault();
+
+                    if (fightingUser.Value != null)
+                    {
+                        fightingUser.Value.Character.Fighting = null;
+                        fightingUser.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                    }
+                }
+
+                actor.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                actor.Character.Fighting = null;
+
+                var randomExit = room.Exits[this.random.Next(0, room.Exits.Count - 1)];
+
+                if (randomExit != null)
+                {
+                    string? dir = Enum.GetName(typeof(Direction), randomExit.Direction)?.ToLower();
+                    await this.communicator.SendToPlayer(actor.Connection, $"You flee from combat!", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} flees {dir}.", cancellationToken);
+
+                    await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
+
+                    actor.Character.Location = new KeyValuePair<long, long>(randomExit.ToArea, randomExit.ToRoom);
+
+                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} runs in!", cancellationToken);
+                    await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
                 }
             }
         }
@@ -418,7 +465,6 @@ namespace Legendary.Engine.Processors
                     {
                         user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
                         user.Value.Character.Fighting = null;
-                        user.Value.Character.Fighting = null;
                     }
 
                     // Stop all the mobiles from fighting
@@ -494,6 +540,43 @@ namespace Legendary.Engine.Processors
         private async Task DoScore(UserData actor, string[] args, CancellationToken cancellationToken)
         {
             await this.ShowPlayerScore(actor, cancellationToken);
+        }
+
+        private async Task DoScan(UserData actor, string[] args, CancellationToken cancellationToken)
+        {
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            await this.communicator.SendToPlayer(actor.Connection, $"You scan in all directions.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} scans all around.", cancellationToken);
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var exit in room.Exits)
+            {
+                sb.Append($"Looking {exit.Direction.ToString().ToLower()} you see:");
+
+                var location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+                var mobs = this.communicator.GetMobilesInRoom(location);
+                var players = this.communicator.GetPlayersInRoom(location);
+
+                if (players != null)
+                {
+                    foreach (var player in players)
+                    {
+                        sb.Append($"<span class='scan'>{player.FirstName}</span>");
+                    }
+                }
+
+                if (mobs != null)
+                {
+                    foreach (var mob in mobs)
+                    {
+                        sb.Append($"<span class='scan'>{mob.FirstName}</span>");
+                    }
+                }
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
         private async Task DoSkills(UserData actor, string[] args, CancellationToken cancellationToken)
@@ -1342,18 +1425,16 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var character in characters)
                 {
-                    sb.Append($"<span class='where'>{character.FirstName}");
+                    sb.Append($"<span class='scan'>{character.FirstName} is in ");
 
                     var room = this.communicator.ResolveRoom(character.Location);
 
-                    var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
-
                     if (room != null)
                     {
-                        sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span>");
+                        sb.Append($"{room?.Name} [{room?.RoomId}]");
                     }
 
-                    sb.Append("</span");
+                    sb.Append("</span>");
                 }
             }
 
@@ -1361,18 +1442,16 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var mobile in mobiles)
                 {
-                    sb.Append($"<span class='where'>{mobile.FirstName}");
+                    sb.Append($"<span class='scan'>{mobile.FirstName} is in ");
 
                     var room = this.communicator.ResolveRoom(mobile.Location);
 
-                    var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
-
                     if (room != null)
                     {
-                        sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span>");
+                        sb.Append($"{room?.Name} [{room?.RoomId}]");
                     }
 
-                    sb.Append("</span");
+                    sb.Append("</span>");
                 }
             }
 

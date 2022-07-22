@@ -296,6 +296,13 @@ namespace Legendary.Core.Contracts
         List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location);
 
         /// <summary>
+        /// Gets all players in a given location.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <returns>List of players.</returns>
+        List<Character>? GetPlayersInRoom(KeyValuePair<long, long> location);
+
+        /// <summary>
         /// Gets all of the mobiles currently in the given area.
         /// </summary>
         /// <param name="areaId">The area.</param>
