@@ -16,8 +16,6 @@ namespace Legendary.Engine
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
-    using Legendary.Engine.Contracts;
-    using Microsoft.CodeAnalysis;
 
     /// <summary>
     /// Represents the user environment.

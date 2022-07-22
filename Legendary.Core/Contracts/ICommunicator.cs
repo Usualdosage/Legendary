@@ -180,12 +180,12 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Sends a message to a specified target.
         /// </summary>
-        /// <param name="socket">The socket to send to.</param>
+        /// <param name="sender">The sender of the message.</param>
         /// <param name="target">The target name to send to.</param>
         /// <param name="message">The message.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToPlayer(WebSocket socket, string target, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToPlayer(string? sender, string target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the sender.

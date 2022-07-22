@@ -504,3 +504,42 @@ progress {
     color: deeppink;
     font-weight: bold;
 }
+
+/* Item Decorations */
+
+.item_glow_yellow {
+    color: yellow;
+}
+
+.item_glow_blue {
+    color: deepskyblue;
+}
+
+.item_glow_red {
+    color: red;
+}
+
+.item_glow_orange {
+    color: orange;
+}
+
+.item_glow_purple {
+    color: purple;
+}
+
+.item_glow_green {
+    color: green;
+}
+
+.item_glow_dark {
+    color: darkgray;
+}
+
+.item_glow_white {
+    color: white;
+}
+
+.item_hum {
+    color: #666;
+    font-style: italic;
+}

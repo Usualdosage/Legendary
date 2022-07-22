@@ -356,9 +356,21 @@ namespace Legendary.Engine.Processors
             var sb = new StringBuilder();
 
             sb.AppendLine("<span class='inventory'>You are carrying:</span>");
-            foreach (var item in actor.Character.Inventory)
+
+            var itemGroups = actor.Character.Inventory.GroupBy(g => g.ItemId);
+
+            foreach (var itemGroup in itemGroups)
             {
-                sb.AppendLine($"<span class='inventory-item'>{item.Name}</span>");
+                var item = itemGroup.First();
+
+                if (itemGroup.Count() == 1)
+                {
+                    sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
+                }
+                else
+                {
+                    sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                }
             }
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
@@ -657,10 +669,11 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                if (actor.Character.LastComm != null)
+                if (Communicator.Tells.ContainsKey(actor.Character.FirstName))
                 {
+                    var target = Communicator.Tells[actor.Character.FirstName];
                     var sentence = string.Join(' ', args, 1, args.Length - 1);
-                    await this.Tell(actor, actor.Character.LastComm, sentence, cancellationToken);
+                    await this.Tell(actor, target, sentence, cancellationToken);
                 }
                 else
                 {
@@ -1221,7 +1234,7 @@ namespace Legendary.Engine.Processors
             message = char.ToUpper(message[0]) + message[1..];
             target = char.ToUpper(target[0]) + target[1..];
 
-            var commResult = await this.communicator.SendToPlayer(user.Connection, target, $"{user.Character.FirstName} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
+            var commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{user.Character.FirstName} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
 
             switch (commResult)
             {
@@ -1248,14 +1261,23 @@ namespace Legendary.Engine.Processors
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
 
-                        user.Character.LastComm = target;
-                        await this.communicator.SaveCharacter(user.Character);
-
-                        var targetChar = this.communicator.ResolveCharacter(target);
-                        if (targetChar != null)
+                        // Create the link between the two who are engaged in conversation.
+                        if (Communicator.Tells.ContainsKey(user.Character.FirstName))
                         {
-                            targetChar.Character.LastComm = user.Character.FirstName;
-                            await this.communicator.SaveCharacter(targetChar.Character);
+                            Communicator.Tells[user.Character.FirstName] = target;
+                        }
+                        else
+                        {
+                            Communicator.Tells.TryAdd(user.Character.FirstName, target);
+                        }
+
+                        if (Communicator.Tells.ContainsKey(target))
+                        {
+                            Communicator.Tells[target] = user.Character.FirstName;
+                        }
+                        else
+                        {
+                            Communicator.Tells.TryAdd(target, user.Character.FirstName);
                         }
 
                         break;

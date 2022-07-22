@@ -63,12 +63,10 @@ namespace Legendary.Core.Models
         /// </summary>
         public IList<Exit> Exits { get; set; } = new List<Exit>();
 
-        // TO-DO: FIX THIS PROBLEM
-
         /// <summary>
         /// Gets or sets the room flags.
         /// </summary>
-        public object? Flags { get; set; }
+        public IList<RoomFlags> Flags { get; set; } = new List<RoomFlags>();
 
         /// <summary>
         /// Gets or sets the room's terrain.

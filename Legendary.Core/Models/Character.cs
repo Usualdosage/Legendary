@@ -51,7 +51,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
-        public string? FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the middle name.

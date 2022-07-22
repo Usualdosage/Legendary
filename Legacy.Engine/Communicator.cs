@@ -17,7 +17,6 @@ namespace Legendary.Engine
     using System.Net.WebSockets;
     using System.Reflection;
     using System.Text;
-    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
@@ -31,9 +30,6 @@ namespace Legendary.Engine
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
-    using Legendary.Engine.Models.Skills;
-    using Legendary.Engine.Models.Spells;
-    using Legendary.Engine.Models.SpellTrees;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
@@ -112,6 +108,16 @@ namespace Legendary.Engine
         /// Gets a concurrent dictionary of all currently connected sockets.
         /// </summary>
         public static ConcurrentDictionary<string, UserData>? Users { get; private set; } = new ConcurrentDictionary<string, UserData>();
+
+        /// <summary>
+        /// Gets or sets a concurrent dictionary of people talking to people through tells.
+        /// </summary>
+        public static ConcurrentDictionary<string, string> Tells { get; set; } = new ConcurrentDictionary<string, string>();
+
+        /// <summary>
+        /// Gets or sets a concurrent dictionary of people ignoring other people for this session. Item1 is the ignorer, Item2 is the ignoree. (Bob ignores Alice).
+        /// </summary>
+        public static List<Tuple<string, string>> Ignores { get; set; } = new List<Tuple<string, string>>();
 
         /// <summary>
         /// Gets the language processor.
@@ -464,15 +470,20 @@ namespace Legendary.Engine
             // Show the items
             if (room?.Items != null)
             {
-                foreach (var item in room.Items)
-                {
-                    if (item == null)
-                    {
-                        this.logger.Warn($"ShowRoomToPlayer: Null item found for item!", this);
-                        return;
-                    }
+                var itemGroups = room.Items.GroupBy(g => g.ItemId);
 
-                    sb.Append($"<span class='item'>{item.ShortDescription}</span>");
+                foreach (var itemGroup in itemGroups)
+                {
+                    var item = itemGroup.First();
+
+                    if (itemGroup.Count() == 1)
+                    {
+                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                    }
+                    else
+                    {
+                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                    }
                 }
             }
 
@@ -565,12 +576,24 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<CommResult> SendToPlayer(WebSocket socket, string target, string message, CancellationToken ct = default)
+        public async Task<CommResult> SendToPlayer(string? sender, string target, string message, CancellationToken ct = default)
         {
             var user = Users?.FirstOrDefault(u => u.Value.Username == target);
 
             if (user?.Value?.Character != null)
             {
+                var ignore = Ignores.FirstOrDefault(i => i.Item1 == target && i.Item2 == sender);
+
+                if (ignore != null)
+                {
+                    return CommResult.Ignored;
+                }
+
+                if (user.Value.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                {
+                    return CommResult.NotAvailable;
+                }
+
                 var buffer = Encoding.UTF8.GetBytes(message);
                 var segment = new ArraySegment<byte>(buffer);
                 await user.Value.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, ct);

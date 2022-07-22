@@ -81,6 +81,71 @@ namespace Legendary.Engine.Helpers
         }
 
         /// <summary>
+        /// Decorates the item with its flagged attributes.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="displayString">Defaults to name, but can be anything.</param>
+        /// <returns>String.</returns>
+        public static string? DecorateItem(Item? item, string? displayString)
+        {
+            if (item == null)
+            {
+                return null;
+            }
+
+            StringBuilder sbItem = new StringBuilder();
+
+            if (item.ItemFlags.Contains(ItemFlags.Glowing))
+            {
+                sbItem.Append("(<span class='item_glow_yellow'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.Humming))
+            {
+                sbItem.Append("(<span class='item_hum'>Humming</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowBlue))
+            {
+                sbItem.Append("(<span class='item_glow_blue'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowDark))
+            {
+                sbItem.Append("(<span class='item_glow_dark'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowGreen))
+            {
+                sbItem.Append("(<span class='item_glow_green'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowOrange))
+            {
+                sbItem.Append("(<span class='item_glow_orange'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowPurple))
+            {
+                sbItem.Append("(<span class='item_glow_purple'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowRed))
+            {
+                sbItem.Append("(<span class='item_glow_red'>Glowing</span>) ");
+            }
+
+            if (item.ItemFlags.Contains(ItemFlags.GlowWhite))
+            {
+                sbItem.Append("(<span class='item_glow_white'>Glowing</span>) ");
+            }
+
+            sbItem.Append(displayString ?? item.Name);
+
+            return sbItem.ToString();
+        }
+
+        /// <summary>
         /// Gets the equipment the actor is wearing.
         /// </summary>
         /// <param name="actor">The actor.</param>
@@ -105,7 +170,7 @@ namespace Legendary.Engine.Helpers
 
                 sb.Append("<tr>");
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name ?? "nothing."}</td>");
+                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{DecorateItem(actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location)), null) ?? "nothing."}</td>");
                 sb.Append("</tr>");
             }
 
@@ -138,7 +203,7 @@ namespace Legendary.Engine.Helpers
                 }
 
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                var gear = actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location))?.Name;
+                var gear = DecorateItem(actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location)), null);
 
                 if (!string.IsNullOrWhiteSpace(gear))
                 {

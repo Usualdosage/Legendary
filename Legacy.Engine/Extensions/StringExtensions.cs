@@ -89,7 +89,7 @@ namespace Legendary.Engine.Extensions
         /// <returns>Mobile.</returns>
         public static Item? ParseItemName(this List<Item> items, string input)
         {
-            var bestMatch = new Dictionary<int, Item>();
+            var bestMatch = new Dictionary<Item, int>();
 
             foreach (var item in items)
             {
@@ -118,10 +118,17 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                bestMatch.Add(matchCount, item);
+                if (!bestMatch.ContainsKey(item))
+                {
+                    bestMatch.Add(item, matchCount);
+                }
+                else
+                {
+                    bestMatch[item] += matchCount;
+                }
             }
 
-            return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;
+            return bestMatch.OrderByDescending(b => b.Value).FirstOrDefault().Key;
         }
     }
 }
