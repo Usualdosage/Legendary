@@ -7,7 +7,7 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Engine
+namespace Legendary.Engine.Generators
 {
     using System.Collections.Generic;
     using System.Linq;

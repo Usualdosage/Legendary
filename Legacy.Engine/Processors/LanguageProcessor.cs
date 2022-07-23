@@ -22,6 +22,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Generators;
     using Legendary.Engine.Models;
     using Newtonsoft.Json;
     using RestSharp;

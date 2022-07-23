@@ -15,7 +15,7 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
-    using Legendary.Engine.Contracts;
+    using Legendary.Engine.Generators;
 
     /// <summary>
     /// Abstract implementation of an action contract.

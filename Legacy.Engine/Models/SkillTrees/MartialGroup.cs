@@ -18,12 +18,8 @@ namespace Legendary.Engine.Models.SkillTrees
     /// <summary>
     /// Spells available in the air group.
     /// </summary>
-    public class MartialGroup : IActionTree
+    public class MartialGroup : ActionTree
     {
-        private readonly ICommunicator communicator;
-        private readonly IRandom random;
-        private readonly Combat combat;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MartialGroup"/> class.
         /// </summary>
@@ -31,35 +27,33 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <param name="random">The random generator.</param>
         /// <param name="combat">The combat engine.</param>
         public MartialGroup(ICommunicator communicator, IRandom random, Combat combat)
+            : base(communicator, random, combat)
         {
-            this.communicator = communicator;
-            this.random = random;
-            this.combat = combat;
         }
 
         /// <inheritdoc/>
-        public string Name => "Martial Group";
+        public override string Name => "Martial Group";
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group1
+        public override Dictionary<IAction, int> Group1
         {
             get => new Dictionary<IAction, int>()
             {
-                { new HandToHand(this.communicator, this.random, this.combat), 1 },
-                { new Recall(this.communicator, this.random, this.combat), 1 },
+                { new HandToHand(this.Communicator, this.Random, this.Combat), 1 },
+                { new Recall(this.Communicator, this.Random, this.Combat), 1 },
             };
         }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group2 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group2 { get => new Dictionary<IAction, int>(); }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group3 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group3 { get => new Dictionary<IAction, int>(); }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group4 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group4 { get => new Dictionary<IAction, int>(); }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group5 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group5 { get => new Dictionary<IAction, int>(); }
     }
 }

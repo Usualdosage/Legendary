@@ -9,21 +9,15 @@
 
 namespace Legendary.Engine.Models.SpellTrees
 {
-    using System;
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
-    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Spells;
 
     /// <summary>
     /// Spells available in the healing group.
     /// </summary>
-    public class HealingGroup : IActionTree
+    public class HealingGroup : ActionTree
     {
-        private readonly ICommunicator communicator;
-        private readonly IRandom random;
-        private readonly Combat combat;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="HealingGroup"/> class.
         /// </summary>
@@ -31,41 +25,39 @@ namespace Legendary.Engine.Models.SpellTrees
         /// <param name="random">The random generator.</param>
         /// <param name="combat">The combat engine.</param>
         public HealingGroup(ICommunicator communicator, IRandom random, Combat combat)
+            : base(communicator, random, combat)
         {
-            this.communicator = communicator;
-            this.random = random;
-            this.combat = combat;
         }
 
         /// <inheritdoc/>
-        public string Name => "Healing Group";
+        public override string Name => "Healing Group";
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group1
+        public override Dictionary<IAction, int> Group1
         {
             get => new Dictionary<IAction, int>()
             {
-                { new Armor(this.communicator, this.random, this.combat), 1 },
-                { new CureLight(this.communicator, this.random, this.combat), 1 },
+                { new Armor(this.Communicator, this.Random, this.Combat), 1 },
+                { new CureLight(this.Communicator, this.Random, this.Combat), 1 },
             };
         }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group2
+        public override Dictionary<IAction, int> Group2
         {
             get => new Dictionary<IAction, int>()
             {
-                { new CureSerious(this.communicator, this.random, this.combat), 5 },
+                { new CureSerious(this.Communicator, this.Random, this.Combat), 5 },
             };
         }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group3 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group3 { get => new Dictionary<IAction, int>(); }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group4 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group4 { get => new Dictionary<IAction, int>(); }
 
         /// <inheritdoc/>
-        public Dictionary<IAction, int> Group5 { get => new Dictionary<IAction, int>(); }
+        public override Dictionary<IAction, int> Group5 { get => new Dictionary<IAction, int>(); }
     }
 }
