@@ -67,7 +67,7 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                if (actor.IsAffectedBy(this))
+                if (target.IsAffectedBy(this))
                 {
                     await this.Communicator.SendToPlayer(actor, $"{target?.FirstName} is are already armored.", cancellationToken);
                 }

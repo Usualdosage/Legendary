@@ -82,6 +82,13 @@ namespace Legendary.Core.Contracts
         Item ResolveItem(long itemId);
 
         /// <summary>
+        /// Gets the first mobile matching the name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>Mobile.</returns>
+        Mobile? ResolveMobile(string name);
+
+        /// <summary>
         /// Gets a room by location.
         /// </summary>
         /// <param name="location">The area ID and room ID.</param>

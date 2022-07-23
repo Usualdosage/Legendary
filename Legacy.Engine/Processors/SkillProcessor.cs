@@ -48,16 +48,15 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="args">The input args.</param>
-        /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoSkill(UserData actor, string[] args, string command, CancellationToken cancellationToken)
+        public async Task DoSkill(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var proficiency = actor.Character.GetSkillProficiency(command);
+            var proficiency = actor.Character.GetSkillProficiency(args.Action);
 
             if (proficiency != null && proficiency.Proficiency > 0)
             {
-                var skill = this.actionHelper.CreateActionInstance<Skill>("Legendary.Engine.Models.Skills", command.FirstCharToUpper());
+                var skill = this.actionHelper.CreateActionInstance<Skill>("Legendary.Engine.Models.Skills", args.Action.FirstCharToUpper());
 
                 if (skill != null)
                 {
@@ -73,10 +72,8 @@ namespace Legendary.Engine.Processors
                         actor.Character.Mana.Current -= skill.ManaCost;
                     }
 
-                    var targetName = args.Length > 1 ? args[1] : string.Empty;
-
                     // We may or may not have a target. The skill will figure that bit out.
-                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
+                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == args.Target);
 
                     if (await skill.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {

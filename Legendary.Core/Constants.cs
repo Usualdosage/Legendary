@@ -64,7 +64,7 @@ namespace Legendary.Core
         /// <summary>
         /// Gets the level at which a player is considered immortal (staff).
         /// </summary>
-        public const int WIZLEVEL = 100;
+        public const int WIZLEVEL = 90;
 
         /// <summary>
         /// What mobiles will say when they have a connection error to the AI server.

@@ -506,8 +506,13 @@ namespace Legendary.Core.Models
         /// </summary>
         /// <param name="name">The name of the skill.</param>
         /// <returns>True if they have it.</returns>
-        public bool HasSkill(string name)
+        public bool HasSkill(string? name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
             return this.Skills.Any(sk => sk.SkillName.ToLower().StartsWith(name.ToLower()));
         }
 
@@ -516,9 +521,16 @@ namespace Legendary.Core.Models
         /// </summary>
         /// <param name="name">The skill name.</param>
         /// <returns>The skill proficiency, if exists.</returns>
-        public SkillProficiency? GetSkillProficiency(string name)
+        public SkillProficiency? GetSkillProficiency(string? name)
         {
-            return this.Skills.FirstOrDefault(sk => sk.SkillName.ToLower().StartsWith(name.ToLower()));
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                return this.Skills.FirstOrDefault(sp => sp.SkillName.ToLower().StartsWith(name.ToLower()));
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -526,8 +538,13 @@ namespace Legendary.Core.Models
         /// </summary>
         /// <param name="name">The name of the spell.</param>
         /// <returns>True if they have it.</returns>
-        public bool HasSpell(string name)
+        public bool HasSpell(string? name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
             return this.Spells.Any(sp => sp.SpellName.ToLower().StartsWith(name.ToLower()));
         }
 
@@ -536,9 +553,16 @@ namespace Legendary.Core.Models
         /// </summary>
         /// <param name="name">The spell name.</param>
         /// <returns>The spell proficiency, if exists.</returns>
-        public SpellProficiency? GetSpellProficiency(string name)
+        public SpellProficiency? GetSpellProficiency(string? name)
         {
-            return this.Spells.FirstOrDefault(sk => sk.SpellName.ToLower().StartsWith(name.ToLower()));
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                return this.Spells.FirstOrDefault(sp => sp.SpellName.ToLower().StartsWith(name.ToLower()));
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>

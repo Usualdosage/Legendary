@@ -740,6 +740,12 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public Mobile? ResolveMobile(string name)
+        {
+            return this.world.Mobiles.Where(m => m.FirstName.ToLower().StartsWith(name.ToLower())).FirstOrDefault();
+        }
+
+        /// <inheritdoc/>
         public Character? ResolveFightingCharacter(Character actor)
         {
             if (actor.Fighting != null)
@@ -1129,53 +1135,55 @@ namespace Legendary.Engine
                 return;
             }
 
-            if (user.Character.CharacterFlags.Contains(CharacterFlags.Sleeping) && input.Trim().ToLower() != "wake")
+            CommandArgs? args = CommandArgs.ParseCommand(input);
+
+            if (args == null)
             {
-                await this.SendToPlayer(user.Connection, "You can't do that while you're asleep.", cancellationToken);
-                return;
-            }
-
-            // Encode the string, otherwise the player can input HTML and have it actually render.
-            input = HttpUtility.HtmlEncode(input);
-
-            string[] args = input.Split(' ');
-
-            // See if this is a single emote
-            var emote = Emotes.Get(args[0]);
-
-            if (emote != null)
-            {
-                await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
-                await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
+                await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
             }
             else
             {
-                // Parse the command and see if the player is using one of their skills.
-                var command = args[0].ToLower();
+                // See if this is a single emote
+                var emote = Emotes.Get(args.Action);
 
-                if (command.Length > 2 && user.Character.HasSkill(command))
+                if (emote != null)
                 {
-                    if (this.skillProcessor != null)
-                    {
-                        await this.skillProcessor.DoSkill(user, args, command, cancellationToken);
-                        return;
-                    }
-                    else
-                    {
-                        await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
-                        return;
-                    }
+                    await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
+                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
                 }
-                else if (IsCasting(command))
+                else
                 {
-                    if (args.Length > 1)
+                    // See if this is a skill
+                    if (!string.IsNullOrWhiteSpace(args.Action) && user.Character.HasSkill(args.Action))
                     {
-                        if (user.Character.HasSpell(args[1]))
+                        if (this.skillProcessor != null)
                         {
-                            if (this.spellProcessor != null)
+                            await this.skillProcessor.DoSkill(user, args, cancellationToken);
+                            return;
+                        }
+                        else
+                        {
+                            await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                            return;
+                        }
+                    }
+                    else if (IsCasting(args.Action))
+                    {
+                        // If casting, see what they are casting and see if they can cast it.
+                        if (!string.IsNullOrWhiteSpace(args.Method))
+                        {
+                            if (user.Character.HasSpell(args.Method))
                             {
-                                await this.spellProcessor.DoSpell(user, args, command, cancellationToken);
-                                return;
+                                if (this.spellProcessor != null)
+                                {
+                                    await this.spellProcessor.DoSpell(user, args, cancellationToken);
+                                    return;
+                                }
+                                else
+                                {
+                                    await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                                    return;
+                                }
                             }
                             else
                             {
@@ -1185,21 +1193,17 @@ namespace Legendary.Engine
                         }
                         else
                         {
-                            await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
-                            return;
+                            await this.SendToPlayer(user.Connection, "Commune or cast what?", cancellationToken);
                         }
                     }
                     else
                     {
-                        await this.SendToPlayer(user.Connection, "Commune or cast what?", cancellationToken);
-                    }
-                }
-                else
-                {
-                    if (this.actionProcessor != null)
-                    {
-                        await this.actionProcessor.DoAction(user, args, command, cancellationToken);
-                        return;
+                        // Not casting, using a skill, or emoting, so check actions.
+                        if (this.actionProcessor != null)
+                        {
+                            await this.actionProcessor.DoAction(user, args, cancellationToken);
+                            return;
+                        }
                     }
                 }
             }

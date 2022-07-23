@@ -505,6 +505,9 @@ namespace Legendary.Engine
                     await this.communicator.SendToPlayer(userData.Connection, "You feel less healthy.", cancellationToken);
                 }
 
+                // Set health to 1.
+                userData.Character.Health.Current = 1;
+
                 // Save changes.
                 await this.communicator.SaveCharacter(userData);
 

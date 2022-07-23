@@ -12,20 +12,21 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
     using System.Reflection;
-    using System.Runtime.ConstrainedExecution;
     using System.Text;
     using System.Threading;
+    using System.Threading.Channels;
     using System.Threading.Tasks;
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Attributes;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
+    using Legendary.Engine.Models;
     using MongoDB.Driver;
 
     /// <summary>
@@ -39,8 +40,8 @@ namespace Legendary.Engine.Processors
         private readonly ActionHelper actionHelper;
         private readonly IRandom random;
         private readonly Combat combat;
-        private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
-        private IDictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>>();
+        private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
+        private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionProcessor"/> class.
@@ -68,22 +69,30 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="args">The input args.</param>
-        /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoAction(UserData actor, string[] args, string command, CancellationToken cancellationToken)
+        public async Task DoAction(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             try
             {
                 // Get the matching actions for the command word.
                 var action = this.actions
-                    .Where(a => a.Key.StartsWith(command))
+                    .Where(a => a.Key.StartsWith(args.Action))
                     .OrderBy(a => a.Value.Key)
                     .FirstOrDefault();
 
                 if (action.Value.Value != null)
                 {
-                    await action.Value.Value(actor, args, cancellationToken);
+                    var methodAttribs = (MinimumLevelAttribute?)action.Value.Value.GetMethodInfo()?.GetCustomAttribute(typeof(MinimumLevelAttribute));
+
+                    if (methodAttribs != null & methodAttribs?.Level > actor.Character.Level)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                    }
+                    else
+                    {
+                        await action.Value.Value(actor, args, cancellationToken);
+                    }
                 }
                 else
                 {
@@ -92,14 +101,22 @@ namespace Legendary.Engine.Processors
                     {
                         // Get the matching actions for the wizard command word.
                         var wizAction = this.wizActions
-                            .Where(a => a.Key.StartsWith(command))
+                            .Where(a => a.Key.StartsWith(args.Action))
                             .OrderBy(a => a.Value.Key)
                             .FirstOrDefault();
 
                         if (wizAction.Value.Value != null)
                         {
-                            await wizAction.Value.Value(actor, args, cancellationToken);
-                            return;
+                            var methodAttribs = (MinimumLevelAttribute)wizAction.Value.Value.GetMethodInfo().GetCustomAttributes(typeof(MinimumLevelAttribute));
+
+                            if (methodAttribs != null & methodAttribs?.Level > actor.Character.Level)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                            }
+                            else
+                            {
+                                await wizAction.Value.Value(actor, args, cancellationToken);
+                            }
                         }
                         else
                         {
@@ -165,66 +182,67 @@ namespace Legendary.Engine.Processors
         /// </summary>
         private void ConfigureWizActions()
         {
-            this.actions.Add("goto", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoGoTo)));
-            this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoPeace)));
-            this.wizActions.Add("wiznet", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoWiznet)));
+            this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
+            this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
+            this.wizActions.Add("wiznet", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWiznet)));
+            this.wizActions.Add("transfer", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTransfer)));
         }
 
         /// <summary>
-        /// Configures all of the actions based on the input. The numeric value in the KVP is the PRIORITY in qhich the command will
+        /// Configures all of the actions based on the input. The numeric value in the KVP is the PRIORITY in which the command will
         /// be executed. So, if someone types "n", it will check "north", "ne", "nw", and "newbie" in that order.
         /// </summary>
         private void ConfigureActions()
         {
-            this.actions.Add("affects", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoAffects)));
-            this.actions.Add("commands", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCommands)));
-            this.actions.Add("down", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("drop", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoDrop)));
-            this.actions.Add("east", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("eat", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoEat)));
-            this.actions.Add("emote", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoEmote)));
-            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoEquipment)));
-            this.actions.Add("flee", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoFlee)));
-            this.actions.Add("get", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoGet)));
-            this.actions.Add("help", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoHelp)));
-            this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoInventory)));
-            this.actions.Add("kill", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCombat)));
-            this.actions.Add("look", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoLook)));
-            this.actions.Add("murder", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoCombat)));
-            this.actions.Add("newbie", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoNewbieChat)));
-            this.actions.Add("north", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("ne", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("nw", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("pray", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoPray)));
-            this.actions.Add("quit", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoQuit)));
-            this.actions.Add("rest", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoRest)));
-            this.actions.Add("remove", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoRemove)));
-            this.actions.Add("reply", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoReply)));
-            this.actions.Add("save", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(8, new Func<UserData, string[], CancellationToken, Task>(this.DoSave)));
-            this.actions.Add("say", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(7, new Func<UserData, string[], CancellationToken, Task>(this.DoSay)));
-            this.actions.Add("scan", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoScan)));
-            this.actions.Add("score", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(4, new Func<UserData, string[], CancellationToken, Task>(this.DoScore)));
-            this.actions.Add("skills", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(5, new Func<UserData, string[], CancellationToken, Task>(this.DoSkills)));
-            this.actions.Add("sleep", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(6, new Func<UserData, string[], CancellationToken, Task>(this.DoSleep)));
-            this.actions.Add("south", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("se", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("sw", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("spells", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(8, new Func<UserData, string[], CancellationToken, Task>(this.DoSpells)));
-            this.actions.Add("subscribe", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(9, new Func<UserData, string[], CancellationToken, Task>(this.DoSubscribe)));
-            this.actions.Add("tell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoTell)));
-            this.actions.Add("time", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoTime)));
-            this.actions.Add("unsubscribe", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoUnsubscribe)));
-            this.actions.Add("up", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("west", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoMove)));
-            this.actions.Add("wear", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(1, new Func<UserData, string[], CancellationToken, Task>(this.DoWear)));
-            this.actions.Add("where", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoWhere)));
-            this.actions.Add("who", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWho)));
-            this.actions.Add("wield", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(2, new Func<UserData, string[], CancellationToken, Task>(this.DoWield)));
-            this.actions.Add("wake", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(3, new Func<UserData, string[], CancellationToken, Task>(this.DoWake)));
-            this.actions.Add("yell", new KeyValuePair<int, Func<UserData, string[], CancellationToken, Task>>(0, new Func<UserData, string[], CancellationToken, Task>(this.DoYell)));
+            this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
+            this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
+            this.actions.Add("down", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("drop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrop)));
+            this.actions.Add("east", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("eat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEat)));
+            this.actions.Add("emote", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmote)));
+            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEquipment)));
+            this.actions.Add("flee", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFlee)));
+            this.actions.Add("get", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGet)));
+            this.actions.Add("help", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoHelp)));
+            this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoInventory)));
+            this.actions.Add("kill", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCombat)));
+            this.actions.Add("look", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLook)));
+            this.actions.Add("murder", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCombat)));
+            this.actions.Add("newbie", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoNewbieChat)));
+            this.actions.Add("north", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("ne", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("nw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("pray", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPray)));
+            this.actions.Add("quit", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoQuit)));
+            this.actions.Add("rest", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRest)));
+            this.actions.Add("remove", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRemove)));
+            this.actions.Add("reply", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReply)));
+            this.actions.Add("save", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSave)));
+            this.actions.Add("say", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(7, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSay)));
+            this.actions.Add("scan", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScan)));
+            this.actions.Add("score", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScore)));
+            this.actions.Add("skills", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSkills)));
+            this.actions.Add("sleep", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(6, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSleep)));
+            this.actions.Add("south", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("se", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("sw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("spells", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSpells)));
+            this.actions.Add("subscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(9, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSubscribe)));
+            this.actions.Add("tell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(0, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTell)));
+            this.actions.Add("time", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTime)));
+            this.actions.Add("unsubscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoUnsubscribe)));
+            this.actions.Add("up", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("west", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("wear", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWear)));
+            this.actions.Add("where", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWhere)));
+            this.actions.Add("who", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWho)));
+            this.actions.Add("wield", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWield)));
+            this.actions.Add("wake", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWake)));
+            this.actions.Add("yell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(0, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoYell)));
         }
 
-        private async Task DoAffects(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoAffects(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -243,19 +261,19 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
-        private async Task DoCombat(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoCombat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Who do you want to kill?", cancellationToken);
             }
             else
             {
-                await this.communicator.Attack(actor, args[1], cancellationToken);
+                await this.communicator.Attack(actor, args.Method, cancellationToken);
             }
         }
 
-        private async Task DoCommands(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoCommands(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Available Commands:<br/>", cancellationToken);
 
@@ -271,39 +289,39 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
-        private async Task DoDrop(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoDrop(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Drop what?", cancellationToken);
             }
             else
             {
-                await this.DropItem(actor, args[1], cancellationToken);
+                await this.DropItem(actor, args.Method, cancellationToken);
             }
         }
 
-        private async Task DoEat(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoEat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Eat what?", cancellationToken);
             }
             else
             {
-                await this.EatItem(actor, args[1], cancellationToken);
+                await this.EatItem(actor, args.Method, cancellationToken);
             }
         }
 
-        private async Task DoEmote(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoEmote(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Emote what?", cancellationToken);
             }
             else
             {
-                var sentence = string.Join(' ', args, 1, args.Length - 1);
+                var sentence = args.Method;
                 if (!string.IsNullOrWhiteSpace(sentence))
                 {
                     sentence = sentence.ToLower();
@@ -313,7 +331,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoFlee(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoFlee(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var room = this.communicator.ResolveRoom(actor.Character.Location);
 
@@ -356,25 +374,26 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoGet(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoGet(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Get what?", cancellationToken);
             }
             else
             {
-                await this.GetItem(actor, args[1], cancellationToken);
+                await this.GetItem(actor, args.Method, cancellationToken);
             }
         }
 
-        private async Task DoEquipment(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoEquipment(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var equipment = this.actionHelper.GetEquipment(actor.Character);
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
         }
 
-        private async Task DoGoTo(UserData actor, string[] args, CancellationToken cancellationToken)
+        [MinimumLevel(90)]
+        private async Task DoGoTo(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (actor.Character.Level < 100)
             {
@@ -382,23 +401,23 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                if (args.Length < 2)
+                if (string.IsNullOrWhiteSpace(args.Method))
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"Goto where?", cancellationToken);
                 }
                 else
                 {
-                    await this.GotoRoom(actor, args[1], cancellationToken);
+                    await this.GotoRoom(actor, args.Method, cancellationToken);
                 }
             }
         }
 
-        private async Task DoHelp(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoHelp(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, "Help text.", cancellationToken);
         }
 
-        private async Task DoInventory(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoInventory(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sb = new StringBuilder();
 
@@ -423,12 +442,12 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
-        private async Task DoLook(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoLook(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length > 1)
+            if (!string.IsNullOrWhiteSpace(args.Method))
             {
-                // TODO: Need to be able to look IN stuff (e.g. "look in corpse")
-                await this.communicator.ShowPlayerToPlayer(actor.Character, args[1], cancellationToken);
+#warning TODO: Need to be able to look IN stuff (e.g. "look in corpse")
+                await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
             }
             else
             {
@@ -436,19 +455,27 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoNewbieChat(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoNewbieChat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var sentence = string.Join(' ', args, 1, args.Length - 1);
-            sentence = char.ToUpper(sentence[0]) + sentence[1..];
-            var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
-            if (channel != null)
+            if (!string.IsNullOrWhiteSpace(args.Method))
             {
-                await this.communicator.SendToPlayer(actor.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
-                await this.communicator.SendToChannel(channel, actor.ConnectionId, $"{actor.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                var sentence = args.Method;
+                sentence = char.ToUpper(sentence[0]) + sentence[1..];
+                var channel = this.communicator.Channels.FirstOrDefault(c => c.Name.ToLower() == "newbie");
+                if (channel != null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You newbie chat \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                    await this.communicator.SendToChannel(channel, actor.ConnectionId, $"{actor.Character.FirstName} newbie chats \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Newbie chat what?", cancellationToken);
             }
         }
 
-        private async Task DoPeace(UserData actor, string[] args, CancellationToken cancellationToken)
+        [MinimumLevel(90)]
+        private async Task DoPeace(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (actor.Character.Level < 100)
             {
@@ -485,9 +512,9 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoPray(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoPray(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var sentence = string.Join(' ', args, 1, args.Length - 1);
+            var sentence = args.Method;
             if (!string.IsNullOrWhiteSpace(sentence))
             {
                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
@@ -504,45 +531,44 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoQuit(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoQuit(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"You have disconnected.", cancellationToken);
             await this.communicator.SendToRoom(null, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} has left the realms.", cancellationToken);
             await this.communicator.Quit(actor.Connection, actor.Character.FirstName ?? "Someone", cancellationToken);
         }
 
-        private async Task DoRest(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoRest(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} kicks back and rests.", cancellationToken);
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
         }
 
-        private async Task DoMove(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoMove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.MovePlayer(actor, ParseDirection(args[0]), cancellationToken);
+            await this.MovePlayer(actor, ParseDirection(args.Action), cancellationToken);
         }
 
-        private async Task DoSave(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoSave(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SaveCharacter(actor);
             await this.communicator.SendToPlayer(actor.Connection, $"Character saved.", cancellationToken);
         }
 
-        private async Task DoSay(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoSay(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var sentence = string.Join(' ', args, 1, args.Length - 1);
-            sentence = char.ToUpper(sentence[0]) + sentence[1..];
+            var sentence = args.Method;
             await this.communicator.SendToPlayer(actor.Connection, $"You say \"<span class='say'>{sentence}</b>\"", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
         }
 
-        private async Task DoScore(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoScore(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.ShowPlayerScore(actor, cancellationToken);
         }
 
-        private async Task DoScan(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoScan(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var room = this.communicator.ResolveRoom(actor.Character.Location);
 
@@ -553,7 +579,7 @@ namespace Legendary.Engine.Processors
 
             foreach (var exit in room.Exits)
             {
-                sb.Append($"Looking {exit.Direction.ToString().ToLower()} you see:");
+                sb.Append($"Looking {exit.Direction.ToString().ToLower()} you see:<br/>");
 
                 var location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
                 var mobs = this.communicator.GetMobilesInRoom(location);
@@ -579,7 +605,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
-        private async Task DoSkills(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoSkills(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
             builder.Append("<div class='skillgroups'>");
@@ -641,14 +667,14 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
 
-        private async Task DoSleep(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoSleep(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"You go to sleep.", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} goes to sleep.", cancellationToken);
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
         }
 
-        private async Task DoSpells(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoSpells(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
             builder.Append("<div class='spellgroups'>");
@@ -710,43 +736,50 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
 
-        private async Task DoSubscribe(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoSubscribe(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var name = string.Join(' ', args, 1, args.Length - 1);
-            var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
-            if (channel != null)
+            var name = args.Method;
+
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                if (channel.AddUser(actor.ConnectionId, actor))
+                var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
+                if (channel != null)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"You have subscribed to the {channel.Name} channel.", cancellationToken);
+                    if (channel.AddUser(actor.ConnectionId, actor))
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You have subscribed to the {channel.Name} channel.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"Unable to subscribe to the {channel.Name} channel.", cancellationToken);
+                    }
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"Unable to subscribe to the {channel.Name} channel.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"Unable to subscribe to {name}. Channel does not exist.", cancellationToken);
                 }
             }
             else
             {
-                await this.communicator.SendToPlayer(actor.Connection, $"Unable to subscribe to {name}. Channel does not exist.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"Subscribe to what?", cancellationToken);
             }
         }
 
-        private async Task DoTell(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoTell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 3)
+            if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Tell whom what?", cancellationToken);
             }
             else
             {
-                var sentence = string.Join(' ', args, 2, args.Length - 2);
-                await this.Tell(actor, args[1], sentence, cancellationToken);
+                await this.Tell(actor, args.Target, args.Method, cancellationToken);
             }
         }
 
-        private async Task DoReply(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoReply(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Reply what?", cancellationToken);
             }
@@ -755,8 +788,7 @@ namespace Legendary.Engine.Processors
                 if (Communicator.Tells.ContainsKey(actor.Character.FirstName))
                 {
                     var target = Communicator.Tells[actor.Character.FirstName];
-                    var sentence = string.Join(' ', args, 1, args.Length - 1);
-                    await this.Tell(actor, target, sentence, cancellationToken);
+                    await this.Tell(actor, target, args.Method, cancellationToken);
                 }
                 else
                 {
@@ -765,7 +797,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoTime(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoTime(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var metrics = this.world.GameMetrics;
 
@@ -777,9 +809,47 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoUnsubscribe(UserData actor, string[] args, CancellationToken cancellationToken)
+        [MinimumLevel(90)]
+        private async Task DoTransfer(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var name = string.Join(' ', args, 1, args.Length - 1);
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Transfer who?", cancellationToken);
+            }
+            else
+            {
+                var target = args.Method;
+
+                var player = this.communicator.ResolveCharacter(target);
+
+                if (player != null)
+                {
+                    player.Character.Location = actor.Character.Location;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You have transferred {player.Character.FirstName} here.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, player.Character, $"{player.Character.FirstName} arrives in a puff of smoke.", cancellationToken);
+                    await this.communicator.SendToPlayer(player.Connection, $"{actor.Character} has summoned you!", cancellationToken);
+                }
+                else
+                {
+                    var mobile = this.communicator.ResolveMobile(target);
+
+                    if (mobile != null)
+                    {
+                        mobile.Location = actor.Character.Location;
+                        await this.communicator.SendToPlayer(actor.Connection, $"You have transferred {mobile.FirstName} here.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{mobile.FirstName} arrives in a puff of smoke.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                }
+            }
+        }
+
+        private async Task DoUnsubscribe(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var name = args.Method;
 
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -788,6 +858,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 var channel = this.communicator.Channels.FirstOrDefault(f => f.Name.ToLower() == name.ToLower());
+
                 if (channel != null)
                 {
                     if (channel.RemoveUser(actor.ConnectionId))
@@ -806,7 +877,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoWho(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoWho(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (Communicator.Users != null)
             {
@@ -834,11 +905,11 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoWhere(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoWhere(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var actorRoom = this.communicator.ResolveRoom(actor.Character.Location);
 
-            if (args.Length < 2)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
                 if (Communicator.Users != null)
                 {
@@ -884,12 +955,12 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"There is no '{args[1]}' near you.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"There is no '{args.Method}' near you.", cancellationToken);
                 }
             }
         }
 
-        private async Task DoWake(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoWake(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting) || actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
             {
@@ -904,13 +975,13 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoRemove(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoRemove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // remove <argument>
             // See if they are wearing the item.
-            if (args.Length > 1)
+            if (!string.IsNullOrWhiteSpace(args.Method))
             {
-                var itemName = args[1].ToLower();
+                var itemName = args.Method.ToLower();
 
                 if (itemName == "all")
                 {
@@ -947,13 +1018,13 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoWear(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoWear(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // wear <argument>
             // See if they have it in their inventory.
-            if (args.Length > 1)
+            if (!string.IsNullOrWhiteSpace(args.Method))
             {
-                var itemName = args[1].ToLower();
+                var itemName = args.Method.ToLower();
 
                 if (itemName == "all")
                 {
@@ -1031,13 +1102,13 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoWield(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoWield(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // wield <argument>
             // See if they have it in their inventory.
-            if (args.Length > 1)
+            if (!string.IsNullOrWhiteSpace(args.Method))
             {
-                var itemName = args[1].ToLower();
+                var itemName = args.Method.ToLower();
 
                 var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
 
@@ -1076,10 +1147,9 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoWiznet(UserData actor, string[] args, CancellationToken cancellationToken)
+        [MinimumLevel(90)]
+        private async Task DoWiznet(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            // TODO: Check if user is an IMM
-
             // Sub/unsub to wiznet channel
             if (this.communicator.IsSubscribed("wiznet", actor.ConnectionId, actor))
             {
@@ -1093,14 +1163,14 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoYell(UserData actor, string[] args, CancellationToken cancellationToken)
+        private async Task DoYell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var sentence = string.Join(' ', args, 1, args.Length - 1);
+            var sentence = args.Method;
 
             if (!string.IsNullOrWhiteSpace(sentence))
             {
                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                await this.communicator.SendToPlayer(actor.Connection, $"You yell \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"You yell \"<span class='yell'>{sentence}</b>\"", cancellationToken);
                 await this.communicator.SendToArea(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} yells \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
             }
             else

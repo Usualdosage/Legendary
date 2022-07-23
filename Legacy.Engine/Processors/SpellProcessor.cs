@@ -47,16 +47,11 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="args">The input args.</param>
-        /// <param name="command">The command.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoSpell(UserData actor, string[] args, string command, CancellationToken cancellationToken)
+        public async Task DoSpell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            // cast <spell>
-            // cast <spell> <target>
-            var spellName = args[1];
-
-            var proficiency = actor.Character.GetSpellProficiency(spellName);
+            var proficiency = actor.Character.GetSpellProficiency(args.Method);
 
             if (proficiency != null && proficiency.Proficiency > 0)
             {
@@ -76,12 +71,10 @@ namespace Legendary.Engine.Processors
                         actor.Character.Mana.Current -= spell.ManaCost;
                     }
 
-                    var targetName = args.Length > 2 ? args[2] : string.Empty;
-
                     // We may or may not have a target. The spell will figure that bit out.
-                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == targetName);
+                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == args.Target);
 
-                    this.logger.Info($"DEBUG: Spell {command} cast by {actor.Character.FirstName} at {targetName}", this.communicator);
+                    this.logger.Info($"DEBUG: Spell {args.Method} cast by {actor.Character.FirstName} at {args.Target}", this.communicator);
 
                     if (await spell.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
