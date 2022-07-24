@@ -10,7 +10,7 @@ class LegendaryClient {
         var socket = new WebSocket(wsUri);
         let commands = [];
         const $console = $("#console");
-        const $roomImage = $(".loader").remove();
+        var updateUI = true;
 
         socket.onopen = e => {
             console.log("Connected to Legendary!", e);
@@ -25,6 +25,13 @@ class LegendaryClient {
         };
 
         socket.onmessage = function (e) {
+
+            // Do this when we receive the first message, and no more.
+            if (updateUI === true) {
+                const $roomImage = $(".loader").remove();
+                $(".audio-controls").show();
+                updateUI = false;
+            }
 
             var message = e.data.toString();
 

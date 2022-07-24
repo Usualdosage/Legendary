@@ -198,9 +198,10 @@ namespace Legendary.Engine.Processors
         {
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
+            this.actions.Add("dice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDice)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("drink", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrink)));
-            this.actions.Add("drop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrop)));
+            this.actions.Add("drop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrop)));
             this.actions.Add("east", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("eat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEat)));
             this.actions.Add("emote", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmote)));
@@ -293,9 +294,77 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        private async Task DoDice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"How many dice do you want to roll?", cancellationToken);
+            }
+            else
+            {
+                if (int.TryParse(args.Method, out int numDice))
+                {
+                    if (numDice > 5)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can only throw up to five dice.", cancellationToken);
+                    }
+                    else
+                    {
+                        StringBuilder sbToPlayer = new StringBuilder();
+                        StringBuilder sbToRoom = new StringBuilder();
+
+                        sbToPlayer.Append($"You roll {numDice} six-sided dice.<br/>");
+                        sbToRoom.Append($"{actor.Character.FirstName} rolls {numDice} six-sided dice.<br/>");
+
+                        int total = 0;
+                        for (var x = 0; x < numDice; x++)
+                        {
+                            var roll = this.random.Next(1, 6);
+                            string dice = string.Empty;
+                            switch (roll)
+                            {
+                                case 1:
+                                    dice = "fa-dice-one";
+                                    break;
+                                case 2:
+                                    dice = "fa-dice-two";
+                                    break;
+                                case 3:
+                                    dice = "fa-dice-three";
+                                    break;
+                                case 4:
+                                    dice = "fa-dice-four";
+                                    break;
+                                case 5:
+                                    dice = "fa-dice-five";
+                                    break;
+                                case 6:
+                                    dice = "fa-dice-six";
+                                    break;
+                            }
+
+                            sbToPlayer.Append($"<i class='fa-solid {dice}'></i>");
+                            sbToRoom.Append($"<i class='fa-solid {dice}'></i>");
+                            total += roll;
+                        }
+
+                        sbToPlayer.Append($"<br/>Your total is {total}.");
+                        sbToRoom.Append($"<br/>{actor.Character.FirstName}'s total is {total}.");
+
+                        await this.communicator.SendToPlayer(actor.Connection, sbToPlayer.ToString(), cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, sbToRoom.ToString(), cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"How many dice do you want to roll?", cancellationToken);
+                }
+            }
+        }
+
         private async Task DoDrink(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Thirst.Current >= actor.Character.Thirst.Max - 2)
+            if (actor.Character.Thirst.Current <= 2)
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"You are not thirsty.", cancellationToken);
                 return;

@@ -1,6 +1,6 @@
 ﻿@model UserModel
 
-<div class="audio-controls">
+<div class="audio-controls" style="display: none">
     <div>Audio Controls <button onclick="toggleMute()"><i id="muteButton" class="fa-solid fa-volume-high"></i></button></div>
     <div>
         <span>Music</span><input type="range" min="1" max="100" value="30" class="slider" onchange="changeBgAudio(this)" id="audioBackground">
@@ -25,7 +25,7 @@
 
 <div class="console-container">
     <div id="console">
-        <p class="loader"><i class="fas fa-spinner fa-spin"></i> One moment, we are loading the game...</p>
+        <p class="loader"><i class="fas fa-spinner fa-spin"></i> One moment while we load Legendary...</p>
     </div>
     <div id="input">
         <input type="text" id="inputField" placeholder="Type message and press enter." />
@@ -34,8 +34,9 @@
 
 @section Scripts {
     <script>$(function () {
-    const client = new LegendaryClient();
+        const client = new LegendaryClient();
         client.Connect();
         $("#inputField").focus();
-    });</script>
+    });
+    </script>
 }
