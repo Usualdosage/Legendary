@@ -57,52 +57,27 @@ namespace Legendary.Engine.Models
             // Strip out common HTML tags.
             string result = Regex.Replace(input, @"<[^>]*>", string.Empty);
 
-            // Use cases:
-            // 'shield bash' target
-            // c light target
-            // cast 'cure light'
-            // cast cu
-            // cast 'cure serious'
-            // cast 'cure serious' target
-            // say hello
-            // say hello there!
-            // tell Bob Hello there!
-            var words = Regex.Matches(result, @"\w+|'[\w\s]*'");
-
-            if (words.Count == 1)
+            if (IsCommunication(result))
             {
-                return new CommandArgs(words[0].Value, null, null);
-            }
-            else if (words.Count == 2)
-            {
-                var method = words[1].Value.Replace("\'", string.Empty);
-
-                if (IsCommunication(words[0].Value))
-                {
-                    return ProcessSentence(words);
-                }
-                else
-                {
-                    return new CommandArgs(words[0].Value, method, null);
-                }
-            }
-            else if (words.Count == 3)
-            {
-                if (IsCommunication(words[0].Value))
-                {
-                    return ProcessSentence(words);
-                }
-                else
-                {
-                    var method = words[1].Value.Replace("\'", string.Empty);
-                    return new CommandArgs(words[0].Value, method, words[2].Value);
-                }
+                return ProcessSentence(result);
             }
             else
             {
-                if (IsCommunication(words[0].Value))
+                var words = Regex.Matches(result, @"\w+|""[\w\s]*""");
+
+                if (words.Count == 1)
                 {
-                    return ProcessSentence(words);
+                    return new CommandArgs(words[0].Value, null, null);
+                }
+                else if (words.Count == 2)
+                {
+                    var method = words[1].Value.Replace("\'", string.Empty);
+                    return new CommandArgs(words[0].Value, method, null);
+                }
+                else if (words.Count == 3)
+                {
+                    var method = words[1].Value.Replace("\'", string.Empty);
+                    return new CommandArgs(words[0].Value, method, words[2].Value);
                 }
                 else
                 {
@@ -111,38 +86,33 @@ namespace Legendary.Engine.Models
             }
         }
 
-        /// <summary>
-        /// Determines if an input is a type of communication, which is handled differently than standard commands.
-        /// </summary>
-        /// <param name="action">The action.</param>
-        /// <returns>True if it's a communication action.</returns>
-        private static bool IsCommunication(string action)
+        private static bool IsCommunication(string message)
         {
-            switch (action.ToLower().Trim())
+            if (message.StartsWith("say ") ||
+                message.StartsWith("tell ") ||
+                message.StartsWith("yell ") ||
+                message.StartsWith("pray ") ||
+                message.StartsWith("newbie "))
             {
-                default:
-                    return false;
-                case "say":
-                case "tell":
-                case "yell":
-                case "pray":
-                case "newbie":
-                    return true;
+                return true;
             }
+
+            return false;
         }
 
-        private static CommandArgs ProcessSentence(MatchCollection matches)
+        private static CommandArgs ProcessSentence(string input)
         {
-            var command = matches[0].Value.ToLower().Trim();
-            string[] words = matches.Select(m => m.Value).ToArray();
+            var words = input.Split(' ');
 
-            switch (command)
+            string action = words[0].Trim();
+
+            switch (action)
             {
                 // A tell will have the target as the second word.
                 case "tell":
                     {
                         var sentence = string.Join(' ', words, 2, words.Length - 2);
-                        return new CommandArgs(command, FormatSentence(sentence), words[1]);
+                        return new CommandArgs(action, FormatSentence(sentence), words[1]);
                     }
 
                 default:
@@ -153,7 +123,7 @@ namespace Legendary.Engine.Models
                 case "emote":
                     {
                         var sentence = string.Join(' ', words, 1, words.Length - 1);
-                        return new CommandArgs(command, FormatSentence(sentence), words[1]);
+                        return new CommandArgs(action, FormatSentence(sentence), words[1]);
                     }
             }
         }

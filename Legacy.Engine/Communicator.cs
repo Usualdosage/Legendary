@@ -742,7 +742,39 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public Mobile? ResolveMobile(string name)
         {
-            return this.world.Mobiles.Where(m => m.FirstName.ToLower().StartsWith(name.ToLower())).FirstOrDefault();
+            foreach (var area in this.world.Areas)
+            {
+                foreach (var room in area.Rooms)
+                {
+                    var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().StartsWith(name.ToLower()));
+
+                    if (mob != null)
+                    {
+                        return mob;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public KeyValuePair<long, long>? ResolveMobileLocation(string name)
+        {
+            foreach (var area in this.world.Areas)
+            {
+                foreach (var room in area.Rooms)
+                {
+                    var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().StartsWith(name.ToLower()));
+
+                    if (mob != null)
+                    {
+                        return new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <inheritdoc/>
@@ -1234,13 +1266,13 @@ namespace Legendary.Engine
                         var obj = spellGroup.GetValue(treeInstance);
                         if (obj != null)
                         {
-                            var group = (Dictionary<IAction, int>)obj;
+                            var group = (List<IAction>)obj;
 
                             foreach (var kvp in group)
                             {
-                                if (!userData.Character.HasSpell(kvp.Key.Name.ToLower()))
+                                if (!userData.Character.HasSpell(kvp.Name.ToLower()))
                                 {
-                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Key.Name, 75));
+                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Name, 75));
                                 }
                             }
                         }
@@ -1265,13 +1297,13 @@ namespace Legendary.Engine
                         var obj = spellGroup.GetValue(treeInstance);
                         if (obj != null)
                         {
-                            var group = (Dictionary<IAction, int>)obj;
+                            var group = (List<IAction>)obj;
 
                             foreach (var kvp in group)
                             {
-                                if (!userData.Character.HasSkill(kvp.Key.Name.ToLower()))
+                                if (!userData.Character.HasSkill(kvp.Name.ToLower()))
                                 {
-                                    userData.Character.Skills.Add(new SkillProficiency(kvp.Key.Name, 75));
+                                    userData.Character.Skills.Add(new SkillProficiency(kvp.Name, 75));
                                 }
                             }
                         }

@@ -89,6 +89,13 @@ namespace Legendary.Core.Contracts
         Mobile? ResolveMobile(string name);
 
         /// <summary>
+        /// Gets the actual physical location of a mob by name.
+        /// </summary>
+        /// <param name="name">The name of the mob.</param>
+        /// <returns>KVP.</returns>
+        KeyValuePair<long, long>? ResolveMobileLocation(string name);
+
+        /// <summary>
         /// Gets a room by location.
         /// </summary>
         /// <param name="location">The area ID and room ID.</param>

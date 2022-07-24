@@ -357,7 +357,7 @@ namespace Legendary.Engine.Processors
                 if (this.replaceWords != null && this.replaceWords.ContainsKey(testWord))
                 {
                     // Word should be replaced with another word.
-                    return this.replaceWords.First(r => r.Key == word.ToLower()).Value + $"[{word}]";
+                    return this.replaceWords.First(r => r.Key == word.ToLower()).Value;
                 }
                 else
                 {

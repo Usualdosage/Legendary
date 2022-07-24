@@ -35,25 +35,25 @@ namespace Legendary.Engine.Models.SkillTrees
         public override string Name => "Martial Group";
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group1
+        public override List<IAction> Group1
         {
-            get => new Dictionary<IAction, int>()
+            get => new List<IAction>()
             {
-                { new HandToHand(this.Communicator, this.Random, this.Combat), 1 },
-                { new Recall(this.Communicator, this.Random, this.Combat), 1 },
+                { new HandToHand(this.Communicator, this.Random, this.Combat) },
+                { new Recall(this.Communicator, this.Random, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group2 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group2 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group3 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group3 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group4 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group4 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group5 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group5 { get => new List<IAction>(); }
     }
 }

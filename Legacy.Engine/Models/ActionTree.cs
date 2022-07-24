@@ -36,19 +36,19 @@ namespace Legendary.Engine.Models
         public abstract string Name { get; }
 
         /// <inheritdoc/>
-        public abstract Dictionary<IAction, int> Group1 { get; }
+        public abstract List<IAction> Group1 { get; }
 
         /// <inheritdoc/>
-        public abstract Dictionary<IAction, int> Group2 { get; }
+        public abstract List<IAction> Group2 { get; }
 
         /// <inheritdoc/>
-        public abstract Dictionary<IAction, int> Group3 { get; }
+        public abstract List<IAction> Group3 { get; }
 
         /// <inheritdoc/>
-        public abstract Dictionary<IAction, int> Group4 { get; }
+        public abstract List<IAction> Group4 { get; }
 
         /// <inheritdoc/>
-        public abstract Dictionary<IAction, int> Group5 { get; }
+        public abstract List<IAction> Group5 { get; }
 
         /// <summary>
         /// Gets the communicator.
@@ -72,11 +72,11 @@ namespace Legendary.Engine.Models
         /// <returns>Int.</returns>
         public virtual int GetMatches(List<string> proficiencyNames)
         {
-            int g1Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Key.Name.ToLower() == s.ToLower()));
-            int g2Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Key.Name.ToLower() == s.ToLower()));
-            int g3Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Key.Name.ToLower() == s.ToLower()));
-            int g4Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Key.Name.ToLower() == s.ToLower()));
-            int g5Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Key.Name.ToLower() == s.ToLower()));
+            int g1Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Name.ToLower() == s.ToLower()));
+            int g2Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Name.ToLower() == s.ToLower()));
+            int g3Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Name.ToLower() == s.ToLower()));
+            int g4Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Name.ToLower() == s.ToLower()));
+            int g5Total = this.Group1.Count(a => proficiencyNames.Any(s => a.Name.ToLower() == s.ToLower()));
 
             return g1Total + g2Total + g3Total + g4Total + g5Total;
         }

@@ -33,31 +33,37 @@ namespace Legendary.Engine.Models.SpellTrees
         public override string Name => "Healing Group";
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group1
+        public override List<IAction> Group1
         {
-            get => new Dictionary<IAction, int>()
+            get => new List<IAction>()
             {
-                { new Armor(this.Communicator, this.Random, this.Combat), 1 },
-                { new CureLight(this.Communicator, this.Random, this.Combat), 1 },
+                { new Armor(this.Communicator, this.Random, this.Combat) },
+                { new CureLight(this.Communicator, this.Random, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group2
+        public override List<IAction> Group2
         {
-            get => new Dictionary<IAction, int>()
+            get => new List<IAction>()
             {
-                { new CureSerious(this.Communicator, this.Random, this.Combat), 5 },
+                { new CureSerious(this.Communicator, this.Random, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group3 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group3
+        {
+            get => new List<IAction>()
+            {
+                { new CureCritical(this.Communicator, this.Random, this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group4 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group4 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
-        public override Dictionary<IAction, int> Group5 { get => new Dictionary<IAction, int>(); }
+        public override List<IAction> Group5 { get => new List<IAction>(); }
     }
 }

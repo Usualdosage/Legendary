@@ -167,10 +167,6 @@ namespace Legendary.Engine
             {
                 await this.communicator.SendToPlayer(this.connectedUser.Connection, "The sun sets in the west.");
             }
-            else
-            {
-                return;
-            }
         }
 
         /// <summary>

@@ -26,26 +26,26 @@ namespace Legendary.Engine.Contracts
         /// <summary>
         /// Gets the skills or spells available in group 1.
         /// </summary>
-        public Dictionary<IAction, int> Group1 { get; }
+        public List<IAction> Group1 { get; }
 
         /// <summary>
         /// Gets the skills or spells available in group 2.
         /// </summary>
-        public Dictionary<IAction, int> Group2 { get; }
+        public List<IAction> Group2 { get; }
 
         /// <summary>
         /// Gets the skills or spells available in group 3.
         /// </summary>
-        public Dictionary<IAction, int> Group3 { get; }
+        public List<IAction> Group3 { get; }
 
         /// <summary>
         /// Gets the skills or spells available in group 4.
         /// </summary>
-        public Dictionary<IAction, int> Group4 { get; }
+        public List<IAction> Group4 { get; }
 
         /// <summary>
         /// Gets the skills or spells available in group 5.
         /// </summary>
-        public Dictionary<IAction, int> Group5 { get; }
+        public List<IAction> Group5 { get; }
     }
 }
