@@ -43,6 +43,7 @@ namespace Legendary.Engine
     {
         private readonly RequestDelegate requestDelegate;
         private readonly LanguageGenerator languageGenerator;
+        private readonly TitleGenerator titleGenerator;
         private readonly Combat combat;
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
@@ -66,25 +67,25 @@ namespace Legendary.Engine
         /// <param name="serverSettings">The server settings.</param>
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
-        /// <param name="world">The world to use in this comm instance.</param>
         /// <param name="random">The random number generator.</param>
-        public Communicator(RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IWorld world, IRandom random)
+        public Communicator(RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IRandom random)
         {
             this.webHostEnvironment = webHostEnvironment;
             this.logger = logger;
             this.requestDelegate = requestDelegate;
             this.apiClient = apiClient;
             this.dataService = dataService;
-            this.world = world;
             this.serverSettings = serverSettings;
             this.random = random;
+
+            this.world = new World(this.dataService, this.random, this.logger, this);
 
             // Add public channels.
             this.Channels = new List<CommChannel>()
                 {
                     new CommChannel("pray", false, true),
                     new CommChannel("newbie", false, true),
-                    new CommChannel("wiznet", true, false),
+                    new CommChannel("imm", true, false),
                 };
 
             // Start the engine.
@@ -103,6 +104,9 @@ namespace Legendary.Engine
 
             // Create the action helper.
             this.actionHelper = new ActionHelper(this, this.random, this.combat);
+
+            // Create the title generator.
+            this.titleGenerator = new TitleGenerator(this, this.random, this.combat);
         }
 
         /// <summary>
@@ -162,7 +166,7 @@ namespace Legendary.Engine
                 // Configure the user and add the environment handler.
                 // TODO: We may want to handle environmental changes globally.
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
-                var environment = new Environment(this, this.random, userData);
+                var environment = new Environment(this, this.random, userData, this.combat);
                 userData.Environment = environment;
 
                 // If the user is already connected, remove, and then re-add.
@@ -189,7 +193,7 @@ namespace Legendary.Engine
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip?.ToString());
 
-                // TODO: Just all all skills and spells for now.
+                // TODO: Just add all skills and spells for now.
                 this.ApplySkillsAndSpells(userData);
 
                 // Create instances of the action, skill, and spell processors.
@@ -471,7 +475,7 @@ namespace Legendary.Engine
             // Show the items
             if (room?.Items != null)
             {
-                var itemGroups = room.Items.GroupBy(g => g.ItemId);
+                var itemGroups = room.Items.GroupBy(g => g.Name);
 
                 foreach (var itemGroup in itemGroups)
                 {
@@ -569,7 +573,7 @@ namespace Legendary.Engine
             sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
 
             // Condition
-            sb.Append($"<tr><td colspan='2' class='condition'>{this.combat.GetPlayerCondition(actor)}</td></tr>");
+            sb.Append($"<tr><td colspan='2' class='condition'>{Combat.GetPlayerCondition(actor)}</td></tr>");
 
             sb.Append("</table></div>");
 
@@ -740,17 +744,20 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public Mobile? ResolveMobile(string name)
+        public Mobile? ResolveMobile(string? name)
         {
-            foreach (var area in this.world.Areas)
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                foreach (var room in area.Rooms)
+                foreach (var area in this.world.Areas)
                 {
-                    var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().StartsWith(name.ToLower()));
-
-                    if (mob != null)
+                    foreach (var room in area.Rooms)
                     {
-                        return mob;
+                        var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().StartsWith(name.ToLower()));
+
+                        if (mob != null)
+                        {
+                            return mob;
+                        }
                     }
                 }
             }
@@ -1099,13 +1106,13 @@ namespace Legendary.Engine
             character.Level += 1;
 
             // HP is based on con
-            var hp = this.random.Next(8 + this.random.Next(1, 4), (int)character.Con.Current);
+            var hp = this.random.Next(6 + this.random.Next(1, 4), Math.Max((int)character.Con.Current, 12));
 
             // Movement is based on dex
-            var move = this.random.Next(8 + this.random.Next(1, 4), (int)character.Dex.Current);
+            var move = this.random.Next(6 + this.random.Next(1, 4), Math.Max((int)character.Dex.Current, 12));
 
             // Mana is based on wis
-            var mana = this.random.Next(8 + this.random.Next(1, 4), (int)character.Wis.Current);
+            var mana = this.random.Next(6 + this.random.Next(1, 4), Math.Max((int)character.Wis.Current, 12));
 
             character.Health.Max += hp;
             character.Mana.Max += mana;
@@ -1118,11 +1125,23 @@ namespace Legendary.Engine
             character.Trains += (int)trains;
             character.Practices += (int)pracs;
 
+            this.UpdateTitle(character);
+
             // Save all the changes.
             await this.SaveCharacter(character);
 
             await this.SendToPlayer(character, $"You advanced a level! You gained {hp} health, {mana} mana, and {move} movement. You have {character.Trains} training sessions and {character.Practices} practices.", cancellationToken);
             await this.PlaySound(character, AudioChannel.Actor, Sounds.LEVELUP, cancellationToken);
+        }
+
+        private void UpdateTitle(Character character)
+        {
+            var newTitle = this.titleGenerator.Generate(character);
+
+            if (!string.IsNullOrWhiteSpace(newTitle))
+            {
+                character.Title = newTitle;
+            }
         }
 
         /// <summary>
@@ -1138,7 +1157,7 @@ namespace Legendary.Engine
             sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
 
             // How beat up they are.
-            sb.Append(this.combat.GetPlayerCondition(target));
+            sb.Append(Combat.GetPlayerCondition(target));
 
             // Worn items.
             if (target.IsNPC)
@@ -1393,7 +1412,7 @@ namespace Legendary.Engine
                 }
 
                 // Handle any changes in the world (item rot, movement of mobs, etc).
-                this.world.ProcessWorldChanges(this, this.random).Wait();
+                this.world.ProcessWorldChanges().Wait();
             }
             catch (Exception exc)
             {

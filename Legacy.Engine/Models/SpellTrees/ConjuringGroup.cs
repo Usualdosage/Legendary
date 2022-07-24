@@ -1,4 +1,4 @@
-﻿// <copyright file="HealingGroup.cs" company="Legendary™">
+﻿// <copyright file="ConjuringGroup.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -14,61 +14,47 @@ namespace Legendary.Engine.Models.SpellTrees
     using Legendary.Engine.Models.Spells;
 
     /// <summary>
-    /// Spells available in the healing group.
+    /// Spells available in the air group.
     /// </summary>
-    public class HealingGroup : ActionTree
+    public class ConjuringGroup : ActionTree
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HealingGroup"/> class.
+        /// Initializes a new instance of the <see cref="ConjuringGroup"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
         /// <param name="combat">The combat engine.</param>
-        public HealingGroup(ICommunicator communicator, IRandom random, Combat combat)
+        public ConjuringGroup(ICommunicator communicator, IRandom random, Combat combat)
             : base(communicator, random, combat)
         {
         }
 
         /// <inheritdoc/>
-        public override string Name => "Healing Group";
+        public override string Name => "Conjuring Group";
 
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
             get => new List<IAction>()
             {
-                { new Armor(this.Communicator, this.Random, this.Combat) },
-                { new CureLight(this.Communicator, this.Random, this.Combat) },
-                { new CauseLight(this.Communicator, this.Random, this.Combat) },
+                { new CreateFood(this.Communicator, this.Random, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group2
-        {
-            get => new List<IAction>()
-            {
-                { new CureSerious(this.Communicator, this.Random, this.Combat) },
-            };
-        }
+        public override List<IAction> Group2 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
         public override List<IAction> Group3
         {
             get => new List<IAction>()
             {
-                { new CureCritical(this.Communicator, this.Random, this.Combat) },
+                { new CreateSpring(this.Communicator, this.Random, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group4
-        {
-            get => new List<IAction>()
-            {
-                { new Poison(this.Communicator, this.Random, this.Combat) },
-            };
-        }
+        public override List<IAction> Group4 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
         public override List<IAction> Group5 { get => new List<IAction>(); }

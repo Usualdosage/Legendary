@@ -9,7 +9,6 @@
 
 namespace Legendary.Core.Contracts
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Models;
@@ -117,5 +116,23 @@ namespace Legendary.Core.Contracts
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Processes an effect each tick.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="effect">The effect to process.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task OnTick(Character actor, Effect effect, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Processes an effect each viotick.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="effect">The effect to process.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task OnVioTick(Character actor, Effect effect, CancellationToken cancellationToken = default);
     }
 }

@@ -11,6 +11,7 @@ namespace Legendary.Engine.Processors
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Text;
@@ -26,6 +27,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Microsoft.AspNetCore.Hosting;
     using MongoDB.Driver;
 
     /// <summary>
@@ -197,6 +199,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("drink", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrink)));
             this.actions.Add("drop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrop)));
             this.actions.Add("east", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("eat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEat)));
@@ -288,6 +291,41 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        private async Task DoDrink(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.Thirst.Current >= actor.Character.Thirst.Max - 2)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You are not thirsty.", cancellationToken);
+                return;
+            }
+
+            // Check if there is a spring in the room
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            if (room != null)
+            {
+                var spring = room.Items.FirstOrDefault(i => i.ItemType == ItemType.Spring);
+                if (spring != null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You drink cool water from {spring.Name}.", cancellationToken);
+                    actor.Character.Thirst.Current = Math.Min(8, actor.Character.Thirst.Current);
+                }
+            }
+            else
+            {
+                // No spring, so see if they have a drinking vessel.
+                if (string.IsNullOrWhiteSpace(args.Method))
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"Drink what?", cancellationToken);
+                }
+                else
+                {
+                    // TODO Implement drinking containers.
+                    await this.communicator.SendToPlayer(actor.Connection, $"Not implemented.", cancellationToken);
+                }
+            }
         }
 
         private async Task DoDrop(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -495,7 +533,22 @@ namespace Legendary.Engine.Processors
 
         private async Task DoHelp(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, "Help text.", cancellationToken);
+            var helpCommand = args.Method;
+
+            var directoryInfo = new DirectoryInfo(@"Data/HelpFiles/");
+
+            var file = directoryInfo.GetFiles().Where(f => f.Name.ToLower() == helpCommand + ".html").FirstOrDefault();
+
+            if (file != null)
+            {
+                var content = File.ReadAllText(file.FullName);
+
+                await this.communicator.SendToPlayer(actor.Connection, content, cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "No help files found by that name. You can start by typing HELP NEWBIE.", cancellationToken);
+            }
         }
 
         private async Task DoInventory(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -504,7 +557,7 @@ namespace Legendary.Engine.Processors
 
             sb.AppendLine("<span class='inventory'>You are carrying:</span>");
 
-            var itemGroups = actor.Character.Inventory.GroupBy(g => g.ItemId);
+            var itemGroups = actor.Character.Inventory.GroupBy(g => g.Name);
 
             foreach (var itemGroup in itemGroups)
             {
@@ -716,13 +769,13 @@ namespace Legendary.Engine.Processors
 
                             if (obj != null)
                             {
-                                var group = (Dictionary<IAction, int>)obj;
+                                var group = (List<IAction>)obj;
 
-                                foreach (var kvp in group)
+                                foreach (var action in group)
                                 {
-                                    if (actor.Character.HasSkill(kvp.Key.Name.ToLower()))
+                                    if (actor.Character.HasSkill(action.Name.ToLower()))
                                     {
-                                        var proficiency = actor.Character.GetSkillProficiency(kvp.Key.Name.ToLower());
+                                        var proficiency = actor.Character.GetSkillProficiency(action.Name.ToLower());
                                         if (proficiency != null)
                                         {
                                             builder.Append($"<span class='skillinfo'>{proficiency.SkillName} {proficiency.Proficiency}% <progress class='skillprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
@@ -785,13 +838,13 @@ namespace Legendary.Engine.Processors
 
                             if (obj != null)
                             {
-                                var group = (Dictionary<IAction, int>)obj;
+                                var group = (List<IAction>)obj;
 
-                                foreach (var kvp in group)
+                                foreach (var action in group)
                                 {
-                                    if (actor.Character.HasSpell(kvp.Key.Name.ToLower()))
+                                    if (actor.Character.HasSpell(action.Name.ToLower()))
                                     {
-                                        var proficiency = actor.Character.GetSpellProficiency(kvp.Key.Name.ToLower());
+                                        var proficiency = actor.Character.GetSpellProficiency(action.Name.ToLower());
                                         if (proficiency != null)
                                         {
                                             builder.Append($"<span class='spellinfo'>{proficiency.SpellName} {proficiency.Proficiency}% <progress class='spellprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
@@ -896,7 +949,7 @@ namespace Legendary.Engine.Processors
                     await this.communicator.SendToPlayer(actor.Connection, $"You SLAY {player.Character.FirstName} in cold blood!", cancellationToken);
                     await this.communicator.SendToRoom(actor.Character.Location, actor.Character, player.Character, $"{actor.Character.FirstName} SLAYS {player.Character.FirstName} in cold blood!", cancellationToken);
                     await this.communicator.SendToPlayer(player.Connection, $"{actor.Character} has SLAIN you!", cancellationToken);
-                    await this.combat.KillPlayer(player, actor.Character, cancellationToken);
+                    await this.combat.KillPlayer(player.Character, actor.Character, cancellationToken);
                 }
                 else
                 {
@@ -1444,7 +1497,7 @@ namespace Legendary.Engine.Processors
                     user.Character.Inventory.Remove(item);
                     await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
                     await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
-                    user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 0));
+                    user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, item.Value));
                     await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} eats {item.Name}.", cancellationToken);
                     return;
                 }
@@ -1595,7 +1648,7 @@ namespace Legendary.Engine.Processors
 
             if (exit != null)
             {
-                var newArea = await this.world.FindArea(a => a.AreaId == exit.ToArea);
+                var newArea = this.world.Areas.FirstOrDefault(a => a.AreaId == exit.ToArea);
                 var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
 
                 if (newArea != null && newRoom != null)

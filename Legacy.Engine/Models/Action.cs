@@ -191,5 +191,17 @@ namespace Legendary.Engine.Models
         {
             return Task.CompletedTask;
         }
+
+        /// <inheritdoc/>
+        public virtual Task OnTick(Character actor, Effect effect, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public virtual Task OnVioTick(Character actor, Effect effect, CancellationToken cancellationToken = default)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -78,6 +78,98 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Shows the player's physical condition.
+        /// </summary>
+        /// <param name="target">The player.</param>
+        /// <returns>String.</returns>
+        public static string? GetPlayerCondition(Character? target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            // Get the target's health as a percentage of their total health.
+            var percentage = target.Health.GetPercentage();
+
+            var message = percentage switch
+            {
+                <= 0 => "<span class='player-health'>is DEAD.</span>", // 0
+                > 0 and <= 10 => $"<span class='player-health'>is on {target.Pronoun} death bed.</span>", // 1-10
+                > 11 and <= 20 => "<span class='player-health'>is mortally wounded.</span>", // 11-20
+                > 21 and <= 30 => "<span class='player-health'>is seriously hurt.</span>", // 21-30
+                > 31 and <= 40 => "<span class='player-health'>has taken some severe damage.</span>", // 31-40
+                > 41 and <= 50 => "<span class='player-health'>is covered in major wounds.</span>", // 41-50
+                > 51 and <= 60 => "<span class='player-health'>is bleeding profusely from many wounds.</span>", // 51-60
+                > 61 and <= 70 => "<span class='player-health'>has some big wounds and nasty scratches.</span>", // 61-70
+                > 71 and <= 80 => "<span class='player-health'>has some abrasions and lacerations.</span>", // 71-80
+                > 81 and <= 90 => "<span class='player-health'>has some small wounds and bruises.</span>", // 81-90
+                > 91 and <= 99 => "<span class='player-health'>has some tiny scrapes.</span>", // 91-99
+                _ => "<span class='player-health'>is in perfect health.</span>" // 100
+            };
+
+            return $"{target.FirstName} {message}.";
+        }
+
+        /// <summary>
+        /// Applies the damage to the target. If damage brings them to below 0, return true.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="damage">The damage.</param>
+        /// <returns>True if the target is killed.</returns>
+        public static bool ApplyDamage(Character? target, int damage)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+
+            target.Health.Current -= damage;
+
+            // If below zero, character is dead.
+            if (target.Health.Current < 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Calculates the damage verb messages based on the raw damage.
+        /// </summary>
+        /// <param name="damage">The damage as a total.</param>
+        /// <param name="blocked">Whether or not the attack was blocked.</param>
+        /// <returns>String.</returns>
+        public static string CalculateDamageVerb(int damage, bool blocked)
+        {
+            if (blocked)
+            {
+                return "<span class='damage damage_0'>was blocked by</span>";
+            }
+
+            var message = damage switch
+            {
+                <= 0 => "<span class='damage damage_0'>has no effect on</span>",
+                > 0 and <= 10 => "<span class='damage damage_1'>scratches</span>", // 1-10
+                > 11 and <= 20 => "<span class='damage damage_2'>injures</span>", // 11-20
+                > 21 and <= 30 => "<span class='damage damage_3'>wounds</span>", // 21-30
+                > 31 and <= 40 => "<span class='damage damage_4'>mauls</span>", // 31-40
+                > 41 and <= 50 => "<span class='damage damage_5'>maims</span>", // 41-50
+                > 51 and <= 100 => "<span class='damage damage_6'>MUTILATES</span>", // 51-100
+                > 101 and <= 200 => "<span class='damage damage_7'>MASSACRES</span>", // 101-200
+                > 201 and <= 300 => "<span class='damage damage_8'>MANGLES</span>", // 201-300
+                > 301 and <= 500 => "<span class='damage damage_9'>*** OBLITERATES ***</span>", // 301-500
+                > 501 and <= 700 => "<span class='damage damage_10'>*** DISINTEGRATES ***</span>", // 501-700
+                > 701 and <= 900 => "<span class='damage damage_11'>*** ANNIHILIATES ***</span>", // 701-900
+                > 901 and <= 1100 => "<span class='damage damage_12'>=== EVISCERATES ===</span>", // 901-1100
+                _ => "<span class='damage damage_13'>does UNSPEAKABLE things</span>" // Over 1100
+            };
+
+            return message;
+        }
+
+        /// <summary>
         /// Gets the default combat action (martial) for the fighting character.
         /// </summary>
         /// <remarks>If they are wielding a weapon, gets that weapon type, and returns the skill for it. Othwerise, returns hand to hand.</remarks>
@@ -124,7 +216,7 @@ namespace Legendary.Engine
         /// <param name="action">The action.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoDamage(Character actor, Character target, IAction? action, CancellationToken cancellationToken)
+        public async Task DoDamage(Character actor, Character target, IAction? action, CancellationToken cancellationToken = default)
         {
             // Get the action the character is using to fight.
             IAction combatAction = action ?? this.GetCombatAction(actor);
@@ -181,13 +273,13 @@ namespace Legendary.Engine
             var damage = this.CalculateDamage(actor, target, combatAction);
 
             // Calculate the damage verb.
-            var damFromVerb = this.CalculateDamageVerb(damage, blocked);
+            var damFromVerb = CalculateDamageVerb(damage, blocked);
 
             await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
             await this.communicator.SendToPlayer(target, $"{actor.FirstName}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
             await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName}'s {combatAction.DamageNoun} {damFromVerb} {actor.LastName}!", cancellationToken);
 
-            bool isDead = this.ApplyDamage(target, damage);
+            bool isDead = ApplyDamage(target, damage);
 
             if (isDead)
             {
@@ -207,11 +299,7 @@ namespace Legendary.Engine
                 else
                 {
                     // Player killed player.
-                    var deadPlayer = this.communicator.ResolveCharacter(target);
-                    if (deadPlayer != null)
-                    {
-                        await this.KillPlayer(deadPlayer, actor, cancellationToken);
-                    }
+                    await this.KillPlayer(target, actor, cancellationToken);
                 }
 
                 // Add the experience to the player.
@@ -224,7 +312,7 @@ namespace Legendary.Engine
             else
             {
                 // Show the opponent's condition.
-                string? condition = this.GetPlayerCondition(target);
+                string? condition = GetPlayerCondition(target);
 
                 if (!string.IsNullOrWhiteSpace(condition))
                 {
@@ -394,30 +482,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Applies the damage to the target. If damage brings them to below 0, return true.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="damage">The damage.</param>
-        /// <returns>True if the target is killed.</returns>
-        public bool ApplyDamage(Character? target, int damage)
-        {
-            if (target == null)
-            {
-                return false;
-            }
-
-            target.Health.Current -= damage;
-
-            // If below zero, character is dead.
-            if (target.Health.Current < 0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Kills a mobile.
         /// </summary>
         /// <param name="target">The mobile.</param>
@@ -449,108 +513,74 @@ namespace Legendary.Engine
         /// <summary>
         /// Kills a player.
         /// </summary>
-        /// <param name="userData">The user data.</param>
+        /// <param name="actor">The player about to die.</param>
         /// <param name="killer">The killer of the player.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task KillPlayer(UserData? userData, Character killer, CancellationToken cancellationToken = default)
+        public async Task KillPlayer(Character? actor, Character killer, CancellationToken cancellationToken = default)
         {
-            if (userData != null)
+            if (actor != null)
             {
-                StopFighting(userData.Character, killer);
+                StopFighting(actor, killer);
 
-                await this.communicator.SendToPlayer(killer, $"You have KILLED {userData.Character.FirstName}!", cancellationToken);
-                await this.communicator.SendToPlayer(userData.Connection, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
-                await this.communicator.SendToRoom(killer, killer.Location, userData.ConnectionId, $"{userData.Character.FirstName} is DEAD!");
+                await this.communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
+                await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName} is DEAD!");
 
-                await this.communicator.PlaySound(userData.Character, Core.Types.AudioChannel.Actor, Sounds.DEATH, cancellationToken);
+                await this.communicator.PlaySound(actor, Core.Types.AudioChannel.Actor, Sounds.DEATH, cancellationToken);
 
                 // Make dead and ghost.
-                userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
-                userData.Character.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
+                actor.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
+                actor.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
 
                 var room = this.communicator.ResolveRoom(killer.Location);
 
                 if (room != null)
                 {
-                    this.logger.Info($"{killer.FirstName} has killed {userData.Character.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
+                    this.logger.Info($"{killer.FirstName} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
 
                     // Generate the corpse.
-                    this.GenerateCorpse(killer.Location, userData.Character);
+                    this.GenerateCorpse(killer.Location, actor);
                 }
 
                 // Remove all equipment and inventory.
-                userData.Character.Inventory = new List<Item>();
-                userData.Character.Equipment = new List<Item>();
-                userData.Character.Currency = 0;
+                actor.Inventory = new List<Item>();
+                actor.Equipment = new List<Item>();
+                actor.Currency = 0;
 
                 // Send the character to their home.
-                userData.Character.Location = userData.Character.Home;
+                actor.Location = actor.Home;
 
                 // Increment deaths.
                 if (killer.IsNPC)
                 {
-                    userData.Character.Metrics.MobDeaths += 1;
+                    actor.Metrics.MobDeaths += 1;
                 }
                 else
                 {
-                    userData.Character.Metrics.PlayerDeaths += 1;
+                    actor.Metrics.PlayerDeaths += 1;
                 }
 
                 // Update con loss.
-                if (userData.Character.Metrics.TotalDeaths % 4 == 0)
+                if (actor.Metrics.TotalDeaths % 4 == 0)
                 {
-                    userData.Character.Con.Max -= 1;
-                    userData.Character.Con.Current = Math.Min(userData.Character.Con.Current, userData.Character.Con.Max);
-                    await this.communicator.SendToPlayer(userData.Connection, "You feel less healthy.", cancellationToken);
+                    actor.Con.Max -= 1;
+                    actor.Con.Current = Math.Min(actor.Con.Current, actor.Con.Max);
+                    await this.communicator.SendToPlayer(actor, "You feel less healthy.", cancellationToken);
                 }
 
                 // Set health to 1.
-                userData.Character.Health.Current = 1;
+                actor.Health.Current = 1;
 
                 // Save changes.
-                await this.communicator.SaveCharacter(userData);
+                await this.communicator.SaveCharacter(actor);
 
                 // Show player info.
-                await this.communicator.ShowPlayerInfo(userData.Character, cancellationToken);
+                await this.communicator.ShowPlayerInfo(actor, cancellationToken);
 
                 // Show the player their new surroundings.
-                await this.communicator.ShowRoomToPlayer(userData.Character, cancellationToken);
+                await this.communicator.ShowRoomToPlayer(actor, cancellationToken);
             }
-        }
-
-        /// <summary>
-        /// Shows the player's physical condition.
-        /// </summary>
-        /// <param name="target">The player.</param>
-        /// <returns>String.</returns>
-        public string? GetPlayerCondition(Character? target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            // Get the target's health as a percentage of their total health.
-            var percentage = target.Health.GetPercentage();
-
-            var message = percentage switch
-            {
-                <= 0 => "<span class='player-health'>is DEAD.</span>", // 0
-                > 0 and <= 10 => $"<span class='player-health'>is on {target.Pronoun} death bed.</span>", // 1-10
-                > 11 and <= 20 => "<span class='player-health'>is mortally wounded.</span>", // 11-20
-                > 21 and <= 30 => "<span class='player-health'>is seriously hurt.</span>", // 21-30
-                > 31 and <= 40 => "<span class='player-health'>has taken some severe damage.</span>", // 31-40
-                > 41 and <= 50 => "<span class='player-health'>is covered in major wounds.</span>", // 41-50
-                > 51 and <= 60 => "<span class='player-health'>is bleeding profusely from many wounds.</span>", // 51-60
-                > 61 and <= 70 => "<span class='player-health'>has some big wounds and nasty scratches.</span>", // 61-70
-                > 71 and <= 80 => "<span class='player-health'>has some abrasions and lacerations.</span>", // 71-80
-                > 81 and <= 90 => "<span class='player-health'>has some small wounds and bruises.</span>", // 81-90
-                > 91 and <= 99 => "<span class='player-health'>has some tiny scrapes.</span>", // 91-99
-                _ => "<span class='player-health'>is in perfect health.</span>" // 100
-            };
-
-            return $"{target.FirstName} {message}.";
         }
 
         /// <summary>
@@ -697,40 +727,6 @@ namespace Legendary.Engine
             }
 
             return saveThrow < saves;
-        }
-
-        /// <summary>
-        /// Calculates the damage verb messages based on the raw damage.
-        /// </summary>
-        /// <param name="damage">The damage as a total.</param>
-        /// <param name="blocked">Whether or not the attack was blocked.</param>
-        /// <returns>String.</returns>
-        public string CalculateDamageVerb(int damage, bool blocked)
-        {
-            if (blocked)
-            {
-                return "<span class='damage damage_0'>was blocked by</span>";
-            }
-
-            var message = damage switch
-            {
-                <= 0 => "<span class='damage damage_0'>has no effect on</span>",
-                > 0 and <= 10 => "<span class='damage damage_1'>scratches</span>", // 1-10
-                > 11 and <= 20 => "<span class='damage damage_2'>injures</span>", // 11-20
-                > 21 and <= 30 => "<span class='damage damage_3'>wounds</span>", // 21-30
-                > 31 and <= 40 => "<span class='damage damage_4'>mauls</span>", // 31-40
-                > 41 and <= 50 => "<span class='damage damage_5'>maims</span>", // 41-50
-                > 51 and <= 100 => "<span class='damage damage_6'>MUTILATES</span>", // 51-100
-                > 101 and <= 200 => "<span class='damage damage_7'>MASSACRES</span>", // 101-200
-                > 201 and <= 300 => "<span class='damage damage_8'>MANGLES</span>", // 201-300
-                > 301 and <= 500 => "<span class='damage damage_9'>*** OBLITERATES ***</span>", // 301-500
-                > 501 and <= 700 => "<span class='damage damage_10'>*** DISINTEGRATES ***</span>", // 501-700
-                > 701 and <= 900 => "<span class='damage damage_11'>*** ANNIHILIATES ***</span>", // 701-900
-                > 901 and <= 1100 => "<span class='damage damage_12'>=== EVISCERATES ===</span>", // 901-1100
-                _ => "<span class='damage damage_13'>does UNSPEAKABLE things</span>" // Over 1100
-            };
-
-            return message;
         }
 
         /// <summary>

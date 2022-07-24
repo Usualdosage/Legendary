@@ -16,6 +16,7 @@ namespace Legendary.Engine
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Represents the user environment.
@@ -24,6 +25,7 @@ namespace Legendary.Engine
     {
         private readonly ICommunicator communicator;
         private readonly IRandom random;
+        private readonly Combat combat;
         private readonly UserData connectedUser;
 
         /// <summary>
@@ -32,11 +34,13 @@ namespace Legendary.Engine
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="connectedUser">The connected user.</param>
-        public Environment(ICommunicator communicator, IRandom random, UserData connectedUser)
+        /// <param name="combat">The combat engine.</param>
+        public Environment(ICommunicator communicator, IRandom random, UserData connectedUser, Combat combat)
         {
             this.communicator = communicator;
             this.random = random;
             this.connectedUser = connectedUser;
+            this.combat = combat;
         }
 
         /// <summary>
@@ -46,10 +50,9 @@ namespace Legendary.Engine
         /// <param name="gameHour">The game hour.</param>
         public void ProcessEnvironmentChanges(int gameTicks, int gameHour)
         {
-            ProcessRecovery(this.connectedUser);
-
             List<Task> tasks = new List<Task>();
 
+            tasks.Add(this.ProcessRecovery(this.connectedUser));
             tasks.Add(this.ProcessTime(this.connectedUser, gameHour));
             tasks.Add(this.ProcessWeather(this.connectedUser));
             tasks.Add(this.ProcessMobiles(this.connectedUser));
@@ -59,7 +62,7 @@ namespace Legendary.Engine
             Task.WaitAll(tasks.ToArray());
         }
 
-        private static void ProcessRecovery(UserData user)
+        private async Task ProcessRecovery(UserData user)
         {
             int standardHPRecover = Constants.STANDARD_HP_RECOVERY;
             int standardManaRecover = Constants.STANDARD_MANA_RECOVERY;
@@ -86,18 +89,41 @@ namespace Legendary.Engine
 
             var hitRestore = Math.Min(user.Character.Health.Max - user.Character.Health.Current, standardHPRecover);
             user.Character.Health.Current += hitRestore;
+
+            user.Character.Hunger.Current += 1;
+            user.Character.Thirst.Current += 1;
+
+            // TODO Cumulative effects, and add damage as these increase.
+            if (user.Character.Hunger.Current >= user.Character.Hunger.Max)
+            {
+                await this.communicator.SendToPlayer(user.Connection, $"You are hungry.");
+            }
+
+            if (user.Character.Thirst.Current >= user.Character.Thirst.Max)
+            {
+                await this.communicator.SendToPlayer(user.Connection, $"You are thirsty.");
+            }
         }
 
         private async Task ProcessAffects(UserData user)
         {
-            List<Effect> effectsToRemove = new List<Effect>();
             foreach (var effect in user.Character.AffectedBy)
             {
-                effect.Duration -= 1;
-
-                if (effect.Duration < 0)
+                if (effect != null)
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                    effect.Duration -= 1;
+
+                    if (effect.Duration < 0)
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                    }
+                    else
+                    {
+                        if (effect.Effector != null && effect.Action != null)
+                        {
+                            await effect.Action.OnTick(user.Character, effect);
+                        }
+                    }
                 }
             }
 
@@ -123,7 +149,14 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
+                        if (item.ItemType == Core.Types.ItemType.Spring)
+                        {
+                            await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name.FirstCharToUpper()} dries up.");
+                        }
+                        else
+                        {
+                            await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name.FirstCharToUpper()} disintegrates.");
+                        }
                     }
                 }
             }
@@ -142,7 +175,7 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name} disintegrates.");
+                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name.FirstCharToUpper()} disintegrates.");
                     }
                 }
             }

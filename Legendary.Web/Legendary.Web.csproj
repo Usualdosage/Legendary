@@ -51,6 +51,7 @@
     <Folder Include="wwwroot\audio\music\" />
     <Folder Include="wwwroot\audio\soundfx\" />
     <Folder Include="wwwroot\audio\weather\" />
+    <Folder Include="Data\HelpFiles\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />
@@ -58,6 +59,7 @@
     <None Remove="Contracts\" />
     <None Remove="Views\Creator\" />
     <None Remove="Data\" />
+    <None Remove="Data\HelpFiles\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj">

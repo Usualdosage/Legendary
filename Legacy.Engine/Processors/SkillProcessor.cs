@@ -58,7 +58,7 @@ namespace Legendary.Engine.Processors
             {
                 var skill = this.actionHelper.CreateActionInstance<Skill>("Legendary.Engine.Models.Skills", args.Action.FirstCharToUpper());
 
-                if (skill != null)
+                if (skill != null && skill.CanInvoke)
                 {
                     // See if the player has enough mana to use this skill.
                     if (skill.ManaCost > actor.Character.Mana.Current)
@@ -72,16 +72,36 @@ namespace Legendary.Engine.Processors
                         actor.Character.Mana.Current -= skill.ManaCost;
                     }
 
-                    // We may or may not have a target. The skill will figure that bit out.
-                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == args.Target);
+                    Character? character = null;
+
+                    if (!string.IsNullOrWhiteSpace(args.Target))
+                    {
+                        // We may or may not have a target. The skill will figure that bit out.
+                        var target = this.communicator.ResolveCharacter(args.Target);
+
+                        // It's not a character, so maybe a mob.
+                        if (target == null)
+                        {
+                            var mob = this.communicator.ResolveMobile(args.Target);
+
+                            if (mob != null)
+                            {
+                                character = (Character)mob;
+                            }
+                        }
+                        else
+                        {
+                            character = target?.Character;
+                        }
+                    }
 
                     if (await skill.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
                         try
                         {
-                            await skill.PreAction(actor.Character, target?.Value?.Character, cancellationToken);
-                            await skill.Act(actor.Character, target?.Value?.Character, cancellationToken);
-                            await skill.PostAction(actor.Character, target?.Value?.Character, cancellationToken);
+                            await skill.PreAction(actor.Character, character, cancellationToken);
+                            await skill.Act(actor.Character, character, cancellationToken);
+                            await skill.PostAction(actor.Character, character, cancellationToken);
                         }
                         catch
                         {

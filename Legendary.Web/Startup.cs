@@ -76,9 +76,6 @@ namespace Legendary.Web
             services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
 
-            // Load the world.
-            services.AddSingleton<IWorld, World>();
-
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
@@ -92,8 +89,6 @@ namespace Legendary.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
-
-            // app.UseExceptionHandler("/Home/Error");
 
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();

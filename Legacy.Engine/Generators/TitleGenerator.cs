@@ -109,21 +109,28 @@ namespace Legendary.Engine.Generators
         /// </summary>
         /// <param name="character">The character.</param>
         /// <returns>String.</returns>
-        public string Generate(Character character)
+        public string? Generate(Character character)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("the ");
-
-            if (character.Level <= 5)
+            try
             {
-                sb.Append(this.genericTitles[character.Level]);
-            }
-            else
-            {
-                sb.Append(this.CalculateTitle(character));
-            }
+                StringBuilder sb = new StringBuilder();
+                sb.Append("the ");
 
-            return sb.ToString();
+                if (character.Level <= 5)
+                {
+                    sb.Append(this.genericTitles[character.Level]);
+                }
+                else
+                {
+                    sb.Append(this.CalculateTitle(character));
+                }
+
+                return sb.ToString();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private string CalculateTitle(Character character)

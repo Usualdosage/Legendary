@@ -48,5 +48,10 @@ namespace Legendary.Core.Types
         /// Currency.
         /// </summary>
         Currency = 7,
+
+        /// <summary>
+        /// Spring.
+        /// </summary>
+        Spring = 8,
     }
 }

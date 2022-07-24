@@ -13,6 +13,7 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -30,6 +31,7 @@ namespace Legendary.Engine
         private readonly IRandom random;
         private readonly IDataService dataService;
         private readonly ILogger logger;
+        private readonly ICommunicator communicator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
@@ -37,11 +39,13 @@ namespace Legendary.Engine
         /// <param name="dataService">The areas within the world.</param>
         /// <param name="random">The random generator.</param>
         /// <param name="logger">The logger.</param>
-        public World(IDataService dataService, IRandom random, ILogger logger)
+        /// <param name="communicator">The communicator.</param>
+        public World(IDataService dataService, IRandom random, ILogger logger, ICommunicator communicator)
         {
             this.dataService = dataService;
             this.logger = logger;
             this.random = random;
+            this.communicator = communicator;
 
             // Cache common lookups as hash sets for faster reads.
             this.Areas = new HashSet<Area>(this.dataService.Areas.Find(a => true).ToList());
@@ -172,7 +176,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task ProcessWorldChanges(ICommunicator communicator, IRandom random, CancellationToken cancellationToken = default)
+        public async Task ProcessWorldChanges(CancellationToken cancellationToken = default)
         {
             foreach (var area in this.Areas)
             {
@@ -185,49 +189,14 @@ namespace Legendary.Engine
 
                     foreach (var item in items)
                     {
-                        await communicator.SendToRoom(null, location, string.Empty, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        await this.communicator.SendToRoom(null, location, string.Empty, $"{item.ShortDescription} disintegrates.", cancellationToken);
                     }
 
-                    // Maybe move any wandering mobiles.
-                    foreach (var mobile in room.Mobiles)
-                    {
-                        if (mobile.MobileFlags != null && mobile.MobileFlags.Contains(MobileFlags.Wander))
-                        {
-                            if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed))
-                            {
-                                if (mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
-                                {
-                                    // Mobiles have a 50% chance each tick to move around.
-                                    var move = this.random.Next(0, 100);
+                    // Apply affects to mobiles.
+                    await this.ProcessMobileAffects(room);
 
-                                    if (move <= 50)
-                                    {
-                                        var randomExitNumber = this.random.Next(0, room.Exits.Count);
-
-                                        var exit = room.Exits[randomExitNumber];
-
-                                        var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
-                                        var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
-
-                                        if (newArea != null && newRoom != null)
-                                        {
-                                            string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                                            await communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName} leaves {dir}.", cancellationToken);
-
-                                            // Set the mobile's new location.
-                                            mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                                            // Add the mobile to the new location.
-                                            var nextRoom = communicator.ResolveRoom(mobile.Location);
-                                            nextRoom.Mobiles.Add(mobile);
-
-                                            await communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName} enters.", cancellationToken);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    // Move mobiles who wander.
+                    await this.ProcessMobileWander(room, cancellationToken);
                 }
             }
 
@@ -362,6 +331,76 @@ namespace Legendary.Engine
                 replacement,
                 options,
                 cancellationToken);
+        }
+
+        private async Task ProcessMobileAffects(Room room)
+        {
+            // Process effects on mobiles, and (maybe) move them if they are wandering.
+            foreach (var mobile in room.Mobiles)
+            {
+                // Check effects.
+                if (mobile.AffectedBy.Count > 0)
+                {
+                    foreach (var effect in mobile.AffectedBy)
+                    {
+                        if (effect != null)
+                        {
+                            effect.Duration -= 1;
+
+                            if (effect.Effector != null && effect.Action != null)
+                            {
+                                await effect.Action.OnTick(mobile, effect);
+                            }
+                        }
+                    }
+
+                    mobile.AffectedBy.RemoveAll(e => e.Duration < 0);
+                }
+            }
+        }
+
+        private async Task ProcessMobileWander(Room room, CancellationToken cancellationToken)
+        {
+            // Process effects on mobiles, and (maybe) move them if they are wandering.
+            foreach (var mobile in room.Mobiles)
+            {
+                if (mobile.MobileFlags != null && mobile.MobileFlags.Contains(MobileFlags.Wander))
+                {
+                    if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed))
+                    {
+                        if (mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
+                        {
+                            // Mobiles have a 50% chance each tick to move around.
+                            var move = this.random.Next(0, 100);
+
+                            if (move <= 50)
+                            {
+                                var randomExitNumber = this.random.Next(0, room.Exits.Count);
+
+                                var exit = room.Exits[randomExitNumber];
+
+                                var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
+                                var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
+
+                                if (newArea != null && newRoom != null)
+                                {
+                                    string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName} leaves {dir}.", cancellationToken);
+
+                                    // Set the mobile's new location.
+                                    mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                                    // Add the mobile to the new location.
+                                    var nextRoom = this.communicator.ResolveRoom(mobile.Location);
+                                    nextRoom.Mobiles.Add(mobile);
+
+                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName} enters.", cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

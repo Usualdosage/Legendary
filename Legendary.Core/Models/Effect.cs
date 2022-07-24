@@ -9,13 +9,23 @@
 
 namespace Legendary.Core.Models
 {
-    using System;
+    using Legendary.Core.Contracts;
 
     /// <summary>
     /// Represents the effect someone can be affected by.
     /// </summary>
     public class Effect
     {
+        /// <summary>
+        /// Gets or sets the action of the effect.
+        /// </summary>
+        public IAction? Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets the source of the effect.
+        /// </summary>
+        public Character? Effector { get; set; }
+
         /// <summary>
         /// Gets or sets the name.
         /// </summary>

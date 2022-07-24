@@ -15,7 +15,6 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
-    using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
 
@@ -71,18 +70,36 @@ namespace Legendary.Engine.Processors
                         actor.Character.Mana.Current -= spell.ManaCost;
                     }
 
-                    // We may or may not have a target. The spell will figure that bit out.
-                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Username == args.Target);
+                    Character? character = null;
 
-                    this.logger.Info($"DEBUG: Spell {args.Method} cast by {actor.Character.FirstName} at {args.Target}", this.communicator);
+                    if (!string.IsNullOrWhiteSpace(args.Target))
+                    {
+                        // We may or may not have a target. The skill will figure that bit out.
+                        var target = this.communicator.ResolveCharacter(args.Target);
+
+                        // It's not a character, so maybe a mob.
+                        if (target == null)
+                        {
+                            var mob = this.communicator.ResolveMobile(args.Target);
+
+                            if (mob != null)
+                            {
+                                character = (Character)mob;
+                            }
+                        }
+                        else
+                        {
+                            character = target?.Character;
+                        }
+                    }
 
                     if (await spell.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
                         try
                         {
-                            await spell.PreAction(actor.Character, target?.Value?.Character, cancellationToken);
-                            await spell.Act(actor.Character, target?.Value?.Character, cancellationToken);
-                            await spell.PostAction(actor.Character, target?.Value?.Character, cancellationToken);
+                            await spell.PreAction(actor.Character, character, cancellationToken);
+                            await spell.Act(actor.Character, character, cancellationToken);
+                            await spell.PostAction(actor.Character, character, cancellationToken);
                         }
                         catch
                         {

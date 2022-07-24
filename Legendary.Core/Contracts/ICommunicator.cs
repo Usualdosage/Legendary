@@ -86,7 +86,7 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>Mobile.</returns>
-        Mobile? ResolveMobile(string name);
+        Mobile? ResolveMobile(string? name);
 
         /// <summary>
         /// Gets the actual physical location of a mob by name.

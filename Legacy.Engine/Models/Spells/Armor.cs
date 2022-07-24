@@ -79,7 +79,7 @@ namespace Legendary.Engine.Models.Spells
 
                     target?.AffectedBy.Add(effect);
                     await this.Communicator.SendToPlayer(actor, $"{target?.FirstName} is protected by your magical armor.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName} is protected by {target?.FirstName}'s armor.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName} is protected by {actor.FirstName}'s armor.", cancellationToken);
                 }
             }
         }

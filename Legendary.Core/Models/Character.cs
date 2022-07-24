@@ -513,6 +513,12 @@ namespace Legendary.Core.Models
                 return false;
             }
 
+            // This will prevent skills being resolved for directions (e, ne, sw, etc).
+            if (name.Length <= 2)
+            {
+                return false;
+            }
+
             return this.Skills.Any(sk => sk.SkillName.ToLower().StartsWith(name.ToLower()));
         }
 

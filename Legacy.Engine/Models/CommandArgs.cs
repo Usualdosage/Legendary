@@ -71,12 +71,12 @@ namespace Legendary.Engine.Models
                 }
                 else if (words.Count == 2)
                 {
-                    var method = words[1].Value.Replace("\'", string.Empty);
+                    var method = words[1].Value.Replace("\"", string.Empty);
                     return new CommandArgs(words[0].Value, method, null);
                 }
                 else if (words.Count == 3)
                 {
-                    var method = words[1].Value.Replace("\'", string.Empty);
+                    var method = words[1].Value.Replace("\"", string.Empty);
                     return new CommandArgs(words[0].Value, method, words[2].Value);
                 }
                 else
