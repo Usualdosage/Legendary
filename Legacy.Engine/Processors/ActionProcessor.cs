@@ -185,9 +185,10 @@ namespace Legendary.Engine.Processors
         {
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
             this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
+            this.wizActions.Add("slay", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSlay)));
+            this.wizActions.Add("title", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTitle)));
             this.wizActions.Add("transfer", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTransfer)));
             this.wizActions.Add("wiznet", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWiznet)));
-            this.wizActions.Add("slay", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSlay)));
         }
 
         /// <summary>
@@ -198,7 +199,7 @@ namespace Legendary.Engine.Processors
         {
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
-            this.actions.Add("dice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDice)));
+            this.actions.Add("dice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDice)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("drink", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrink)));
             this.actions.Add("drop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrop)));
@@ -206,6 +207,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("eat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEat)));
             this.actions.Add("emote", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmote)));
             this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEquipment)));
+            this.actions.Add("examine", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoExamine)));
             this.actions.Add("flee", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFlee)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGet)));
             this.actions.Add("give", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGive)));
@@ -548,6 +550,51 @@ namespace Legendary.Engine.Processors
         {
             var equipment = this.actionHelper.GetEquipment(actor.Character);
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
+        }
+
+        private async Task DoExamine(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Examine what?", cancellationToken);
+            }
+            else
+            {
+                if (actor.Character.Inventory == null || actor.Character.Inventory.Count == 0)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
+                    return;
+                }
+
+                var item = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(args.Method));
+
+                if (item != null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You examine {item.Name}.<br/>", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} examines {item.Name}.<br/>", cancellationToken);
+
+                    StringBuilder sb = new StringBuilder();
+
+                    if (!string.IsNullOrWhiteSpace(item.Image))
+                    {
+                        sb.Append($"<div class='room-image'><img src='{item.Image}'/></div>");
+                    }
+                    else
+                    {
+                        sb.Append($"<div class='room-image room-image-none'></div>");
+                    }
+
+                    sb.Append($"{item.LongDescription}<br/>");
+                    sb.Append($"{item.Name.FirstCharToUpper()} is of type {Enum.GetName<ItemType>(item.ItemType)?.ToString().ToLower()} and appears to have a durability of {item.Durability.Current}.<br/>");
+                    sb.Append($"You value it at approximately {this.random.Next(Math.Max((int)item.Value - 100, 2), Math.Max((int)item.Value + 100, 4))} gold.");
+
+                    await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
+                }
+            }
         }
 
         [MinimumLevel(90)]
@@ -1047,6 +1094,39 @@ namespace Legendary.Engine.Processors
                 var timeInfo = DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second);
 
                 await this.communicator.SendToPlayer(actor.Connection, $"{timeInfo}", cancellationToken);
+            }
+        }
+
+        [MinimumLevel(95)]
+        private async Task DoTitle(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method) && string.IsNullOrWhiteSpace(args.Target))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Set title to what? (title [\"title\"] [player (optional)])", cancellationToken);
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(args.Target))
+                {
+                    var player = this.communicator.ResolveCharacter(args.Target);
+
+                    if (player != null)
+                    {
+                        player.Character.Title = args.Method;
+                        await this.communicator.SaveCharacter(player.Character);
+                        await this.communicator.SendToPlayer(actor.Connection, $"{player.Character.FirstName}'s title set to \"{args.Method}\".", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    actor.Character.Title = args.Method;
+                    await this.communicator.SaveCharacter(actor.Character);
+                    await this.communicator.SendToPlayer(actor.Connection, $"Title set to \"{args.Method}\".", cancellationToken);
+                }
             }
         }
 

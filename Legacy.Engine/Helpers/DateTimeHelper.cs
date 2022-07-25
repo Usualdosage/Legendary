@@ -44,11 +44,13 @@ namespace Legendary.Engine.Helpers
             " on " +
             DaysOfWeek[gameDay % 6] +
             ", the " +
-            FormatNumber(gameDay) +
+            FormatNumber(gameDay % 30) +
             " day of " +
             MonthsOfYear[gameMonth] +
             ", in the year " +
             gameYear +
+            ". It is the " +
+            FormatNumber(gameDay) + " day of the year" +
             ". The time is " +
             FormatTime(gameHour, gameMinute, gameSecond) +
             ". " +

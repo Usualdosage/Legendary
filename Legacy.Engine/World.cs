@@ -21,6 +21,7 @@ namespace Legendary.Engine
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
     using MongoDB.Driver;
 
     /// <summary>
@@ -385,7 +386,7 @@ namespace Legendary.Engine
                                 if (newArea != null && newRoom != null)
                                 {
                                     string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName} leaves {dir}.", cancellationToken);
+                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
                                     // Set the mobile's new location.
                                     mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
@@ -394,7 +395,7 @@ namespace Legendary.Engine
                                     var nextRoom = this.communicator.ResolveRoom(mobile.Location);
                                     nextRoom.Mobiles.Add(mobile);
 
-                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName} enters.", cancellationToken);
+                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                                 }
                             }
                         }

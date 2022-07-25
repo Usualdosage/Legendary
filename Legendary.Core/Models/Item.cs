@@ -143,5 +143,10 @@ namespace Legendary.Core.Models
         /// Gets or sets a list of things this item contains (if it's a container).
         /// </summary>
         public List<IItem>? Contains { get; set; }
+
+        /// <summary>
+        /// Gets or sets the item image.
+        /// </summary>
+        public string? Image { get; set; }
     }
 }
