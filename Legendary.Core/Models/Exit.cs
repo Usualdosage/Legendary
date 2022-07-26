@@ -43,5 +43,25 @@ namespace Legendary.Core.Models
         /// Gets the room this exit goes to.
         /// </summary>
         public long ToRoom { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this is a door.
+        /// </summary>
+        public bool IsDoor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the door.
+        /// </summary>
+        public string? DoorName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this door is locked.
+        /// </summary>
+        public bool IsLocked { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id of the key that will open this door.
+        /// </summary>
+        public long KeyId { get; set; }
     }
 }

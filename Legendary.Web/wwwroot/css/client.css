@@ -149,8 +149,28 @@ body {
     font-size: 3em;
 }
 
-/* Descriptive Content */
+/* Help Content */
 
+.help-content {
+    width: 1024px;
+}
+
+    .help-content h1 {
+        font-size: 2em;
+        font-family: 'Balgruf', 'Comforter', cursive;
+    }
+
+    .help-content h2 {
+        font-size: 1.5em;
+        font-family: 'Balgruf', 'Comforter', cursive;
+    }
+
+    .help-content p {
+        padding: 5px;
+        font-size: .9em;
+    }
+
+/* Descriptive Content */
 .command {
     width: 100px;
     display: inline-block;
@@ -381,7 +401,7 @@ progress {
 }
 
 .newbie {
-    color: #fff;
+    color: lightblue;
     font-weight: bold;
 }
 
