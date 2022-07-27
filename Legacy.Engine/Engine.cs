@@ -57,13 +57,17 @@ namespace Legendary.Engine
         {
             this.logger.Info("Legendary is starting up...", null);
 
+            this.logger.Info("Loading the world from the database...", null);
+
+            await this.world.LoadWorld();
+
             this.logger.Info("Updating the game metrics...", null);
 
             await this.world.UpdateGameMetrics(null);
 
             this.logger.Info("Populating the world with mobiles and items...", null);
 
-            await this.world.Populate();
+            this.world.Populate();
 
             this.logger.Info("Starting main loop...", null);
 

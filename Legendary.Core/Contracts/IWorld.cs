@@ -206,7 +206,12 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Loads items and mobs based on resets.
         /// </summary>
+        void Populate();
+
+        /// <summary>
+        /// Loads all of the hash sets from the database.
+        /// </summary>
         /// <returns>Task.</returns>
-        Task Populate();
+        Task LoadWorld();
     }
 }

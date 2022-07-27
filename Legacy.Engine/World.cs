@@ -47,27 +47,35 @@ namespace Legendary.Engine
             this.logger = logger;
             this.random = random;
             this.communicator = communicator;
-
-            // Cache common lookups as hash sets for faster reads.
-            this.Areas = new HashSet<Area>(this.dataService.Areas.Find(a => true).ToList());
-            this.Items = new HashSet<Item>(this.dataService.Items.Find(a => true).ToList());
-            this.Mobiles = new HashSet<Mobile>(this.dataService.Mobiles.Find(a => true).ToList());
         }
 
         /// <inheritdoc/>
-        public HashSet<Area> Areas { get; private set; }
+        public HashSet<Area> Areas { get; private set; } = new HashSet<Area>();
 
         /// <inheritdoc/>
-        public HashSet<Item> Items { get; private set; }
+        public HashSet<Item> Items { get; private set; } = new HashSet<Item>();
 
         /// <inheritdoc/>
-        public HashSet<Mobile> Mobiles { get; private set; }
+        public HashSet<Mobile> Mobiles { get; private set; } = new HashSet<Mobile>();
 
         /// <inheritdoc/>
         public GameMetrics? GameMetrics { get; internal set; } = null;
 
         /// <inheritdoc/>
-        public async Task Populate()
+        public async Task LoadWorld()
+        {
+            var areas = await this.dataService.Areas.Find(Builders<Area>.Filter.Empty).ToListAsync();
+            var items = await this.dataService.Items.Find(Builders<Item>.Filter.Empty).ToListAsync();
+            var mobiles = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
+
+            // Cache common lookups as hash sets for faster reads.
+            this.Areas = new HashSet<Area>(areas);
+            this.Items = new HashSet<Item>(items);
+            this.Mobiles = new HashSet<Mobile>(mobiles);
+        }
+
+        /// <inheritdoc/>
+        public void Populate()
         {
             foreach (var area in this.Areas)
             {
@@ -76,7 +84,7 @@ namespace Legendary.Engine
                     // Populate items from resets
                     foreach (var reset in room.ItemResets)
                     {
-                        var item = await this.FindItem(f => f.ItemId == reset);
+                        var item = this.Items.FirstOrDefault(i => i.ItemId == reset);
                         if (item != null)
                         {
                             item.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
@@ -87,7 +95,7 @@ namespace Legendary.Engine
                     // Populate mobs from resets
                     foreach (var reset in room.MobileResets)
                     {
-                        var mobile = await this.FindMobile(f => f.CharacterId == reset);
+                        var mobile = this.Mobiles.FirstOrDefault(m=> m.CharacterId == reset);
                         if (mobile != null)
                         {
                             mobile.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);

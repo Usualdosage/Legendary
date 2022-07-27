@@ -17,88 +17,93 @@ namespace Legendary.Core
     public static class Sounds
     {
         /// <summary>
+        /// Needs to be appended to requests to access file share.
+        /// </summary>
+        public const string SAS_TOKEN = "?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D";
+
+        /// <summary>
         /// Armor MP3.
         /// </summary>
-        public const string ARMOR = "../audio/soundfx/armor.mp3";
+        public const string ARMOR = "https://legendary.file.core.windows.net/audio/soundfx/armor.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Fireball MP3.
         /// </summary>
-        public const string FIREBALL = "../audio/soundfx/fireball.mp3";
+        public const string FIREBALL = "https://legendary.file.core.windows.net/audio/soundfx/fireball.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Lightning bolt MP3.
         /// </summary>
-        public const string LIGHTNINGBOLT = "../audio/soundfx/lightningbolt.mp3";
+        public const string LIGHTNINGBOLT = "https://legendary.file.core.windows.net/audio/soundfx/lightningbolt.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Recall MP3.
         /// </summary>
-        public const string RECALL = "../audio/soundfx/recall.mp3";
+        public const string RECALL = "https://legendary.file.core.windows.net/audio/soundfx/recall.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Slash MP3.
         /// </summary>
-        public const string SLASH = "../audio/soundfx/slash.mp3";
+        public const string SLASH = "https://legendary.file.core.windows.net/audio/soundfx/slash.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Punch MP3.
         /// </summary>
-        public const string PUNCH = "../audio/soundfx/punch.mp3";
+        public const string PUNCH = "https://legendary.file.core.windows.net/audio/soundfx/punch.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Armor MP3.
         /// </summary>
-        public const string DEATH = "../audio/soundfx/death.mp3";
+        public const string DEATH = "https://legendary.file.core.windows.net/audio/soundfx/death.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Level up MP3.
         /// </summary>
-        public const string LEVELUP = "../audio/soundfx/levelup.mp3";
+        public const string LEVELUP = "https://legendary.file.core.windows.net/audio/soundfx/levelup.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Cure MP3.
         /// </summary>
-        public const string CURELIGHT = "../audio/soundfx/curelight.mp3";
+        public const string CURELIGHT = "https://legendary.file.core.windows.net/audio/soundfx/curelight.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Walk MP3.
         /// </summary>
-        public const string WALK = "../audio/soundfx/walk.mp3";
+        public const string WALK = "https://legendary.file.core.windows.net/audio/soundfx/walk.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Rain MP3.
         /// </summary>
-        public const string RAIN = "../audio/weather/rain.mp3";
+        public const string RAIN = "https://legendary.file.core.windows.net/audio/weather/rain.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Storm MP3.
         /// </summary>
-        public const string STORM = "../audio/weather/storm.mp3";
+        public const string STORM = "https://legendary.file.core.windows.net/audio/weather/storm.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Space MP3.
         /// </summary>
-        public const string SPACE = "../audio/weather/space.mp3";
+        public const string SPACE = "https://legendary.file.core.windows.net/audio/weather/space.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Wind MP3.
         /// </summary>
-        public const string WIND = "../audio/weather/wind.mp3";
+        public const string WIND = "https://legendary.file.core.windows.net/audio/weather/wind.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Forest MP3.
         /// </summary>
-        public const string FOREST = "../audio/weather/forest.mp3";
+        public const string FOREST = "https://legendary.file.core.windows.net/audio/weather/forest.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// Fountain MP3.
         /// </summary>
-        public const string CITY_FOUNTAIN = "../audio/weather/city_fountain.mp3";
+        public const string CITY_FOUNTAIN = "https://legendary.file.core.windows.net/audio/weather/city_fountain.mp3" + SAS_TOKEN;
 
         /// <summary>
         /// City MP3.
         /// </summary>
-        public const string CITY = "../audio/weather/city.mp3";
+        public const string CITY = "https://legendary.file.core.windows.net/audio/weather/city.mp3" + SAS_TOKEN;
     }
 }

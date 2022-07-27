@@ -185,6 +185,7 @@ namespace Legendary.Engine.Processors
         {
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
             this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
+            this.wizActions.Add("reload", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReload)));
             this.wizActions.Add("slay", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSlay)));
             this.wizActions.Add("title", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTitle)));
             this.wizActions.Add("transfer", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTransfer)));
@@ -705,6 +706,11 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        private async Task DoMove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            await this.MovePlayer(actor, ParseDirection(args.Action), cancellationToken);
+        }
+
         private async Task DoNewbieChat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(args.Method))
@@ -788,16 +794,28 @@ namespace Legendary.Engine.Processors
             await this.communicator.Quit(actor.Connection, actor.Character.FirstName ?? "Someone", cancellationToken);
         }
 
+        [MinimumLevel(100)]
+        private async Task DoReload(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.Level < 100)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
+                await this.world.LoadWorld();
+                this.world.Populate();
+                await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
+                this.logger.Warn($"{actor.Character.FirstName} has reloaded all of the game data and repopulated the world.", this.communicator);
+            }
+        }
+
         private async Task DoRest(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} kicks back and rests.", cancellationToken);
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
-        }
-
-        private async Task DoMove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            await this.MovePlayer(actor, ParseDirection(args.Action), cancellationToken);
         }
 
         private async Task DoSave(UserData actor, CommandArgs args, CancellationToken cancellationToken)

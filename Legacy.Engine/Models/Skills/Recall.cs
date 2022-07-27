@@ -11,6 +11,7 @@ namespace Legendary.Engine.Models.Skills
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
 
@@ -46,7 +47,7 @@ namespace Legendary.Engine.Models.Skills
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, "../audio/soundfx/recall.mp3", cancellationToken);
+            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.RECALL, cancellationToken);
             actor.Location = actor.Home;
         }
 

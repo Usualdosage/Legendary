@@ -112,8 +112,6 @@ class LegendaryClient {
 
         $('#inputField').keypress(function (e) {
 
-            debugger;
-
             if (e.which != 13) {
                 return;
             }

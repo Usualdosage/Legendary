@@ -540,14 +540,14 @@ namespace Legendary.Engine
             if (room != null)
             {
                 var soundIndex = this.random.Next(0, 4);
-                await this.PlaySound(actor, AudioChannel.Background, $"../audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3", cancellationToken);
+                await this.PlaySound(actor, AudioChannel.Background, $"https://legendary.file.core.windows.net/audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
 
                 // 40% chance to play the terrain SFX (e.g. forest, city)
                 var randomSfx = this.random.Next(0, 10);
 
                 if (randomSfx <= 4)
                 {
-                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"../audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3", cancellationToken);
+                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"https://legendary.file.core.windows.net/audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
                 }
             }
         }
@@ -1015,17 +1015,7 @@ namespace Legendary.Engine
                 return;
             }
 
-            var contentRootPath = this.webHostEnvironment.ContentRootPath;
-            var soundFile = Path.Combine(contentRootPath, sound);
-
-            if (File.Exists(soundFile.Replace("../", "/wwwroot/")))
-            {
-                await this.SendToPlayer(user, $"[AUDIO]|{(int)channel}|{sound}", cancellationToken);
-            }
-            else
-            {
-                return;
-            }
+            await this.SendToPlayer(user, $"[AUDIO]|{(int)channel}|{sound}", cancellationToken);
         }
 
         /// <inheritdoc/>

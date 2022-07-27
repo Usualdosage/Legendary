@@ -34,10 +34,6 @@
     <Content Remove="wwwroot\img\rooms\" />
     <Content Remove="wwwroot\fonts\" />
     <Content Remove="stylecop.json" />
-    <Content Remove="wwwroot\audio\" />
-    <Content Remove="wwwroot\audio\music\" />
-    <Content Remove="wwwroot\audio\soundfx\" />
-    <Content Remove="wwwroot\audio\weather\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
@@ -47,10 +43,6 @@
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="Views\Creator\" />
     <Folder Include="Data\" />
-    <Folder Include="wwwroot\audio\" />
-    <Folder Include="wwwroot\audio\music\" />
-    <Folder Include="wwwroot\audio\soundfx\" />
-    <Folder Include="wwwroot\audio\weather\" />
     <Folder Include="Data\HelpFiles\" />
   </ItemGroup>
   <ItemGroup>
