@@ -96,6 +96,10 @@ class LegendaryClient {
                     $roomImage[x].remove();
                 }
 
+                var image = document.querySelector(".room-image img");
+
+                image.onerror = imgError(this);
+
                 // Remove all but 1 of the player info panels (they stack)
 
                 var $playerInfo = $(".player-info");
@@ -106,9 +110,17 @@ class LegendaryClient {
             }
         };
 
+        function imgError(image) {
+            debugger;
+            image.onerror = "";
+            image.src = "../img/rooms/none.png";
+            return true;
+        }
+
         $("#inputField").click(function (e) {
             $(this).select();
         });
+
 
         $('#inputField').keypress(function (e) {
 

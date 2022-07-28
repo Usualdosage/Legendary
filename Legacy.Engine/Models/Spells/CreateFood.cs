@@ -46,7 +46,11 @@ namespace Legendary.Engine.Models.Spells
             await this.Communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} closes {actor.Pronoun} eyes and {item.Name} suddenly appears.", cancellationToken);
 
             var room = this.Communicator.ResolveRoom(actor.Location);
-            room.Items.Add(item);
+
+            if (room != null)
+            {
+                room.Items.Add(item);
+            }
         }
 
         private Item CreateFoodItem()

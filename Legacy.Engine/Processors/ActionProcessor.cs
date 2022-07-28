@@ -446,7 +446,7 @@ namespace Legendary.Engine.Processors
         {
             var room = this.communicator.ResolveRoom(actor.Character.Location);
 
-            if (room.Exits.Count == 0)
+            if (room == null || room.Exits.Count == 0)
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"You couldn't escape!", cancellationToken);
             }
@@ -840,6 +840,11 @@ namespace Legendary.Engine.Processors
         {
             var room = this.communicator.ResolveRoom(actor.Character.Location);
 
+            if (room == null)
+            {
+                return;
+            }
+
             await this.communicator.SendToPlayer(actor.Connection, $"You scan in all directions.", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} scans all around.", cancellationToken);
 
@@ -1178,14 +1183,14 @@ namespace Legendary.Engine.Processors
                         var oldRoom = this.communicator.ResolveRoom(mobile.Location);
                         var newRoom = this.communicator.ResolveRoom(actor.Character.Location);
 
-                        var oldMob = oldRoom.Mobiles.FirstOrDefault(m => m.CharacterId == mobile.CharacterId);
+                        var oldMob = oldRoom != null ? oldRoom.Mobiles.FirstOrDefault(m => m.CharacterId == mobile.CharacterId) : null;
 
                         if (oldMob != null)
                         {
-                            oldRoom.Mobiles.Remove(oldMob);
+                            oldRoom?.Mobiles.Remove(oldMob);
                         }
 
-                        newRoom.Mobiles.Add(mobile);
+                        newRoom?.Mobiles.Add(mobile);
 
                         mobile.Location = actor.Character.Location;
 
@@ -1570,6 +1575,11 @@ namespace Legendary.Engine.Processors
         {
             var room = this.communicator.ResolveRoom(user.Character.Location);
 
+            if (room == null)
+            {
+                return;
+            }
+
             if (target.ToLower() == "all")
             {
                 List<Item> itemsToRemove = new ();
@@ -1811,7 +1821,7 @@ namespace Legendary.Engine.Processors
 
             var room = this.communicator.ResolveRoom(user.Character.Location);
 
-            Exit? exit = room.Exits?.FirstOrDefault(e => e.Direction == direction);
+            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
 
             if (exit != null)
             {

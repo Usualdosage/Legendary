@@ -12,7 +12,7 @@ namespace Legendary.Core.Types
     /// <summary>
     /// Flags applied to rooms.
     /// </summary>
-    public enum RoomFlags : int
+    public enum RoomFlags
     {
         /// <summary>
         /// Room is always dark.

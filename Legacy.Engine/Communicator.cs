@@ -208,6 +208,14 @@ namespace Legendary.Engine
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
+                // Make sure the character is in an existig room.
+                var room = this.ResolveRoom(userData.Character.Location);
+
+                if (room == null)
+                {
+                    userData.Character.Location = new KeyValuePair<long, long>(1, 1);
+                }
+
                 // Show the room to the player.
                 await this.ShowRoomToPlayer(userData.Character, cancellationToken);
 
@@ -814,9 +822,9 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public Room ResolveRoom(KeyValuePair<long, long> location)
+        public Room? ResolveRoom(KeyValuePair<long, long> location)
         {
-            return this.world.Areas.Single(a => a.AreaId == location.Key).Rooms.Single(r => r.RoomId == location.Value);
+            return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key)?.Rooms.SingleOrDefault(r => r.RoomId == location.Value);
         }
 
         /// <inheritdoc/>

@@ -66,6 +66,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the room flags.
         /// </summary>
+        [BsonIgnore]
         public IList<RoomFlags> Flags { get; set; } = new List<RoomFlags>();
 
         /// <summary>

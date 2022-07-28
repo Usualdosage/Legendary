@@ -796,7 +796,11 @@ namespace Legendary.Engine
 
                 // Add the corpse to the room.
                 var room = this.communicator.ResolveRoom(location);
-                room.Items.Add(corpse);
+
+                if (room != null)
+                {
+                    room.Items.Add(corpse);
+                }
             }
             catch (Exception exc)
             {

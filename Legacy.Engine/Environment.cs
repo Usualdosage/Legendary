@@ -213,6 +213,11 @@ namespace Legendary.Engine
             // TODO: Finish the weather.
             var room = this.communicator.ResolveRoom(userData.Character.Location);
 
+            if (room == null)
+            {
+                return;
+            }
+
             var weather = this.random.Next(1, 8);
 
             switch (room.Terrain)

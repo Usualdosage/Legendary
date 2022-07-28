@@ -106,7 +106,7 @@ body {
 .loader {
     padding: 15px;
     border: solid 1px #ccc;
-    width: 350px;
+    width: 600px;
     border-radius: 5px;
     margin-top: 10px;
     background-color: #222;
@@ -114,6 +114,7 @@ body {
 
     .loader i {
         color: cornflowerblue;
+        margin-right: 20px;
     }
 
 .error {
@@ -278,8 +279,8 @@ progress {
 }
 
 .room-image {
-    width: 200px;
-    height: 200px;
+    width: 215px;
+    height: 215px;
     border: solid 1px #ccc;
     border-radius: 5px;
     position: fixed;

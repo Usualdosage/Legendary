@@ -95,7 +95,7 @@ namespace Legendary.Engine
                     // Populate mobs from resets
                     foreach (var reset in room.MobileResets)
                     {
-                        var mobile = this.Mobiles.FirstOrDefault(m=> m.CharacterId == reset);
+                        var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
                         if (mobile != null)
                         {
                             mobile.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
@@ -401,9 +401,12 @@ namespace Legendary.Engine
 
                                     // Add the mobile to the new location.
                                     var nextRoom = this.communicator.ResolveRoom(mobile.Location);
-                                    nextRoom.Mobiles.Add(mobile);
 
-                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                    if (nextRoom != null)
+                                    {
+                                        nextRoom.Mobiles.Add(mobile);
+                                        await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                    }
                                 }
                             }
                         }
