@@ -2,18 +2,20 @@
 class LegendaryClient {
 
     constructor() {
+
     }
 
     Connect() {
         var protocol = location.protocol === "https:" ? "wss:" : "ws:";
         var wsUri = protocol + "//" + window.location.host;
         var socket = new WebSocket(wsUri);
+        let commandIndex = 0;
         let commands = [];
         const $console = $("#console");
         var updateUI = true;
-
+ 
         socket.onopen = e => {
-            console.log("Connected to Legendary!", e);
+            console.log("Created a secure connection to Legendary.", e);
         };
 
         socket.onclose = function (e) {
@@ -74,34 +76,32 @@ class LegendaryClient {
                 return;
             }
             else {
+
                 $console.append("<span class='message'>" + message + "</span>");
 
-                // Autoscroll
+                if (message.indexOf('room-image') > 0) {
+                    // Show the loader image for a moment when a new message is received that contains a room image
+                    $("#loader_image").show();
+                }
 
+                // Autoscroll
                 $console.prop("scrollTop", $console.prop("scrollHeight"));
 
                 // Autotrim if there are more than 250 messages
-
                 var $remove = $(".message");
 
                 if ($remove.length > 250) {
                     $remove[0].remove();
                 }
 
-                // Remove all but 1 of the room images (they stack)
-
+                // Remove all but the top room images (they stack)
                 var $roomImage = $(".room-image");
 
                 for (var x = 0; x < $roomImage.length - 1; x++) {
                     $roomImage[x].remove();
                 }
 
-                var image = document.querySelector(".room-image img");
-
-                image.onerror = imgError(this);
-
                 // Remove all but 1 of the player info panels (they stack)
-
                 var $playerInfo = $(".player-info");
 
                 for (var x = 0; x < $playerInfo.length - 1; x++) {
@@ -110,19 +110,38 @@ class LegendaryClient {
             }
         };
 
-        function imgError(image) {
-            debugger;
-            image.onerror = "";
-            image.src = "../img/rooms/none.png";
-            return true;
-        }
-
-        $("#inputField").click(function (e) {
+        $("#inputField").on("click", function (e) {
             $(this).select();
         });
 
+        $("#inputField").on("keydown", function (e) {
 
-        $('#inputField').keypress(function (e) {
+            if (e.which === 38) {
+                if (commands.length === 0) {
+                    return;
+                }
+                else {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let command = commands[commandIndex];
+
+                    if (command) {
+                        commandIndex--;
+                    }
+                    else {
+                        commandIndex = commands.length - 1;
+                        command = commands[commandIndex]
+                    }
+
+                    $('#inputField').val(command);
+                    $('#inputField').select();
+                }
+            }
+        });
+
+        $("#inputField").on("keypress", function (e) {
 
             if (e.which != 13) {
                 return;
@@ -134,6 +153,8 @@ class LegendaryClient {
             socket.send(message);
 
             commands.push(message);
+
+            commandIndex = commands.length - 2;
 
             $(this).select();
         });

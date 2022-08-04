@@ -295,6 +295,20 @@ progress {
         border-radius: 5px;
     }
 
+#loader_image {
+    width: 215px;
+    height: 215px;
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    position: fixed;
+    bottom: 50px;
+    right: 25px;
+    z-index: 800;
+    background-image: url('../img/loading_eye.gif');
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
 .room-description {
     margin-bottom: 5px;
 }

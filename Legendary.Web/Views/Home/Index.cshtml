@@ -26,6 +26,7 @@
 <div class="console-container">
     <div id="console">
         <p class="loader"><i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> One moment while we establish a secure connection to Legendary...</p>
+        <div id="loader_image"></div>
     </div>
     <div id="input">
         <input type="text" id="inputField" placeholder="Type message and press enter." />
@@ -33,10 +34,26 @@
 </div>
 
 @section Scripts {
-    <script>$(function () {
-        const client = new LegendaryClient();
-        client.Connect();
-        $("#inputField").focus();
-    });
+    <script>
+        $(function () {
+
+            const client = new LegendaryClient();
+            client.Connect();
+
+            $("#inputField").focus();
+            
+        });
+
+        const image_error = function (e) {
+            const loader = document.getElementById('loader_image');
+            loader.style.display = 'none';
+            e.src = "../../img/rooms/none.png";
+        }
+
+        const image_load = function (e) {
+            const loader = document.getElementById('loader_image');
+            loader.style.display = 'none';
+        }
+        
     </script>
 }

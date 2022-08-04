@@ -578,7 +578,7 @@ namespace Legendary.Engine.Processors
 
                     if (!string.IsNullOrWhiteSpace(item.Image))
                     {
-                        sb.Append($"<div class='room-image'><img src='{item.Image}'/></div>");
+                        sb.Append($"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);'  loading='eager' src='{item.Image}'/></div>");
                     }
                     else
                     {
@@ -1846,6 +1846,7 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     await this.communicator.SendToPlayer(user.Connection, $"You are unable to go that way.<br/>", cancellationToken);
+                    await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
                 }
             }
             else

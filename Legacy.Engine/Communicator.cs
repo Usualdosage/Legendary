@@ -406,7 +406,7 @@ namespace Legendary.Engine
 
                 if (!string.IsNullOrWhiteSpace(actor.Image))
                 {
-                    await this.SendToPlayer(actor, $"<div class='room-image'><img src='{actor.Image}'/></div>", cancellationToken);
+                    await this.SendToPlayer(actor, $"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);' loading='eager' src='{actor.Image}'/></div>", cancellationToken);
                 }
             }
             else
@@ -430,7 +430,7 @@ namespace Legendary.Engine
 
                             if (!string.IsNullOrWhiteSpace(mobile.Image))
                             {
-                                await this.SendToPlayer(actor, $"<div class='room-image'><img src='{mobile?.Image}'/></div>", cancellationToken);
+                                await this.SendToPlayer(actor, $"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);' loading='eager' src='{mobile?.Image}'/></div>", cancellationToken);
                             }
                         }
                         else
@@ -447,7 +447,7 @@ namespace Legendary.Engine
 
                     if (!string.IsNullOrWhiteSpace(target.Value.Value.Character.Image))
                     {
-                        await this.SendToPlayer(actor, $"<div class='room-image'><img src='{target.Value.Value.Character.Image}'/></div>", cancellationToken);
+                        await this.SendToPlayer(actor, $"<div class='room-image'><img class='room-image-content' onerror='image_error(this);' loading='eager' src='{target.Value.Value.Character.Image}'/></div>", cancellationToken);
                     }
                 }
             }
@@ -471,7 +471,7 @@ namespace Legendary.Engine
 
             if (!string.IsNullOrWhiteSpace(room?.Image))
             {
-                sb.Append($"<div class='room-image'><img src='{room?.Image}'/></div>");
+                sb.Append($"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);' loading='eager' src='{room?.Image}'/></div>");
             }
             else
             {
