@@ -584,3 +584,8 @@ progress {
     color: #666;
     font-style: italic;
 }
+
+/* Random things */
+.dice {
+    margin: 3px;
+}

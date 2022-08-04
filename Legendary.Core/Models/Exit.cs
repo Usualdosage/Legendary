@@ -47,7 +47,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets a value indicating whether this is a door.
         /// </summary>
-        public bool IsDoor { get; set; }
+        public bool IsDoor { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this door is closed.
+        /// </summary>
+        public bool IsClosed { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the name of the door.
@@ -57,11 +62,11 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets a value indicating whether this door is locked.
         /// </summary>
-        public bool IsLocked { get; set; }
+        public bool IsLocked { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the id of the key that will open this door.
         /// </summary>
-        public long KeyId { get; set; }
+        public long? KeyId { get; set; }
     }
 }

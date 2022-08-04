@@ -221,6 +221,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("north", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("ne", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("nw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("open", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoOpen)));
             this.actions.Add("pray", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPray)));
             this.actions.Add("quit", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoQuit)));
             this.actions.Add("rest", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRest)));
@@ -346,8 +347,8 @@ namespace Legendary.Engine.Processors
                                     break;
                             }
 
-                            sbToPlayer.Append($"<i class='fa-solid {dice}'></i>");
-                            sbToRoom.Append($"<i class='fa-solid {dice}'></i>");
+                            sbToPlayer.Append($"<i class='dice fa-solid {dice}'></i>");
+                            sbToRoom.Append($"<i class='dice fa-solid {dice}'></i>");
                             total += roll;
                         }
 
@@ -708,7 +709,61 @@ namespace Legendary.Engine.Processors
 
         private async Task DoMove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.MovePlayer(actor, ParseDirection(args.Action), cancellationToken);
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "You're far too relaxed.", cancellationToken);
+                return;
+            }
+
+            if (actor.Character.Movement.Current == 0)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You are too exhausted.", cancellationToken);
+                return;
+            }
+
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            var direction = ParseDirection(args.Action);
+
+            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+            if (exit != null)
+            {
+                if (exit.IsDoor && exit.IsClosed)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is closed.", cancellationToken);
+                }
+                else
+                {
+                    var newArea = this.world.Areas.FirstOrDefault(a => a.AreaId == exit.ToArea);
+                    var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
+
+                    if (newArea != null && newRoom != null)
+                    {
+                        string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                        await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} leaves {dir}.", cancellationToken);
+
+                        await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
+
+                        actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                        actor.Character.Movement.Current -= GetTerrainMovementPenalty(newRoom);
+
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} enters.", cancellationToken);
+                        await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You are unable to go that way.", cancellationToken);
+                        await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You can't go that way.", cancellationToken);
+            }
         }
 
         private async Task DoNewbieChat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -727,6 +782,47 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Newbie chat what?", cancellationToken);
+            }
+        }
+
+        private async Task DoOpen(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var direction = ParseDirection(args.Action);
+
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+            if (exit != null)
+            {
+                if (exit.IsDoor && exit.IsClosed && exit.IsLocked)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is locked.", cancellationToken);
+                }
+                else if (exit.IsDoor && exit.IsClosed)
+                {
+                    // Need to open the door on BOTH sides
+                    var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
+
+                    var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
+
+                    if (exitToThisRoom != null)
+                    {
+                        exitToThisRoom.IsClosed = false;
+                    }
+
+                    exit.IsClosed = false;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName} to the {direction} of you.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} opens the {exit.DoorName} to the {direction} of you.", cancellationToken);
+                }
+                else if (exit.IsDoor)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already open.", cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                }
             }
         }
 
@@ -808,6 +904,49 @@ namespace Legendary.Engine.Processors
                 this.world.Populate();
                 await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
                 this.logger.Warn($"{actor.Character.FirstName} has reloaded all of the game data and repopulated the world.", this.communicator);
+            }
+        }
+
+        private async Task DoRemove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            // remove <argument>
+            // See if they are wearing the item.
+            if (!string.IsNullOrWhiteSpace(args.Method))
+            {
+                var itemName = args.Method.ToLower();
+
+                if (itemName == "all")
+                {
+                    foreach (var target in actor.Character.Equipment)
+                    {
+                        // Un-equip each item and put back in inventory.
+                        actor.Character.Equipment.Remove(target);
+                        actor.Character.Inventory.Add(target);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Name.Contains(itemName));
+
+                    if (target != null)
+                    {
+                        // Un-equip the item and put back in inventory.
+                        actor.Character.Inventory.Add(target);
+                        actor.Character.Equipment.Remove(target);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Remove what?", cancellationToken);
             }
         }
 
@@ -1337,49 +1476,6 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task DoRemove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            // remove <argument>
-            // See if they are wearing the item.
-            if (!string.IsNullOrWhiteSpace(args.Method))
-            {
-                var itemName = args.Method.ToLower();
-
-                if (itemName == "all")
-                {
-                    foreach (var target in actor.Character.Equipment)
-                    {
-                        // Un-equip each item and put back in inventory.
-                        actor.Character.Equipment.Remove(target);
-                        actor.Character.Inventory.Add(target);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
-                    }
-                }
-                else
-                {
-                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Name.Contains(itemName));
-
-                    if (target != null)
-                    {
-                        // Un-equip the item and put back in inventory.
-                        actor.Character.Inventory.Add(target);
-                        actor.Character.Equipment.Remove(target);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} removes {target.Name}.", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
-                    }
-                }
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"Remove what?", cancellationToken);
-            }
-        }
-
         private async Task DoWear(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // wear <argument>
@@ -1802,56 +1898,6 @@ namespace Legendary.Engine.Processors
 
                         break;
                     }
-            }
-        }
-
-        private async Task MovePlayer(UserData user, Direction direction, CancellationToken cancellationToken = default)
-        {
-            if (user.Character.CharacterFlags.Contains(CharacterFlags.Resting))
-            {
-                await this.communicator.SendToPlayer(user.Connection, "You're far too relaxed.", cancellationToken);
-                return;
-            }
-
-            if (user.Character.Movement.Current == 0)
-            {
-                await this.communicator.SendToPlayer(user.Connection, $"You are too exhausted.", cancellationToken);
-                return;
-            }
-
-            var room = this.communicator.ResolveRoom(user.Character.Location);
-
-            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
-
-            if (exit != null)
-            {
-                var newArea = this.world.Areas.FirstOrDefault(a => a.AreaId == exit.ToArea);
-                var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
-
-                if (newArea != null && newRoom != null)
-                {
-                    string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                    await this.communicator.SendToPlayer(user.Connection, $"You go {dir}.<br/>", cancellationToken);
-                    await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} leaves {dir}.", cancellationToken);
-
-                    await this.communicator.PlaySound(user.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
-
-                    user.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                    user.Character.Movement.Current -= GetTerrainMovementPenalty(newRoom);
-
-                    await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} enters.", cancellationToken);
-                    await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
-                }
-                else
-                {
-                    await this.communicator.SendToPlayer(user.Connection, $"You are unable to go that way.<br/>", cancellationToken);
-                    await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
-                }
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(user.Connection, $"You can't go that way.<br/>", cancellationToken);
             }
         }
 
