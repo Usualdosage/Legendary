@@ -828,7 +828,6 @@ namespace Legendary.Engine.Processors
                     else
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"You are unable to go that way.", cancellationToken);
-                        await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
                     }
                 }
             }

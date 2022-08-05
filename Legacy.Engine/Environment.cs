@@ -17,6 +17,7 @@ namespace Legendary.Engine
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Models;
 
     /// <summary>
     /// Represents the user environment.
@@ -27,6 +28,42 @@ namespace Legendary.Engine
         private readonly IRandom random;
         private readonly Combat combat;
         private readonly UserData connectedUser;
+        private int dayWeatherIndex = 0;
+
+        private List<Weather> dayWeatherForward = new List<Weather>()
+        {
+            new Weather(0, "The sun shines in a nearly cloudless sky.", string.Empty),
+            new Weather(1, "Some small clouds form in the sky.", string.Empty),
+            new Weather(2, "Some thicker clouds begin to form in the sky.", string.Empty),
+            new Weather(3, "The sky becomes mostly cloudy.", string.Empty),
+            new Weather(4, "The cloud cover gets heavier.", string.Empty),
+            new Weather(5, "You hear thunder rumble in the distance.", string.Empty),
+            new Weather(6, "Dark, heavy clouds fill the sky.", string.Empty),
+            new Weather(7, "The wind picks up.", string.Empty),
+            new Weather(8, "It begins to {precipitate} lightly.", string.Empty),
+            new Weather(9, "Lighting flashes in the sky from the heavy clouds.", string.Empty),
+            new Weather(10, "The wind begins to howl.", string.Empty),
+            new Weather(11, "The {precipitate} picks up and starts coming down heavily.", string.Empty),
+            new Weather(12, "Lightning flashes all around you while thunder erupts from the skies.", string.Empty),
+            new Weather(13, "The {precipitate} is coming down in buckets all around you.", string.Empty),
+        };
+
+        private List<Weather> dayWeatherBackward = new List<Weather>()
+        {
+            new Weather(0, "The small clouds dissipate.", string.Empty),
+            new Weather(1, "The thicker clouds get smaller as the wind blows them away.", string.Empty),
+            new Weather(2, "The sky begins to clear.", string.Empty),
+            new Weather(3, "The heavy cloud cover begins to break up.", string.Empty),
+            new Weather(4, "The thunder fades off in the distance.", string.Empty),
+            new Weather(5, "The dark, heavy clouds begin to break up.", string.Empty),
+            new Weather(6, "The wind dies down a bit.", string.Empty),
+            new Weather(7, "The light {precipitate} stops.", string.Empty),
+            new Weather(8, "The lightning seems to fade off in the distance.", string.Empty),
+            new Weather(9, "The wind calms to a dull roar.", string.Empty),
+            new Weather(10, "The {precipitate} slows to a medium fall.", string.Empty),
+            new Weather(11, "The thunder and lighting around you seems to gradually fade out.", string.Empty),
+            new Weather(12, "The {precipitate} stops coming down so heavily.", string.Empty),
+        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Environment"/> class.
@@ -41,6 +78,8 @@ namespace Legendary.Engine
             this.random = random;
             this.connectedUser = connectedUser;
             this.combat = combat;
+
+            this.dayWeatherIndex = this.random.Next(0, this.dayWeatherForward.Count - 1);
         }
 
         /// <summary>
@@ -192,6 +231,11 @@ namespace Legendary.Engine
         {
             var room = this.communicator.ResolveRoom(userData.Character.Location);
 
+            if (room == null || room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+            {
+                return;
+            }
+
             if (gameHour == 6)
             {
                 await this.communicator.SendToPlayer(this.connectedUser.Connection, "The sun rises in the east.");
@@ -199,6 +243,14 @@ namespace Legendary.Engine
             else if (gameHour == 19)
             {
                 await this.communicator.SendToPlayer(this.connectedUser.Connection, "The sun sets in the west.");
+            }
+            else if (gameHour == 21)
+            {
+                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The moon rises in east.");
+            }
+            else if (gameHour == 2)
+            {
+                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The moon sets in the west.");
             }
         }
 
@@ -210,15 +262,30 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessWeather(UserData userData, CancellationToken cancellationToken = default)
         {
-            // TODO: Finish the weather.
             var room = this.communicator.ResolveRoom(userData.Character.Location);
 
-            if (room == null)
+            if (room == null || room.Flags.Contains(Core.Types.RoomFlags.Indoors))
             {
                 return;
             }
 
+            // Roll a 3 sided die. 0, we increment the weather. 1, we decrement it. 2, no action.
+            var chance = this.random.Next(0, 2);
+
+            switch (chance)
+            {
+                case 0:
+                    this.dayWeatherIndex += 1;
+                    break;
+                case 1:
+                    this.dayWeatherIndex -= 1;
+                    break;
+                case 2:
+                    break;
+            }
+
             var weather = this.random.Next(1, 8);
+            string precipitate = "rain";
 
             switch (room.Terrain)
             {
@@ -229,9 +296,11 @@ namespace Legendary.Engine
                 case Core.Types.Terrain.City:
                     break;
                 case Core.Types.Terrain.Desert:
+                    precipitate = "virga";
                     break;
                 case Core.Types.Terrain.Ethereal:
                     {
+                        precipitate = "stardust";
                         switch (weather)
                         {
                             default:
@@ -270,8 +339,10 @@ namespace Legendary.Engine
                 case Core.Types.Terrain.Jungle:
                     break;
                 case Core.Types.Terrain.Mountains:
+                    precipitate = "snow";
                     break;
                 case Core.Types.Terrain.Snow:
+                    precipitate = "snow";
                     break;
                 case Core.Types.Terrain.Swamp:
                     break;

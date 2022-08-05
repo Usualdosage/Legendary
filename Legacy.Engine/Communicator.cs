@@ -490,11 +490,11 @@ namespace Legendary.Engine
 
                     if (itemGroup.Count() == 1)
                     {
-                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.LongDescription)}</span>");
                     }
                     else
                     {
-                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.LongDescription)}</span>");
                     }
                 }
             }
