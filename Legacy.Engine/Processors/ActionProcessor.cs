@@ -159,6 +159,29 @@ namespace Legendary.Engine.Processors
             };
         }
 
+        /// <summary>
+        /// Used for opening and closing doors.
+        /// </summary>
+        /// <param name="direction">The direction.</param>
+        /// <returns>User friendly string.</returns>
+        private static string ParseFriendlyDirection(Direction direction)
+        {
+            return direction switch
+            {
+                Direction.South => "to the south of",
+                Direction.North => "to the north of",
+                Direction.East => "to the south of",
+                Direction.West => "to the north of",
+                Direction.SouthEast => "to the southeast of",
+                Direction.SouthWest => "to the southwest of",
+                Direction.NorthEast => "to the northeast of",
+                Direction.NorthWest => "to the northwest of",
+                Direction.Up => "above",
+                Direction.Down => "below",
+                _ => "to the front of",
+            };
+        }
+
         private static int GetTerrainMovementPenalty(Room room)
         {
             switch (room.Terrain)
@@ -199,6 +222,7 @@ namespace Legendary.Engine.Processors
         private void ConfigureActions()
         {
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
+            this.actions.Add("close", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoClose)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
             this.actions.Add("dice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDice)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
@@ -268,6 +292,54 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        private async Task DoClose(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Close what?", cancellationToken);
+                return;
+            }
+
+            var direction = ParseDirection(args.Method);
+            var friendlyDirection = ParseFriendlyDirection(direction);
+
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+            if (exit != null)
+            {
+                if (exit.IsDoor && !exit.IsClosed)
+                {
+                    // Need to close the door on BOTH sides
+                    var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
+
+                    var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
+
+                    if (exitToThisRoom != null)
+                    {
+                        exitToThisRoom.IsClosed = true;
+                    }
+
+                    exit.IsClosed = true;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You close the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} closes the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+
+                    await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.CLOSEDOOR, cancellationToken);
+                    await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.CLOSEDOOR, cancellationToken);
+
+                }
+                else if (exit.IsDoor && exit.IsClosed)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already closed.", cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                }
+            }
         }
 
         private async Task DoCombat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -572,8 +644,8 @@ namespace Legendary.Engine.Processors
 
                 if (item != null)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"You examine {item.Name}.<br/>", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} examines {item.Name}.<br/>", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"You examine {item.Name}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} examines {item.Name}.", cancellationToken);
 
                     StringBuilder sb = new StringBuilder();
 
@@ -787,7 +859,14 @@ namespace Legendary.Engine.Processors
 
         private async Task DoOpen(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var direction = ParseDirection(args.Action);
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Open what?", cancellationToken);
+                return;
+            }
+
+            var direction = ParseDirection(args.Method);
+            var friendlyDirection = ParseFriendlyDirection(direction);
 
             var room = this.communicator.ResolveRoom(actor.Character.Location);
 
@@ -812,8 +891,11 @@ namespace Legendary.Engine.Processors
                     }
 
                     exit.IsClosed = false;
-                    await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName} to the {direction} of you.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} opens the {exit.DoorName} to the {direction} of you.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} opens the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+
+                    await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.OPENDOOR, cancellationToken);
+                    await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.OPENDOOR, cancellationToken);
                 }
                 else if (exit.IsDoor)
                 {

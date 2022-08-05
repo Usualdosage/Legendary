@@ -52,13 +52,13 @@ namespace Legendary.Core.Types
         BackgroundSFX = 6,
 
         /// <summary>
-        /// Unused.
+        /// Background sound effects.
         /// </summary>
-        Unused1 = 7,
+        BackgroundSFX2 = 7,
 
         /// <summary>
-        /// Unused.
+        /// Background sound effects.
         /// </summary>
-        Unused2 = 8,
+        BackgroundSFX3 = 8,
     }
 }

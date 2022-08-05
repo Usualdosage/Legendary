@@ -105,5 +105,15 @@ namespace Legendary.Core
         /// City MP3.
         /// </summary>
         public const string CITY = "https://legendary.file.core.windows.net/audio/weather/city.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Open Door MP3.
+        /// </summary>
+        public const string OPENDOOR = "https://legendary.file.core.windows.net/audio/soundfx/door-open.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Close Door MP3.
+        /// </summary>
+        public const string CLOSEDOOR = "https://legendary.file.core.windows.net/audio/soundfx/door-close.mp3" + SAS_TOKEN;
     }
 }

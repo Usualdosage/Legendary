@@ -164,7 +164,6 @@ namespace Legendary.Engine
                 }
 
                 // Configure the user and add the environment handler.
-                // TODO: We may want to handle environmental changes globally.
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
                 var environment = new Environment(this, this.random, userData, this.combat);
                 userData.Environment = environment;
@@ -507,7 +506,14 @@ namespace Legendary.Engine
             {
                 foreach (var exit in room.Exits)
                 {
-                    sb.Append(Enum.GetName(typeof(Direction), exit.Direction)?.ToLower() + " ");
+                    if (exit.IsDoor && exit.IsClosed)
+                    {
+                        sb.Append("(" + Enum.GetName(typeof(Direction), exit.Direction)?.ToLower() + ") ");
+                    }
+                    else
+                    {
+                        sb.Append(Enum.GetName(typeof(Direction), exit.Direction)?.ToLower() + " ");
+                    }
                 }
             }
 
