@@ -50,7 +50,7 @@ namespace Legendary.Engine.Helpers
             ", in the year " +
             gameYear +
             ". It is the " +
-            FormatNumber(gameDay) + " day of the year" +
+            FormatNumber(gameDay + (gameMonth * 30)) + " day of the year" +
             ". The time is " +
             FormatTime(gameHour, gameMinute, gameSecond) +
             ". " +
@@ -129,13 +129,22 @@ namespace Legendary.Engine.Helpers
 
         private static string FormatNumber(int gameDay)
         {
-            return gameDay switch
+            if (gameDay != 11 && gameDay.ToString().EndsWith("1"))
             {
-                1 or 21 => gameDay + "st",
-                2 or 22 => gameDay + "nd",
-                3 or 23 => gameDay + "rd",
-                _ => gameDay + "th",
-            };
+                return gameDay + "st";
+            }
+            else if (gameDay != 12 && gameDay.ToString().EndsWith("2"))
+            {
+                return gameDay + "nd";
+            }
+            else if (gameDay != 13 && gameDay.ToString().EndsWith("3"))
+            {
+                return gameDay + "rd";
+            }
+            else
+            {
+                return gameDay + "th";
+            }
         }
 
         private static string FormatSeason(int gameMonth)

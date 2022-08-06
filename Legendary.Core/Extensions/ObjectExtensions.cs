@@ -19,7 +19,7 @@ namespace Legendary.Core.Extensions
     public static class ObjectExtensions
     {
         /// <summary>
-        /// Deep clones and object, preserving reference loops.
+        /// Deep clones an object, preserving reference loops.
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="obj">The object.</param>

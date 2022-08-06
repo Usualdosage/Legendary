@@ -584,7 +584,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                await this.GetItem(actor, args.Method, cancellationToken);
+                await this.GetItem(actor, args.Method, args.Target, cancellationToken);
             }
         }
 
@@ -788,8 +788,26 @@ namespace Legendary.Engine.Processors
         {
             if (!string.IsNullOrWhiteSpace(args.Method))
             {
-#warning TODO: Need to be able to look IN stuff (e.g. "look in corpse")
-                await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
+                // Are we looking at a player, a mobile, or at an item?
+                var items = this.communicator.GetItemsInRoom(actor.Character.Location);
+
+                if (items != null)
+                {
+                    var item = items.ParseTargetName(args.Method);
+
+                    if (item != null)
+                    {
+                        await this.communicator.ShowItemToPlayer(actor.Character, item, cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
+                }
             }
             else
             {
@@ -1859,7 +1877,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task GetItem(UserData user, string target, CancellationToken cancellationToken = default)
+        private async Task GetItem(UserData user, string method, string target, CancellationToken cancellationToken = default)
         {
             var room = this.communicator.ResolveRoom(user.Character.Location);
 
@@ -1868,7 +1886,54 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
-            if (target.ToLower() == "all")
+            // Get all corpse, get all chest, etc.
+            if (!string.IsNullOrWhiteSpace(target))
+            {
+                // See if we have an item like that in the room.
+                var items = this.communicator.GetItemsInRoom(user.Character.Location);
+
+                if (items != null)
+                {
+                    var item = items.ParseTargetName(target);
+
+                    if (item != null)
+                    {
+                        if (item.Contains != null && item.Contains.Count > 0)
+                        {
+                            List<IItem> itemsToRemove = new ();
+
+                            foreach (var eq in item.Contains)
+                            {
+                                if (eq != null)
+                                {
+                                    var clone = (eq as Item).Clone();
+                                    if (clone != null)
+                                    {
+                                        user.Character.Inventory.Add(clone);
+                                        await this.communicator.SendToPlayer(user.Connection, $"You get {clone.Name} from {item.Name}.", cancellationToken);
+                                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} gets {eq.Name} from {item.Name}.", cancellationToken);
+                                        itemsToRemove.Add(eq);
+                                    }
+                                }
+                            }
+
+                            foreach (var itemToRemove in itemsToRemove)
+                            {
+                                item.Contains.Remove(itemToRemove);
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything in {item.Name} to get.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
+                    }
+                }
+            }
+            else if (method.ToLower() == "all")
             {
                 List<Item> itemsToRemove = new ();
 
@@ -1911,7 +1976,7 @@ namespace Legendary.Engine.Processors
 
                 List<Item> itemsToRemove = new ();
 
-                var item = room.Items.ParseItemName(target);
+                var item = room.Items.ParseItemName(method);
 
                 if (item != null)
                 {

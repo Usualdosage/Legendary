@@ -103,6 +103,19 @@ namespace Legendary.Engine
                         {
                             var clone = mobile.DeepCopy();
                             clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                            // Add items to mobs.
+                            foreach (var itemReset in clone.EquipmentResets)
+                            {
+                                var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+
+                                if (item != null)
+                                {
+                                    var itemClone = item.DeepCopy();
+                                    clone.Equipment.Add(itemClone);
+                                }
+                            }
+
                             room.Mobiles.Add(clone);
                         }
                     }

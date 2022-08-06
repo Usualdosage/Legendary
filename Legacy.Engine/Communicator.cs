@@ -452,6 +452,37 @@ namespace Legendary.Engine
             }
         }
 
+        /// <inheritdoc/>
+        public async Task ShowItemToPlayer(Character actor, Item item, CancellationToken cancellationToken = default)
+        {
+            await this.SendToPlayer(actor, $"You examine {item.Name}.", cancellationToken);
+
+            StringBuilder sb = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(item.Image))
+            {
+                sb.Append($"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);'  loading='eager' src='{item.Image}'/></div>");
+            }
+            else
+            {
+                sb.Append($"<div class='room-image room-image-none'></div>");
+            }
+
+            sb.Append($"{item.LongDescription}<br/>");
+
+            if (item.Contains?.Count > 0)
+            {
+                sb.Append($"{item.Name} contains:<br/>");
+
+                foreach (var eq in item.Contains)
+                {
+                    sb.Append($"<span class='item'>{eq.Name}</span>");
+                }
+            }
+
+            await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
+        }
+
         /// <summary>
         /// Shows the information in a room to a single player.
         /// </summary>
@@ -479,26 +510,6 @@ namespace Legendary.Engine
 
             sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
 
-            // Show the items
-            if (room?.Items != null)
-            {
-                var itemGroups = room.Items.GroupBy(g => g.Name);
-
-                foreach (var itemGroup in itemGroups)
-                {
-                    var item = itemGroup.First();
-
-                    if (itemGroup.Count() == 1)
-                    {
-                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
-                    }
-                    else
-                    {
-                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
-                    }
-                }
-            }
-
             sb.Append("<span class='exits'>[ Exits: ");
 
             // Show the exits
@@ -518,6 +529,26 @@ namespace Legendary.Engine
             }
 
             sb.Append("]</span>");
+
+            // Show the items
+            if (room?.Items != null)
+            {
+                var itemGroups = room.Items.GroupBy(g => g.Name);
+
+                foreach (var itemGroup in itemGroups)
+                {
+                    var item = itemGroup.First();
+
+                    if (itemGroup.Count() == 1)
+                    {
+                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                    }
+                    else
+                    {
+                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                    }
+                }
+            }
 
             // Show the mobiles
             if (room?.Mobiles != null)

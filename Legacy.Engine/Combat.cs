@@ -543,7 +543,7 @@ namespace Legendary.Engine
                     this.GenerateCorpse(killer.Location, actor);
                 }
 
-                // Remove all equipment and inventory.
+                // Remove all equipment, currency, and inventory.
                 actor.Inventory = new List<Item>();
                 actor.Equipment = new List<Item>();
                 actor.Currency = 0;
@@ -761,16 +761,15 @@ namespace Legendary.Engine
                     Location = location,
                     Level = victim.Level,
                     Name = $"the corpse of {victim.FirstName}",
-                    ShortDescription = $"The corpse of {victim.FirstName} is rotting here.",
-                    LongDescription = $"The corpse of {victim.FirstName} is rotting here.",
+                    ShortDescription = $"The corpse of {victim.FirstName} is decomposing here.",
+                    LongDescription = $"The corpse of {victim.FirstName} is decomposing here.",
                     WearLocation = new List<WearLocation>() { WearLocation.None },
                     Weight = 200,
                     RotTimer = 2,
+                    Contains = new List<IItem>(),
                 };
 
                 // Create a corpse with their stuff in the room.
-                var playerInventory = victim.Inventory;
-                var equipment = victim.Equipment;
                 var currency = victim.Currency;
 
                 // If the player had any money, add it to the corpse.
@@ -787,12 +786,20 @@ namespace Legendary.Engine
                         Level = 0,
                     };
 
-                    // corpse.Contains.Add(currencyObj);
+                    corpse.Contains.Add(currencyObj);
                 }
 
-                // Add the gear to the corpse.
-                // corpse.Contains.AddRange(equipment);
-                // corpse.Contains.AddRange(playerInventory);
+                // Add any equipment.
+                foreach (var eq in victim.Equipment)
+                {
+                    corpse.Contains.Add(eq.Clone());
+                }
+
+                // Add any inventory.
+                foreach (var inv in victim.Inventory)
+                {
+                    corpse.Contains.Add(inv.Clone());
+                }
 
                 // Add the corpse to the room.
                 var room = this.communicator.ResolveRoom(location);

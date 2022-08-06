@@ -157,6 +157,15 @@ namespace Legendary.Core.Contracts
         Task ShowPlayerToPlayer(Character actor, string target, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Shows an item to a player, including it's contents, if applicable.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="item">The item.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task ShowItemToPlayer(Character actor, Item item, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sends a message to a specified socket.
         /// </summary>
         /// <param name="socket">The socket to send to.</param>
