@@ -64,5 +64,10 @@ namespace Legendary.Core.Types
         /// Gets or sets the total kills.
         /// </summary>
         public Dictionary<string, int> TotalKills { get; set; } = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Gets or sets the total game hours (ticks) played, to calculate age.
+        /// </summary>
+        public int GameHoursPlayed { get; set; }
     }
 }

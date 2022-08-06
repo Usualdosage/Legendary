@@ -29,6 +29,7 @@ namespace Legendary.Core.Models
         private MaxCurrent dex = new MaxCurrent(10, 10);
         private MaxCurrent con = new MaxCurrent(10, 10);
 
+        private int defaultAge = 18;
         private int saveDeath = 8;
         private int saveSpell = 8;
         private int saveMaledictive = 8;
@@ -69,9 +70,9 @@ namespace Legendary.Core.Models
         public string? Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the player's age.
+        /// Gets the player's age.
         /// </summary>
-        public int Age { get; set; } = 18;
+        public int Age => this.defaultAge + (this.Metrics.GameHoursPlayed / 8760);
 
         /// <summary>
         /// Gets or sets the level.

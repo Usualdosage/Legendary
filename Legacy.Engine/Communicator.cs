@@ -490,11 +490,11 @@ namespace Legendary.Engine
 
                     if (itemGroup.Count() == 1)
                     {
-                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.LongDescription)}</span>");
+                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
                     }
                     else
                     {
-                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.LongDescription)}</span>");
+                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
                     }
                 }
             }
@@ -522,15 +522,20 @@ namespace Legendary.Engine
             // Show the mobiles
             if (room?.Mobiles != null)
             {
-                foreach (var mob in room.Mobiles)
-                {
-                    if (mob == null)
-                    {
-                        this.logger.Warn($"ShowRoomToPlayer: Null mob found for mob!", this);
-                        return;
-                    }
+                var mobGroups = room.Mobiles.GroupBy(g => g.FirstName);
 
-                    sb.Append($"<span class='mobile'>{mob.ShortDescription}</span>");
+                foreach (var mobGroup in mobGroups)
+                {
+                    var mob = mobGroup.First();
+
+                    if (mobGroup.Count() == 1)
+                    {
+                        sb.Append($"<span class='mobile'>{mob.ShortDescription}</span>");
+                    }
+                    else
+                    {
+                        sb.Append($"<span class='mobile'>({mobGroup.Count()}) {mob.ShortDescription}</span>");
+                    }
                 }
             }
 
@@ -1400,6 +1405,13 @@ namespace Legendary.Engine
                     {
                         if (user.Value != null)
                         {
+                            var metrics = user.Value.Character.Metrics;
+
+                            if (metrics != null)
+                            {
+                                metrics.GameHoursPlayed++;
+                            }
+
                             // Update the player info
                             this.ShowPlayerInfo(user.Value.Character).Wait();
 

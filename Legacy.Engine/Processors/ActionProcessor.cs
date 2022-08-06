@@ -252,6 +252,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("rest", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRest)));
             this.actions.Add("remove", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRemove)));
             this.actions.Add("reply", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReply)));
+            this.actions.Add("sacrifice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSacrifice)));
             this.actions.Add("save", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSave)));
             this.actions.Add("say", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(7, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSay)));
             this.actions.Add("scan", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScan)));
@@ -1055,6 +1056,18 @@ namespace Legendary.Engine.Processors
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
         }
 
+        private async Task DoSacrifice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Sacrifice what?", cancellationToken);
+            }
+            else
+            {
+                await this.SacrificeItem(actor, args.Method, cancellationToken);
+            }
+        }
+
         private async Task DoSave(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SaveCharacter(actor);
@@ -1763,6 +1776,87 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(user.Connection, $"You were unable to teleport there.", cancellationToken);
+        }
+
+        private async Task SacrificeItem(UserData user, string target, CancellationToken cancellationToken = default)
+        {
+            var room = this.communicator.ResolveRoom(user.Character.Location);
+
+            if (room == null)
+            {
+                return;
+            }
+
+            if (target.ToLower() == "all")
+            {
+                List<Item> itemsToRemove = new();
+
+                if (room.Items == null || room.Items.Count == 0)
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to sacrifice.", cancellationToken);
+                    return;
+                }
+
+                foreach (var item in room.Items)
+                {
+                    if (item != null)
+                    {
+                        if (item.WearLocation.Contains(WearLocation.None))
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"You can't sacrifice {item.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            user.Character.DivineFavor += 1;
+                            await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to your deity for some divine favor.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
+                            itemsToRemove.Add(item);
+                        }
+                    }
+                }
+
+                foreach (var itemToRemove in itemsToRemove)
+                {
+                    room.Items.Remove(itemToRemove);
+                }
+            }
+            else
+            {
+                if (room.Items == null || room.Items.Count == 0)
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to sacrifice.", cancellationToken);
+                    return;
+                }
+
+                List<Item> itemsToRemove = new();
+
+                var item = room.Items.ParseItemName(target);
+
+                if (item != null)
+                {
+                    if (item.WearLocation.Contains(WearLocation.None))
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You can't sacrifice {item.Name}.", cancellationToken);
+                        return;
+                    }
+                    else
+                    {
+                        user.Character.DivineFavor += 1;
+                        await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to your deity for some divine favor.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
+                        itemsToRemove.Add(item);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
+                }
+
+                foreach (var itemToRemove in itemsToRemove)
+                {
+                    room.Items.Remove(itemToRemove);
+                }
+            }
         }
 
         private async Task GetItem(UserData user, string target, CancellationToken cancellationToken = default)
