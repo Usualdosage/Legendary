@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Recalls the player to their hometown recall point.
@@ -41,7 +42,7 @@ namespace Legendary.Engine.Models.Skills
         public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
             await this.Communicator.SendToPlayer(actor, "You close your eyes and recall to your hometown.", cancellationToken);
-            await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} disappears in a puff of smoke.", cancellationToken);
+            await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} disappears in a puff of smoke.", cancellationToken);
         }
 
         /// <inheritdoc/>

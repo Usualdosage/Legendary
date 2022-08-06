@@ -98,7 +98,7 @@ namespace Legendary.Core
         public static readonly List<string> EMOTE_ACTION = new List<string>()
         {
             "{0} looks around idly.",
-            "{0} shrugs to {1}self.",
+            "{0} shrugs.",
             "{0} smoothes the wrinkles out of {1} clothes.",
             "{0} gazes solemnly at the sky.",
             "{0} runs {1} fingers through {1} hair.",

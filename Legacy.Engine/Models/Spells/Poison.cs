@@ -13,6 +13,7 @@ namespace Legendary.Engine.Models.Spells
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Casts the poison spell.
@@ -70,7 +71,7 @@ namespace Legendary.Engine.Models.Spells
 
                 if (this.Combat.DidSave(target, this))
                 {
-                    await this.Communicator.SendToPlayer(actor, $"{target.FirstName} looks queasy for a moment, but it passes.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} looks queasy for a moment, but it passes.", cancellationToken);
                     await this.Communicator.SendToPlayer(target, $"You feel queasy for a moment, but it passes.", cancellationToken);
                 }
                 else
@@ -83,9 +84,9 @@ namespace Legendary.Engine.Models.Spells
                         Duration = actor.Level / 10,
                     };
 
-                    await this.Communicator.SendToPlayer(actor, $"{target.FirstName} suddenly looks very ill.", cancellationToken);
-                    await this.Communicator.SendToPlayer(target, $"{actor.FirstName} has poisoned you!", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName} has been poisoned by {actor.FirstName}!", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} suddenly looks very ill.", cancellationToken);
+                    await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} has poisoned you!", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} has been poisoned by {actor.FirstName}!", cancellationToken);
 
                     target?.AffectedBy.Add(effect);
 
@@ -107,9 +108,9 @@ namespace Legendary.Engine.Models.Spells
                     var damage = this.Combat.CalculateDamage(effect.Effector, actor, effect.Action);
                     var damageVerb = Combat.CalculateDamageVerb(damage, false);
 
-                    await this.Communicator.SendToPlayer(actor, $"{effect.Effector.FirstName}'s {effect.Action.DamageNoun} {damageVerb} you.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, $"{effect.Effector.FirstName.FirstCharToUpper()}'s {effect.Action.DamageNoun} {damageVerb} you.", cancellationToken);
                     await this.Communicator.SendToPlayer(effect.Effector, $"Your {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Location, actor, effect.Effector, $"{effect.Effector.FirstName}'s {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, effect.Effector, $"{effect.Effector.FirstName.FirstCharToUpper()}'s {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
 
                     if (Combat.ApplyDamage(actor, damage))
                     {

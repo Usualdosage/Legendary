@@ -85,10 +85,12 @@ namespace Legendary.Engine
                     foreach (var reset in room.ItemResets)
                     {
                         var item = this.Items.FirstOrDefault(i => i.ItemId == reset);
+
                         if (item != null)
                         {
-                            item.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
-                            room.Items.Add(item);
+                            var clone = item.DeepCopy();
+                            clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                            room.Items.Add(clone);
                         }
                     }
 
@@ -96,10 +98,12 @@ namespace Legendary.Engine
                     foreach (var reset in room.MobileResets)
                     {
                         var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
+
                         if (mobile != null)
                         {
-                            mobile.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
-                            room.Mobiles.Add(mobile);
+                            var clone = mobile.DeepCopy();
+                            clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                            room.Mobiles.Add(clone);
                         }
                     }
                 }
@@ -151,12 +155,14 @@ namespace Legendary.Engine
                     metrics.CurrentHour = 0;
                     metrics.CurrentDay++;
 
-                    if (metrics.CurrentDay == 31)
+                    if (metrics.CurrentDay >= 31)
                     {
+                        metrics.CurrentDay = 1;
                         metrics.CurrentMonth++;
 
-                        if (metrics.CurrentMonth == 13)
+                        if (metrics.CurrentMonth >= 13)
                         {
+                            metrics.CurrentMonth = 1;
                             metrics.CurrentYear++;
                         }
                     }

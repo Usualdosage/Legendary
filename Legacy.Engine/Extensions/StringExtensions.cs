@@ -75,7 +75,10 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                bestMatch.Add(matchCount, target);
+                if (!bestMatch.ContainsValue(target))
+                {
+                    bestMatch.Add(matchCount, target);
+                }
             }
 
             return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;

@@ -15,6 +15,7 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.
@@ -43,12 +44,12 @@ namespace Legendary.Engine.Models
             if (target == null)
             {
                 await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}'.", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} extends {actor.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} extends {actor.Pronoun} hand and utters the words, '{spellWords}'.", cancellationToken);
             }
             else
             {
                 await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}' at {target?.FirstName}.", cancellationToken);
-                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName} extends {actor.Pronoun} hand toward {target?.FirstName} and utters the word, '{spellWords}'", cancellationToken);
+                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} extends {actor.Pronoun} hand toward {target?.FirstName} and utters the word, '{spellWords}'", cancellationToken);
             }
         }
 
@@ -70,7 +71,7 @@ namespace Legendary.Engine.Models
         public virtual async Task DamageToTarget(Character actor, Character target, CancellationToken cancellationToken)
         {
             Combat.StartFighting(actor, target);
-            await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName} yells \"<span class='yell'>{actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
+            await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName.FirstCharToUpper()} yells \"<span class='yell'>{actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
             await this.Combat.DoDamage(actor, target, this, cancellationToken);
         }
 

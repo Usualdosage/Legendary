@@ -364,7 +364,7 @@ namespace Legendary.Engine
                         {
                             await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
                             await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
-                            await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                            await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
 
                             // Start the fight.
                             Combat.StartFighting(user.Character, mobile);
@@ -377,11 +377,11 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    this.logger.Info($"{user.Character.FirstName} has attacked {target.Value.Value.Character.FirstName} in room {user.Character.Location.Value}.", this);
+                    this.logger.Info($"{user.Character.FirstName.FirstCharToUpper()} has attacked {target.Value.Value.Character.FirstName} in room {user.Character.Location.Value}.", this);
 
                     await this.SendToPlayer(user.Connection, $"You attack {target.Value.Value.Character.FirstName}!", cancellationToken);
-                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {target.Value.Value.Character.FirstName}!", cancellationToken);
-                    await this.SendToArea(user.Character.Location, string.Empty, $"{target.Value.Value.Character.FirstName} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} attacks {target.Value.Value.Character.FirstName}!", cancellationToken);
+                    await this.SendToArea(user.Character.Location, string.Empty, $"{target.Value.Value.Character.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
 
                     // Start the fight.
                     Combat.StartFighting(user.Character, target.Value.Value.Character);
@@ -401,7 +401,7 @@ namespace Legendary.Engine
             {
                 await this.SendToPlayer(actor, "You look at yourself.", cancellationToken);
                 await this.SendToPlayer(actor, this.GetPlayerInfo(actor), cancellationToken);
-                await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} looks at {actor.Pronoun}self.", cancellationToken);
+                await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {actor.Pronoun}self.", cancellationToken);
 
                 if (!string.IsNullOrWhiteSpace(actor.Image))
                 {
@@ -424,7 +424,7 @@ namespace Legendary.Engine
                         if (mobile != null)
                         {
                             await this.SendToPlayer(actor, $"You look at {mobile.FirstName}.", cancellationToken);
-                            await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} looks at {mobile.FirstName}.", cancellationToken);
+                            await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {mobile.FirstName}.", cancellationToken);
                             await this.SendToPlayer(actor, this.GetPlayerInfo(mobile), cancellationToken);
 
                             if (!string.IsNullOrWhiteSpace(mobile.Image))
@@ -440,7 +440,7 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName} looks at you.", cancellationToken);
+                    await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName.FirstCharToUpper()} looks at you.", cancellationToken);
                     await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
                     await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
 
@@ -999,7 +999,7 @@ namespace Legendary.Engine
 
                     if (!string.IsNullOrWhiteSpace(response))
                     {
-                        response = $"{mobile.FirstName} says \"<span class='say'>{response}</span>\"";
+                        response = $"{mobile.FirstName.FirstCharToUpper()} says \"<span class='say'>{response}</span>\"";
                         await this.SendToRoom(mobile, mobile.Location, string.Empty, response, cancellationToken);
                     }
                     else
@@ -1157,7 +1157,7 @@ namespace Legendary.Engine
         {
             var sb = new StringBuilder();
 
-            sb.Append($"<span class='player-desc-title'>{target.FirstName} {target.LastName}</span><br/>");
+            sb.Append($"<span class='player-desc-title'>{target.FirstName.FirstCharToUpper()} {target.LastName}</span><br/>");
             sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
 
             // How beat up they are.
@@ -1475,7 +1475,7 @@ namespace Legendary.Engine
                 await this.SendToPlayer(user.Connection, content, cancellationToken);
             }
 
-            await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} suddenly appears.", cancellationToken);
+            await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} suddenly appears.", cancellationToken);
         }
 
         /// <summary>

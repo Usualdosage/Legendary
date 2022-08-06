@@ -16,6 +16,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Casts the cause light spell.
@@ -44,7 +45,7 @@ namespace Legendary.Engine.Models.Spells
             var item = this.CreateSpringItem();
 
             await this.Communicator.SendToPlayer(actor, $"You close your eyes and a bubbling spring suddenly appears.", cancellationToken);
-            await this.Communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} closes {actor.Pronoun} eyes and a bubbling spring suddenly appears.", cancellationToken);
+            await this.Communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} closes {actor.Pronoun} eyes and a bubbling spring suddenly appears.", cancellationToken);
 
             var room = this.Communicator.ResolveRoom(actor.Location);
 

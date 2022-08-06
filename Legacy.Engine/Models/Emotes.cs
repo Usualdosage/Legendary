@@ -17,7 +17,10 @@ namespace Legendary.Engine.Models
     /// </summary>
     public class Emotes
     {
-        private static readonly Dictionary<string, Emote> Actions = new ()
+        /// <summary>
+        /// All available "built in" emotes.
+        /// </summary>
+        public static readonly Dictionary<string, Emote> Actions = new ()
         {
             { "giggle", new Emote("You giggle.", "{0} giggles.") },
             { "wince", new Emote("You wince painfully.", "{0} winces painfully.") },
@@ -48,6 +51,7 @@ namespace Legendary.Engine.Models
             { "lol", new Emote("You laugh out loud!", "{0} laughs out loud!") },
             { "rofl", new Emote("You laugh so hard you almost fall down.", "{0} laughs so hard they almost fall down.") },
             { "lick", new Emote("You lick your lips.", "{0} licks their lips.") },
+            { "ponder", new Emote("You ponder the idea.", "{0} ponders deeply.") },
         };
 
         /// <summary>

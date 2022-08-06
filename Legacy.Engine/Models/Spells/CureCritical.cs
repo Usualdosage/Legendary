@@ -45,15 +45,28 @@ namespace Legendary.Engine.Models.Spells
 
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor, "You feel a LOT better!", cancellationToken);
-                await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                actor.Health.Current += result;
+                if (actor.Health.Current >= actor.Health.Max)
+                {
+                    await this.Communicator.SendToPlayer(actor, "You are already completely healthy.", cancellationToken);
+                }
+                else
+                {
+                    await this.Communicator.SendToPlayer(actor, "You feel a LOT better!", cancellationToken);
+                    actor.Health.Current += result;
+                }
             }
             else
             {
-                await this.Communicator.SendToPlayer(target, "You feel a LOT better!", cancellationToken);
-                await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                actor.Health.Current += result;
+                if (target.Health.Current >= target.Health.Max)
+                {
+                    await this.Communicator.SendToPlayer(actor, "They are already completely healthy.", cancellationToken);
+                }
+                else
+                {
+                    await this.Communicator.SendToPlayer(target, "You feel a LOT better!", cancellationToken);
+                    await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                    actor.Health.Current += result;
+                }
             }
         }
     }

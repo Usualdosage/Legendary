@@ -15,6 +15,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Casts the create food spell.
@@ -43,7 +44,7 @@ namespace Legendary.Engine.Models.Spells
             var item = this.CreateFoodItem();
 
             await this.Communicator.SendToPlayer(actor, $"You close your eyes and {item.Name} suddenly appears.", cancellationToken);
-            await this.Communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName} closes {actor.Pronoun} eyes and {item.Name} suddenly appears.", cancellationToken);
+            await this.Communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} closes {actor.Pronoun} eyes and {item.Name} suddenly appears.", cancellationToken);
 
             var room = this.Communicator.ResolveRoom(actor.Location);
 

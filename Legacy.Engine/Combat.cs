@@ -108,7 +108,7 @@ namespace Legendary.Engine
                 _ => "<span class='player-health'>is in perfect health.</span>" // 100
             };
 
-            return $"{target.FirstName} {message}.";
+            return $"{target.FirstName.FirstCharToUpper()} {message}.";
         }
 
         /// <summary>
@@ -246,8 +246,8 @@ namespace Legendary.Engine
                     {
                         // This was a total martial combat miss. Show the miss and exit.
                         await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                        await this.communicator.SendToPlayer(target, $"{actor.FirstName}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName}'s {combatAction.DamageNoun} misses {actor.LastName}.", cancellationToken);
+                        await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {actor.LastName}.", cancellationToken);
 
                         // Run post action to check if the skill improved.
                         await combatAction.PostAction(actor, target, cancellationToken);
@@ -258,8 +258,8 @@ namespace Legendary.Engine
                 {
                     // This was a total miss because the character is not proficient. Don't allow an increase.
                     await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                    await this.communicator.SendToPlayer(target, $"{actor.FirstName}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName}'s {combatAction.DamageNoun} misses {actor.LastName}.", cancellationToken);
+                    await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {actor.LastName}.", cancellationToken);
                     return;
                 }
             }
@@ -276,8 +276,8 @@ namespace Legendary.Engine
             var damFromVerb = CalculateDamageVerb(damage, blocked);
 
             await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
-            await this.communicator.SendToPlayer(target, $"{actor.FirstName}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
-            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName}'s {combatAction.DamageNoun} {damFromVerb} {actor.LastName}!", cancellationToken);
+            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
+            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {actor.LastName}!", cancellationToken);
 
             bool isDead = ApplyDamage(target, damage);
 
@@ -493,7 +493,7 @@ namespace Legendary.Engine
             StopFighting(target, killer);
 
             await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
-            await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName} is DEAD!", cancellationToken);
+            await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
 
             var room = this.communicator.ResolveRoom(killer.Location);
 
@@ -524,8 +524,8 @@ namespace Legendary.Engine
                 StopFighting(actor, killer);
 
                 await this.communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
-                await this.communicator.SendToPlayer(actor, $"{killer.FirstName} has KILLED you! You are now dead.", cancellationToken);
-                await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName} is DEAD!");
+                await this.communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
+                await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName.FirstCharToUpper()} is DEAD!");
 
                 await this.communicator.PlaySound(actor, Core.Types.AudioChannel.Actor, Sounds.DEATH, cancellationToken);
 
@@ -537,7 +537,7 @@ namespace Legendary.Engine
 
                 if (room != null)
                 {
-                    this.logger.Info($"{killer.FirstName} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
+                    this.logger.Info($"{killer.FirstName.FirstCharToUpper()} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
 
                     // Generate the corpse.
                     this.GenerateCorpse(killer.Location, actor);
@@ -655,7 +655,7 @@ namespace Legendary.Engine
 
                         if (randomGear != null)
                         {
-                            await this.communicator.SendToPlayer(actor, $"{target.FirstName} blocked your attack with their armor!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} blocked your attack with their armor!", cancellationToken);
                             await this.communicator.SendToPlayer(target, $"You absorbed {actor.FirstName}'s attack with {randomGear.Name}!", cancellationToken);
 
                             randomGear.Durability.Current -= 1;
@@ -664,7 +664,7 @@ namespace Legendary.Engine
                             {
                                 // It's destroyed.
                                 await this.communicator.SendToPlayer(actor, $"You destroyed {randomGear.Name}!", cancellationToken);
-                                await this.communicator.SendToPlayer(target, $"{actor.FirstName} destroyed {randomGear.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroyed {randomGear.Name}.", cancellationToken);
 
                                 target.Equipment.Remove(randomGear);
                             }
