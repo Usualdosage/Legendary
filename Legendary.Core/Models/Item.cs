@@ -15,7 +15,6 @@ namespace Legendary.Core.Models
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Represents a single item.
@@ -148,5 +147,50 @@ namespace Legendary.Core.Models
         /// Gets or sets the item image.
         /// </summary>
         public string? Image { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the item is closed (if container).
+        /// </summary>
+        public bool IsClosed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the item is locked (if container).
+        /// </summary>
+        public bool IsLocked { get; set; }
+
+        /// <summary>
+        /// Gets or sets the keyId for the lock.
+        /// </summary>
+        public long? KeyId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the kind of item.
+        /// </summary>
+        public ItemKind ItemKind { get; set; } = ItemKind.Common;
+
+        /// <summary>
+        /// Gets or sets the liquid type in a drink or spring.
+        /// </summary>
+        public LiquidType LiquidType { get; set; } = LiquidType.None;
+
+        /// <summary>
+        /// Gets or sets the max and current carry weight of the container.
+        /// </summary>
+        public MaxCurrent? CarryWeight { get; set; }
+
+        /// <summary>
+        /// Gets or sets the item resets for a container.
+        /// </summary>
+        public List<long>? ItemResets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the food value for an item.
+        /// </summary>
+        public MaxCurrent? Food { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of drinks in a container (drink).
+        /// </summary>
+        public MaxCurrent? Drinks { get; set; }
     }
 }

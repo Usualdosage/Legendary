@@ -11,6 +11,7 @@ namespace Legendary.Engine.Processors
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -234,6 +235,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("emotes", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmotes)));
             this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEquipment)));
             this.actions.Add("examine", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoExamine)));
+            // this.actions.Add("fill", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFill)));
             this.actions.Add("flee", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFlee)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGet)));
             this.actions.Add("give", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGive)));
@@ -247,6 +249,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("ne", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("nw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("open", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoOpen)));
+            // this.actions.Add("put", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPut)));
             this.actions.Add("pray", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPray)));
             this.actions.Add("quit", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoQuit)));
             this.actions.Add("rest", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRest)));
@@ -304,42 +307,86 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
-            var direction = ParseDirection(args.Method);
-            var friendlyDirection = ParseFriendlyDirection(direction);
-
+            // Check if there is a container in the room
             var room = this.communicator.ResolveRoom(actor.Character.Location);
+            var container = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Container);
 
-            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
-
-            if (exit != null)
+            if (container != null)
             {
-                if (exit.IsDoor && !exit.IsClosed)
+                if (!container.IsClosed)
                 {
-                    // Need to close the door on BOTH sides
-                    var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
-
-                    var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
-
-                    if (exitToThisRoom != null)
-                    {
-                        exitToThisRoom.IsClosed = true;
-                    }
-
-                    exit.IsClosed = true;
-                    await this.communicator.SendToPlayer(actor.Connection, $"You close the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} closes the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
-
-                    await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.CLOSEDOOR, cancellationToken);
-                    await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.CLOSEDOOR, cancellationToken);
-
-                }
-                else if (exit.IsDoor && exit.IsClosed)
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already closed.", cancellationToken);
+                    container.IsClosed = true;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You close {container.Name}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} closes {container.Name}.", cancellationToken);
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's already closed.", cancellationToken);
+                }
+            }
+            else
+            {
+                // See if it's an item they are carrying.
+                var item = actor.Character.Inventory.ParseItemName(args.Method);
+
+                if (item != null)
+                {
+                    if (item.ItemType == ItemType.Container)
+                    {
+                        if (!item.IsClosed)
+                        {
+                            item.IsClosed = true;
+                            await this.communicator.SendToPlayer(actor.Connection, $"You close {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} closes {item.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's already close.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't close that.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    // It has to be a door then.
+                    var direction = ParseDirection(args.Method);
+                    var friendlyDirection = ParseFriendlyDirection(direction);
+
+                    Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+                    if (exit != null)
+                    {
+                        if (exit.IsDoor && !exit.IsClosed)
+                        {
+                            // Need to close the door on BOTH sides
+                            var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
+
+                            var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
+
+                            if (exitToThisRoom != null)
+                            {
+                                exitToThisRoom.IsClosed = true;
+                            }
+
+                            exit.IsClosed = true;
+                            await this.communicator.SendToPlayer(actor.Connection, $"You close the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} closes the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+
+                            await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.CLOSEDOOR, cancellationToken);
+                            await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.CLOSEDOOR, cancellationToken);
+                        }
+                        else if (exit.IsDoor && exit.IsClosed)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already closed.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                        }
+                    }
                 }
             }
         }
@@ -450,14 +497,19 @@ namespace Legendary.Engine.Processors
 
             // Check if there is a spring in the room
             var room = this.communicator.ResolveRoom(actor.Character.Location);
+            var spring = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Spring);
 
-            if (room != null)
+            if (spring != null)
             {
-                var spring = room.Items.FirstOrDefault(i => i.ItemType == ItemType.Spring);
-                if (spring != null)
+                var liquid = ActionHelper.GetLiquidDescription(spring.LiquidType);
+                await this.communicator.SendToPlayer(actor.Connection, $"You drink {liquid} from {spring.Name}.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} drinks {liquid} from {spring.Name}.", cancellationToken);
+
+                actor.Character.Thirst.Current = Math.Min(8, actor.Character.Thirst.Current);
+
+                if (actor.Character.Thirst.Current <= 2)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"You drink cool water from {spring.Name}.", cancellationToken);
-                    actor.Character.Thirst.Current = Math.Min(8, actor.Character.Thirst.Current);
+                    await this.communicator.SendToPlayer(actor.Connection, $"You are no longer thirsty.", cancellationToken);
                 }
             }
             else
@@ -469,8 +521,32 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    // TODO Implement drinking containers.
-                    await this.communicator.SendToPlayer(actor.Connection, $"Not implemented.", cancellationToken);
+                    // See if it's an item they are carrying.
+                    var item = actor.Character.Inventory.ParseItemName(args.Method);
+
+                    if (item != null)
+                    {
+                        if (item.ItemType == ItemType.Drink)
+                        {
+                            if (item.Drinks?.Current > 0)
+                            {
+                                item.Drinks.Current--;
+                                var liquid = ActionHelper.GetLiquidDescription(item.LiquidType);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You drink {liquid} from {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} drinks {liquid} from {item.Name}.", cancellationToken);
+                                actor.Character.Thirst.Current = Math.Min(8, actor.Character.Thirst.Current);
+
+                                if (actor.Character.Thirst.Current <= 2)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You are no longer thirsty.", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"It's empty.", cancellationToken);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -900,45 +976,100 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
-            var direction = ParseDirection(args.Method);
-            var friendlyDirection = ParseFriendlyDirection(direction);
-
+            // Check if there is a container in the room
             var room = this.communicator.ResolveRoom(actor.Character.Location);
+            var container = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Container);
 
-            Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
-
-            if (exit != null)
+            if (container != null)
             {
-                if (exit.IsDoor && exit.IsClosed && exit.IsLocked)
+                // Check if it's locked.
+                if (container.IsClosed && container.IsLocked)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is locked.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's locked.", cancellationToken);
                 }
-                else if (exit.IsDoor && exit.IsClosed)
+                else if (container.IsClosed)
                 {
-                    // Need to open the door on BOTH sides
-                    var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
-
-                    var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
-
-                    if (exitToThisRoom != null)
-                    {
-                        exitToThisRoom.IsClosed = false;
-                    }
-
-                    exit.IsClosed = false;
-                    await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} opens the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
-
-                    await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.OPENDOOR, cancellationToken);
-                    await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.OPENDOOR, cancellationToken);
-                }
-                else if (exit.IsDoor)
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already open.", cancellationToken);
+                    container.IsClosed = false;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You open {container.Name}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} opens {container.Name}.", cancellationToken);
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
+                }
+            }
+            else
+            {
+                // See if it's an item they are carrying.
+                var item = actor.Character.Inventory.ParseItemName(args.Method);
+
+                if (item != null)
+                {
+                    if (item.ItemType == ItemType.Container)
+                    {
+                        // Check if it's locked.
+                        if (item.IsClosed && item.IsLocked)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's locked.", cancellationToken);
+                        }
+                        else if (item.IsClosed)
+                        {
+                            item.IsClosed = false;
+                            await this.communicator.SendToPlayer(actor.Connection, $"You open {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} opens {item.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't open that.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    // It has to be a door then.
+                    var direction = ParseDirection(args.Method);
+                    var friendlyDirection = ParseFriendlyDirection(direction);
+
+                    Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+                    if (exit != null)
+                    {
+                        if (exit.IsDoor && exit.IsClosed && exit.IsLocked)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is locked.", cancellationToken);
+                        }
+                        else if (exit.IsDoor && exit.IsClosed)
+                        {
+                            // Need to open the door on BOTH sides
+                            var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
+
+                            var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
+
+                            if (exitToThisRoom != null)
+                            {
+                                exitToThisRoom.IsClosed = false;
+                            }
+
+                            exit.IsClosed = false;
+                            await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} opens the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+
+                            await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.OPENDOOR, cancellationToken);
+                            await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.OPENDOOR, cancellationToken);
+                        }
+                        else if (exit.IsDoor)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already open.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                        }
+                    }
                 }
             }
         }

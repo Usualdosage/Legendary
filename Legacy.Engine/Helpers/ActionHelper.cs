@@ -10,15 +10,12 @@
 namespace Legendary.Engine.Helpers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using Legendary.Core.Attributes;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
-    using Legendary.Engine.Contracts;
-    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Helper for creating instances of skills and spells by reflection.
@@ -77,6 +74,43 @@ namespace Legendary.Engine.Helpers
             catch
             {
                 return WearLocation.None.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Gets the description of the liquid.
+        /// </summary>
+        /// <param name="liquidType">The liquid type.</param>
+        /// <returns>String.</returns>
+        public static string GetLiquidDescription(LiquidType liquidType)
+        {
+            try
+            {
+                var enumType = typeof(LiquidType);
+                var memberInfos = enumType.GetMember(liquidType.ToString());
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(LiquidDescription), false);
+
+                if (valueAttributes != null && valueAttributes.Count() > 0)
+                {
+                    var descAttribute = valueAttributes[0] as LiquidDescription;
+                    if (descAttribute != null)
+                    {
+                        return descAttribute.Description;
+                    }
+                    else
+                    {
+                        return LiquidType.None.ToString();
+                    }
+                }
+                else
+                {
+                    return LiquidType.None.ToString();
+                }
+            }
+            catch
+            {
+                return LiquidType.None.ToString();
             }
         }
 

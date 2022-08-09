@@ -135,5 +135,50 @@ namespace Legendary.Core.Contracts
         /// Gets or sets the time until this item rots into dust (in ticks).
         /// </summary>
         int RotTimer { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the item is closed (if container).
+        /// </summary>
+        public bool IsClosed { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the item is locked (if container).
+        /// </summary>
+        public bool IsLocked { get; set; }
+
+        /// <summary>
+        /// Gets or sets the key id of the item for the lock.
+        /// </summary>
+        public long? KeyId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the kind of item.
+        /// </summary>
+        public ItemKind ItemKind { get; set; }
+
+        /// <summary>
+        /// Gets or sets the liquid type in a drink or spring.
+        /// </summary>
+        public LiquidType LiquidType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current and max carry weight of the container.
+        /// </summary>
+        public MaxCurrent? CarryWeight { get; set; }
+
+        /// <summary>
+        /// Gets or sets the item resets for a container.
+        /// </summary>
+        public List<long>? ItemResets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current and max carry food value of the item.
+        /// </summary>
+        public MaxCurrent? Food { get; set; }
+
+        /// <summary>
+        /// Gets or sets the current and max number of drinks of the drink.
+        /// </summary>
+        public MaxCurrent? Drinks { get; set; }
     }
 }

@@ -53,5 +53,15 @@ namespace Legendary.Core.Types
         /// Spring.
         /// </summary>
         Spring = 8,
+
+        /// <summary>
+        /// Key.
+        /// </summary>
+        Key = 9,
+
+        /// <summary>
+        /// Gem.
+        /// </summary>
+        Gem = 10,
     }
 }

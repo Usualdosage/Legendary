@@ -25,8 +25,23 @@ namespace Legendary.Core.Types
         Aggressive = 1,
 
         /// <summary>
-        /// Change the mob will wander around.
+        /// Chance the mob will wander around.
         /// </summary>
         Wander = 2,
+
+        /// <summary>
+        /// Can train with this mob.
+        /// </summary>
+        Trainer = 3,
+
+        /// <summary>
+        /// Can buy stuff from this mob.
+        /// </summary>
+        Shopkeeper = 4,
+
+        /// <summary>
+        /// Can select skill trees and practice skills with this mob.
+        /// </summary>
+        Guildmaster = 5,
     }
 }
