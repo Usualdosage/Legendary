@@ -767,6 +767,8 @@ namespace Legendary.Engine
                     Weight = 200,
                     RotTimer = 2,
                     Contains = new List<IItem>(),
+                    IsPlayerCorpse = !victim.IsNPC,
+                    IsNPCCorpse = victim.IsNPC,
                 };
 
                 // Create a corpse with their stuff in the room.

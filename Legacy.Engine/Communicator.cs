@@ -185,9 +185,13 @@ namespace Legendary.Engine
                 string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
                 this.logger.Info(msg, this);
 
-                // BUGFIX: Remove any fighting affects
+                // Remove any fighting affects
                 userData.Character.Fighting = null;
                 userData.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+
+                // Remove any previous followers or followings.
+                userData.Character.Followers = new List<long>();
+                userData.Character.Following = null;
 
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip?.ToString());
@@ -318,6 +322,10 @@ namespace Legendary.Engine
                 }
                 else
                 {
+                    // Remove any followers or followings.
+                    user.Value.Value.Character.Followers = new List<long>();
+                    user.Value.Value.Character.Following = null;
+
                     Users?.TryRemove(user.Value);
                 }
             }
@@ -353,7 +361,6 @@ namespace Legendary.Engine
 
                 if (target == null || target.Value.Value == null)
                 {
-                    // Maybe a mobile?
                     var mobiles = this.GetMobilesInRoom(user.Character.Location);
 
                     if (mobiles != null)
@@ -773,6 +780,19 @@ namespace Legendary.Engine
             if (!character.IsNPC && Users != null)
             {
                 return Users.FirstOrDefault(u => u.Value.Character.FirstName == character.FirstName).Value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
+        public UserData? ResolveCharacter(long characterId)
+        {
+            if (Users != null)
+            {
+                return Users.FirstOrDefault(u => u.Value.Character.CharacterId == characterId).Value;
             }
             else
             {

@@ -405,7 +405,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character the player is following.
         /// </summary>
-        public Character? Following { get; set; }
+        public long? Following { get; set; }
 
         /// <summary>
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.

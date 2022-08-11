@@ -436,6 +436,14 @@ namespace Legendary.Engine
                                     string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
                                     await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
+                                    // Remove the mobile from the prior location.
+                                    var lastRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                    if (lastRoom != null)
+                                    {
+                                        lastRoom.Mobiles.Remove(mobile);
+                                    }
+
                                     // Set the mobile's new location.
                                     mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
 

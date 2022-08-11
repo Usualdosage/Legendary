@@ -75,6 +75,13 @@ namespace Legendary.Core.Contracts
         UserData? ResolveCharacter(string name);
 
         /// <summary>
+        /// Resolves a player using their character id.
+        /// </summary>
+        /// <param name="characterId">The character id.</param>
+        /// <returns>UserData.</returns>
+        UserData? ResolveCharacter(long characterId);
+
+        /// <summary>
         /// Gets the item by item Id.
         /// </summary>
         /// <param name="itemId">Item id.</param>

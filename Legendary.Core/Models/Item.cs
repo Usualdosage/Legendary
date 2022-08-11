@@ -192,5 +192,15 @@ namespace Legendary.Core.Models
         /// Gets or sets the number of drinks in a container (drink).
         /// </summary>
         public MaxCurrent? Drinks { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether or not this is a mob corpse.
+        /// </summary>
+        public bool IsNPCCorpse { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether or not this is a player corpse.
+        /// </summary>
+        public bool IsPlayerCorpse { get; set; }
     }
 }

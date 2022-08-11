@@ -67,6 +67,7 @@ namespace Legendary.Engine
 
             this.logger.Info("Populating the world with mobiles and items...", null);
 
+            await this.world.CleanupWorld();
             this.world.Populate();
 
             this.logger.Info("Starting main loop...", null);

@@ -79,7 +79,7 @@ namespace Legendary.Engine.Processors
             {
                 // Get the matching actions for the command word.
                 var action = this.actions
-                    .Where(a => a.Key.StartsWith(args.Action))
+                    .Where(a => a.Key.StartsWith(args.Action.ToLower()))
                     .OrderBy(a => a.Value.Key)
                     .FirstOrDefault();
 
@@ -103,7 +103,7 @@ namespace Legendary.Engine.Processors
                     {
                         // Get the matching actions for the wizard command word.
                         var wizAction = this.wizActions
-                            .Where(a => a.Key.StartsWith(args.Action))
+                            .Where(a => a.Key.StartsWith(args.Action.ToLower()))
                             .OrderBy(a => a.Value.Key)
                             .FirstOrDefault();
 
@@ -238,6 +238,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("examine", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoExamine)));
             // this.actions.Add("fill", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFill)));
             this.actions.Add("flee", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFlee)));
+            this.actions.Add("follow", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFollow)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGet)));
             this.actions.Add("give", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGive)));
             this.actions.Add("help", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoHelp)));
@@ -657,6 +658,59 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        private async Task DoFollow(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Follow whom?", cancellationToken);
+            }
+            else
+            {
+                if (args.Method.ToLower() == "self")
+                {
+                    if (actor.Character.Following != null)
+                    {
+                        // Find the person they were following and remove them as a follower.
+                        var target = this.communicator.ResolveCharacter(actor.Character.Following.Value);
+
+                        if (target != null)
+                        {
+                            target.Character.Followers.Remove(actor.Character.CharacterId);
+                            await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} stops following you.", cancellationToken);
+                        }
+                    }
+
+                    actor.Character.Following = null;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You now follow yourself, and yourself alone.", cancellationToken);
+                }
+                else
+                {
+                    var target = this.communicator.ResolveCharacter(args.Method);
+
+                    if (target != null)
+                    {
+                        // You can follow a person, but they have to be in the same room.
+                        if (target.Character.Location.Value == actor.Character.Location.Value)
+                        {
+                            target.Character.Followers.Add(actor.Character.CharacterId);
+                            actor.Character.Following = target.Character.CharacterId;
+                            await this.communicator.SendToPlayer(actor.Connection, $"You begin following {target.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} now follows you.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                }
+            }
+        }
+
         private async Task DoGet(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -665,7 +719,21 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                await this.GetItem(actor, args.Method, args.Target, cancellationToken);
+                if (!string.IsNullOrWhiteSpace(args.Target))
+                {
+                    await this.GetItem(actor, args.Method, args.Target, cancellationToken);
+                }
+                else
+                {
+                    if (args.Method.ToLower() == "all")
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"Get all of what?", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"Get what now?", cancellationToken);
+                    }
+                }
             }
         }
 
@@ -696,7 +764,8 @@ namespace Legendary.Engine.Processors
 
                         await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                         await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, targetPlayer.Character, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
+
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                     }
                     else
                     {
@@ -1096,7 +1165,12 @@ namespace Legendary.Engine.Processors
                     if (newArea != null && newRoom != null)
                     {
                         string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                        await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+
+                        if (actor.Character.Following == null)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+                        }
+
                         await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
                         await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
@@ -1107,6 +1181,23 @@ namespace Legendary.Engine.Processors
 
                         await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                         await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
+
+                        // Check if there are followers.
+                        if (actor.Character.Followers.Count > 0)
+                        {
+                            foreach (var follower in actor.Character.Followers)
+                            {
+                                // Resolve the follower.
+                                var target = this.communicator.ResolveCharacter(follower);
+
+                                // Make sure they are still following the actor.
+                                if (target != null && target.Character.Following == actor.Character.CharacterId)
+                                {
+                                    await this.communicator.SendToPlayer(target.Connection, $"You follow {actor.Character.FirstName} {dir}.", cancellationToken);
+                                    await this.DoMove(target, args, cancellationToken);
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -2267,7 +2358,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (item != null)
                     {
-                        if (item.WearLocation.Contains(WearLocation.None))
+                        if (item.WearLocation.Contains(WearLocation.None) && !item.IsNPCCorpse)
                         {
                             await this.communicator.SendToPlayer(user.Connection, $"You can't sacrifice {item.Name}.", cancellationToken);
                         }
@@ -2300,7 +2391,7 @@ namespace Legendary.Engine.Processors
 
                 if (item != null)
                 {
-                    if (item.WearLocation.Contains(WearLocation.None))
+                    if (item.WearLocation.Contains(WearLocation.None) && !item.IsNPCCorpse)
                     {
                         await this.communicator.SendToPlayer(user.Connection, $"You can't sacrifice {item.Name}.", cancellationToken);
                         return;
