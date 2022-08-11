@@ -90,6 +90,27 @@ namespace Legendary.Engine
                         {
                             var clone = item.DeepCopy();
                             clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                            if (clone.ItemResets != null)
+                            {
+                                foreach (var itemReset in clone.ItemResets)
+                                {
+                                    var itemInItem = this.Items.FirstOrDefault(i => i.ItemId == itemReset);
+
+                                    if (itemInItem != null)
+                                    {
+                                        var itemInItemClone = itemInItem.DeepCopy();
+
+                                        if (clone.Contains == null)
+                                        {
+                                            clone.Contains = new List<IItem>();
+                                        }
+
+                                        clone.Contains.Add(itemInItemClone);
+                                    }
+                                }
+                            }
+
                             room.Items.Add(clone);
                         }
                     }
