@@ -85,7 +85,16 @@ namespace Legendary.Engine.Extensions
                 }
             }
 
-            return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;
+            var matchResult = bestMatch.OrderByDescending(b => b.Key).FirstOrDefault();
+
+            if (matchResult.Key == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return matchResult.Value;
+            }
         }
 
         /// <summary>
@@ -134,57 +143,16 @@ namespace Legendary.Engine.Extensions
                 }
             }
 
-            return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;
-        }
+            var matchResult = bestMatch.OrderByDescending(b => b.Key).FirstOrDefault();
 
-        /// <summary>
-        /// Get the most likely name from a list of items for a given input.
-        /// </summary>
-        /// <param name="items">The list of items.</param>
-        /// <param name="input">The string to match.</param>
-        /// <returns>Mobile.</returns>
-        public static Item? ParseItemName(this List<Item> items, string input)
-        {
-            var bestMatch = new Dictionary<Item, int>();
-
-            foreach (var item in items)
+            if (matchResult.Key == 0)
             {
-                List<string> allTokens = new List<string>();
-
-                var nameTokens = item.Name.Split(' ');
-                var shortDescTokens = item.ShortDescription?.Split(' ');
-
-                if (nameTokens != null)
-                {
-                    allTokens.AddRange(nameTokens);
-                }
-
-                if (shortDescTokens != null)
-                {
-                    allTokens.AddRange(shortDescTokens);
-                }
-
-                int matchCount = 0;
-
-                foreach (var token in allTokens)
-                {
-                    if (Regex.IsMatch(token, input))
-                    {
-                        matchCount += 1;
-                    }
-                }
-
-                if (!bestMatch.ContainsKey(item))
-                {
-                    bestMatch.Add(item, matchCount);
-                }
-                else
-                {
-                    bestMatch[item] += matchCount;
-                }
+                return null;
             }
-
-            return bestMatch.OrderByDescending(b => b.Value).FirstOrDefault().Key;
+            else
+            {
+                return matchResult.Value;
+            }
         }
     }
 }

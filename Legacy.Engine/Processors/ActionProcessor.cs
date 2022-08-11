@@ -11,7 +11,6 @@ namespace Legendary.Engine.Processors
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -34,7 +33,7 @@ namespace Legendary.Engine.Processors
     /// <summary>
     /// Used to perform quick lookups of skills.
     /// </summary>
-    public class ActionProcessor
+    public partial class ActionProcessor
     {
         private readonly ICommunicator communicator;
         private readonly IWorld world;
@@ -232,12 +231,13 @@ namespace Legendary.Engine.Processors
             this.actions.Add("drop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrop)));
             this.actions.Add("east", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("eat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEat)));
-            this.actions.Add("emote", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmote)));
+            this.actions.Add("emote", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmote)));
             this.actions.Add("emotes", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmotes)));
-            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEquipment)));
-            this.actions.Add("examine", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoExamine)));
-            // this.actions.Add("fill", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFill)));
-            this.actions.Add("flee", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFlee)));
+            this.actions.Add("empty", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEmpty)));
+            this.actions.Add("equipment", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEquipment)));
+            this.actions.Add("examine", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoExamine)));
+            this.actions.Add("fill", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFill)));
+            this.actions.Add("flee", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFlee)));
             this.actions.Add("follow", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoFollow)));
             this.actions.Add("get", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGet)));
             this.actions.Add("give", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGive)));
@@ -333,7 +333,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 // See if it's an item they are carrying.
-                var item = actor.Character.Inventory.ParseItemName(args.Method);
+                var item = actor.Character.Inventory.ParseTargetName(args.Method);
 
                 if (item != null)
                 {
@@ -505,7 +505,7 @@ namespace Legendary.Engine.Processors
             var room = this.communicator.ResolveRoom(actor.Character.Location);
             var spring = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Spring);
 
-            if (spring != null)
+            if (spring != null && string.IsNullOrEmpty(args.Method))
             {
                 var liquid = ActionHelper.GetLiquidDescription(spring.LiquidType);
                 await this.communicator.SendToPlayer(actor.Connection, $"You drink {liquid} from {spring.Name}.", cancellationToken);
@@ -528,7 +528,7 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     // See if it's an item they are carrying.
-                    var item = actor.Character.Inventory.ParseItemName(args.Method);
+                    var item = actor.Character.Inventory.ParseTargetName(args.Method);
 
                     if (item != null)
                     {
@@ -552,6 +552,10 @@ namespace Legendary.Engine.Processors
                                 await this.communicator.SendToPlayer(actor.Connection, $"It's empty.", cancellationToken);
                             }
                         }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't drink from that.", cancellationToken);
                     }
                 }
             }
@@ -613,6 +617,89 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        private async Task DoEmpty(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Empty what?", cancellationToken);
+            }
+            else
+            {
+                var itemName = args.Method.ToLower();
+
+                var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+
+                if (target != null && target.ItemType == ItemType.Drink)
+                {
+                    if (target.Drinks?.Current == 0)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"{target.Name} is already empty.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You empty {target.Name}, pouring {ActionHelper.GetLiquidDescription(target.LiquidType)} out onto the ground.", cancellationToken);
+
+                        if (target.Drinks != null)
+                        {
+                            target.Drinks.Current = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You can't empty that.", cancellationToken);
+                }
+            }
+        }
+
+        private async Task DoFill(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Fill what?", cancellationToken);
+            }
+            else
+            {
+                var itemName = args.Method.ToLower();
+
+                var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+
+                if (target != null && target.ItemType == ItemType.Drink)
+                {
+                    // See if there's a fountain in the room.
+                    var room = this.communicator.ResolveRoom(actor.Character.Location);
+                    var spring = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Spring);
+
+                    if (spring != null)
+                    {
+                        if (target.Drinks?.Current > 0)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"{target.Name} already has something in it.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You fill {target.Name} with {ActionHelper.GetLiquidDescription(spring.LiquidType)} from {spring.Name}.", cancellationToken);
+
+                            if (target.Drinks != null)
+                            {
+                                target.Drinks.Current = target.Drinks.Max;
+                            }
+
+                            target.LiquidType = spring.LiquidType;
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"There's nothing here to fill that with.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You can't fill that.", cancellationToken);
+                }
+            }
         }
 
         private async Task DoFlee(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -719,21 +806,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                if (!string.IsNullOrWhiteSpace(args.Target))
-                {
-                    await this.GetItem(actor, args.Method, args.Target, cancellationToken);
-                }
-                else
-                {
-                    if (args.Method.ToLower() == "all")
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"Get all of what?", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"Get what now?", cancellationToken);
-                    }
-                }
+                await this.GetItem(actor, args.Method, args.Target, cancellationToken);
             }
         }
 
@@ -984,7 +1057,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 // See if it's an item they are carrying.
-                var item = actor.Character.Inventory.ParseItemName(args.Method);
+                var item = actor.Character.Inventory.ParseTargetName(args.Method);
 
                 if (item != null)
                 {
@@ -1263,7 +1336,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 // See if it's an item they are carrying.
-                var item = actor.Character.Inventory.ParseItemName(args.Method);
+                var item = actor.Character.Inventory.ParseTargetName(args.Method);
 
                 if (item != null)
                 {
@@ -1918,7 +1991,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 // See if it's an item they are carrying.
-                var item = actor.Character.Inventory.ParseItemName(args.Method);
+                var item = actor.Character.Inventory.ParseTargetName(args.Method);
 
                 if (item != null)
                 {
@@ -2346,7 +2419,7 @@ namespace Legendary.Engine.Processors
 
             if (target.ToLower() == "all")
             {
-                List<Item> itemsToRemove = new();
+                List<Item> itemsToRemove = new ();
 
                 if (room.Items == null || room.Items.Count == 0)
                 {
@@ -2385,9 +2458,9 @@ namespace Legendary.Engine.Processors
                     return;
                 }
 
-                List<Item> itemsToRemove = new();
+                List<Item> itemsToRemove = new ();
 
-                var item = room.Items.ParseItemName(target);
+                var item = room.Items.ParseTargetName(target);
 
                 if (item != null)
                 {
@@ -2515,7 +2588,7 @@ namespace Legendary.Engine.Processors
 
                 List<Item> itemsToRemove = new ();
 
-                var item = room.Items.ParseItemName(method);
+                var item = room.Items.ParseTargetName(method);
 
                 if (item != null)
                 {
@@ -2552,7 +2625,7 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
-            var item = user.Character.Inventory.ParseItemName(target);
+            var item = user.Character.Inventory.ParseTargetName(target);
 
             if (item != null && item.ItemType == ItemType.Food)
             {
@@ -2619,7 +2692,7 @@ namespace Legendary.Engine.Processors
 
                     List<Item> itemsToRemove = new ();
 
-                    var item = user.Character.Inventory.ParseItemName(target);
+                    var item = user.Character.Inventory.ParseTargetName(target);
 
                     if (item != null)
                     {
