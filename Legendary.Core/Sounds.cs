@@ -115,5 +115,15 @@ namespace Legendary.Core
         /// Close Door MP3.
         /// </summary>
         public const string CLOSEDOOR = "https://legendary.file.core.windows.net/audio/soundfx/door-close.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Lock Door MP3.
+        /// </summary>
+        public const string LOCKDOOR = "https://legendary.file.core.windows.net/audio/soundfx/door-open.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Unlock Door MP3.
+        /// </summary>
+        public const string UNLOCKDOOR = "https://legendary.file.core.windows.net/audio/soundfx/door-close.mp3" + SAS_TOKEN;
     }
 }

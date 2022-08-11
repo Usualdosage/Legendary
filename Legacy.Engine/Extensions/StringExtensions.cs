@@ -79,7 +79,10 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                bestMatch.Add(matchCount, target);
+                if (!bestMatch.ContainsKey(matchCount))
+                {
+                    bestMatch.Add(matchCount, target);
+                }
             }
 
             return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;
@@ -125,7 +128,10 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                bestMatch.Add(matchCount, target);
+                if (!bestMatch.ContainsKey(matchCount))
+                {
+                    bestMatch.Add(matchCount, target);
+                }
             }
 
             return bestMatch.OrderByDescending(b => b.Key).FirstOrDefault().Value;

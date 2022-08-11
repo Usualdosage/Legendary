@@ -242,6 +242,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("help", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoHelp)));
             this.actions.Add("inventory", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoInventory)));
             this.actions.Add("kill", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCombat)));
+            this.actions.Add("lock", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLock)));
             this.actions.Add("look", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLook)));
             this.actions.Add("murder", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCombat)));
             this.actions.Add("newbie", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoNewbieChat)));
@@ -269,6 +270,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("subscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(9, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSubscribe)));
             this.actions.Add("tell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(0, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTell)));
             this.actions.Add("time", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTime)));
+            this.actions.Add("unlock", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoUnlock)));
             this.actions.Add("unsubscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoUnsubscribe)));
             this.actions.Add("up", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("west", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
@@ -860,29 +862,195 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        private async Task DoLock(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Lock what?", cancellationToken);
+                return;
+            }
+
+            // Check if there is a container in the room
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+            var container = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Container);
+
+            if (container != null && container.Name.Contains(args.Method))
+            {
+                // Check if it's locked.
+                if (container.IsClosed && container.IsLocked)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's already locked.", cancellationToken);
+                }
+                else if (!container.IsClosed)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's still open.", cancellationToken);
+                }
+                else if (container.IsClosed && !container.IsLocked)
+                {
+                    // Do we have a key?
+                    var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == container.KeyId);
+                    if (key == null)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You lock {container.Name} with {key.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} locks {container.Name} with {key.Name}.", cancellationToken);
+
+                        await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.LOCKDOOR, cancellationToken);
+                        await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.LOCKDOOR, cancellationToken);
+
+                        container.IsLocked = true;
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You can't lock that.", cancellationToken);
+                }
+            }
+            else
+            {
+                // See if it's an item they are carrying.
+                var item = actor.Character.Inventory.ParseItemName(args.Method);
+
+                if (item != null)
+                {
+                    if (item.ItemType == ItemType.Container)
+                    {
+                        // Check if it's locked.
+                        if (item.IsClosed && item.IsLocked)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's already locked.", cancellationToken);
+                        }
+                        else if (!item.IsClosed)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's still open.", cancellationToken);
+                        }
+                        else if (item.IsClosed && !item.IsLocked)
+                        {
+                            // Do we have a key?
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == item.KeyId);
+                            if (key == null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You lock {item.Name} with {key.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} locks {item.Name}.", cancellationToken);
+
+                                item.IsLocked = true;
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't lock that.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't lock that.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    // It has to be a door then.
+                    var direction = ParseDirection(args.Method);
+                    var friendlyDirection = ParseFriendlyDirection(direction);
+
+                    Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+                    if (exit != null)
+                    {
+                        if (exit.IsDoor && exit.IsClosed && exit.IsLocked)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already locked.", cancellationToken);
+                        }
+                        else if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
+                        {
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == exit.KeyId);
+                            if (key == null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
+                            }
+                            else
+                            {
+                                // Need to lock the door on BOTH sides
+                                var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
+
+                                var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
+
+                                if (exitToThisRoom != null)
+                                {
+                                    exitToThisRoom.IsLocked = true;
+                                }
+
+                                exit.IsLocked = true;
+                                await this.communicator.SendToPlayer(actor.Connection, $"You lock the {exit.DoorName} {friendlyDirection} you with {key.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} locks the {exit.DoorName} {friendlyDirection} you with {key.Name}.", cancellationToken);
+
+                                await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.LOCKDOOR, cancellationToken);
+                                await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.LOCKDOOR, cancellationToken);
+                            }
+                        }
+                        else if (exit.IsDoor && !exit.IsClosed)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is open.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                        }
+                    }
+                }
+            }
+        }
+
         private async Task DoLook(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(args.Method))
             {
-                // Are we looking at a player, a mobile, or at an item?
-                var items = this.communicator.GetItemsInRoom(actor.Character.Location);
-
-                if (items != null)
+                if (args.Method.ToLower() == "sky")
                 {
-                    var item = items.ParseTargetName(args.Method);
+                    var room = this.communicator.ResolveRoom(actor.Character.Location);
 
-                    if (item != null)
+                    if (room != null && room.Flags.Contains(RoomFlags.Indoors))
                     {
-                        await this.communicator.ShowItemToPlayer(actor.Character, item, cancellationToken);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You're unable to see the sky from indoors.", cancellationToken);
+                    }
+                    else
+                    {
+                        var area = this.communicator.ResolveArea(actor.Character.Location);
+
+                        if (area != null)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"Looking at the sky, you seem to be in the vicinty of {area.Name}.", cancellationToken);
+                        }
+                    }
+                }
+                else
+                {
+                    // Are we looking at a player, a mobile, or at an item?
+                    var items = this.communicator.GetItemsInRoom(actor.Character.Location);
+
+                    if (items != null)
+                    {
+                        var item = items.ParseTargetName(args.Method);
+
+                        if (item != null)
+                        {
+                            await this.communicator.ShowItemToPlayer(actor.Character, item, cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
+                        }
                     }
                     else
                     {
                         await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
                     }
-                }
-                else
-                {
-                    await this.communicator.ShowPlayerToPlayer(actor.Character, args.Method, cancellationToken);
                 }
             }
             else
@@ -1149,6 +1317,7 @@ namespace Legendary.Engine.Processors
             {
                 await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
                 await this.world.LoadWorld();
+                await this.world.CleanupWorld();
                 this.world.Populate();
                 await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
                 this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);
@@ -1600,6 +1769,151 @@ namespace Legendary.Engine.Processors
                     else
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                }
+            }
+        }
+
+        private async Task DoUnlock(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Unlock what?", cancellationToken);
+                return;
+            }
+
+            // Check if there is a container in the room
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+            var container = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Container);
+
+            if (container != null && container.Name.Contains(args.Method))
+            {
+                // Check if it's locked.
+                if (container.IsClosed && !container.IsLocked)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's already unlocked.", cancellationToken);
+                }
+                else if (!container.IsClosed)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
+                }
+                else if (container.IsClosed && container.IsLocked)
+                {
+                    // Do we have a key?
+                    var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == container.KeyId);
+                    if (key == null)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You unlock {container.Name} with {key.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} unlocks {container.Name} with {key.Name}.", cancellationToken);
+
+                        await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.UNLOCKDOOR, cancellationToken);
+                        await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.UNLOCKDOOR, cancellationToken);
+
+                        container.IsLocked = false;
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You can't unlock that.", cancellationToken);
+                }
+            }
+            else
+            {
+                // See if it's an item they are carrying.
+                var item = actor.Character.Inventory.ParseItemName(args.Method);
+
+                if (item != null)
+                {
+                    if (item.ItemType == ItemType.Container)
+                    {
+                        // Check if it's locked.
+                        if (item.IsClosed && !item.IsLocked)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's already unlocked.", cancellationToken);
+                        }
+                        else if (!item.IsClosed)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
+                        }
+                        else if (item.IsClosed && item.IsLocked)
+                        {
+                            // Do we have a key?
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == item.KeyId);
+                            if (key == null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You unlock {item.Name} with {key.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} unlocks {item.Name}.", cancellationToken);
+
+                                item.IsLocked = false;
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't unlock that.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't unlock that.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    // It has to be a door then.
+                    var direction = ParseDirection(args.Method);
+                    var friendlyDirection = ParseFriendlyDirection(direction);
+
+                    Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
+
+                    if (exit != null)
+                    {
+                        if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already unlocked.", cancellationToken);
+                        }
+                        else if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
+                        {
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == exit.KeyId);
+                            if (key == null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
+                            }
+                            else
+                            {
+                                // Need to lock the door on BOTH sides
+                                var oppRoom = this.communicator.ResolveRoom(new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom));
+
+                                var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
+
+                                if (exitToThisRoom != null)
+                                {
+                                    exitToThisRoom.IsLocked = true;
+                                }
+
+                                exit.IsLocked = true;
+                                await this.communicator.SendToPlayer(actor.Connection, $"You unlock the {exit.DoorName} {friendlyDirection} you with {key.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} unlocks the {exit.DoorName} {friendlyDirection} you with {key.Name}.", cancellationToken);
+
+                                await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.UNLOCKDOOR, cancellationToken);
+                                await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.UNLOCKDOOR, cancellationToken);
+                            }
+                        }
+                        else if (exit.IsDoor && !exit.IsClosed)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is open.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"There is no door in that direction.", cancellationToken);
+                        }
                     }
                 }
             }

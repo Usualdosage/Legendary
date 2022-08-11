@@ -103,6 +103,13 @@ namespace Legendary.Core.Contracts
         Room? ResolveRoom(KeyValuePair<long, long> location);
 
         /// <summary>
+        /// Gets a area by location.
+        /// </summary>
+        /// <param name="location">The area ID and room ID.</param>
+        /// <returns>Area.</returns>
+        Area? ResolveArea(KeyValuePair<long, long> location);
+
+        /// <summary>
         /// Resolves which character someone is fighting. Could be a player or a mob.
         /// </summary>
         /// <param name="actor">The character.</param>

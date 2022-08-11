@@ -802,7 +802,7 @@ namespace Legendary.Engine
                 {
                     foreach (var room in area.Rooms)
                     {
-                        var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().StartsWith(name.ToLower()));
+                        var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().Contains(name.ToLower()));
 
                         if (mob != null)
                         {
@@ -822,7 +822,7 @@ namespace Legendary.Engine
             {
                 foreach (var room in area.Rooms)
                 {
-                    var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().StartsWith(name.ToLower()));
+                    var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().Contains(name.ToLower()));
 
                     if (mob != null)
                     {
@@ -867,6 +867,12 @@ namespace Legendary.Engine
         public Room? ResolveRoom(KeyValuePair<long, long> location)
         {
             return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key)?.Rooms.SingleOrDefault(r => r.RoomId == location.Value);
+        }
+
+        /// <inheritdoc/>
+        public Area? ResolveArea(KeyValuePair<long, long> location)
+        {
+            return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key);
         }
 
         /// <inheritdoc/>
