@@ -108,7 +108,7 @@ namespace Legendary.Engine
                 _ => "<span class='player-health'>is in perfect health.</span>" // 100
             };
 
-            return $"{target.FirstName.FirstCharToUpper()} {message}.";
+            return $"{target.FirstName.FirstCharToUpper()} {message}";
         }
 
         /// <summary>

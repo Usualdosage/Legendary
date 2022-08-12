@@ -129,18 +129,21 @@ namespace Legendary.Engine
             var hitRestore = Math.Min(user.Character.Health.Max - user.Character.Health.Current, standardHPRecover);
             user.Character.Health.Current += hitRestore;
 
-            user.Character.Hunger.Current += 1;
-            user.Character.Thirst.Current += 1;
-
             // TODO Cumulative effects, and add damage as these increase.
-            if (user.Character.Hunger.Current >= user.Character.Hunger.Max)
+            if (user.Character.Level < Constants.WIZLEVEL)
             {
-                await this.communicator.SendToPlayer(user.Connection, $"You are hungry.");
-            }
+                user.Character.Hunger.Current += 1;
+                user.Character.Thirst.Current += 1;
 
-            if (user.Character.Thirst.Current >= user.Character.Thirst.Max)
-            {
-                await this.communicator.SendToPlayer(user.Connection, $"You are thirsty.");
+                if (user.Character.Hunger.Current >= user.Character.Hunger.Max)
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"You are hungry.");
+                }
+
+                if (user.Character.Thirst.Current >= user.Character.Thirst.Max)
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"You are thirsty.");
+                }
             }
         }
 
