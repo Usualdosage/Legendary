@@ -81,7 +81,8 @@ namespace Legendary.Engine.Models
                 }
                 else
                 {
-                    return null;
+                    var emote = words.Skip(1).Take(words.Count - 1).Select(w => w.Value).ToArray();
+                    return new CommandArgs(words[0].Value, string.Join(' ', emote), string.Empty);
                 }
             }
         }

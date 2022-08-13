@@ -159,6 +159,16 @@ namespace Legendary.Core.Models
         public bool IsLocked { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the item is trapped (if container).
+        /// </summary>
+        public bool IsTrapped { get; set; }
+
+        /// <summary>
+        /// Gets or sets the trap type.
+        /// </summary>
+        public TrapType? TrapType { get; set; }
+
+        /// <summary>
         /// Gets or sets the keyId for the lock.
         /// </summary>
         public long? KeyId { get; set; }

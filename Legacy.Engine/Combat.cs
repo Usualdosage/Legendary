@@ -415,18 +415,18 @@ namespace Legendary.Engine
             // The greater the level difference, the more experience, and vice versa.
 
             // Start with the base experience per kill.
-            int baseExperience = this.random.Next(200, 400);
+            int baseExperience = this.random.Next(0, 400);
 
-            // e.g. 10, 50 = -40
-            int levelOffset = actor.Level - target.Level;
+            // e.g. 10, 50 = -40 * 10 = -400
+            int levelOffset = (target.Level - actor.Level) * 10;
 
-            if (levelOffset < 0)
+            if (levelOffset == 0)
             {
-                levelOffset = Math.Abs(levelOffset * 10); // e.g. 400
+                levelOffset = 1;
             }
 
-            // Calculate the modifier. Need at least 1 to produce a non-zero result.
-            double expModifier = Math.Max(1, levelOffset / 100); // e.g. 4
+            // Calculate the modifier
+            double expModifier = levelOffset / 100; // e.g. -4
 
             // Bonus if char is evil vs good, vice versa.
             double bonus = 1;
@@ -474,7 +474,7 @@ namespace Legendary.Engine
                     }
             }
 
-            double expResult = (baseExperience * expModifier) * bonus;
+            double expResult = Math.Max(0, (baseExperience * expModifier) * bonus);
 
             actor.Experience += (int)expResult;
 

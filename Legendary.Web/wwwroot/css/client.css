@@ -588,3 +588,23 @@ progress {
 .dice {
     margin: 3px;
 }
+
+/* Help Files */
+.help-text {
+
+}
+
+    .help-text h4 {
+        font-size: 1.1em;
+        font-weight: bold;
+        font-family: 'Balgruf';
+    }
+
+    .help-text ul li {
+        font-weight: bold;
+    }
+
+    .help-text ul li em {
+        color: aquamarine;
+    }
+

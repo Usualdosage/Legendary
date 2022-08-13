@@ -103,7 +103,7 @@ namespace Legendary.Engine.Models
         /// <inheritdoc/>
         public virtual async Task CheckImprove(Character actor, CancellationToken cancellationToken = default)
         {
-            int maxImprove = (int)Math.Max(2, actor.Int.Current / 4);
+            int maxImprove = (int)Math.Max(10, actor.Int.Current);
 
             if (this.ActionType == ActionType.Skill)
             {
@@ -119,7 +119,7 @@ namespace Legendary.Engine.Models
                     // The lower the skill percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
                     int modifier = (int)(1 / (skillProficiency.Proficiency / 5) * 100);
 
-                    skillProficiency.Progress += this.Random.Next(0, maxImprove) + modifier;
+                    skillProficiency.Progress += this.Random.Next(8, maxImprove) + modifier;
 
                     if (skillProficiency.Progress >= 100)
                     {
@@ -129,10 +129,12 @@ namespace Legendary.Engine.Models
                         if (skillProficiency.Proficiency == 100)
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
+                            actor.Experience += this.Random.Next(1000, 2000);
                         }
                         else
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+                            actor.Experience += this.Random.Next(100, 200);
                         }
 
                         await this.Communicator.SaveCharacter(actor);
@@ -164,11 +166,15 @@ namespace Legendary.Engine.Models
                         if (spellProficiency.Proficiency == 100)
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
+                            actor.Experience += this.Random.Next(1000, 2000);
                         }
                         else
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have become better at {this.Name}!", cancellationToken);
+                            actor.Experience += this.Random.Next(100, 200);
                         }
+
+                        await this.Communicator.SaveCharacter(actor);
                     }
                 }
             }

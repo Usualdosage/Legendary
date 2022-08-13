@@ -55,6 +55,16 @@ namespace Legendary.Core.Models
         public bool IsClosed { get; set; } = false;
 
         /// <summary>
+        /// Gets or sets a value indicating whether this door is trapped.
+        /// </summary>
+        public bool IsTrapped { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the trap type.
+        /// </summary>
+        public TrapType? TrapType { get; set; }
+
+        /// <summary>
         /// Gets or sets the name of the door.
         /// </summary>
         public string? DoorName { get; set; }

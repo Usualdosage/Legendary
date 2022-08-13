@@ -201,19 +201,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        /// <summary>
-        /// Configures all of the wizard (immortal) actions. Actions from this list cannot be accessed by mortal players.
-        /// </summary>
-        private void ConfigureWizActions()
-        {
-            this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
-            this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
-            this.wizActions.Add("reload", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReload)));
-            this.wizActions.Add("slay", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSlay)));
-            this.wizActions.Add("title", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTitle)));
-            this.wizActions.Add("transfer", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTransfer)));
-            this.wizActions.Add("wiznet", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWiznet)));
-        }
+        
 
         /// <summary>
         /// Configures all of the actions based on the input. The numeric value in the KVP is the PRIORITY in which the command will
@@ -221,7 +209,9 @@ namespace Legendary.Engine.Processors
         /// </summary>
         private void ConfigureActions()
         {
-            this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
+            this.actions.Add("advance", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAdvance)));
+            this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
+            this.actions.Add("awards", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAwards)));
             this.actions.Add("buy", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoBuy)));
             this.actions.Add("close", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoClose)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
@@ -596,7 +586,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                var sentence = args.Method;
+                var sentence = string.Join(' ', new string?[2] { args.Method, args.Target });
                 if (!string.IsNullOrWhiteSpace(sentence))
                 {
                     sentence = sentence.ToLower();
@@ -801,6 +791,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Gets one or more items and places it into your inventory.</p><ul><li>get <em>target</em></li><li>get all <em>target</em></li><ul>")]
         private async Task DoGet(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -813,6 +804,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Gives an item from your inventory to a target.<p><ul><li>give <em>item</em> <em>target</em>")]
         private async Task DoGive(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrEmpty(args.Target))
@@ -870,6 +862,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
         }
 
+        [HelpText("<p>Examines an item in your inventory closely to determine some of its attributes.</p><ul><li>examine <em>item</em></li><ul>")]
         private async Task DoExamine(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -904,7 +897,52 @@ namespace Legendary.Engine.Processors
 
                     sb.Append($"{item.LongDescription}<br/>");
                     sb.Append($"{item.Name.FirstCharToUpper()} is of type {Enum.GetName<ItemType>(item.ItemType)?.ToString().ToLower()} and appears to have a durability of {item.Durability.Current}.<br/>");
-                    sb.Append($"You value it at approximately {this.random.Next(Math.Max((int)item.Value - 100, 2), Math.Max((int)item.Value + 100, 4))} gold.");
+                    sb.Append($"You value it at approximately {this.random.Next(Math.Max((int)item.Value - 100, 2), Math.Max((int)item.Value + 100, 4))} gold.<br/>");
+
+                    if (item.ItemType == ItemType.Drink)
+                    {
+                        sb.Append($"{item.Name.FirstCharToUpper()} is a drink container. It has around {item.Drinks?.Current} draughts of {ActionHelper.GetLiquidDescription(item.LiquidType)} inside of it.");
+                    }
+                    else if (item.ItemType == ItemType.Food)
+                    {
+                        sb.Append($"{item.Name.FirstCharToUpper()} is food. It has around {item.Food?.Current} meals remaining.");
+                    }
+                    else if (item.ItemType == ItemType.Container)
+                    {
+                        sb.Append($"{item.Name.FirstCharToUpper()} is a container. ");
+
+                        if (item.IsClosed)
+                        {
+                            sb.Append("It is closed, so you can't see what is inside.");
+                        }
+                        else
+                        {
+                            sb.Append("It contains:<br/><ul>");
+
+                            if (item.Contains != null)
+                            {
+                                var objGroups = item.Contains.GroupBy(i => i.ItemId);
+
+                                foreach (var group in objGroups)
+                                {
+                                    if (group.Count() > 1)
+                                    {
+                                        sb.Append($"<li>({group.Count()}) {group.First().Name}</li>");
+                                    }
+                                    else
+                                    {
+                                        sb.Append($"<li>{group.First().Name}</li>");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                sb.Append($"<li>Nothing.</li>");
+                            }
+
+                            sb.Append("</ul>");
+                        }
+                    }
 
                     await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
                 }
@@ -915,73 +953,47 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [MinimumLevel(90)]
-        private async Task DoGoTo(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        private async Task DoHelp(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Level < 100)
+            // help put
+            var helpCommand = args.Method;
+
+            if (!string.IsNullOrWhiteSpace(helpCommand))
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(args.Method))
+                if (helpCommand.ToLower() == "commands")
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"Goto where?", cancellationToken);
+                    await this.DoCommands(actor, args, cancellationToken);
+                }
+                else if (helpCommand.ToLower() == "newbie")
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "You can type COMMANDS to see a list of all commands. Type help <command> to see what the command does.", cancellationToken);
                 }
                 else
                 {
-                    if (long.TryParse(args.Method, out long result))
+                    var type = this.GetType();
+                    var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+                    var method = methods.FirstOrDefault(m => m.Name.ToLower() == "do" + helpCommand);
+                    if (method != null)
                     {
-                        await this.GotoRoom(actor, result, cancellationToken);
-                    }
-                    else
-                    {
-                        var player = this.communicator.ResolveCharacter(args.Method);
-
-                        if (player != null)
+                        var helpText = method.GetCustomAttribute(typeof(HelpTextAttribute));
+                        if (helpText != null && helpText is HelpTextAttribute attrib)
                         {
-                            var room = this.communicator.ResolveRoom(player.Character.Location);
-
-                            if (room != null)
-                            {
-                                await this.GotoRoom(actor, player.Character.Location.Value, cancellationToken);
-                            }
+                            await this.communicator.SendToPlayer(actor.Connection, $"<span class='help-text'><h4>{helpCommand.ToUpper()}</h4>{attrib.HelpText}</span>", cancellationToken);
                         }
                         else
                         {
-                            var location = this.communicator.ResolveMobileLocation(args.Method);
-
-                            if (location != null)
-                            {
-                                await this.GotoRoom(actor, location.Value.Value, cancellationToken);
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(actor.Connection, $"There's nobody here by that name.", cancellationToken);
-                            }
+                            await this.communicator.SendToPlayer(actor.Connection, "That is a valid command, but there is not currently help text available for it.", cancellationToken);
                         }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, "No help files found by that name. You can start by typing HELP NEWBIE or HELP COMMANDS.", cancellationToken);
                     }
                 }
             }
-        }
-
-        private async Task DoHelp(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            var helpCommand = args.Method;
-
-            var directoryInfo = new DirectoryInfo(@"Data/HelpFiles/");
-
-            var file = directoryInfo.GetFiles().Where(f => f.Name.ToLower() == helpCommand + ".html").FirstOrDefault();
-
-            if (file != null)
-            {
-                var content = File.ReadAllText(file.FullName);
-
-                await this.communicator.SendToPlayer(actor.Connection, content, cancellationToken);
-            }
             else
             {
-                await this.communicator.SendToPlayer(actor.Connection, "No help files found by that name. You can start by typing HELP NEWBIE.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, "Usage: help <command>. You can start by typing HELP NEWBIE or HELP COMMANDS.", cancellationToken);
             }
         }
 
@@ -1155,6 +1167,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Looks at another player, NPC, or item. Look at the sky if you're outside to help determine where you are. See also HELP EXAMINE.</p><ul><li>look <em>player name</em></li><li>look <em>NPC name</em></li><li>look <em>item</em></li><li>look <em>sky</em></li><ul>")]
         private async Task DoLook(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (!string.IsNullOrWhiteSpace(args.Method))
@@ -1207,6 +1220,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>You can move in any cardinal direction simply by typing the direction and pressing enter.</p><ul><li>north, south, east, west, up, down, ne, se, sw, nw.</li><ul>")]
         private async Task DoMove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting))
@@ -1412,44 +1426,6 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [MinimumLevel(90)]
-        private async Task DoPeace(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            if (actor.Character.Level < 100)
-            {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
-            }
-            else
-            {
-                if (Communicator.Users != null)
-                {
-                    var users = Communicator.Users.Where(u => u.Value.Character.Location.InSamePlace(actor.Character.Location));
-
-                    // Stop all the users from fighting
-                    foreach (var user in users)
-                    {
-                        user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                        user.Value.Character.Fighting = null;
-                    }
-
-                    // Stop all the mobiles from fighting
-                    var mobiles = this.communicator.GetMobilesInRoom(actor.Character.Location);
-                    if (mobiles != null)
-                    {
-                        foreach (var mob in mobiles)
-                        {
-                            mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                            mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
-                            mob.Fighting = null;
-                        }
-                    }
-                }
-
-                await this.communicator.SendToPlayer(actor.Connection, "You stop all fighting in the room.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
-            }
-        }
-
         private async Task DoPray(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
@@ -1474,24 +1450,6 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, $"You have disconnected.", cancellationToken);
             await this.communicator.SendToRoom(null, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} has left the realms.", cancellationToken);
             await this.communicator.Quit(actor.Connection, actor.Character.FirstName ?? "Someone", cancellationToken);
-        }
-
-        [MinimumLevel(100)]
-        private async Task DoReload(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            if (actor.Character.Level < 100)
-            {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
-                await this.world.LoadWorld();
-                await this.world.CleanupWorld();
-                this.world.Populate();
-                await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
-                this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);
-            }
         }
 
         private async Task DoRemove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -1808,44 +1766,6 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [MinimumLevel(100)]
-        private async Task DoSlay(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(args.Method))
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"Slay whom?", cancellationToken);
-            }
-            else
-            {
-                var target = args.Method;
-
-                var player = this.communicator.ResolveCharacter(target);
-
-                if (player != null)
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"You SLAY {player.Character.FirstName} in cold blood!", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} SLAYS {player.Character.FirstName} in cold blood!", cancellationToken);
-                    await this.communicator.SendToPlayer(player.Connection, $"{actor.Character} has SLAIN you!", cancellationToken);
-                    await this.combat.KillPlayer(player.Character, actor.Character, cancellationToken);
-                }
-                else
-                {
-                    var mobile = this.communicator.ResolveMobile(target);
-
-                    if (mobile != null)
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You SLAY {mobile.FirstName} in cold blood!", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} SLAYS {mobile.FirstName} in cold blood!", cancellationToken);
-                        await this.combat.KillMobile(mobile, actor.Character, cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
-                    }
-                }
-            }
-        }
-
         private async Task DoTime(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var metrics = this.world.GameMetrics;
@@ -1855,92 +1775,6 @@ namespace Legendary.Engine.Processors
                 var timeInfo = DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second);
 
                 await this.communicator.SendToPlayer(actor.Connection, $"{timeInfo}", cancellationToken);
-            }
-        }
-
-        [MinimumLevel(95)]
-        private async Task DoTitle(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(args.Method) && string.IsNullOrWhiteSpace(args.Target))
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"Set title to what? (title [\"title\"] [player (optional)])", cancellationToken);
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(args.Target))
-                {
-                    var player = this.communicator.ResolveCharacter(args.Target);
-
-                    if (player != null)
-                    {
-                        player.Character.Title = args.Method;
-                        await this.communicator.SaveCharacter(player.Character);
-                        await this.communicator.SendToPlayer(actor.Connection, $"{player.Character.FirstName.FirstCharToUpper()}'s title set to \"{args.Method}\".", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
-                    }
-                }
-                else
-                {
-                    actor.Character.Title = args.Method;
-                    await this.communicator.SaveCharacter(actor.Character);
-                    await this.communicator.SendToPlayer(actor.Connection, $"Title set to \"{args.Method}\".", cancellationToken);
-                }
-            }
-        }
-
-        [MinimumLevel(90)]
-        private async Task DoTransfer(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(args.Method))
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"Transfer whom?", cancellationToken);
-            }
-            else
-            {
-                var target = args.Method;
-
-                var player = this.communicator.ResolveCharacter(target);
-
-                if (player != null)
-                {
-                    player.Character.Location = actor.Character.Location;
-                    await this.communicator.SendToPlayer(actor.Connection, $"You have transferred {player.Character.FirstName} here.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} arrives in a puff of smoke.", cancellationToken);
-                    await this.communicator.SendToPlayer(player.Connection, $"{actor.Character} has summoned you!", cancellationToken);
-                    await this.communicator.SendToRoom(player.Character.Location, actor.Character, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} vanishes in a flash of light.", cancellationToken);
-                }
-                else
-                {
-                    var mobile = this.communicator.ResolveMobile(target);
-
-                    if (mobile != null)
-                    {
-                        var oldRoom = this.communicator.ResolveRoom(mobile.Location);
-                        var newRoom = this.communicator.ResolveRoom(actor.Character.Location);
-
-                        var oldMob = oldRoom != null ? oldRoom.Mobiles.FirstOrDefault(m => m.CharacterId == mobile.CharacterId) : null;
-
-                        if (oldMob != null)
-                        {
-                            oldRoom?.Mobiles.Remove(oldMob);
-                        }
-
-                        newRoom?.Mobiles.Add(mobile);
-
-                        mobile.Location = actor.Character.Location;
-
-                        await this.communicator.SendToPlayer(actor.Connection, $"You have transferred {mobile.FirstName} here.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{mobile.FirstName.FirstCharToUpper()} arrives in a puff of smoke.", cancellationToken);
-                        await this.communicator.SendToRoom(mobile.Location, actor.Character, null, $"{mobile.FirstName.FirstCharToUpper()} vanishes in a flash of light.", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
-                    }
-                }
             }
         }
 
@@ -2346,22 +2180,6 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Wield what?", cancellationToken);
-            }
-        }
-
-        [MinimumLevel(90)]
-        private async Task DoWiznet(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            // Sub/unsub to wiznet channel
-            if (this.communicator.IsSubscribed("wiznet", actor.ConnectionId, actor))
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"Unsubscribed from WIZNET.", cancellationToken);
-                this.communicator.RemoveFromChannel("wiznet", actor.ConnectionId, actor);
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"Welcome to WIZNET!", cancellationToken);
-                this.communicator.AddToChannel("wiznet", actor.ConnectionId, actor);
             }
         }
 

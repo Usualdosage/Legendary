@@ -20,6 +20,16 @@ namespace Legendary.Engine.Processors
     /// </summary>
     public partial class ActionProcessor
     {
+        private async Task DoAdvance(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+        }
+
+        private async Task DoAwards(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+        }
+
         private async Task DoBuy(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);

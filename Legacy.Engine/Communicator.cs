@@ -1120,15 +1120,23 @@ namespace Legendary.Engine
         {
             // TODO: This will need some tweaking.
             var level = character.Level;
-            var experience = character.Experience;
-            bool didAdvance = (level * 1500) > experience;
 
-            if (didAdvance)
+            if (level < 90)
             {
-                await this.IncreaseLevel(character, cancellationToken);
-            }
+                var experience = character.Experience;
+                bool didAdvance = (level * 1500) > experience;
 
-            return didAdvance;
+                if (didAdvance)
+                {
+                    await this.IncreaseLevel(character, cancellationToken);
+                }
+
+                return didAdvance;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

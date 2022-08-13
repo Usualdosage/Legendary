@@ -1,4 +1,4 @@
-﻿// <copyright file="MinimumLevelAttribute.cs" company="Legendary™">
+﻿// <copyright file="HelpTextAttribute.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -15,20 +15,20 @@ namespace Legendary.Engine.Attributes
     /// Used to mark methods that require a level requirement to use.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class MinimumLevelAttribute : Attribute
+    public class HelpTextAttribute : Attribute
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinimumLevelAttribute"/> class.
+        /// Initializes a new instance of the <see cref="HelpTextAttribute"/> class.
         /// </summary>
-        /// <param name="level">The level.</param>
-        public MinimumLevelAttribute(int level)
+        /// <param name="helpText">The help text.</param>
+        public HelpTextAttribute(string helpText)
         {
-            this.Level = level;
+            this.HelpText = helpText;
         }
 
         /// <summary>
-        /// Gets or sets the level.
+        /// Gets or sets the help text.
         /// </summary>
-        public int Level { get; set; }
+        public string HelpText { get; set; }
     }
 }
