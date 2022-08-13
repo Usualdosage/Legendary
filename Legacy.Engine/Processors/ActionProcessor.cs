@@ -1064,6 +1064,12 @@ namespace Legendary.Engine.Processors
 
             if (container != null && container.Name.Contains(args.Method))
             {
+                if (!container.KeyId.HasValue || container.KeyId == 0)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"{container.Name.FirstCharToUpper()} has no lock.", cancellationToken);
+                    return;
+                }
+
                 // Check if it's locked.
                 if (container.IsClosed && container.IsLocked)
                 {
@@ -1073,10 +1079,14 @@ namespace Legendary.Engine.Processors
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"It's still open.", cancellationToken);
                 }
+                else if (!container.KeyId.HasValue || container.KeyId.Value == 0)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You can't lock that.", cancellationToken);
+                }
                 else if (container.IsClosed && !container.IsLocked)
                 {
                     // Do we have a key?
-                    var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == container.KeyId);
+                    var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == container.KeyId && k.ItemType == ItemType.Key);
                     if (key == null)
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
@@ -1106,6 +1116,12 @@ namespace Legendary.Engine.Processors
                 {
                     if (item.ItemType == ItemType.Container)
                     {
+                        if (!item.KeyId.HasValue || item.KeyId == 0)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"{item.Name.FirstCharToUpper()} has no lock.", cancellationToken);
+                            return;
+                        }
+
                         // Check if it's locked.
                         if (item.IsClosed && item.IsLocked)
                         {
@@ -1118,7 +1134,7 @@ namespace Legendary.Engine.Processors
                         else if (item.IsClosed && !item.IsLocked)
                         {
                             // Do we have a key?
-                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == item.KeyId);
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == item.KeyId && k.ItemType == ItemType.Key);
                             if (key == null)
                             {
                                 await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
@@ -1151,13 +1167,19 @@ namespace Legendary.Engine.Processors
 
                     if (exit != null)
                     {
+                        if (!exit.KeyId.HasValue || exit.KeyId == 0)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"There is no lock.", cancellationToken);
+                            return;
+                        }
+
                         if (exit.IsDoor && exit.IsClosed && exit.IsLocked)
                         {
                             await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already locked.", cancellationToken);
                         }
                         else if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                         {
-                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == exit.KeyId);
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == exit.KeyId && k.ItemType == ItemType.Key);
                             if (key == null)
                             {
                                 await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
@@ -1839,6 +1861,12 @@ namespace Legendary.Engine.Processors
 
             if (container != null && container.Name.Contains(args.Method))
             {
+                if (!container.KeyId.HasValue || container.KeyId == 0)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"{container.Name.FirstCharToUpper()} has no lock.", cancellationToken);
+                    return;
+                }
+
                 // Check if it's locked.
                 if (container.IsClosed && !container.IsLocked)
                 {
@@ -1848,10 +1876,14 @@ namespace Legendary.Engine.Processors
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
                 }
+                else if (!container.KeyId.HasValue || container.KeyId.Value == 0)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You can't unlock that.", cancellationToken);
+                }
                 else if (container.IsClosed && container.IsLocked)
                 {
                     // Do we have a key?
-                    var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == container.KeyId);
+                    var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == container.KeyId && k.ItemType == ItemType.Key);
                     if (key == null)
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
@@ -1892,8 +1924,14 @@ namespace Legendary.Engine.Processors
                         }
                         else if (item.IsClosed && item.IsLocked)
                         {
+                            if (!item.KeyId.HasValue || item.KeyId == 0)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"{item.Name.FirstCharToUpper()} has no lock.", cancellationToken);
+                                return;
+                            }
+
                             // Do we have a key?
-                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == item.KeyId);
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == item.KeyId && k.ItemType == ItemType.Key);
                             if (key == null)
                             {
                                 await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
@@ -1932,7 +1970,13 @@ namespace Legendary.Engine.Processors
                         }
                         else if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                         {
-                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == exit.KeyId);
+                            if (!exit.KeyId.HasValue || exit.KeyId == 0)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"There is no lock.", cancellationToken);
+                                return;
+                            }
+
+                            var key = actor.Character.Inventory.FirstOrDefault(k => k.ItemId == exit.KeyId && k.ItemType == ItemType.Key);
                             if (key == null)
                             {
                                 await this.communicator.SendToPlayer(actor.Connection, $"You lack the key.", cancellationToken);
@@ -2216,7 +2260,7 @@ namespace Legendary.Engine.Processors
                         else
                         {
                             // Swap out the equipment.
-                            await this.communicator.SendToPlayer(actor.Connection, $"You stops wielding {targetLocationItem.Name}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You stop wielding {targetLocationItem.Name}.", cancellationToken);
                             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} stops wielding {targetLocationItem.Name}.", cancellationToken);
                             actor.Character.Equipment.Remove(targetLocationItem);
                             actor.Character.Inventory.Add(targetLocationItem);

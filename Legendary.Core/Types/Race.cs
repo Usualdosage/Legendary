@@ -83,5 +83,15 @@ namespace Legendary.Core.Types
         /// Faerie.
         /// </summary>
         Faerie = 13,
+
+        /// <summary>
+        /// Creature is an animal of some kind.
+        /// </summary>
+        Animal = 14,
+
+        /// <summary>
+        /// Other race, not specified.
+        /// </summary>
+        Other = 15,
     }
 }

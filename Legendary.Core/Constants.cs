@@ -93,21 +93,92 @@ namespace Legendary.Core
         };
 
         /// <summary>
-        /// What mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
+        /// What happy mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
         /// </summary>
-        public static readonly List<string> EMOTE_ACTION = new List<string>()
+        public static readonly List<string> EMOTE_ACTION_HAPPY = new List<string>()
         {
-            "{0} looks around idly.",
-            "{0} shrugs.",
-            "{0} smoothes the wrinkles out of {1} clothes.",
-            "{0} gazes solemnly at the sky.",
+            "{0} looks around with a smile.",
+            "{0} smiles happily.",
+            "{0} shrugs innocently.",
+            "{0} gazes deeply at the sky in awe.",
             "{0} runs {1} fingers through {1} hair.",
             "{0} bites {1} lip contemplatively.",
             "{0} picks some dirt out of {1} fingernails.",
             "{0} hums a little tune.",
+            "{0} laughs a little bit.",
             "{0} looks at you curiously.",
             "{0} whistles a little tune.",
-            "{0} says '<span class='say'>Looks like weather is coming.</span>'.",
+            "{0} says '<span class='say'>I love this kind of day!</span>'.",
+            "{0} smiles and says '<span class='say'>Hi there!</span>'.",
+        };
+
+        /// <summary>
+        /// What angry mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
+        /// </summary>
+        public static readonly List<string> EMOTE_ACTION_ANGRY = new List<string>()
+        {
+            "{0} looks around angrily.",
+            "{0} shrugs, shaking {1} head.",
+            "{0} grumbles idly.",
+            "{0} growls under {1} breath.",
+            "{0} looks at you with a snarl.",
+            "{0} glares at you.",
+            "{0} says '<span class='say'>Looks like crappy weather is coming.</span>'.",
+            "{0} says '<span class='say'>Ugh, I hate it here.</span>'.",
+            "{0} mutters something under {1} breath.",
+            "{0} says '<span class='say'>What? What are you looking at?</span>'.",
+            "{0} says '<span class='say'>Another day where eveything sucks.</span>'.",
+        };
+
+        /// <summary>
+        /// What neutral mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
+        /// </summary>
+        public static readonly List<string> EMOTE_ACTION_NEUTRAL = new List<string>()
+        {
+            "{0} looks around idly.",
+            "{0} shrugs.",
+            "{0} yawns out of boredom.",
+            "{0} gazes around, a bored expression on {1} face.",
+            "{0} runs {1} fingers through {1} hair.",
+            "{0} bites {1} lip contemplatively.",
+            "{0} picks some dirt out of {1} fingernails.",
+            "{0} looks at you ambivalently.",
+            "{0} shrugs apathetically.",
+        };
+
+        /// <summary>
+        /// What sad mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
+        /// </summary>
+        public static readonly List<string> EMOTE_ACTION_SAD = new List<string>()
+        {
+            "{0} looks around in sorrow.",
+            "{0} wipes some tears from {1} eyes.",
+            "{0} shrugs, shaking {1} head.",
+            "{0} gazes solemnly at the ground.",
+            "{0} nervously twists {1} hair.",
+            "{0} sighs, releasing {1} breath shakily.",
+            "{0} bites {1} lip sullenly.",
+            "{0} bows {1} head sadly.",
+            "{0} says '<span class='say'>Today is so depressing.</span>'.",
+            "{0} says '<span class='say'>I wish it would rain.</span>'.",
+            "{0} says '<span class='say'>I love the color gray.</span>'.",
+        };
+
+        /// <summary>
+        /// What animal mobiles will do. {0} is name, {1} is pronoun.
+        /// </summary>
+        public static readonly List<string> EMOTE_ANIMAL_ACTION = new List<string>()
+        {
+            "{0} scurries about.",
+            "{0} sniffs the air.",
+            "{0} begins to clean {1}self.",
+            "{0} darts away quickly.",
+            "{0} peers at you curiously.",
+            "{0} sniffs the ground.",
+            "{0} makes some subtle little noises.",
+            "{0} scratches {1}self.",
+            "{0} whines pitifully.",
+            "{0} nibbles on some food.",
         };
     }
 }

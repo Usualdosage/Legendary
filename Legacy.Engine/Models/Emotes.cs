@@ -69,5 +69,19 @@ namespace Legendary.Engine.Models
         {
             return Actions.FirstOrDefault(a => a.Key.ToLower() == action.ToLower()).Value;
         }
+
+        /// <summary>
+        /// Gets an emote by index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>Emote.</returns>
+        public static Emote? Get(int index)
+        {
+            var actionArray = Actions.ToArray();
+
+            var emote = actionArray[index];
+
+            return Actions[emote.Key];
+        }
     }
 }

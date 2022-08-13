@@ -15,6 +15,7 @@ namespace Legendary.Engine.Processors
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
     using Legendary.Core;
@@ -132,19 +133,71 @@ namespace Legendary.Engine.Processors
         /// <returns>String.</returns>
         public string? ProcessEmote(Character character, Mobile mobile, string input)
         {
-            if (this.random.Next(0, 100) < 10)
+            // Process actions for humanoids.
+            if ((int)mobile.Race <= 13)
             {
-                this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} did a random action.", this.communicator);
-                var action = Constants.EMOTE_ACTION[this.random.Next(0, Constants.EMOTE_ACTION.Count - 1)];
+                if (this.random.Next(0, 100) < 10)
+                {
+                    this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} did a random action.", this.communicator);
 
-                action = action.Replace("{0}", mobile.FirstName.FirstCharToUpper());
-                action = action.Replace("{1}", mobile.Pronoun);
+                    string action = string.Empty;
 
-                return action;
+                    switch (mobile.Emotion)
+                    {
+                        case Core.Types.Emotion.Neutral:
+                            action = Constants.EMOTE_ACTION_NEUTRAL[this.random.Next(0, Constants.EMOTE_ACTION_NEUTRAL.Count - 1)];
+                            break;
+                        case Core.Types.Emotion.Happy:
+                            action = Constants.EMOTE_ACTION_HAPPY[this.random.Next(0, Constants.EMOTE_ACTION_HAPPY.Count - 1)];
+                            break;
+                        case Core.Types.Emotion.Angry:
+                            action = Constants.EMOTE_ACTION_ANGRY[this.random.Next(0, Constants.EMOTE_ACTION_ANGRY.Count - 1)];
+                            break;
+                        case Core.Types.Emotion.Sad:
+                            action = Constants.EMOTE_ACTION_SAD[this.random.Next(0, Constants.EMOTE_ACTION_SAD.Count - 1)];
+                            break;
+                    }
+
+                    action = action.Replace("{0}", mobile.FirstName.FirstCharToUpper());
+                    action = action.Replace("{1}", mobile.Pronoun);
+
+                    return action;
+                }
+                else if (this.random.Next(0, 100) < 5)
+                {
+                    // Do a random emote.
+                    var emote = Emotes.Get(this.random.Next(0, Emotes.Actions.Count - 1));
+
+                    if (emote != null)
+                    {
+                        return emote.ToRoom.Replace("{0}", mobile.FirstName.FirstCharToUpper());
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                return null;
+                if (this.random.Next(0, 100) < 10)
+                {
+                    this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} did a random animal action.", this.communicator);
+                    var action = Constants.EMOTE_ANIMAL_ACTION[this.random.Next(0, Constants.EMOTE_ANIMAL_ACTION.Count - 1)];
+
+                    action = action.Replace("{0}", mobile.FirstName.FirstCharToUpper());
+                    action = action.Replace("{1}", mobile.Pronoun);
+
+                    return action;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

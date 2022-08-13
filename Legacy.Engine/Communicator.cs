@@ -371,7 +371,11 @@ namespace Legendary.Engine
                         {
                             await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
                             await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
-                            await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+
+                            if ((int)mobile.Race <= 13)
+                            {
+                                await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                            }
 
                             // Start the fight.
                             Combat.StartFighting(user.Character, mobile);
