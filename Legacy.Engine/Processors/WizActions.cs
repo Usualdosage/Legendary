@@ -299,5 +299,27 @@ namespace Legendary.Engine.Processors
                 this.communicator.AddToChannel("wiznet", actor.ConnectionId, actor);
             }
         }
+
+        private async Task GotoRoom(UserData user, long room, CancellationToken cancellationToken = default)
+        {
+            foreach (var area in this.world.Areas)
+            {
+                var targetRoom = area.Rooms.FirstOrDefault(r => r.RoomId == room);
+                if (targetRoom == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.", cancellationToken);
+                    await this.communicator.SendToRoom(null, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} vanishes.", cancellationToken);
+                    user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
+                    await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
+                    return;
+                }
+            }
+
+            await this.communicator.SendToPlayer(user.Connection, $"You were unable to teleport there.", cancellationToken);
+        }
     }
 }

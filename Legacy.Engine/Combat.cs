@@ -546,7 +546,7 @@ namespace Legendary.Engine
                 // Remove all equipment, currency, and inventory.
                 actor.Inventory = new List<Item>();
                 actor.Equipment = new List<Item>();
-                actor.Currency = 0;
+                actor.Currency = 0m;
 
                 // Send the character to their home.
                 actor.Location = actor.Home;
@@ -755,6 +755,7 @@ namespace Legendary.Engine
         {
             try
             {
+                // Create a corpse with their stuff in the room.
                 var corpse = new Item()
                 {
                     ItemType = ItemType.Container,
@@ -771,24 +772,14 @@ namespace Legendary.Engine
                     IsNPCCorpse = victim.IsNPC,
                 };
 
-                // Create a corpse with their stuff in the room.
-                var currency = victim.Currency;
+                // If the victim was a mob, randomize the currency a little bit. If not, just use the full value.
+                var currency = (victim.IsNPC && victim.Currency > 0) ? this.random.Next(victim.Currency - 1, victim.Currency + 1) : victim.Currency;
 
                 // If the player had any money, add it to the corpse.
                 if (currency > 0)
                 {
-                    var currencyObj = new Item()
-                    {
-                        ItemType = ItemType.Currency,
-                        Value = currency,
-                        WearLocation = new List<WearLocation>() { WearLocation.None },
-                        Weight = currency / 10,
-                        ShortDescription = $"{currency} gold coins",
-                        LongDescription = $"{currency} gold coins are lying here.",
-                        Level = 0,
-                    };
-
-                    corpse.Contains.Add(currencyObj);
+                    var currencyItems = currency.ToCurrencyItems();
+                    corpse.Contains.AddRange(currencyItems);
                 }
 
                 // Add any equipment.

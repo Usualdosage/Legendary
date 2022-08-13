@@ -59,7 +59,7 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets the weight of the item.
         /// </summary>
-        long Weight { get; set; }
+        decimal Weight { get; set; }
 
         /// <summary>
         ///  Gets or sets the durability of the armor.
@@ -129,7 +129,7 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets the value of the item.
         /// </summary>
-        long Value { get; set; }
+        decimal Value { get; set; }
 
         /// <summary>
         /// Gets or sets the time until this item rots into dust (in ticks).

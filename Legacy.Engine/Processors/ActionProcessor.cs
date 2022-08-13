@@ -201,8 +201,6 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        
-
         /// <summary>
         /// Configures all of the actions based on the input. The numeric value in the KVP is the PRIORITY in which the command will
         /// be executed. So, if someone types "n", it will check "north", "ne", "nw", and "newbie" in that order.
@@ -279,6 +277,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("yell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(0, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoYell)));
         }
 
+        [HelpText("<p>Displays a list of things your player is currently affected by.</p><ul><li>affects</li></ul>")]
         private async Task DoAffects(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             StringBuilder sb = new StringBuilder();
@@ -298,6 +297,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Closes a closeable container or door. See also: HELP OPEN, HELP LOCK, HELP UNLOCK.</p><ul><li>close <em>item</em></li><li>close <em>direction</em></li></ul>")]
         private async Task DoClose(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -390,6 +390,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Attacks another player or NPC. This will initiate combat. See also: HELP FLEE.</p><ul><li>kill <em>target</em></li><li>murder <em>target</em></li></ul>")]
         private async Task DoCombat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -402,6 +403,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Displays all available player commands. In many cases, a command can be shortened (e.g. 'l' for 'look'). For more information:</p><ul><li>help <em>command</em></li></ul>")]
         private async Task DoCommands(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Available Commands:<br/>", cancellationToken);
@@ -418,6 +420,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Rolls up to five six-sided dice, which will display in your current room.</p><ul><li>dice <em>3</em></li></ul>")]
         private async Task DoDice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -486,6 +489,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Drinks a liquid from a container item in your inventory. Reduces thirst. See also: HELP EAT</p><ul><li>drink <em>item</em></li></ul>")]
         private async Task DoDrink(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (actor.Character.Thirst.Current <= 2)
@@ -554,6 +558,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Drops an item from your inventory to the ground. See also: HELP GET</p><ul><li>drop <em>item</em></li><li>drop <em>all</em></li></ul>")]
         private async Task DoDrop(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -566,6 +571,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Eats a consumable food item in your inventory. Reduces hunger. See also: HELP DRINK</p><ul><li>eat <em>item</em></li></ul>")]
         private async Task DoEat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -578,6 +584,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Lets your player perform a custom action which will be visible in a room. See also: HELP EMOTES</p><ul><li>emote <em>message</em></li></ul>")]
         private async Task DoEmote(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -596,6 +603,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>An emote is an automatic action your player can do, which will be visible in a room. For a list of emotes, type EMOTES. See also: HELP EMOTE</p>")]
         private async Task DoEmotes(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Available Emotes:<br/>", cancellationToken);
@@ -612,6 +620,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Empties a drink container in your inventory of all of its contents.</p><ul><li>empty <em>item</em></li></ul>")]
         private async Task DoEmpty(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -647,6 +656,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Fill a container in your inventory from a liquid source, like a fountain.</p><ul><li>fill <em>container</em></li></ul>")]
         private async Task DoFill(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -695,6 +705,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Flee from combat, as long as there is an exit to flee through.</p><ul><li>flee</li></ul>")]
         private async Task DoFlee(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var room = this.communicator.ResolveRoom(actor.Character.Location);
@@ -738,6 +749,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Follow a player. As the player moves about, so will you, unless you rest or sleep. To stop following, follow self.</p><ul><li>follow <em>target</em></li><li>follow self</li></ul>")]
         private async Task DoFollow(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -791,7 +803,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>Gets one or more items and places it into your inventory.</p><ul><li>get <em>target</em></li><li>get all <em>target</em></li><ul>")]
+        [HelpText("<p>Gets one or more items and places it into your inventory.</p><ul><li>get <em>target</em></li><li>get all <em>target</em></li></ul>")]
         private async Task DoGet(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -804,7 +816,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>Gives an item from your inventory to a target.<p><ul><li>give <em>item</em> <em>target</em>")]
+        [HelpText("<p>Gives an item from your inventory to a target.<p><ul><li>give <em>item</em> <em>target</em></li></ul>")]
         private async Task DoGive(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrEmpty(args.Target))
@@ -856,13 +868,14 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Displays the current equipment worn by your player. See also: HELP INVENTORY, HELP WEAR.</p><ul><li>equipment</li></ul>")]
         private async Task DoEquipment(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var equipment = this.actionHelper.GetEquipment(actor.Character);
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
         }
 
-        [HelpText("<p>Examines an item in your inventory closely to determine some of its attributes.</p><ul><li>examine <em>item</em></li><ul>")]
+        [HelpText("<p>Examines an item in your inventory closely to determine some of its attributes.</p><ul><li>examine <em>item</em></li></ul>")]
         private async Task DoExamine(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -919,7 +932,7 @@ namespace Legendary.Engine.Processors
                         {
                             sb.Append("It contains:<br/><ul>");
 
-                            if (item.Contains != null)
+                            if (item.Contains != null && item.Contains.Count > 0)
                             {
                                 var objGroups = item.Contains.GroupBy(i => i.ItemId);
 
@@ -955,16 +968,15 @@ namespace Legendary.Engine.Processors
 
         private async Task DoHelp(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            // help put
-            var helpCommand = args.Method;
+            var helpCommand = args.Method?.ToLower();
 
             if (!string.IsNullOrWhiteSpace(helpCommand))
             {
-                if (helpCommand.ToLower() == "commands")
+                if (helpCommand == "commands")
                 {
                     await this.DoCommands(actor, args, cancellationToken);
                 }
-                else if (helpCommand.ToLower() == "newbie")
+                else if (helpCommand == "newbie")
                 {
                     await this.communicator.SendToPlayer(actor.Connection, "You can type COMMANDS to see a list of all commands. Type help <command> to see what the command does.", cancellationToken);
                 }
@@ -972,7 +984,21 @@ namespace Legendary.Engine.Processors
                 {
                     var type = this.GetType();
                     var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
-                    var method = methods.FirstOrDefault(m => m.Name.ToLower() == "do" + helpCommand);
+                    MethodInfo? method = null;
+
+                    if (helpCommand is "ne" or "nw" or "south" or "north" or "east" or "west" or "up" or "down" or "se" or "sw")
+                    {
+                        method = methods.FirstOrDefault(m => m.Name.ToLower() == "domove");
+                    }
+                    else if (helpCommand is "kill" or "murder")
+                    {
+                        method = methods.FirstOrDefault(m => m.Name.ToLower() == "docombat");
+                    }
+                    else
+                    {
+                        method = methods.FirstOrDefault(m => m.Name.ToLower() == "do" + helpCommand);
+                    }
+
                     if (method != null)
                     {
                         var helpText = method.GetCustomAttribute(typeof(HelpTextAttribute));
@@ -997,6 +1023,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Lists all items in your inventory.</p><ul><li>inventory</li></ul>")]
         private async Task DoInventory(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sb = new StringBuilder();
@@ -1022,6 +1049,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Locks a lockable container, as long as you have the proper key. See HELP UNLOCK, HELP OPEN.</p><ul><li>lock <em>container</em></li></ul>")]
         private async Task DoLock(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -1320,6 +1348,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Opens a door or a container. If it is locked, you will need to unlock it first. See HELP UNLOCK, HELP LOCK.</p><ul><li>open <em>container</em></li><li>open <em>direction</em></li></ul>")]
         private async Task DoOpen(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -1426,6 +1455,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Sends a message to all available Gods. Do not abuse or spam this channel.</p><ul><li>pray <em>message</em></li></ul>")]
         private async Task DoPray(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
@@ -1445,13 +1475,16 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Saves and exits the game.</p><ul><li>quit</li></ul>")]
         private async Task DoQuit(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
+            await this.communicator.SaveCharacter(actor);
             await this.communicator.SendToPlayer(actor.Connection, $"You have disconnected.", cancellationToken);
             await this.communicator.SendToRoom(null, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} has left the realms.", cancellationToken);
             await this.communicator.Quit(actor.Connection, actor.Character.FirstName ?? "Someone", cancellationToken);
         }
 
+        [HelpText("<p>Removes one or more items from your person and places the item(s) in your inventory. See also: HELP WEAR.</p><ul><li>remove <em>target</em></li><li>remove <em>all</em></li></ul>")]
         private async Task DoRemove(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // remove <argument>
@@ -1495,6 +1528,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Rests. Your player will recover mana, health, and movement more quickly when resting. See also: HELP SLEEP, HELP WAKE.</p><ul><li>rest</li></ul>")]
         private async Task DoRest(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
@@ -1502,6 +1536,7 @@ namespace Legendary.Engine.Processors
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
         }
 
+        [HelpText("<p>Sacrifices an item to your deity in return for some divine favor. Not all items can be sacrificed.</p><ul><li>sacrifice <em>target</em></li></ul>")]
         private async Task DoSacrifice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -1514,12 +1549,14 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Saves all changes to your player. Note that the game autosaves every 30 seconds, and when you exit.</p><ul><li>save</li></ul>")]
         private async Task DoSave(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SaveCharacter(actor);
             await this.communicator.SendToPlayer(actor.Connection, $"Character saved.", cancellationToken);
         }
 
+        [HelpText("<p>Sends a message to everyone in the same room as your player. See also: HELP TELL, HELP YELL.</p><ul><li>say <em>message</em></li></ul>")]
         private async Task DoSay(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
@@ -1527,11 +1564,13 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
         }
 
+        [HelpText("<p>Displays your player's score card.</p><ul><li>score</li></ul>")]
         private async Task DoScore(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.ShowPlayerScore(actor, cancellationToken);
         }
 
+        [HelpText("<p>Scans in all directions for NPCs or players.</p><ul><li>scan</li></ul>")]
         private async Task DoScan(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var room = this.communicator.ResolveRoom(actor.Character.Location);
@@ -1574,6 +1613,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Displays all current skill groups, skills, and skill progressions.</p><ul><li>skills</li></ul>")]
         private async Task DoSkills(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
@@ -1636,6 +1676,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Sleeps. Your player will recover mana, health, and movement more quickly when sleeping, but will be unable to react to the environment around them. See also: HELP REST, HELP WAKE.</p><ul><li>rest</li></ul>")]
         private async Task DoSleep(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"You go to sleep.", cancellationToken);
@@ -1643,6 +1684,7 @@ namespace Legendary.Engine.Processors
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
         }
 
+        [HelpText("<p>Displays all current spell groups, spells, and spell progressions.</p><ul><li>skills</li></ul>")]
         private async Task DoSpells(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
@@ -1705,6 +1747,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Subscribes to a communication channel.</p><ul><li>subscribe <em>channel</em></li></ul>")]
         private async Task DoSubscribe(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var name = args.Method;
@@ -1734,6 +1777,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Tells a target player a message anywhere in the world. If player is sleeping, or ignoring you, the message will not go through. See also: HELP REPLY, HELP SAY, HELP YELL.</p><ul><li>tell <em>target</em> <em>message</em></li></ul>")]
         private async Task DoTell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
@@ -1746,6 +1790,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Replies to the last player who sent you a tell. If player is sleeping, or ignoring you, the message will not go through. See also: HELP TELL.</p><ul><li>reply <em>message</em></li></ul>")]
         private async Task DoReply(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -1766,6 +1811,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Displays the current date and time of the world.</p><ul><li>time</li></ul>")]
         private async Task DoTime(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var metrics = this.world.GameMetrics;
@@ -1778,6 +1824,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Unlocks a locked container, as long as you have the proper key. See HELP LOCK, HELP OPEN.</p><ul><li>unlock <em>container</em></li></ul>")]
         private async Task DoUnlock(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -1923,6 +1970,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Unsubscribes from a communication channel.</p><ul><li>unsubscribe <em>channel</em></li></ul>")]
         private async Task DoUnsubscribe(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var name = args.Method;
@@ -1953,6 +2001,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Displays all players who are online, who are visible to you.</p><ul><li>who</li></ul>")]
         private async Task DoWho(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (Communicator.Users != null)
@@ -1981,6 +2030,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Displays all players in your area who are visible to you. Provide a target to see where they are individually.</p><ul><li>where</li><li>where <em>target</em></li></ul>")]
         private async Task DoWhere(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var actorRoom = this.communicator.ResolveRoom(actor.Character.Location);
@@ -2039,6 +2089,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Wake from resting or sleeping. See also: HELP SLEEP, HELP REST.</p><ul><li>who</li></ul>")]
         private async Task DoWake(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting) || actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
@@ -2054,6 +2105,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Wear an item or items from your inventory. See also: REMOVE.</p><ul><li>wear <em>target</em></li><li>wear <em>all</em></li></ul>")]
         private async Task DoWear(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // wear <argument>
@@ -2138,6 +2190,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>If the item is a weapon, your player will wield it. See also: WEAR.</p><ul><li>wield <em>target</em></li></ul>")]
         private async Task DoWield(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             // wield <argument>
@@ -2183,6 +2236,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Yells loudly so that everyone who is in your current area can hear you. See also: HELP SAY, HELP TELL.</p><ul><li>yell <em>message</em></li></ul>")]
         private async Task DoYell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
@@ -2205,28 +2259,6 @@ namespace Legendary.Engine.Processors
             actor.Character.Equipment.Add(item);
             await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
-        }
-
-        private async Task GotoRoom(UserData user, long room, CancellationToken cancellationToken = default)
-        {
-            foreach (var area in this.world.Areas)
-            {
-                var targetRoom = area.Rooms.FirstOrDefault(r => r.RoomId == room);
-                if (targetRoom == null)
-                {
-                    continue;
-                }
-                else
-                {
-                    await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.", cancellationToken);
-                    await this.communicator.SendToRoom(null, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} vanishes.", cancellationToken);
-                    user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
-                    await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
-                    return;
-                }
-            }
-
-            await this.communicator.SendToPlayer(user.Connection, $"You were unable to teleport there.", cancellationToken);
         }
 
         private async Task SacrificeItem(UserData user, string target, CancellationToken cancellationToken = default)
@@ -2310,7 +2342,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task GetItem(UserData user, string method, string target, CancellationToken cancellationToken = default)
+        private async Task GetItem(UserData user, string method, string? target, CancellationToken cancellationToken = default)
         {
             var room = this.communicator.ResolveRoom(user.Character.Location);
 
@@ -2322,14 +2354,23 @@ namespace Legendary.Engine.Processors
             // Get all corpse, get all chest, etc.
             if (!string.IsNullOrWhiteSpace(target))
             {
-                // See if we have an item like that in the room.
+                // See if it's an item in the room.
                 var items = this.communicator.GetItemsInRoom(user.Character.Location);
+                var item = items?.ParseTargetName(target);
 
-                if (items != null)
+                if (item == null)
                 {
-                    var item = items.ParseTargetName(target);
+                    item = user.Character.Inventory.ParseTargetName(target);
+                }
 
-                    if (item != null)
+                if (item != null)
+                {
+                    if (item.IsClosed)
+                    {
+                        // See if it's an item the player is carrying.
+                        await this.communicator.SendToPlayer(user.Connection, $"{item.Name.FirstCharToUpper()} is closed.", cancellationToken);
+                    }
+                    else
                     {
                         if (item.Contains != null && item.Contains.Count > 0)
                         {
@@ -2339,13 +2380,26 @@ namespace Legendary.Engine.Processors
                             {
                                 if (eq != null)
                                 {
-                                    var clone = (eq as Item).Clone();
-                                    if (clone != null)
+                                    await this.communicator.SendToPlayer(user.Connection, $"You get {eq.Name} from {item.Name}.", cancellationToken);
+                                    await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} gets {eq.Name} from {item.Name}.", cancellationToken);
+
+                                    if (eq.ItemType == ItemType.Currency)
                                     {
-                                        user.Character.Inventory.Add(clone);
-                                        await this.communicator.SendToPlayer(user.Connection, $"You get {clone.Name} from {item.Name}.", cancellationToken);
-                                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} gets {eq.Name} from {item.Name}.", cancellationToken);
+                                        user.Character.Currency += eq.Value;
                                         itemsToRemove.Add(eq);
+                                    }
+                                    else if (!eq.WearLocation.Contains(WearLocation.None))
+                                    {
+                                        var clone = (eq as Item).Clone();
+                                        if (clone != null)
+                                        {
+                                            user.Character.Inventory.Add(clone);
+                                            itemsToRemove.Add(eq);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(user.Connection, $"You couldn't get {eq.Name} from {item.Name}.", cancellationToken);
                                     }
                                 }
                             }
@@ -2360,10 +2414,10 @@ namespace Legendary.Engine.Processors
                             await this.communicator.SendToPlayer(user.Connection, $"There isn't anything in {item.Name} to get.", cancellationToken);
                         }
                     }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
-                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
                 }
             }
             else if (method.ToLower() == "all")
@@ -2457,12 +2511,31 @@ namespace Legendary.Engine.Processors
                 }
                 else if (user.Character.Hunger.Current >= 8)
                 {
-                    user.Character.Inventory.Remove(item);
-                    await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
-                    await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
-                    user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, item.Value));
-                    await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} eats {item.Name}.", cancellationToken);
-                    return;
+                    if (item.Food?.Current != null)
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
+                        await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
+
+                        item.Food.Current -= 1;
+
+                        // If a food value is 3, that equates to 3 meals. So when a player eats, each food value means 8 hours of food.
+                        user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 8));
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} eats {item.Name}.", cancellationToken);
+
+                        if (item.Food.Current <= 0)
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"You have eaten all of {item.Name}.", cancellationToken);
+                            user.Character.Inventory.Remove(item);
+                        }
+                        else
+                        {
+                            item.Food.Current -= 1;
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"{item.Name.FirstCharToUpper()} has no apparent nutritional value.", cancellationToken);
+                    }
                 }
             }
             else
@@ -2662,9 +2735,11 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td>Movement:</td><td>{user.Character.Movement.Current}/{user.Character.Movement.Max}</td><td>Wis:</td><td>{user.Character.Wis}</td></tr>");
 
-            sb.Append($"<tr><td>Currency:</td><td>{user.Character.Currency}</td><td>Dex:</td><td>{user.Character.Dex}</td></tr>");
+            sb.Append($"<tr><td rowspan='3'>Currency:</td><td rowspan='2'>{user.Character.Currency.ToCurrencyDescription()}</td><td>Dex:</td><td>{user.Character.Dex}</td></tr>");
 
-            sb.Append($"<tr><td colspan='2'>&nbsp;</td><td>Con:</td><td>{user.Character.Con}</td></tr>");
+            sb.Append($"<tr><td rowspan='2'>Con:</td><td rowspan='2'>{user.Character.Con}</td></tr>");
+
+            sb.Append("<tr><td colspan='2'></td></tr>");
 
             sb.Append($"<tr><td class='player-section' colspan='4'>Combat Rolls</td></tr>");
 

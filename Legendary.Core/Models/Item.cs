@@ -61,7 +61,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the weight of the item.
         /// </summary>
-        public long Weight { get; set; }
+        public decimal Weight { get; set; }
 
         /// <summary>
         ///  Gets or sets the durability of the armor.
@@ -131,7 +131,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the value of the item.
         /// </summary>
-        public long Value { get; set; } = 0;
+        public decimal Value { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the time until this item rots into dust (in ticks).

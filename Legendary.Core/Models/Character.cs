@@ -87,7 +87,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the currency.
         /// </summary>
-        public long Currency { get; set; } = 0;
+        public decimal Currency { get; set; } = 0m;
 
         /// <summary>
         /// Gets or sets the player's divine favor.

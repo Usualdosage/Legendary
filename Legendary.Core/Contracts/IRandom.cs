@@ -21,5 +21,13 @@ namespace Legendary.Core.Contracts
         /// <param name="max">The maximum value.</param>
         /// <returns>System.Int32.</returns>
         int Next(int min, int max);
+
+        /// <summary>
+        /// Gets the next random decimal in a specified range.
+        /// </summary>
+        /// <param name="min">The minimum value.</param>
+        /// <param name="max">The maximum value.</param>
+        /// <returns>System.Decimal.</returns>
+        decimal Next(decimal min, decimal max);
     }
 }

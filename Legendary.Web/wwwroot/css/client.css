@@ -150,27 +150,6 @@ body {
     font-size: 3em;
 }
 
-/* Help Content */
-
-.help-content {
-    width: 1024px;
-}
-
-    .help-content h1 {
-        font-size: 2em;
-        font-family: 'Balgruf', 'Comforter', cursive;
-    }
-
-    .help-content h2 {
-        font-size: 1.5em;
-        font-family: 'Balgruf', 'Comforter', cursive;
-    }
-
-    .help-content p {
-        padding: 5px;
-        font-size: .9em;
-    }
-
 /* Descriptive Content */
 .command {
     width: 100px;
@@ -430,6 +409,7 @@ progress {
     }
 
 /* Player Score */
+
 .player-score {
     border: solid 1px #ccc;
     width: 500px;
@@ -437,7 +417,8 @@ progress {
     background-color: #333;
 }
 
-    .player-score table {
+    .player-score table td {
+        vertical-align: top;
     }
 
 .player-score-title {
@@ -498,6 +479,51 @@ progress {
 }
 
 .player-health {
+}
+
+.currency-gold {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 10px;
+    font-family: Courier New, Courier, monospace;
+    color: #222;
+    border: solid 1px brown;
+    background-color: gold;
+    padding-top: 4px;
+}
+
+.currency-silver {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 10px;
+    font-family: Courier New, Courier, monospace;
+    color: #222;
+    border: solid 1px #666;
+    background-color: silver;
+    padding-top: 4px;
+}
+
+.currency-copper {
+    display: inline-block;
+    vertical-align: middle;    
+    min-width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 11px;
+    font-family: Courier New, Courier, monospace;
+    color: #222;
+    border: solid 1px brown;
+    background-color: sandybrown;
+    padding-top: 4px;
 }
 
 /* Skills and Spells */
@@ -598,13 +624,17 @@ progress {
         font-size: 1.1em;
         font-weight: bold;
         font-family: 'Balgruf';
+        color: goldenrod;
     }
 
     .help-text ul li {
         font-weight: bold;
+        color: #ccc;
+        font-family: Courier New, Courier, monospace;
     }
 
-    .help-text ul li em {
-        color: aquamarine;
-    }
+        .help-text ul li em {
+            color: aquamarine;
+            font-family: Courier New, Courier, monospace;
+        }
 
