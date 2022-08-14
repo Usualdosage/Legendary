@@ -37,15 +37,15 @@ namespace Legendary.Engine
             new Weather(2, "Some thicker clouds begin to form in the sky.", string.Empty),
             new Weather(3, "The sky becomes mostly cloudy.", string.Empty),
             new Weather(4, "The cloud cover gets heavier.", string.Empty),
-            new Weather(5, "You hear thunder rumble in the distance.", string.Empty),
+            new Weather(5, "You hear thunder rumble in the distance.", Sounds.THUNDER),
             new Weather(6, "Dark, heavy clouds fill the sky.", string.Empty),
-            new Weather(7, "The wind picks up.", string.Empty),
-            new Weather(8, "It begins to {precipitate} lightly.", string.Empty),
-            new Weather(9, "Lighting flashes in the sky from the heavy clouds.", string.Empty),
-            new Weather(10, "The wind begins to howl.", string.Empty),
-            new Weather(11, "The {precipitate} picks up and starts coming down heavily.", string.Empty),
-            new Weather(12, "Lightning flashes all around you while thunder erupts from the skies.", string.Empty),
-            new Weather(13, "The {precipitate} is coming down in buckets all around you.", string.Empty),
+            new Weather(7, "The wind picks up.", Sounds.WIND),
+            new Weather(8, "It begins to {precipitate} lightly.", Sounds.LIGHTRAIN),
+            new Weather(9, "Lighting flashes in the sky from the heavy clouds.", Sounds.LIGHTNINGBOLT),
+            new Weather(10, "The wind begins to howl.", Sounds.HEAVYWIND),
+            new Weather(11, "The {precipitate} picks up and starts coming down heavily.", Sounds.RAIN),
+            new Weather(12, "Lightning flashes all around you while thunder erupts from the skies.", Sounds.HEAVYTHUNDER),
+            new Weather(13, "The {precipitate} is coming down in buckets all around you.", Sounds.HEAVYRAIN),
         };
 
         private List<Weather> dayWeatherBackward = new List<Weather>()
@@ -54,15 +54,15 @@ namespace Legendary.Engine
             new Weather(1, "The thicker clouds get smaller as the wind blows them away.", string.Empty),
             new Weather(2, "The sky begins to clear.", string.Empty),
             new Weather(3, "The heavy cloud cover begins to break up.", string.Empty),
-            new Weather(4, "The thunder fades off in the distance.", string.Empty),
+            new Weather(4, "The thunder fades off in the distance.", Sounds.THUNDERFADE),
             new Weather(5, "The dark, heavy clouds begin to break up.", string.Empty),
-            new Weather(6, "The wind dies down a bit.", string.Empty),
+            new Weather(6, "The wind dies down a bit.", Sounds.WINDFADE),
             new Weather(7, "The light {precipitate} stops.", string.Empty),
-            new Weather(8, "The lightning seems to fade off in the distance.", string.Empty),
-            new Weather(9, "The wind calms to a dull roar.", string.Empty),
-            new Weather(10, "The {precipitate} slows to a medium fall.", string.Empty),
-            new Weather(11, "The thunder and lighting around you seems to gradually fade out.", string.Empty),
-            new Weather(12, "The {precipitate} stops coming down so heavily.", string.Empty),
+            new Weather(8, "The lightning seems to fade off in the distance.", Sounds.THUNDERFADE),
+            new Weather(9, "The wind calms to a dull roar.", Sounds.WIND),
+            new Weather(10, "The {precipitate} slows to a medium fall.", Sounds.LIGHTRAIN),
+            new Weather(11, "The thunder and lighting around you seems to gradually fade out.", Sounds.THUNDERFADE),
+            new Weather(12, "The {precipitate} stops coming down so heavily.", Sounds.RAIN),
         };
 
         /// <summary>
@@ -288,15 +288,19 @@ namespace Legendary.Engine
             }
 
             var weather = this.random.Next(1, 8);
-            string precipitate = "rain";
+            string precipitate = string.Empty;
 
             switch (room.Terrain)
             {
+                case Core.Types.Terrain.Forest:
+                case Core.Types.Terrain.Grasslands:
+                case Core.Types.Terrain.Hills:
+                case Core.Types.Terrain.Jungle:
                 case Core.Types.Terrain.Air:
-                    break;
                 case Core.Types.Terrain.Beach:
-                    break;
                 case Core.Types.Terrain.City:
+                case Core.Types.Terrain.Swamp:
+                    precipitate = "rain";
                     break;
                 case Core.Types.Terrain.Desert:
                     precipitate = "virga";
@@ -333,22 +337,23 @@ namespace Legendary.Engine
                         break;
                     }
 
-                case Core.Types.Terrain.Forest:
-                    break;
-                case Core.Types.Terrain.Grasslands:
-                    break;
-                case Core.Types.Terrain.Hills:
-                    break;
-                case Core.Types.Terrain.Jungle:
-                    break;
                 case Core.Types.Terrain.Mountains:
-                    precipitate = "snow";
-                    break;
                 case Core.Types.Terrain.Snow:
                     precipitate = "snow";
                     break;
-                case Core.Types.Terrain.Swamp:
-                    break;
+            }
+
+            if (chance == 0)
+            {
+                var weatherMessage = this.dayWeatherForward[Math.Min(this.dayWeatherIndex, this.dayWeatherForward.Count - 1)];
+                await this.communicator.SendToPlayer(this.connectedUser.Connection, weatherMessage.Message.Replace("{precipitate}", precipitate), cancellationToken);
+                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+            }
+            else if (chance == 1)
+            {
+                var weatherMessage = this.dayWeatherBackward[Math.Min(this.dayWeatherIndex, this.dayWeatherBackward.Count - 1)];
+                await this.communicator.SendToPlayer(this.connectedUser.Connection, weatherMessage.Message.Replace("{precipitate}", precipitate), cancellationToken);
+                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
             }
         }
     }

@@ -11,6 +11,7 @@ namespace Legendary.Engine.Processors
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -841,10 +842,10 @@ namespace Legendary.Engine.Processors
                     if (targetPlayer != null)
                     {
                         actor.Character.Inventory.Remove(itemToGive);
-                        targetPlayer.Character.Inventory.Add(itemToGive);
+                        targetPlayer.Character.Inventory.Add(itemToGive.DeepCopy());
 
                         await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
-                        await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
+                        await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
 
                         await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                     }
@@ -855,7 +856,7 @@ namespace Legendary.Engine.Processors
                         if (targetMob != null)
                         {
                             actor.Character.Inventory.Remove(itemToGive);
-                            targetMob.Inventory.Add(itemToGive);
+                            targetMob.Inventory.Add(itemToGive.DeepCopy());
 
                             await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetMob.FirstName}.", cancellationToken);
                             await this.communicator.SendToRoom(actor.Character.Location, actor.Character, targetMob, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetMob.FirstName}.", cancellationToken);
@@ -2512,11 +2513,6 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task<Item?> ItemFromInventory(UserData user, CommandArgs args, CancellationToken cancellationToken)
-        {
-            return null;
-        }
-
         private async Task GetAllItemsInRoom(UserData actor, CancellationToken cancellationToken)
         {
             var itemsInRoom = this.communicator.GetItemsInRoom(actor.Character.Location);
@@ -2600,7 +2596,7 @@ namespace Legendary.Engine.Processors
                             if (item != null)
                             {
                                 await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
 
                                 var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
                                 actor.Character.Inventory.Add(itemClone);
@@ -2643,7 +2639,7 @@ namespace Legendary.Engine.Processors
                     {
                         // Only had 1, so use the original item.
                         await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
 
                         actor.Character.Inventory.Add(item);
                         room.Items.Remove(item);
@@ -2654,7 +2650,7 @@ namespace Legendary.Engine.Processors
                         var targetItem = duplicateItems[Math.Min(args.Index, duplicateItems.Count - 1)];
 
                         await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name}.", cancellationToken);
 
                         actor.Character.Inventory.Add(targetItem);
                         room.Items.Remove(targetItem);
@@ -2705,7 +2701,7 @@ namespace Legendary.Engine.Processors
                         {
                             // Only had 1, so use the original item.
                             await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
 
                             var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
                             actor.Character.Inventory.Add(itemClone);
@@ -2718,7 +2714,7 @@ namespace Legendary.Engine.Processors
                             var targetItem = matchingItems[Math.Min(args.Index, matchingItems.Count - 1)];
 
                             await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name} from {container.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name} from {container.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name} from {container.Name}.", cancellationToken);
 
                             var itemClone = this.communicator.ResolveItem(targetItem.ItemId).DeepCopy();
                             actor.Character.Inventory.Add(itemClone);

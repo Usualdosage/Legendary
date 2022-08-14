@@ -48,7 +48,7 @@ namespace Legendary.Core.Contracts
         /// <param name="lastException">The last thrown exception.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task UpdateGameMetrics(Exception? lastException, CancellationToken cancellationToken = default);
+        Task<GameMetrics> UpdateGameMetrics(Exception? lastException, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Processes changes to the world such as item decay, affects, mob movement, etc.

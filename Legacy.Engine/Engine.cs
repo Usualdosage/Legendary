@@ -95,10 +95,10 @@ namespace Legendary.Engine
 
                             this.gameTicks = 0;
 
-                            await this.world.UpdateGameMetrics(null);
+                            var metrics = await this.world.UpdateGameMetrics(null);
 
                             // Raise the event to any listeners (e.g. Communicator).
-                            this.OnTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
+                            this.OnTick(this, new EngineEventArgs(this.gameTicks, metrics.CurrentHour, null));
                         }
                     }
                     catch (Exception ex)

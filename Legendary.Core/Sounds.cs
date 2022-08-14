@@ -125,5 +125,40 @@ namespace Legendary.Core
         /// Unlock Door MP3.
         /// </summary>
         public const string UNLOCKDOOR = "https://legendary.file.core.windows.net/audio/soundfx/unlock.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Thunder MP3.
+        /// </summary>
+        public const string THUNDER = "https://legendary.file.core.windows.net/audio/weather/thunder.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Light rain MP3.
+        /// </summary>
+        public const string LIGHTRAIN = "https://legendary.file.core.windows.net/audio/weather/lightrain.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Heavy wind MP3.
+        /// </summary>
+        public const string HEAVYWIND = "https://legendary.file.core.windows.net/audio/weather/heavywind.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Heavy thunder MP3.
+        /// </summary>
+        public const string HEAVYTHUNDER = "https://legendary.file.core.windows.net/audio/weather/heavythunder.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Heavy rain MP3.
+        /// </summary>
+        public const string HEAVYRAIN = "https://legendary.file.core.windows.net/audio/weather/heavyrain.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Thunder fade MP3.
+        /// </summary>
+        public const string THUNDERFADE = "https://legendary.file.core.windows.net/audio/weather/thunderfade.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Wind fade MP3.
+        /// </summary>
+        public const string WINDFADE = "https://legendary.file.core.windows.net/audio/weather/windfade.mp3" + SAS_TOKEN;
     }
 }

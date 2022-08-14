@@ -170,7 +170,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task UpdateGameMetrics(Exception? lastException, CancellationToken cancellationToken)
+        public async Task<GameMetrics> UpdateGameMetrics(Exception? lastException, CancellationToken cancellationToken)
         {
             try
             {
@@ -217,6 +217,8 @@ namespace Legendary.Engine
                 // TODO
                 // metrics.MostKills = this.dataService.Characters.Find(c => c.Metrics != null && c.Metrics.PlayerKills > 0).SortByDescending(s => s.Metrics.PlayerKills).FirstOrDefault(cancellationToken: cancellationToken).FirstName;
                 await this.dataService.SaveGameMetrics(metrics, cancellationToken);
+
+                return metrics;
             }
             catch
             {
@@ -433,27 +435,35 @@ namespace Legendary.Engine
 
                                 if (newArea != null && newRoom != null)
                                 {
-                                    string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                                    await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
-
-                                    // Remove the mobile from the prior location.
-                                    var lastRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                    if (lastRoom != null)
+                                    // Don't let mobs leave their home area.
+                                    if (mobile.Location.Key != newArea.AreaId)
                                     {
-                                        lastRoom.Mobiles.Remove(mobile);
+                                        continue;
                                     }
-
-                                    // Set the mobile's new location.
-                                    mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                                    // Add the mobile to the new location.
-                                    var nextRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                    if (nextRoom != null)
+                                    else
                                     {
-                                        nextRoom.Mobiles.Add(mobile);
-                                        await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                        string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                                        await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+
+                                        // Remove the mobile from the prior location.
+                                        var lastRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                        if (lastRoom != null)
+                                        {
+                                            lastRoom.Mobiles.Remove(mobile);
+                                        }
+
+                                        // Set the mobile's new location.
+                                        mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                                        // Add the mobile to the new location.
+                                        var nextRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                        if (nextRoom != null)
+                                        {
+                                            nextRoom.Mobiles.Add(mobile);
+                                            await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                        }
                                     }
                                 }
                             }
