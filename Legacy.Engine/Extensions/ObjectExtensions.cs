@@ -9,8 +9,6 @@
 
 namespace Legendary.Engine.Extensions
 {
-    using System;
-    using System.Reflection;
     using Legendary.Core.Models;
     using Newtonsoft.Json;
 

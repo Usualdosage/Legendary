@@ -1,4 +1,4 @@
-﻿// <copyright file="ItemType.cs" company="Legendary™">
+﻿// <copyright file="AwardLevel.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -10,63 +10,53 @@
 namespace Legendary.Core.Types
 {
     /// <summary>
-    /// Various types that an item can be.
+    /// All possible levels for an award.
     /// </summary>
-    public enum ItemType : short
+    public enum AwardLevel
     {
         /// <summary>
-        /// Weapon.
+        /// Bronze.
         /// </summary>
-        Weapon = 0,
+        Bronze = 0,
 
         /// <summary>
-        /// Armor.
+        /// Silver.
         /// </summary>
-        Armor = 1,
+        Silver = 1,
 
         /// <summary>
-        /// Food.
+        /// Gold.
         /// </summary>
-        Food = 3,
+        Gold = 2,
 
         /// <summary>
-        /// Light.
+        /// Platinum.
         /// </summary>
-        Light = 4,
+        Platinum = 3,
 
         /// <summary>
-        /// Drink.
+        /// Amethyst.
         /// </summary>
-        Drink = 5,
+        Amethyst = 4,
 
         /// <summary>
-        /// Container.
+        /// Emerald.
         /// </summary>
-        Container = 6,
+        Emerald = 5,
 
         /// <summary>
-        /// Currency.
+        /// Sapphire.
         /// </summary>
-        Currency = 7,
+        Sapphire = 6,
 
         /// <summary>
-        /// Spring.
+        /// Ruby.
         /// </summary>
-        Spring = 8,
+        Ruby = 7,
 
         /// <summary>
-        /// Key.
+        /// Diamond.
         /// </summary>
-        Key = 9,
-
-        /// <summary>
-        /// Gem.
-        /// </summary>
-        Gem = 10,
-
-        /// <summary>
-        /// Map.
-        /// </summary>
-        Map = 11,
+        Diamond = 8,
     }
 }

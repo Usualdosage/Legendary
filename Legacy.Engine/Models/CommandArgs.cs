@@ -25,11 +25,13 @@ namespace Legendary.Engine.Models
         /// <param name="action">The action.</param>
         /// <param name="method">The method.</param>
         /// <param name="target">The target.</param>
-        public CommandArgs(string action, string? method, string? target)
+        /// <param name="index">The index of the target, if multiple specified.</param>
+        public CommandArgs(string action, string? method, string? target, int index = 0)
         {
             this.Action = action;
             this.Method = method;
             this.Target = target;
+            this.Index = index;
         }
 
         /// <summary>
@@ -46,6 +48,11 @@ namespace Legendary.Engine.Models
         /// Gets the target.
         /// </summary>
         public string? Target { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the index of the action.
+        /// </summary>
+        public int Index { get; set; } = 0;
 
         /// <summary>
         /// Parses an input into a command args object.
@@ -67,17 +74,43 @@ namespace Legendary.Engine.Models
 
                 if (words.Count == 1)
                 {
+                    // get
                     return new CommandArgs(words[0].Value, null, null);
                 }
                 else if (words.Count == 2)
                 {
+                    // get dagger
                     var method = words[1].Value.Replace("\"", string.Empty);
-                    return new CommandArgs(words[0].Value, method, null);
+                    return new CommandArgs(words[0].Value, method, null, 0);
                 }
-                else if (words.Count == 3)
+                else if (words.Count == 3 && words[0].Value.ToLower() != "emote")
                 {
-                    var method = words[1].Value.Replace("\"", string.Empty);
-                    return new CommandArgs(words[0].Value, method, words[2].Value);
+                    if (int.TryParse(words[1].Value, out int index))
+                    {
+                        // get 2.dagger
+                        var method = words[2].Value.Replace("\"", string.Empty);
+                        return new CommandArgs(words[0].Value, method, null, index);
+                    }
+                    else
+                    {
+                        // get dagger backpack
+                        var method = words[1].Value.Replace("\"", string.Empty);
+                        return new CommandArgs(words[0].Value, method, words[2].Value, 0);
+                    }
+                }
+                else if (words.Count == 4 && words[0].Value.ToLower() != "emote")
+                {
+                    // get 2.dagger backpack
+                    if (int.TryParse(words[1].Value, out int index))
+                    {
+                        var method = words[2].Value.Replace("\"", string.Empty);
+                        return new CommandArgs(words[0].Value, method, words[3].Value, index);
+                    }
+                    else
+                    {
+                        var method = words[1].Value.Replace("\"", string.Empty);
+                        return new CommandArgs(words[0].Value, method, words[3].Value, 0);
+                    }
                 }
                 else
                 {

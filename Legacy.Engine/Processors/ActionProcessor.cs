@@ -29,6 +29,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Models;
     using Microsoft.AspNetCore.Hosting;
     using MongoDB.Driver;
+    using SharpCompress.Compressors.Xz;
 
     /// <summary>
     /// Used to perform quick lookups of skills.
@@ -812,7 +813,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                await this.GetItem(actor, args.Method, args.Target, cancellationToken);
+                await this.GetItem(actor, args, cancellationToken);
             }
         }
 
@@ -875,7 +876,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
         }
 
-        [HelpText("<p>Examines an item in your inventory closely to determine some of its attributes.</p><ul><li>examine <em>item</em></li></ul>")]
+        [HelpText("<p>Examines an item in your inventory closely to determine some of its attributes. If there are more than one you wish to examine, put a number and a period before it. See examples.</p><ul><li>examine <em>item</em></li><li>examine <em>2.item</em></li></ul>")]
         private async Task DoExamine(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -884,13 +885,32 @@ namespace Legendary.Engine.Processors
             }
             else
             {
+                // examine backpack
+                // examine 2.backpack
                 if (actor.Character.Inventory == null || actor.Character.Inventory.Count == 0)
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"You don't have that.", cancellationToken);
                     return;
                 }
 
-                var item = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(args.Method));
+                Item? item = null;
+
+                if (args.Index <= 1)
+                {
+                    item = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(args.Method));
+                }
+                else
+                {
+                    var allItems = actor.Character.Inventory.Where(i => i.Name.Contains(args.Method)).ToList();
+                    if (allItems.Count > 1)
+                    {
+                        item = allItems[args.Index - 1];
+                    }
+                    else
+                    {
+                        item = allItems.FirstOrDefault();
+                    }
+                }
 
                 if (item != null)
                 {
@@ -1558,7 +1578,7 @@ namespace Legendary.Engine.Processors
             actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
         }
 
-        [HelpText("<p>Sacrifices an item to your deity in return for some divine favor. Not all items can be sacrificed.</p><ul><li>sacrifice <em>target</em></li></ul>")]
+        [HelpText("<p>Sacrifices an item to your deity in return for some divine favor. Not all items can be sacrificed.</p><ul><li>sacrifice <em>target</em></li><li>sacrifice <em>all</em></li></ul>")]
         private async Task DoSacrifice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
@@ -2386,153 +2406,371 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task GetItem(UserData user, string method, string? target, CancellationToken cancellationToken = default)
+        private async Task<Tuple<IItem?, IItem?>?> ItemFromRoom(UserData user, CommandArgs args, CancellationToken cancellationToken)
         {
-            var room = this.communicator.ResolveRoom(user.Character.Location);
+            IItem? item = null;
 
-            if (room == null)
+            // Get all items that are in the room.
+            var items = this.communicator.GetItemsInRoom(user.Character.Location);
+
+            var itemName = args.Method;
+            var containerName = args.Target;
+
+            // Get an individual item. E.g. 'get sword', 'get 2.sword'
+            if (!string.IsNullOrWhiteSpace(itemName) && string.IsNullOrWhiteSpace(containerName))
             {
-                return;
-            }
+                item = items?.ParseTargetName(args.Method);
 
-            // Get all corpse, get all chest, etc.
-            if (!string.IsNullOrWhiteSpace(target))
-            {
-                // See if it's an item in the room.
-                var items = this.communicator.GetItemsInRoom(user.Character.Location);
-                var item = items?.ParseTargetName(target);
-
-                if (item == null)
+                if (args.Index <= 1)
                 {
-                    item = user.Character.Inventory.ParseTargetName(target);
-                }
-
-                if (item != null)
-                {
-                    if (item.IsClosed)
-                    {
-                        // See if it's an item the player is carrying.
-                        await this.communicator.SendToPlayer(user.Connection, $"{item.Name.FirstCharToUpper()} is closed.", cancellationToken);
-                    }
-                    else
-                    {
-                        if (item.Contains != null && item.Contains.Count > 0)
-                        {
-                            List<IItem> itemsToRemove = new ();
-
-                            foreach (var eq in item.Contains)
-                            {
-                                if (eq != null)
-                                {
-                                    await this.communicator.SendToPlayer(user.Connection, $"You get {eq.Name} from {item.Name}.", cancellationToken);
-                                    await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} gets {eq.Name} from {item.Name}.", cancellationToken);
-
-                                    if (eq.ItemType == ItemType.Currency)
-                                    {
-                                        user.Character.Currency += eq.Value;
-                                        itemsToRemove.Add(eq);
-                                    }
-                                    else if (!eq.WearLocation.Contains(WearLocation.None))
-                                    {
-                                        var clone = (eq as Item).Clone();
-                                        if (clone != null)
-                                        {
-                                            user.Character.Inventory.Add(clone);
-                                            itemsToRemove.Add(eq);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        await this.communicator.SendToPlayer(user.Connection, $"You couldn't get {eq.Name} from {item.Name}.", cancellationToken);
-                                    }
-                                }
-                            }
-
-                            foreach (var itemToRemove in itemsToRemove)
-                            {
-                                item.Contains.Remove(itemToRemove);
-                            }
-                        }
-                        else
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"There isn't anything in {item.Name} to get.", cancellationToken);
-                        }
-                    }
+                    return new Tuple<IItem?, IItem?>(item, null);
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
-                }
-            }
-            else if (method.ToLower() == "all")
-            {
-                List<Item> itemsToRemove = new ();
+                    // Getting an item by index (2.sword).
+                    var matchingItems = items?.Where(i => i.ItemId == item?.ItemId).ToList();
 
-                if (room.Items == null || room.Items.Count == 0)
-                {
-                    await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
-                    return;
-                }
-
-                foreach (var item in room.Items)
-                {
-                    if (item != null)
+                    // We do have more than 1, so get the item by index. If the index is out of bounds, just get the last one.
+                    if (matchingItems != null && matchingItems.Count > 1)
                     {
-                        if (item.WearLocation.Contains(WearLocation.None))
-                        {
-                            await this.communicator.SendToPlayer(user.Connection, $"You can't get {item.Name}.", cancellationToken);
-                        }
-                        else
-                        {
-                            user.Character.Inventory.Add(item.Clone());
-                            await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
-                            itemsToRemove.Add(item);
-                        }
+                        var index = Math.Min(args.Index, matchingItems.Count - 1);
+                        return new Tuple<IItem?, IItem?>(matchingItems[index], null);
                     }
-                }
-
-                foreach (var itemToRemove in itemsToRemove)
-                {
-                    room.Items.Remove(itemToRemove);
+                    else
+                    {
+                        // Null, or only had one, so just return that.
+                        return new Tuple<IItem?, IItem?>(matchingItems?.FirstOrDefault(), null);
+                    }
                 }
             }
             else
             {
-                if (room.Items == null || room.Items.Count == 0)
+                // Trying to get an individual item from a container. See if we have a container. 'get sword chest'
+                var container = items?.ParseTargetName(args.Target);
+
+                if (container != null)
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"There isn't anything here to get.", cancellationToken);
-                    return;
-                }
-
-                List<Item> itemsToRemove = new ();
-
-                var item = room.Items.ParseTargetName(method);
-
-                if (item != null)
-                {
-                    if (item.WearLocation.Contains(WearLocation.None))
+                    if (container.IsClosed)
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"You can't get {item.Name}.", cancellationToken);
-                        return;
+                        // May be trying to get an item from a closed container.
+                        return new Tuple<IItem?, IItem?>(null, container);
+                    }
+
+                    if (container.Contains != null && container.Contains.Count > 0)
+                    {
+                        item = container.Contains?.ParseTargetName(args.Method);
+
+                        if (item != null)
+                        {
+                            // Just return the first item we find.
+                            if (args.Index <= 1)
+                            {
+                                return new Tuple<IItem?, IItem?>(item, container);
+                            }
+                            else
+                            {
+                                // If we have at least one item, get a list of all items with the same item Id.
+                                if (item != null)
+                                {
+                                    var containerItems = container.Contains?.Where(i => i.ItemId == item.ItemId).ToList();
+
+                                    // We have one more more items. Get either the given index, or the last one in the list.
+                                    if (containerItems != null && containerItems.Count > 0)
+                                    {
+                                        var index = Math.Min(args.Index, containerItems.Count - 1);
+                                        return new Tuple<IItem?, IItem?>(containerItems[index], container);
+                                    }
+                                    else
+                                    {
+                                        // Null, or only had one, so just return that.
+                                        return new Tuple<IItem?, IItem?>(containerItems?.FirstOrDefault(), container);
+                                    }
+                                }
+                                else
+                                {
+                                    return new Tuple<IItem?, IItem?>(null, container);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Nothing like that in the container.
+                            return new Tuple<IItem?, IItem?>(null, container);
+                        }
                     }
                     else
                     {
-                        user.Character.Inventory.Add(item.Clone());
-                        await this.communicator.SendToPlayer(user.Connection, $"You get {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
-                        itemsToRemove.Add(item);
+                        // Container didn't contain anything matching.
+                        return new Tuple<IItem?, IItem?>(null, container);
                     }
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"That isn't here.", cancellationToken);
+                    // No container by that name.
+                    return new Tuple<IItem?, IItem?>(null, null);
+                }
+            }
+        }
+
+        private async Task<Item?> ItemFromInventory(UserData user, CommandArgs args, CancellationToken cancellationToken)
+        {
+            return null;
+        }
+
+        private async Task GetAllItemsInRoom(UserData actor, CancellationToken cancellationToken)
+        {
+            var itemsInRoom = this.communicator.GetItemsInRoom(actor.Character.Location);
+
+            if (itemsInRoom != null && itemsInRoom.Count > 0)
+            {
+                List<Item> itemsToRemove = new List<Item>();
+
+                foreach (var item in itemsInRoom)
+                {
+                    if (item.ItemType == ItemType.Currency)
+                    {
+                        actor.Character.Currency += item.Value;
+                        itemsToRemove.Add(item);
+                    }
+                    else if (item.WearLocation.Contains(WearLocation.None))
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't get {item.Name}.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
+
+                        actor.Character.Inventory.Add(item);
+                        itemsToRemove.Add(item);
+                    }
                 }
 
-                foreach (var itemToRemove in itemsToRemove)
+                var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+                if (room != null)
                 {
-                    room.Items.Remove(itemToRemove);
+                    room.Items.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
                 }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There's nothing here.", cancellationToken);
+            }
+        }
+
+        private async Task GetAllItemsInContainer(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var itemsInInventory = actor.Character.Inventory;
+            var itemsInRoom = this.communicator.GetItemsInRoom(actor.Character.Location);
+            Item? container = null;
+
+            // Check inventory first.
+            if (itemsInInventory != null && itemsInInventory.Count > 0)
+            {
+                container = itemsInInventory.ParseTargetName(args.Target);
+            }
+
+            // Check the items in the room.
+            if (container == null && itemsInRoom != null && itemsInRoom.Count > 0)
+            {
+                container = itemsInRoom.ParseTargetName(args.Target);
+            }
+
+            if (container != null)
+            {
+                if (container.Contains != null && container.Contains.Count > 0)
+                {
+                    List<IItem> itemsToRemove = new List<IItem>();
+
+                    foreach (var item in container.Contains)
+                    {
+                        // Item, no container, check the item.
+                        if (item.ItemType == ItemType.Currency)
+                        {
+                            actor.Character.Currency += item.Value;
+                            itemsToRemove.Add(item);
+                        }
+                        else if (item.WearLocation.Contains(WearLocation.None))
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't get {item.Name} from {container.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            if (item != null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+
+                                var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
+                                actor.Character.Inventory.Add(itemClone);
+
+                                itemsToRemove.Add(item);
+                            }
+                        }
+                    }
+
+                    container.Contains.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"{container.Name.FirstCharToUpper()} has nothing in it.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"That isn't here.", cancellationToken);
+            }
+        }
+
+        private async Task GetItemFromRoom(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var room = this.communicator.ResolveRoom(actor.Character.Location);
+
+            var itemsInRoom = this.communicator.GetItemsInRoom(actor.Character.Location);
+
+            if (itemsInRoom != null)
+            {
+                List<Item> itemsToRemove = new List<Item>();
+
+                var item = itemsInRoom.ParseTargetName(args.Method);
+
+                if (item != null && room != null)
+                {
+                    var duplicateItems = itemsInRoom.Where(i => i.ItemId == item.ItemId).ToList();
+
+                    if (duplicateItems.Count == 1)
+                    {
+                        // Only had 1, so use the original item.
+                        await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
+
+                        actor.Character.Inventory.Add(item);
+                        room.Items.Remove(item);
+                    }
+                    else
+                    {
+                        // Get the item by index.
+                        var targetItem = duplicateItems[Math.Min(args.Index, duplicateItems.Count - 1)];
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name}.", cancellationToken);
+
+                        actor.Character.Inventory.Add(targetItem);
+                        room.Items.Remove(targetItem);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You don't see that here.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There's nothing here.", cancellationToken);
+            }
+        }
+
+        private async Task GetItemFromItem(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            // Get the target. Could be in the room, or in inventory.
+            var itemsInInventory = actor.Character.Inventory;
+            var itemsInRoom = this.communicator.GetItemsInRoom(actor.Character.Location);
+            Item? container = null;
+            IItem? item = null;
+
+            // Check inventory first.
+            if (itemsInInventory != null && itemsInInventory.Count > 0)
+            {
+                container = itemsInInventory.ParseTargetName(args.Target);
+            }
+
+            // Check the items in the room.
+            if (container == null && itemsInRoom != null && itemsInRoom.Count > 0)
+            {
+                container = itemsInRoom.ParseTargetName(args.Target);
+            }
+
+            if (container != null)
+            {
+                if (container.Contains != null && container.Contains.Count > 0)
+                {
+                    item = container.Contains.ParseTargetName(args.Method);
+
+                    if (item != null)
+                    {
+                        var matchingItems = container.Contains.Where(c => c.ItemId == item.ItemId).ToList();
+
+                        if (matchingItems.Count == 1)
+                        {
+                            // Only had 1, so use the original item.
+                            await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+
+                            var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
+                            actor.Character.Inventory.Add(itemClone);
+
+                            container.Contains.Remove(item);
+                        }
+                        else
+                        {
+                            // Get the item by index.
+                            var targetItem = matchingItems[Math.Min(args.Index, matchingItems.Count - 1)];
+
+                            await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name} from {container.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name} from {container.Name}.", cancellationToken);
+
+                            var itemClone = this.communicator.ResolveItem(targetItem.ItemId).DeepCopy();
+                            actor.Character.Inventory.Add(itemClone);
+
+                            container.Contains.Remove(targetItem);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You don't see that here.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There is nothing in {container.Name}.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You don't see that here.", cancellationToken);
+            }
+        }
+
+        private async Task GetItem(UserData actor, CommandArgs args, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Get what?", cancellationToken);
+            }
+            else if (args.Method.ToLower() == "all" && string.IsNullOrWhiteSpace(args.Target))
+            {
+                // get all
+                await this.GetAllItemsInRoom(actor, cancellationToken);
+            }
+            else if (args.Method.ToLower() == "all" && !string.IsNullOrWhiteSpace(args.Target))
+            {
+                // get all chest
+                await this.GetAllItemsInContainer(actor, args, cancellationToken);
+            }
+            else if (string.IsNullOrWhiteSpace(args.Target))
+            {
+                // get sword
+                // get 2.sword
+                await this.GetItemFromRoom(actor, args, cancellationToken);
+            }
+            else
+            {
+                // get sword chest
+                // get sword backpack
+                // get 2.sword chest
+                // get 2.sword backpack
+                await this.GetItemFromItem(actor, args, cancellationToken);
             }
         }
 
