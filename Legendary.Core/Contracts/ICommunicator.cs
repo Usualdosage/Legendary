@@ -154,12 +154,14 @@ namespace Legendary.Core.Contracts
         Task ShowRoomToPlayer(Character actor, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Shows/updates the player information box.
+        /// Sends JSON to the client to update the controls.
         /// </summary>
         /// <param name="actor">The actor.</param>
+        /// <param name="caption">The caption of the image. Defaults to area description.</param>
+        /// <param name="image">The image. Defaults to room image.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ShowPlayerInfo(Character actor, CancellationToken cancellationToken = default);
+        Task SendGameUpdate(Character actor, string? caption, string? image, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Shows a target player or mobile to the actor.

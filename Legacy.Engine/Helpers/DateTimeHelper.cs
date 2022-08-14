@@ -44,7 +44,7 @@ namespace Legendary.Engine.Helpers
             " on " +
             DaysOfWeek[gameDay % 6] +
             ", the " +
-            FormatNumber(gameDay % 30) +
+            FormatNumber((gameDay % 30) + 1) +
             " day of " +
             MonthsOfYear[gameMonth] +
             ", in the year " +
@@ -52,7 +52,7 @@ namespace Legendary.Engine.Helpers
             ". It is the " +
             FormatNumber(gameDay + (gameMonth * 30)) + " day of the year" +
             ". The time is " +
-            FormatTime(gameHour, gameMinute, gameSecond) +
+            FormatTime(gameHour, gameMinute) +
             ". " +
             GetMoon(gameDay).Item1 +
             " " +
@@ -158,17 +158,22 @@ namespace Legendary.Engine.Helpers
             };
         }
 
-        private static string FormatTime(int hour, int minute, int second)
+        private static string FormatTime(int hour, int minute)
         {
             var ampm = "AM";
             var displayHour = hour;
             string displayMinute = minute.ToString();
-            string displaySecond = second.ToString();
 
-            if (hour >= 12)
+            if (hour > 12)
             {
                 displayHour = hour - 12;
                 ampm = "PM";
+            }
+
+            if (hour == 24)
+            {
+                displayHour = 12;
+                ampm = "AM";
             }
 
             if (minute < 10)
@@ -176,12 +181,7 @@ namespace Legendary.Engine.Helpers
                 displayMinute = "0" + minute;
             }
 
-            if (second < 10)
-            {
-                displaySecond = "0" + second;
-            }
-
-            return displayHour + ":" + displayMinute + ":" + displaySecond + " " + ampm;
+            return displayHour + ":" + displayMinute + " " + ampm;
         }
 
         private static string GetHolidays(int month, int day)

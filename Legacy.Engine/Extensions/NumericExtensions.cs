@@ -7,13 +7,12 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-using System.Collections.Generic;
-using System.Text;
-using Legendary.Core.Models;
-using Legendary.Core.Types;
-
 namespace Legendary.Engine.Extensions
 {
+    using System.Collections.Generic;
+    using Legendary.Core.Models;
+    using Legendary.Core.Types;
+
     /// <summary>
     /// Extensions for numeric data types.
     /// </summary>

@@ -920,14 +920,8 @@ namespace Legendary.Engine.Processors
 
                     StringBuilder sb = new StringBuilder();
 
-                    if (!string.IsNullOrWhiteSpace(item.Image))
-                    {
-                        sb.Append($"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);'  loading='eager' src='{item.Image}'/></div>");
-                    }
-                    else
-                    {
-                        sb.Append($"<div class='room-image room-image-none'></div>");
-                    }
+                    // Update the player info
+                    this.communicator.SendGameUpdate(actor.Character, item.ShortDescription, item.Image).Wait();
 
                     sb.Append($"{item.LongDescription}<br/>");
                     sb.Append($"{item.Name.FirstCharToUpper()} is of type {Enum.GetName<ItemType>(item.ItemType)?.ToString().ToLower()} and appears to have a durability of {item.Durability.Current}.<br/>");
@@ -3001,9 +2995,7 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
 
-            sb.Append($"<tr><td colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from The Void.</td></tr>");
-
-            sb.Append($"<tr><td colspan='2'>You are {user.Character.Age} years of age.</td><td>Experience:</td><td>{user.Character.Experience}</td></tr>");
+            sb.Append($"<tr><td class='player-score-info' colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from The Void. You are {user.Character.Age} years of age.</td></tr>");
 
             sb.Append($"<tr><td class='player-section' colspan='4'>Vital Statistics</td></tr>");
 
@@ -3013,11 +3005,11 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td>Movement:</td><td>{user.Character.Movement.Current}/{user.Character.Movement.Max}</td><td>Wis:</td><td>{user.Character.Wis}</td></tr>");
 
-            sb.Append($"<tr><td rowspan='3'>Currency:</td><td rowspan='2'>{user.Character.Currency.ToCurrencyDescription()}</td><td>Dex:</td><td>{user.Character.Dex}</td></tr>");
+            sb.Append($"<tr><td rowspan='3'>Currency:</td><td rowspan='3'>{user.Character.Currency.ToCurrencyDescription()}</td><td>Dex:</td><td>{user.Character.Dex}</td></tr>");
 
-            sb.Append($"<tr><td rowspan='2'>Con:</td><td rowspan='2'>{user.Character.Con}</td></tr>");
+            sb.Append($"<tr><td colspan='2'></td><td>Con:</td><td>{user.Character.Con}</td></tr>");
 
-            sb.Append("<tr><td colspan='2'></td></tr>");
+            sb.Append($"<tr><td colspan='2'></td><td>Experience:</td><td>{user.Character.Experience}</td></tr>");
 
             sb.Append($"<tr><td class='player-section' colspan='4'>Combat Rolls</td></tr>");
 
@@ -3029,7 +3021,7 @@ namespace Legendary.Engine.Processors
 
             sb.Append($"<tr><td>Edged:</td><td>{slashTotal}%</td><td>Magic:</td><td>{magicTotal}%</td></tr>");
 
-            sb.Append($"<tr><td class='player-armor' colspan='4'>Spell Affects</td></tr>");
+            sb.Append($"<tr><td class='player-section' colspan='4'>Spell Affects</td></tr>");
 
             if (user.Character.AffectedBy.Count > 0)
             {

@@ -13,7 +13,6 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -22,6 +21,7 @@ namespace Legendary.Engine
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
     using MongoDB.Driver;
 
     /// <summary>

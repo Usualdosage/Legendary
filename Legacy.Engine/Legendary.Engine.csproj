@@ -34,6 +34,7 @@
     <None Remove="Models\SkillTrees\" />
     <None Remove="Generators\" />
     <None Remove="Attributes\" />
+    <None Remove="Output\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
@@ -53,6 +54,7 @@
     <Folder Include="Models\SkillTrees\" />
     <Folder Include="Generators\" />
     <Folder Include="Attributes\" />
+    <Folder Include="Output\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj" />

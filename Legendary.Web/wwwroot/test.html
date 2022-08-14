@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Legendary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/console.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon"
+          type="image/png"
+          href="/favicon.png">   
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 player-score-title">Crypticant the Immortal</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 player-section">Personal</div>
+            <div class="col-md-2 player-section">Vitals</div>
+            <div class="col-md-2 player-section">Attributes</div>
+            <div class="col-md-2 player-section">Armor</div>
+            <div class="col-md-2 player-section">Saves</div>
+            <div class="col-md-2 player-section">Other</div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 label">
+                Race
+            </div>
+            <div class="col-md-1">
+                Human
+            </div>
+            <div class="col-md-1 label">
+                Health
+            </div>
+            <div class="col-md-1">
+                1024/1024
+            </div>
+            <div class="col-md-1 label">
+                Strength
+            </div>
+            <div class="col-md-1">
+                14 (14)
+            </div>
+            <div class="col-md-1 label">
+                Blunt
+            </div>
+            <div class="col-md-1">
+                24%
+            </div>
+            <div class="col-md-1 label">
+                Afflictive
+            </div>
+            <div class="col-md-1">
+                8%
+            </div>
+        </div>
+        <div class="row alt">
+            <div class="col-md-1 label">
+                Alignment
+            </div>
+            <div class="col-md-1">
+                Evil
+            </div>
+            <div class="col-md-1 label">
+                Mana
+            </div>
+            <div class="col-md-1">
+                928/928
+            </div>
+            <div class="col-md-1 label">
+                Intelligence
+            </div>
+            <div class="col-md-1">
+                14 (14)
+            </div>
+            <div class="col-md-1 label">
+                Pierce
+            </div>
+            <div class="col-md-1">
+                24%
+            </div>
+            <div class="col-md-1 label">
+                Maledictive
+            </div>
+            <div class="col-md-1">
+                8%
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 label">
+                Ethos
+            </div>
+            <div class="col-md-1">
+                Chaotic
+            </div>
+            <div class="col-md-1 label">
+                Movement
+            </div>
+            <div class="col-md-1">
+                897/928
+            </div>
+            <div class="col-md-1 label">
+                Wisdom
+            </div>
+            <div class="col-md-1">
+                14 (14)
+            </div>
+            <div class="col-md-1 label">
+                Edged
+            </div>
+            <div class="col-md-1">
+                24%
+            </div>
+            <div class="col-md-1 label">
+                Spell
+            </div>
+            <div class="col-md-1">
+                8%
+            </div>
+        </div>
+        <div class="row alt">
+            <div class="col-md-1 label">
+                Hometown
+            </div>
+            <div class="col-md-1">
+                Griffonshire
+            </div>
+            <div class="col-md-1 label">
+                Experience
+            </div>
+            <div class="col-md-1">
+                928/928
+            </div>
+            <div class="col-md-1 label">
+                Dexterity
+            </div>
+            <div class="col-md-1">
+                14 (14)
+            </div>
+            <div class="col-md-1 label">
+                Magic
+            </div>
+            <div class="col-md-1">
+                24%
+            </div>
+            <div class="col-md-1 label">
+                Death
+            </div>
+            <div class="col-md-1">
+                8%
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 label">
+                Gender
+            </div>
+            <div class="col-md-1">
+                Male
+            </div>
+            <div class="col-md-1 label">
+                Carry Weight
+            </div>
+            <div class="col-md-1">
+                897/928
+            </div>
+            <div class="col-md-1 label">
+                Constitution
+            </div>
+            <div class="col-md-1">
+                14 (14)
+            </div>
+            <div class="col-md-1 label">
+                &nbsp;
+            </div>
+            <div class="col-md-1">
+                &nbsp;
+            </div>
+            <div class="col-md-1 label">
+                Negative
+            </div>
+            <div class="col-md-1">
+                8%
+            </div>
+        </div>
+        <div class="row alt">
+            <div class="col-md-1 label">
+                Level
+            </div>
+            <div class="col-md-1">
+                100
+            </div>
+            <div class="col-md-1 label">
+                Title
+            </div>
+            <div class="col-md-1">
+                the Immortal
+            </div>
+            <div class="col-md-1 label">
+                Description
+            </div>
+            <div class="col-md-4">
+                Description
+            </div>
+            <div class="col-md-1 label">
+                Image
+            </div>
+            <div class="col-md-2">
+                Image
+            </div>
+        </div>
+    </div>
+</body>
+</html>

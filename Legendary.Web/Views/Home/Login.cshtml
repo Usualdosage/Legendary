@@ -1,6 +1,14 @@
 ﻿@model LoginModel
 @using System
 
+<style type="text/css">
+    body {
+        background-image: url('../img/Mystra.jpg');
+        background-position: center;
+        background-size: cover;
+    }
+</style>
+
 <form action="@Url.Action("Index")" method="post">
     <div class="container" style="margin-top: 75px">
         <div class="row">
@@ -12,7 +20,7 @@
                     <h4 class="card-title">Login to Legendary</h4>
                 </div>
                 <div class="card-body">
-                    <p class="card-text">This is a pre-release ALPHA build (@Model.BuildSettings?.Version). Do not expect stability, or for changes to be saved. Expect chaos.</p>
+                    <p class="card-text">This is an ALPHA build (@Model.BuildSettings?.Version). Do not expect stability, or for changes to be saved. Expect chaos.</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><input type="text" class="form-control" placeholder="Enter user name" name="username" /></li>
                         <li class="list-group-item"><input type="password" class="form-control" placeholder="Enter password" name="password" /></li>

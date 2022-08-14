@@ -28,13 +28,6 @@ class LegendaryClient {
 
         socket.onmessage = function (e) {
 
-            // Do this when we receive the first message, and no more.
-            if (updateUI === true) {
-                const $roomImage = $(".loader").remove();
-                $(".audio-controls").show();
-                updateUI = false;
-            }
-
             var message = e.data.toString();
 
             if (message.startsWith("[AUDIO]")) {
@@ -75,37 +68,43 @@ class LegendaryClient {
                 }
                 return;
             }
+            else if (message.startsWith("{"))
+            {
+                // Parse the incoming message.
+                var context = JSON.parse(message);
+
+                // Get the template.
+                var template = $('#component-template').html();
+
+                // Compile it.
+                var templateScript = Handlebars.compile(template);
+
+                // Generate the dynamic content.
+                var html = templateScript(context);
+
+                // Apply content to control panel.
+                $("#control-panel").empty().append(html);
+
+                $(".loader").hide();
+
+                // Bind the nav buttons.
+                bindNav();
+
+                // Bind the tooltips.
+                $('[data-toggle="tooltip"]').tooltip({ boundary: 'window', placement: 'left' });
+            }
             else {
 
                 $console.append("<span class='message'>" + message + "</span>");
 
-                if (message.indexOf('room-image') > 0) {
-                    // Show the loader image for a moment when a new message is received that contains a room image
-                    $("#loader_image").show();
-                }
-
                 // Autoscroll
                 $console.prop("scrollTop", $console.prop("scrollHeight"));
 
-                // Autotrim if there are more than 250 messages
+                // Autotrim if there are more than 500 messages
                 var $remove = $(".message");
 
-                if ($remove.length > 250) {
+                if ($remove.length > 500) {
                     $remove[0].remove();
-                }
-
-                // Remove all but the top room images (they stack)
-                var $roomImage = $(".room-image");
-
-                for (var x = 0; x < $roomImage.length - 1; x++) {
-                    $roomImage[x].remove();
-                }
-
-                // Remove all but 1 of the player info panels (they stack)
-                var $playerInfo = $(".player-info");
-
-                for (var x = 0; x < $playerInfo.length - 1; x++) {
-                    $playerInfo[x].remove();
                 }
             }
         };
@@ -158,5 +157,11 @@ class LegendaryClient {
 
             $(this).select();
         });
+
+        var bindNav = function () {
+            $(".nav-arrow").on("click", function (e) {
+                socket.send($(this).attr("move"));
+            })
+        }
     }
 }

@@ -1,17 +1,23 @@
 ﻿@model UserModel
 
-<div class="audio-controls" style="display: none">
-    <div>Audio Controls <button onclick="toggleMute()"><i id="muteButton" class="fa-solid fa-volume-high"></i></button></div>
-    <div>
-        <span>Music</span><input type="range" min="1" max="100" value="30" class="slider" onchange="changeBgAudio(this)" id="audioBackground">
-    </div>
-    <div>
-        <span>Effects</span><input type="range" min="1" max="100" value="100" class="slider" onchange="changeSfxAudio(this)" id="audioSFX">
-    </div>
-    <div>
+<div class="container-fluid h-100 main-container">
+    <div class="row h-100">
+        <div class="col h-100">
+            <div class="row console-container">
+                <div id="console" class="console">
+                    <p class="loader"><i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> One moment while we establish a secure connection to Legendary...</p>
+                    <div id="banner">Welcome to Legendary</div>
+                </div>
+            </div>
+            <div class="row input">
+                <input id="inputField" type="text" placeholder="What do you want to do?" />
+            </div>
+        </div>
+        <div id="control-panel" class="col control-panel">
+
+        </div>
     </div>
 </div>
-
 <div class="audio-channels">
     <audio id="channel0"></audio>
     <audio id="channel1"></audio>
@@ -23,37 +29,81 @@
     <audio id="channel7"></audio>
 </div>
 
-<div class="console-container">
-    <div id="console">
-        <p class="loader"><i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> One moment while we establish a secure connection to Legendary...</p>
-        <div id="loader_image"></div>
+<!-- Component Template -->
+<script id="component-template" type="text/x-handlebars-template">
+    <h3>{{m.f}} ({{m.l}})</h3>
+    <h4>{{m.t}}</h4>
+    <div class="component">
+        <div class="progress" data-toggle="tooltip" title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
+            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:{{m.s.hp.p}}%;" aria-valuenow="{{m.s.hp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.hp.p}}%</div>
+        </div>
+        <div class="progress" data-toggle="tooltip" title="Mana: {{m.s.mm.c}}/{{m.s.mm.m}}">
+            <div class="progress-bar progress-bar-striped" role="progressbar" style="width:{{m.s.mm.p}}%;" aria-valuenow="{{m.s.mm.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.mm.p}}%</div>
+        </div>
+        <div class="progress" data-toggle="tooltip" title="Movement: {{m.s.mv.c}}/{{m.s.mv.m}}">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:{{m.s.mv.p}}%;" aria-valuenow="{{m.s.mv.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.mv.p}}%</div>
+        </div>
+        <div class="progress" data-toggle="tooltip" title="Experience: {{m.s.xp.c}}/{{m.s.xp.m}}">
+            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width:{{m.s.xp.p}}%;" aria-valuenow="{{m.s.xp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.xp.p}}%</div>
+        </div>
     </div>
-    <div id="input">
-        <input type="text" id="inputField" placeholder="Type message and press enter." />
+
+    <div class="component component-time-weather">
+        {{m.w.tm}}
     </div>
-</div>
+    <div class="component image-container">
+        <img class="image-content" onload='image_load(this);' onerror='image_error(this);' src="{{m.i.img}}" />
+    </div>
+    <div class="component image-caption">
+        {{m.i.c}}
+    </div>
+    <div class="component">
+        <table class="nav-table">
+            <tr>
+                <td><i move="nw" class="nav-arrow fa fa-arrow-up nw" title="Go Northwest" style="font-size:24px"></i></td>
+                <td><i move="north" class="nav-arrow fa fa-arrow-up" title="Go North" style="font-size:24px"></i></td>
+                <td><i move="ne" class="nav-arrow fa fa-arrow-up ne" title="Go Northeast" style="font-size:24px"></i></td>
+            </tr>
+            <tr>
+                <td><i move="west" class="nav-arrow fa fa-arrow-left" title="Go West" style="font-size:24px"></i></td>
+                <td class="nav-center"><input type="button" move="up" class="nav-arrow nav-up" title="Go Up" value="Up" /><input type="button" move="down" title="Go Down" class="nav-arrow nav-down" value="Down" /></td>
+                <td><i move="east" class="nav-arrow fa fa-arrow-right" title="Go East" style="font-size:24px"></i></td>
+            </tr>
+            <tr>
+                <td><i move="sw" class="nav-arrow fa fa-arrow-down sw" title="Go Southwest" style="font-size:24px"></i></td>
+                <td><i move="south" class="nav-arrow fa fa-arrow-down" title="Go South" style="font-size:24px"></i></td>
+                <td><i move="se" class="nav-arrow fa fa-arrow-down se" title="Go Southeast" style="font-size:24px"></i></td>
+            </tr>
+        </table>
+    </div>
+    <div class="component">
+        <table class="vol-table">
+            <tr>
+                <td>
+                    <label for="audioBackground" class="form-label">Music Volume</label>
+                    <input type="range" class="form-range" min="0" max="100" onchange="changeBgAudio(this)" id="audioBackground">
+                </td>
+                <td>
+                    <label for="audioSFXVolume" class="form-label">SFX Volume</label>
+                    <input type="range" class="form-range" min="0" max="100" onchange="changeSfxAudio(this)" id="audioSFX">
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
 
 @section Scripts {
-    <script>
-        $(function () {
-
+    <script>$(function () {
             const client = new LegendaryClient();
             client.Connect();
-
             $("#inputField").focus();
-            
         });
 
         const image_error = function (e) {
-            const loader = document.getElementById('loader_image');
-            loader.style.display = 'none';
             e.src = "../../img/rooms/none.png";
         }
 
         const image_load = function (e) {
-            const loader = document.getElementById('loader_image');
-            loader.style.display = 'none';
-        }
-        
-    </script>
+            
+        }</script>
 }

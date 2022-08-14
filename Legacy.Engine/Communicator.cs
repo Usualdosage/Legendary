@@ -31,10 +31,12 @@ namespace Legendary.Engine
     using Legendary.Engine.Generators;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Output;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Handles communication between the engine and connected sockets.
@@ -211,13 +213,22 @@ namespace Legendary.Engine
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
-                // Make sure the character is in an existig room.
+                // Make sure the character is in an existing room.
                 var room = this.ResolveRoom(userData.Character.Location);
 
-                if (room == null)
+                // Wait for the game to load.
+                while (room == null)
                 {
-                    userData.Character.Location = new KeyValuePair<long, long>(1, 1);
+                    room = this.ResolveRoom(userData.Character.Location);
                 }
+
+                // Update the metrics before we display the game updates.
+                await this.world.UpdateGameMetrics(null, cancellationToken);
+
+                // Update the player's console.
+                await this.SendGameUpdate(userData.Character, null, null, cancellationToken);
+
+                await this.SendToPlayer(userData.Character, "<p class='connected'><b>Welcome to the World of Mystra! Enjoy your stay.</b></p>", cancellationToken);
 
                 // Show the room to the player.
                 await this.ShowRoomToPlayer(userData.Character, cancellationToken);
@@ -405,19 +416,14 @@ namespace Legendary.Engine
         {
             targetName = targetName.ToLower();
 
-            // Update player stats
-            await this.ShowPlayerInfo(actor, cancellationToken);
-
             if (targetName == actor.FirstName || targetName == "self")
             {
                 await this.SendToPlayer(actor, "You look at yourself.", cancellationToken);
                 await this.SendToPlayer(actor, this.GetPlayerInfo(actor), cancellationToken);
                 await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {actor.Pronoun}self.", cancellationToken);
 
-                if (!string.IsNullOrWhiteSpace(actor.Image))
-                {
-                    await this.SendToPlayer(actor, $"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);' loading='eager' src='{actor.Image}'/></div>", cancellationToken);
-                }
+                // Update player stats
+                await this.SendGameUpdate(actor, actor.FirstName, actor.Image, cancellationToken);
             }
             else
             {
@@ -438,10 +444,8 @@ namespace Legendary.Engine
                             await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {mobile.FirstName}.", cancellationToken);
                             await this.SendToPlayer(actor, this.GetPlayerInfo(mobile), cancellationToken);
 
-                            if (!string.IsNullOrWhiteSpace(mobile.Image))
-                            {
-                                await this.SendToPlayer(actor, $"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);' loading='eager' src='{mobile?.Image}'/></div>", cancellationToken);
-                            }
+                            // Update player stats
+                            await this.SendGameUpdate(actor, mobile.FirstName, mobile.Image, cancellationToken);
                         }
                         else
                         {
@@ -455,10 +459,8 @@ namespace Legendary.Engine
                     await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
                     await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
 
-                    if (!string.IsNullOrWhiteSpace(target.Value.Value.Character.Image))
-                    {
-                        await this.SendToPlayer(actor, $"<div class='room-image'><img class='room-image-content' onerror='image_error(this);' loading='eager' src='{target.Value.Value.Character.Image}'/></div>", cancellationToken);
-                    }
+                    // Update player stats
+                    await this.SendGameUpdate(actor, target.Value.Value.Character.FirstName, target.Value.Value.Character.Image, cancellationToken);
                 }
             }
         }
@@ -470,14 +472,8 @@ namespace Legendary.Engine
 
             StringBuilder sb = new StringBuilder();
 
-            if (!string.IsNullOrWhiteSpace(item.Image))
-            {
-                sb.Append($"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);'  loading='eager' src='{item.Image}'/></div>");
-            }
-            else
-            {
-                sb.Append($"<div class='room-image room-image-none'></div>");
-            }
+            // Update the player info
+            this.SendGameUpdate(actor, item.ShortDescription, item.Image).Wait();
 
             sb.Append($"{item.LongDescription}<br/>");
 
@@ -509,15 +505,6 @@ namespace Legendary.Engine
             var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
 
             sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span> <span class='roomNum'>[{room?.RoomId}]</span><br/>");
-
-            if (!string.IsNullOrWhiteSpace(room?.Image))
-            {
-                sb.Append($"<div class='room-image'><img class='room-image-content' onload='image_load(this);' onerror='image_error(this);' loading='eager' src='{room?.Image}'/></div>");
-            }
-            else
-            {
-                sb.Append($"<div class='room-image room-image-none'></div>");
-            }
 
             sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
 
@@ -595,7 +582,7 @@ namespace Legendary.Engine
             await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
 
             // Update player stats
-            await this.ShowPlayerInfo(actor, cancellationToken);
+            await this.SendGameUpdate(actor, null, null, cancellationToken);
 
             // Play the music according to the terrain.
             if (room != null)
@@ -614,31 +601,61 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task ShowPlayerInfo(Character actor, CancellationToken cancellationToken = default)
+        public async Task SendGameUpdate(Character actor, string? caption, string? image, CancellationToken cancellationToken = default)
         {
-            StringBuilder sb = new ();
+            var area = this.ResolveArea(actor.Location);
+            var room = this.ResolveRoom(actor.Location);
+            var metrics = this.world.GameMetrics;
 
-            sb.Append("<div class='player-info'><table><tr><td colspan='2'>");
-            sb.Append($"<span class='player-title'>{actor.FirstName} {actor.LastName}</span></td></tr>");
+            var outputMessage = new OutputMessage()
+            {
+                Message = new Message()
+                {
+                    FirstName = actor.FirstName,
+                    Level = actor.Level,
+                    Title = actor.Title,
+                    Condition = Combat.GetPlayerCondition(actor),
+                    Stats = new StatMessage()
+                    {
+                        Health = new Status()
+                        {
+                            Current = actor.Health.Current,
+                            Max = actor.Health.Max,
+                        },
+                        Mana = new Status()
+                        {
+                            Current = actor.Mana.Current,
+                            Max = actor.Mana.Max,
+                        },
+                        Movement = new Status()
+                        {
+                            Current = actor.Movement.Current,
+                            Max = actor.Movement.Max,
+                        },
+                        Experience = new Status()
+                        {
+                            // TODO: Calculate TNL
+                            Current = actor.Experience,
+                            Max = actor.Experience + 10000,
+                        },
+                    },
+                    ImageInfo = new ImageInfo()
+                    {
+                        Caption = caption ?? area?.Description,
+                        Image = image ?? room?.Image,
+                    },
+                    Weather = new Models.Output.Weather()
+                    {
+                        Image = null,
+                        Time = metrics != null ? DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second) : null,
+                        Temp = null,
+                    },
+                },
+            };
 
-            // Health bar
-            double healthPct = (actor.Health.Current / actor.Health.Max) * 100;
-            sb.Append($"<tr><td>Health</td><td><progress id='health' max='100' value='{healthPct}'>{healthPct}%</progress></td></tr>");
+            var output = JsonConvert.SerializeObject(outputMessage);
 
-            // Mana bar
-            double manaPct = (actor.Mana.Current / actor.Mana.Max) * 100;
-            sb.Append($"<tr><td>Mana</td><td><progress id='mana' max='100' value='{manaPct}'>{manaPct}%</progress></td></tr>");
-
-            // Movement bar
-            double movePct = (actor.Movement.Current / actor.Movement.Max) * 100;
-            sb.Append($"<tr><td>Move</td><td><progress id='move' max='100' value='{movePct}'>{movePct}%</progress></td></tr>");
-
-            // Condition
-            sb.Append($"<tr><td colspan='2' class='condition'>{Combat.GetPlayerCondition(actor)}</td></tr>");
-
-            sb.Append("</table></div>");
-
-            await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
+            await this.SendToPlayer(actor, output, cancellationToken);
         }
 
         /// <inheritdoc/>
@@ -1482,7 +1499,7 @@ namespace Legendary.Engine
                             }
 
                             // Update the player info
-                            this.ShowPlayerInfo(user.Value.Character).Wait();
+                            this.SendGameUpdate(user.Value.Character, null, null).Wait();
 
                             // See what's going on around the player.
                             if (user.Value.Environment != null)

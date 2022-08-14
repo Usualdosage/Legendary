@@ -346,7 +346,7 @@ namespace Legendary.Engine
                         }
 
                         // Update the player info.
-                        await this.communicator.ShowPlayerInfo(user.Value.Character, cancellationToken);
+                        await this.communicator.SendGameUpdate(user.Value.Character, null, null, cancellationToken);
                     }
                 }
             }
@@ -576,7 +576,7 @@ namespace Legendary.Engine
                 await this.communicator.SaveCharacter(actor);
 
                 // Show player info.
-                await this.communicator.ShowPlayerInfo(actor, cancellationToken);
+                await this.communicator.SendGameUpdate(actor, null, null, cancellationToken);
 
                 // Show the player their new surroundings.
                 await this.communicator.ShowRoomToPlayer(actor, cancellationToken);
