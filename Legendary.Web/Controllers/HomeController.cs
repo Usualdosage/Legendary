@@ -14,6 +14,7 @@ namespace Legendary.Web.Controllers
     using System.Diagnostics;
     using System.Security.Claims;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
@@ -146,14 +147,18 @@ namespace Legendary.Web.Controllers
                     }
 
                     // Make sure the character doesn't exist yet.
-                    var existingCharacter = await this.dataService.FindCharacter(c => c.FirstName == form["FirstName"]);
+                    var existingCharacter = await this.dataService.FindCharacter(c => c.FirstName.ToLower() == form["FirstName"].ToString().ToLower());
 
-                    if (existingCharacter == null)
+                    // Make sure we don't have a mob with this name.
+                    var existingMobile = await this.dataService.FindMobile(m => m.FirstName.ToLower() == form["FirstName"].ToString().ToLower());
+
+                    if (existingCharacter == null && existingMobile == null)
                     {
                         var character = new Character()
                         {
                             FirstName = form["FirstName"],
                             LastName = form["LastName"],
+                            ShortDescription = form["FirstName"],
                             LongDescription = form["LongDescription"],
                             Health = new MaxCurrent(30, 30),
                             Movement = new MaxCurrent(30, 30),
@@ -169,6 +174,30 @@ namespace Legendary.Web.Controllers
                             Alignment = Enum.Parse<Alignment>(form["Alignment"]),
                             Title = "the Adventurer",
                         };
+
+                        switch (character.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
+                                    character.Location = character.Home;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
+                                    character.Location = character.Home;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
+                                    character.Location = character.Home;
+                                    break;
+                                }
+                        }
 
                         var pwHash = Crypt.ComputeSha256Hash(form["Password"]);
                         character.Password = pwHash;

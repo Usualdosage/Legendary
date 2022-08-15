@@ -46,5 +46,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the equipment resets for the mobile.
         /// </summary>
         public List<EquipmentReset> EquipmentResets { get; set; } = new List<EquipmentReset>();
+
+        /// <summary>
+        /// Gets or sets the school type if this mob is a teacher.
+        /// </summary>
+        public SchoolType? SchoolType { get; set; }
+
     }
 }

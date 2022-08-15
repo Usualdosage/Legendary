@@ -108,6 +108,22 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
+        public async Task<Character?> FindMobile(
+            Expression<Func<Mobile, bool>> filter,
+            FindOptions? options = null)
+        {
+            try
+            {
+                return await this.Mobiles.Find(filter, options)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Unable to load mobile. {exc}");
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<GameMetrics?> GetGameMetrics()
         {
             try

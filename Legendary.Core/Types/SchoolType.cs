@@ -1,4 +1,4 @@
-﻿// <copyright file="MobileFlags.cs" company="Legendary™">
+﻿// <copyright file="SchoolType.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -10,48 +10,53 @@
 namespace Legendary.Core.Types
 {
     /// <summary>
-    /// Flags that can be applied to a mobile.
+    /// School types for both teachers and skill/spell trees.
     /// </summary>
-    public enum MobileFlags : short
+    public enum SchoolType
     {
         /// <summary>
-        /// No flags applied.
+        /// General (all).
         /// </summary>
-        None = 0,
+        General = 0,
 
         /// <summary>
-        /// Whether the mob is aggressive or not.
+        /// War.
         /// </summary>
-        Aggressive = 1,
+        War = 1,
 
         /// <summary>
-        /// Chance the mob will wander around.
+        /// Magic.
         /// </summary>
-        Wander = 2,
+        Magic = 2,
 
         /// <summary>
-        /// Can buy and sell items.
+        /// Divinity.
         /// </summary>
-        Shopkeeper = 3,
+        Divinity = 3,
 
         /// <summary>
-        /// Can heal players.
+        /// Occult.
         /// </summary>
-        Priest = 4,
+        Occult = 4,
 
         /// <summary>
-        /// Can train attributes.
+        /// Alchemy.
         /// </summary>
-        Trainer = 5,
+        Alchemy = 5,
 
-        // <summary>
-        /// Can practice skills.
+        /// <summary>
+        /// Herbalism.
         /// </summary>
-        Guildmaster = 5,
+        Herbalism = 6,
 
-        // <summary>
-        /// Can teach new skill/spell trees.
+        /// <summary>
+        /// Scouting.
         /// </summary>
-        Teacher = 5,
+        Scouting = 7,
+
+        /// <summary>
+        /// Rogues.
+        /// </summary>
+        Rogues = 8,
     }
 }

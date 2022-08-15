@@ -52,6 +52,16 @@ namespace Legendary.Data.Contracts
             FindOptions? options = null);
 
         /// <summary>
+        /// Finds a mobile using the given filter.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <param name="options">The find options.</param>
+        /// <returns>Mobile.</returns>
+        public Task<Character?> FindMobile(
+            Expression<Func<Mobile, bool>> filter,
+            FindOptions? options = null);
+
+        /// <summary>
         /// Gets the GameMetrics object.
         /// </summary>
         /// <returns>Task.</returns>

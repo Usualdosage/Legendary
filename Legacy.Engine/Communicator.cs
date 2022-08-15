@@ -213,6 +213,9 @@ namespace Legendary.Engine
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
+                // See if this is a new character, if so, add the proper hometown.
+                this.CheckNewCharacter(userData.Character);
+
                 // Make sure the character is in an existing room.
                 var room = this.ResolveRoom(userData.Character.Location);
 
@@ -1210,6 +1213,34 @@ namespace Legendary.Engine
                 "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
                 _ => false
             };
+        }
+
+        /// <summary>
+        /// Ensures a new character's location is properly set.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        private void CheckNewCharacter(Character character)
+        {
+            switch (character.Alignment)
+            {
+                case Alignment.Good:
+                    {
+                        character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
+                        break;
+                    }
+
+                case Alignment.Evil:
+                    {
+                        character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
+                        break;
+                    }
+
+                case Alignment.Neutral:
+                    {
+                        character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
+                        break;
+                    }
+            }
         }
 
         /// <summary>

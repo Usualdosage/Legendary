@@ -14,8 +14,28 @@ namespace Legendary.Core
     /// <summary>
     /// Game constants.
     /// </summary>
-    public class Constants
+    public static class Constants
     {
+        /// <summary>
+        /// The Area ID for Griffonshire, the hometown.
+        /// </summary>
+        public const long GRIFFONSHIRE_AREA = 6828;
+
+        /// <summary>
+        /// The light temple in Griffonshire for recall purposes.
+        /// </summary>
+        public const long GRIFFONSHIRE_LIGHT_TEMPLE = 6956;
+
+        /// <summary>
+        /// The dark temple in Griffonshire for recall purposes.
+        /// </summary>
+        public const long GRIFFONSHIRE_DARK_TEMPLE = 7055;
+
+        /// <summary>
+        /// The neutral temple in Griffonshire for recall purposes.
+        /// </summary>
+        public const long GRIFFONSHIRE_NEUTRAL_TEMPLE = 7017;
+
         /// <summary>
         /// Time of a tick in milliseconds.
         /// </summary>
