@@ -96,6 +96,13 @@ namespace Legendary.Core.Contracts
         Mobile? ResolveMobile(string? name);
 
         /// <summary>
+        /// Gets the first mobile matching the ID.
+        /// </summary>
+        /// <param name="characterId">The id.</param>
+        /// <returns>Mobile.</returns>
+        Mobile? ResolveMobile(long? characterId);
+
+        /// <summary>
         /// Gets the actual physical location of a mob by name.
         /// </summary>
         /// <param name="name">The name of the mob.</param>

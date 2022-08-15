@@ -28,8 +28,10 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Output;
     using Microsoft.AspNetCore.Hosting;
     using MongoDB.Driver;
+    using Newtonsoft.Json;
     using SharpCompress.Compressors.Xz;
 
     /// <summary>
@@ -211,6 +213,7 @@ namespace Legendary.Engine.Processors
         {
             this.actions.Add("advance", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAdvance)));
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
+            this.actions.Add("areas", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAreas)));
             this.actions.Add("awards", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAwards)));
             this.actions.Add("buy", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoBuy)));
             this.actions.Add("close", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoClose)));
@@ -2981,63 +2984,76 @@ namespace Legendary.Engine.Processors
 
         private async Task ShowPlayerScore(UserData user, CancellationToken cancellationToken = default)
         {
-            StringBuilder sb = new ();
-
             List<Item> equipment = user.Character.Equipment;
             List<Effect> effects = user.Character.AffectedBy;
+            var currencyTuple = user.Character.Currency.GetCurrency();
 
             int pierceTotal = equipment.Sum(a => a?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
             int slashTotal = equipment.Sum(a => a?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
             int bluntTotal = equipment.Sum(a => a?.Blunt ?? 0) + effects.Sum(a => a?.Blunt ?? 0);
             int magicTotal = equipment.Sum(a => a?.Magic ?? 0) + effects.Sum(a => a?.Magic ?? 0);
 
-            sb.Append("<div class='player-score'><table><tr><td colspan='4'>");
-
-            sb.Append($"<span class='player-score-title'>{user.Character.FirstName} {user.Character.MiddleName} {user.Character.LastName} {user.Character.Title}</span></td></tr>");
-
-            sb.Append($"<tr><td class='player-score-info' colspan='4'>You are a level {user.Character.Level} {user.Character.Race} from The Void. You are {user.Character.Age} years of age.</td></tr>");
-
-            sb.Append($"<tr><td class='player-section' colspan='4'>Vital Statistics</td></tr>");
-
-            sb.Append($"<tr><td>Health:</td><td>{user.Character.Health.Current}/{user.Character.Health.Max}</td><td>Str:</td><td>{user.Character.Str}</td></tr>");
-
-            sb.Append($"<tr><td>Mana:</td><td>{user.Character.Mana.Current}/{user.Character.Mana.Max}</td><td>Int:</td><td>{user.Character.Int}</td></tr>");
-
-            sb.Append($"<tr><td>Movement:</td><td>{user.Character.Movement.Current}/{user.Character.Movement.Max}</td><td>Wis:</td><td>{user.Character.Wis}</td></tr>");
-
-            sb.Append($"<tr><td rowspan='3'>Currency:</td><td rowspan='3'>{user.Character.Currency.ToCurrencyDescription()}</td><td>Dex:</td><td>{user.Character.Dex}</td></tr>");
-
-            sb.Append($"<tr><td colspan='2'></td><td>Con:</td><td>{user.Character.Con}</td></tr>");
-
-            sb.Append($"<tr><td colspan='2'></td><td>Experience:</td><td>{user.Character.Experience}</td></tr>");
-
-            sb.Append($"<tr><td class='player-section' colspan='4'>Combat Rolls</td></tr>");
-
-            sb.Append($"<tr><td>Hit dice:</td><td>{user.Character.HitDice}</td><td>Damage dice:</td><td>{user.Character.DamageDice}</td></tr>");
-
-            sb.Append($"<tr><td class='player-section' colspan='4'>Armor</td></tr>");
-
-            sb.Append($"<tr><td>Pierce:</td><td>{pierceTotal}%</td><td>Blunt:</td><td>{bluntTotal}%</td></tr>");
-
-            sb.Append($"<tr><td>Edged:</td><td>{slashTotal}%</td><td>Magic:</td><td>{magicTotal}%</td></tr>");
-
-            sb.Append($"<tr><td class='player-section' colspan='4'>Spell Affects</td></tr>");
-
-            if (user.Character.AffectedBy.Count > 0)
+            var message = new ScoreMessage()
             {
-                foreach (var effect in user.Character.AffectedBy)
+                Message = new Message()
                 {
-                    sb.Append($"<tr><td colspan='4' class='player-affect'>- {effect.Name} for {effect.Duration} hours.</td></tr>");
-                }
-            }
-            else
-            {
-                sb.Append($"<tr><td colspan='4'>You are not affected by anything.</td></tr>");
-            }
+                    Personal = new Personal()
+                    {
+                        Alignment = user.Character.Alignment.ToString(),
+                        Ethos = user.Character.Ethos.ToString(),
+                        Gender = user.Character.Gender.ToString(),
+                        Hometown = "Griffonshire",
+                        Name = user.Character.FirstName,
+                        Race = user.Character.Race.ToString(),
+                        Title = user.Character.Title,
+                    },
+                    Vitals = new Vitals()
+                    {
+                        Health = $"{user.Character.Health.Current}/{user.Character.Health.Max}",
+                        Mana = $"{user.Character.Mana.Current}/{user.Character.Mana.Max}",
+                        Movement = $"{user.Character.Movement.Current}/{user.Character.Movement.Max}",
+                        Experience = user.Character.Experience.ToString(),
+                        Carry = "100/100",
+                        Level = user.Character.Level.ToString(),
+                    },
+                    Attributes = new Attributes()
+                    {
+                        Str = $"{user.Character.Str.Max} ({user.Character.Str.Current})",
+                        Dex = $"{user.Character.Dex.Max} ({user.Character.Dex.Current})",
+                        Wis = $"{user.Character.Wis.Max} ({user.Character.Wis.Current})",
+                        Int = $"{user.Character.Int.Max} ({user.Character.Int.Current})",
+                        Con = $"{user.Character.Con.Max} ({user.Character.Con.Current})",
+                    },
+                    Armor = new Armor()
+                    {
+                        Blunt = $"{bluntTotal}%",
+                        Pierce = $"{pierceTotal}%",
+                        Edged = $"{slashTotal}%",
+                        Magic = $"{magicTotal}%",
+                    },
+                    Saves = new Saves()
+                    {
+                        Aff = $"{user.Character.SaveAfflictive}%",
+                        Mal = $"{user.Character.SaveMaledictive}%",
+                        Neg = $"{user.Character.SaveNegative}%",
+                        Spell = $"{user.Character.SaveSpell}%",
+                        Death = $"{user.Character.SaveDeath}%",
+                    },
+                    Other = new Other()
+                    {
+                        Trains = user.Character.Trains.ToString(),
+                        Pracs = user.Character.Practices.ToString(),
+                        LastLogin = user.Character.Metrics.LastLogin.ToShortDateString(),
+                        Gold = currencyTuple.Item1.ToString(),
+                        Silver = currencyTuple.Item2.ToString(),
+                        Copper = currencyTuple.Item3.ToString(),
+                    },
+                },
+            };
 
-            sb.Append("</table></div>");
+            var objModel = JsonConvert.SerializeObject(message);
 
-            await this.communicator.SendToPlayer(user.Connection, sb.ToString(), cancellationToken);
+            await this.communicator.SendToPlayer(user.Connection, objModel, cancellationToken);
         }
     }
 }

@@ -42,31 +42,40 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            if (target == null)
-            {
-                await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
-            }
-            else
-            {
-                await base.PreAction(actor, target, cancellationToken);
-            }
-        }
-
-        /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
             await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
 
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
+                if (actor.Fighting.HasValue)
+                {
+                    var player = this.Communicator.ResolveCharacter(actor.Fighting.Value);
+
+                    if (player == null)
+                    {
+                        var mobile = this.Communicator.ResolveMobile(actor.Fighting.Value);
+
+                        if (mobile != null)
+                        {
+                            await this.Communicator.PlaySound(mobile, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
+                            await this.DamageToTarget(actor, mobile, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.Communicator.PlaySound(player.Character, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
+                        await this.DamageToTarget(actor, player.Character, cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
+                }
             }
             else
             {
                 await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.LIGHTNINGBOLT, cancellationToken);
-
                 await this.DamageToTarget(actor, target, cancellationToken);
             }
 

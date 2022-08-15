@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Extensions
 {
+    using System;
     using System.Collections.Generic;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -59,6 +60,50 @@ namespace Legendary.Engine.Extensions
                 }
 
                 return $"<span class='currency-gold'>{gold}</span> gold<br/><span class='currency-silver'>{silver}</span> silver<br/><span class='currency-copper'>{copper}</span> copper";
+            }
+        }
+
+        /// <summary>
+        /// Breaks the currency down into gold, silver, and copper.
+        /// </summary>
+        /// <param name="currency">The decimal currency.</param>
+        /// <returns>Tuple.</returns>
+        public static Tuple<int, int, int> GetCurrency(this decimal currency)
+        {
+            if (currency == 0)
+            {
+                return new Tuple<int, int, int>(0, 0, 0);
+            }
+            else
+            {
+                // Currency is a decimal, so like, 23.49. This would represent
+                // 23 gold, 4 silver, and 9 copper.
+                var currencyParts = currency.ToString().Split('.');
+                int gold = 0;
+                int silver = 0;
+                int copper = 0;
+
+                if (currencyParts.Length > 0)
+                {
+                    gold = int.Parse(currencyParts[0]);
+                }
+
+                if (currencyParts.Length > 1)
+                {
+                    // Section segment will be something like 4 or 49
+                    if (currencyParts[1].Length == 1)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                    }
+
+                    if (currencyParts[1].Length == 2)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                        copper = int.Parse(currencyParts[1][1].ToString());
+                    }
+                }
+
+                return new Tuple<int, int, int>(gold, silver, copper);
             }
         }
 

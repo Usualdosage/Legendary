@@ -70,6 +70,7 @@ body {
     font-size: 1.6em;
     font-weight: bold;
     font-family: "Balgruf";
+    text-shadow: 1px 1px 3px #444;
 }
 
 /* Player Console */
@@ -503,15 +504,7 @@ component .vol-table {
     padding: 10px;
 }
 
-    .player-score table {
-        width: 100%;
-    }
-
-    .player-score table td {
-        vertical-align: top;
-    }
-
-.player-score-title {
+    .player-score-title {
     font-family: 'BeyondWonderland', 'Comforter', cursive;
     font-size: 2em;
     width: 100%;
@@ -532,6 +525,11 @@ component .vol-table {
     width: 100%;
     text-align: left;
     display: block;
+}
+
+.score-container {
+    border: solid 1px #888;
+    border-radius: 5px;
 }
 
 .alt {
@@ -598,6 +596,7 @@ component .vol-table {
     text-align: center;
     font-size: 10px;
     font-family: Courier New, Courier, monospace;
+    text-shadow: none;
     color: #222;
     border: solid 1px brown;
     background-color: gold;
@@ -613,6 +612,7 @@ component .vol-table {
     text-align: center;
     font-size: 10px;
     font-family: Courier New, Courier, monospace;
+    text-shadow: none;
     color: #222;
     border: solid 1px #666;
     background-color: silver;
@@ -628,6 +628,7 @@ component .vol-table {
     text-align: center;
     font-size: 11px;
     font-family: Courier New, Courier, monospace;
+    text-shadow: none;
     color: #222;
     border: solid 1px brown;
     background-color: sandybrown;

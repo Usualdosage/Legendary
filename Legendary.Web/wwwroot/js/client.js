@@ -73,25 +73,44 @@ class LegendaryClient {
                 // Parse the incoming message.
                 var context = JSON.parse(message);
 
-                // Get the template.
-                var template = $('#component-template').html();
+                if (context.type === "update") {
 
-                // Compile it.
-                var templateScript = Handlebars.compile(template);
+                    // Get the template.
+                    var template = $('#component-template').html();
 
-                // Generate the dynamic content.
-                var html = templateScript(context);
+                    // Compile it.
+                    var templateScript = Handlebars.compile(template);
 
-                // Apply content to control panel.
-                $("#control-panel").empty().append(html);
+                    // Generate the dynamic content.
+                    var html = templateScript(context);
 
-                $(".loader").hide();
+                    // Apply content to control panel.
+                    $("#control-panel").empty().append(html);
 
-                // Bind the nav buttons.
-                bindNav();
+                    $(".loader").hide();
 
-                // Bind the tooltips.
-                $('[data-toggle="tooltip"]').tooltip({ boundary: 'window', placement: 'left' });
+                    // Bind the nav buttons.
+                    bindNav();
+
+                    // Bind the tooltips.
+                    $('[data-toggle="tooltip"]').tooltip({ boundary: 'window', placement: 'left' });
+                }
+                else if (context.type === "score") {
+                    // Get the template.
+                    var template = $('#score-template').html();
+
+                    // Compile it.
+                    var templateScript = Handlebars.compile(template);
+
+                    // Generate the dynamic content.
+                    var html = templateScript(context);
+
+                    // Apply content to control panel.
+                    $("#console").append(html);
+                }
+                else {
+                    return;
+                }
             }
             else {
 

@@ -70,8 +70,12 @@ namespace Legendary.Engine.Models
         /// <returns>Task.</returns>
         public virtual async Task DamageToTarget(Character actor, Character target, CancellationToken cancellationToken)
         {
+            if (target.Fighting == null)
+            {
+                await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Die, {actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
+            }
+
             Combat.StartFighting(actor, target);
-            await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName.FirstCharToUpper()} yells \"<span class='yell'>{actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
             await this.Combat.DoDamage(actor, target, this, cancellationToken);
         }
 

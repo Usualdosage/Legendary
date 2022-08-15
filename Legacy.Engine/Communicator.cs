@@ -857,6 +857,28 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public Mobile? ResolveMobile(long? characterId)
+        {
+            if (characterId.HasValue)
+            {
+                foreach (var area in this.world.Areas)
+                {
+                    foreach (var room in area.Rooms)
+                    {
+                        var mob = room.Mobiles.FirstOrDefault(m => m.CharacterId == characterId);
+
+                        if (mob != null)
+                        {
+                            return mob;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
         public KeyValuePair<long, long>? ResolveMobileLocation(string name)
         {
             foreach (var area in this.world.Areas)

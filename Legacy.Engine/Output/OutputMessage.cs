@@ -22,6 +22,12 @@ namespace Legendary.Engine.Models.Output
         /// </summary>
         [JsonProperty("m")]
         public Message? Message { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message type.
+        /// </summary>
+        [JsonProperty("type")]
+        public string? Type { get; set; } = "update";
     }
 
     /// <summary>

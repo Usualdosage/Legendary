@@ -265,95 +265,99 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessWeather(UserData userData, CancellationToken cancellationToken = default)
         {
-            var room = this.communicator.ResolveRoom(userData.Character.Location);
-
-            if (room == null || room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+            // Give a 30% chance to display some weather info each tick.
+            if (this.random.Next(0, 100) <= 30)
             {
-                return;
-            }
+                var room = this.communicator.ResolveRoom(userData.Character.Location);
 
-            // Roll a 3 sided die. 0, we increment the weather. 1, we decrement it. 2, no action.
-            var chance = this.random.Next(0, 2);
+                if (room == null || room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+                {
+                    return;
+                }
 
-            switch (chance)
-            {
-                case 0:
-                    this.dayWeatherIndex += 1;
-                    break;
-                case 1:
-                    this.dayWeatherIndex -= 1;
-                    break;
-                case 2:
-                    break;
-            }
+                // Roll a 3 sided die. 0, we increment the weather. 1, we decrement it. 2, no action.
+                var chance = this.random.Next(0, 2);
 
-            var weather = this.random.Next(1, 8);
-            string precipitate = string.Empty;
+                switch (chance)
+                {
+                    case 0:
+                        this.dayWeatherIndex += 1;
+                        break;
+                    case 1:
+                        this.dayWeatherIndex -= 1;
+                        break;
+                    case 2:
+                        break;
+                }
 
-            switch (room.Terrain)
-            {
-                case Core.Types.Terrain.Forest:
-                case Core.Types.Terrain.Grasslands:
-                case Core.Types.Terrain.Hills:
-                case Core.Types.Terrain.Jungle:
-                case Core.Types.Terrain.Air:
-                case Core.Types.Terrain.Beach:
-                case Core.Types.Terrain.City:
-                case Core.Types.Terrain.Swamp:
-                    precipitate = "rain";
-                    break;
-                case Core.Types.Terrain.Desert:
-                    precipitate = "virga";
-                    break;
-                case Core.Types.Terrain.Ethereal:
-                    {
-                        precipitate = "stardust";
-                        switch (weather)
+                var weather = this.random.Next(1, 8);
+                string precipitate = string.Empty;
+
+                switch (room.Terrain)
+                {
+                    case Core.Types.Terrain.Forest:
+                    case Core.Types.Terrain.Grasslands:
+                    case Core.Types.Terrain.Hills:
+                    case Core.Types.Terrain.Jungle:
+                    case Core.Types.Terrain.Air:
+                    case Core.Types.Terrain.Beach:
+                    case Core.Types.Terrain.City:
+                    case Core.Types.Terrain.Swamp:
+                        precipitate = "rain";
+                        break;
+                    case Core.Types.Terrain.Desert:
+                        precipitate = "virga";
+                        break;
+                    case Core.Types.Terrain.Ethereal:
                         {
-                            default:
-                                break;
-                            case 1:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.", cancellationToken);
-                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
-                                break;
-                            case 2:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.", cancellationToken);
-                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
-                                break;
-                            case 3:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.", cancellationToken);
-                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
-                                break;
-                            case 4:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.", cancellationToken);
-                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
-                                break;
-                            case 5:
-                                await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
-                                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
-                                break;
+                            precipitate = "stardust";
+                            switch (weather)
+                            {
+                                default:
+                                    break;
+                                case 1:
+                                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "The stars in space seem to swirl around.", cancellationToken);
+                                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
+                                    break;
+                                case 2:
+                                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "A comet flies by.", cancellationToken);
+                                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
+                                    break;
+                                case 3:
+                                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "Somewhere in the distance, a star goes supernova.", cancellationToken);
+                                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
+                                    break;
+                                case 4:
+                                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "The bleakness of vast space stretches all around you.", cancellationToken);
+                                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
+                                    break;
+                                case 5:
+                                    await this.communicator.SendToPlayer(this.connectedUser.Connection, "A cloud of primordial dust floats past you.");
+                                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, Sounds.SPACE, cancellationToken);
+                                    break;
+                            }
+
+                            break;
                         }
 
+                    case Core.Types.Terrain.Mountains:
+                    case Core.Types.Terrain.Snow:
+                        precipitate = "snow";
                         break;
-                    }
+                }
 
-                case Core.Types.Terrain.Mountains:
-                case Core.Types.Terrain.Snow:
-                    precipitate = "snow";
-                    break;
-            }
-
-            if (chance == 0)
-            {
-                var weatherMessage = this.dayWeatherForward[Math.Min(this.dayWeatherIndex, this.dayWeatherForward.Count - 1)];
-                await this.communicator.SendToPlayer(this.connectedUser.Connection, weatherMessage.Message.Replace("{precipitate}", precipitate), cancellationToken);
-                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
-            }
-            else if (chance == 1)
-            {
-                var weatherMessage = this.dayWeatherBackward[Math.Min(this.dayWeatherIndex, this.dayWeatherBackward.Count - 1)];
-                await this.communicator.SendToPlayer(this.connectedUser.Connection, weatherMessage.Message.Replace("{precipitate}", precipitate), cancellationToken);
-                await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+                if (chance == 0)
+                {
+                    var weatherMessage = this.dayWeatherForward[Math.Min(this.dayWeatherIndex, this.dayWeatherForward.Count - 1)];
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, weatherMessage.Message.Replace("{precipitate}", precipitate), cancellationToken);
+                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+                }
+                else if (chance == 1)
+                {
+                    var weatherMessage = this.dayWeatherBackward[Math.Min(this.dayWeatherIndex, this.dayWeatherBackward.Count - 1)];
+                    await this.communicator.SendToPlayer(this.connectedUser.Connection, weatherMessage.Message.Replace("{precipitate}", precipitate), cancellationToken);
+                    await this.communicator.PlaySound(this.connectedUser.Character, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+                }
             }
         }
     }
