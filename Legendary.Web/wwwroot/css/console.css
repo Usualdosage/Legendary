@@ -636,7 +636,7 @@ component .vol-table {
 
 /* Skills and Spells */
 .skillgroups, .spellgroups {
-    width: 1280px;
+    width: 100%;
     display: inline-block;
 }
 
