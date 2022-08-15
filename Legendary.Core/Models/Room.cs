@@ -59,6 +59,16 @@ namespace Legendary.Core.Models
         public string? Image { get; set; }
 
         /// <summary>
+        /// Gets or sets the video for the room.
+        /// </summary>
+        public string? Video { get; set; }
+
+        /// <summary>
+        /// Gets or sets the watch keyword for the video.
+        /// </summary>
+        public string? WatchKeyword { get; set; }
+
+        /// <summary>
         /// Gets or sets available exits.
         /// </summary>
         public IList<Exit> Exits { get; set; } = new List<Exit>();

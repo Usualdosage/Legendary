@@ -511,6 +511,11 @@ namespace Legendary.Engine
 
             sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
 
+            if (!string.IsNullOrWhiteSpace(room?.WatchKeyword) && !string.IsNullOrWhiteSpace(room?.Image))
+            {
+                sb.Append($"<span class='room-video'>You catch <b>watch</b> the <i>{room.WatchKeyword}</i> here.</span><br/>");
+            }
+
             sb.Append("<span class='exits'>[ Exits: ");
 
             // Show the exits

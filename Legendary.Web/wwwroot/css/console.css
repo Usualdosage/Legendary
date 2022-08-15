@@ -387,6 +387,23 @@ component .vol-table {
         margin-bottom: 5px;
     }
 
+.room-video {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+video {
+    width: 100%;
+    border: solid 1px #666;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px #444;
+}
+
+    .room-video i {
+        color: aquamarine;
+    }
+
 .item {
     padding-left: 10px;
     display: block;
