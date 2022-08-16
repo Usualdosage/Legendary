@@ -412,6 +412,8 @@ namespace Legendary.Engine
 
         private async Task ProcessMobileWander(Room room, CancellationToken cancellationToken)
         {
+            Dictionary<Room, List<Mobile>> removeMobiles = new Dictionary<Room, List<Mobile>>();
+
             // Process effects on mobiles, and (maybe) move them if they are wandering.
             foreach (var mobile in room.Mobiles)
             {
@@ -450,7 +452,14 @@ namespace Legendary.Engine
 
                                         if (lastRoom != null)
                                         {
-                                            lastRoom.Mobiles.Remove(mobile);
+                                            if (removeMobiles.ContainsKey(lastRoom))
+                                            {
+                                                removeMobiles[lastRoom].Add(mobile);
+                                            }
+                                            else
+                                            {
+                                                removeMobiles.Add(room, new List<Mobile>() { mobile });
+                                            }
                                         }
 
                                         // Set the mobile's new location.
@@ -470,6 +479,12 @@ namespace Legendary.Engine
                         }
                     }
                 }
+            }
+
+            // Remove all moves from the designated rooms when we're done.
+            foreach (var kvp in removeMobiles)
+            {
+                kvp.Key.Mobiles.RemoveAll(m => kvp.Value.Contains(m));
             }
         }
     }

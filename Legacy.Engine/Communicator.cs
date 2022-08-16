@@ -16,6 +16,7 @@ namespace Legendary.Engine
     using System.Linq;
     using System.Net.WebSockets;
     using System.Reflection;
+    using System.Reflection.Emit;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -642,9 +643,8 @@ namespace Legendary.Engine
                         },
                         Experience = new Status()
                         {
-                            // TODO: Calculate TNL
-                            Current = actor.Experience,
-                            Max = actor.Experience + 10000,
+                            Current = this.GetExperienceToLevel(actor) - this.GetRemainingExperienceToLevel(actor),
+                            Max = this.GetExperienceToLevel(actor),
                         },
                     },
                     ImageInfo = new ImageInfo()
@@ -1167,15 +1167,34 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public long GetRemainingExperienceToLevel(Character character)
+        {
+            var experience = character.Experience;
+            var level = character.Level;
+
+            // Total amount of experience needed to make level X.
+            var amountNeededToLevel = this.GetExperienceToLevel(character);
+
+            // So if I have 10,000 experience, and I need 12,000 experience, the result will be 2,000.
+            return (long)amountNeededToLevel - experience;
+        }
+
+        /// <inheritdoc/>
+        public long GetExperienceToLevel(Character character)
+        {
+            var level = character.Level;
+            var amountNeededToLevel = (character.Level * 1500 * Math.Max(1, level / 10)) * Math.Sqrt(level);
+            return (long)amountNeededToLevel;
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> CheckLevelAdvance(Character character, CancellationToken cancellationToken = default)
         {
-            // TODO: This will need some tweaking.
             var level = character.Level;
 
             if (level < 90)
             {
-                var experience = character.Experience;
-                bool didAdvance = (level * 1500) > experience;
+                bool didAdvance = this.GetRemainingExperienceToLevel(character) <= 0;
 
                 if (didAdvance)
                 {

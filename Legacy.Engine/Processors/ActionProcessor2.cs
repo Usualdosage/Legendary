@@ -14,6 +14,7 @@ namespace Legendary.Engine.Processors
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Attributes;
@@ -53,16 +54,118 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
         }
 
-        [HelpText("<p>Command not yet available.</p>")]
+        [HelpText("<p>Buys an item from a merchant. See also: HELP LIST, HELP SELL<ul><li>buy item</li><ul></p>")]
         private async Task DoBuy(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Buy what?", cancellationToken);
+            }
+            else
+            {
+                var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+                if (mobs != null)
+                {
+                    var merchant = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
+                    if (merchant == null)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                    }
+                    else
+                    {
+                        if (merchant.Equipment != null && merchant.Equipment.Count > 0)
+                        {
+                            var item = merchant.Equipment.ParseTargetName(args.Method);
+
+                            if (item != null)
+                            {
+                                var price = item.Value.AdjustSellPrice(actor.Character, merchant);
+
+                                if (actor.Character.Currency >= price)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You purchase {item.Name} from {merchant.FirstName.FirstCharToUpper()} for {item.Value.ToMerchantSellPrice(actor.Character, merchant)}.", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} purchases {item.Name} from {merchant.FirstName.FirstCharToUpper()}.", cancellationToken);
+                                    actor.Character.Currency -= price;
+                                    var newItem = item.DeepCopy();
+                                    actor.Character.Inventory.Add(newItem);
+
+                                    await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You lack the funds to purchase that.", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} does not have that for sale.", cancellationToken);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                }
+            }
         }
 
-        [HelpText("<p>Command not yet available.</p>")]
+        [HelpText("<p>Lists all items for sale by a merchant. See also: HELP SELL, HELP BUY</p>")]
         private async Task DoList(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+            if (mobs != null)
+            {
+                var merchant = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
+                if (merchant == null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    if (merchant.Equipment != null && merchant.Equipment.Count > 0)
+                    {
+                        sb.Append($"{merchant.FirstName.FirstCharToUpper()} offers the following items for sale:<br/><ul>");
+
+                        foreach (var item in merchant.Equipment)
+                        {
+                            if (item.WearLocation != null && !item.WearLocation.Contains(Core.Types.WearLocation.None))
+                            {
+                                switch (item.ItemType)
+                                {
+                                    case Core.Types.ItemType.Currency:
+                                    case Core.Types.ItemType.Spring:
+                                        break;
+                                    default:
+                                        {
+                                            if (item.Value > 0)
+                                            {
+                                                var price = item.Value.ToMerchantSellPrice(actor.Character, merchant);
+                                                sb.Append($"<li>{item.Name}, for {price}.</li>");
+                                            }
+
+                                            break;
+                                        }
+                                }
+                            }
+                        }
+
+                        sb.Append($"</ul>");
+
+                        await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} is not currently offering anything for sale.", cancellationToken);
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+            }
         }
 
         [HelpText("<p>Command not yet available.</p>")]
@@ -164,9 +267,70 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Sells an item to a merchant. See also: HELP LIST, HELP BUY<ul><li>sell item</li><ul></p>")]
         private async Task DoSell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Sell what?", cancellationToken);
+            }
+            else
+            {
+                var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+
+                if (mobs != null)
+                {
+                    var merchant = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
+                    if (merchant == null)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                    }
+                    else
+                    {
+                        if (actor.Character.Inventory != null && actor.Character.Inventory.Count > 0)
+                        {
+                            var item = actor.Character.Inventory.ParseTargetName(args.Method);
+
+                            if (item != null)
+                            {
+                                if (item.Value == 0)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} looks to have no interest in {item.Name}.", cancellationToken);
+                                }
+                                else
+                                {
+                                    var price = item.Value.AdjustBuyPrice(actor.Character, merchant);
+
+                                    if (merchant.Currency >= price)
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, $"You sell {item.Name} to {merchant.FirstName.FirstCharToUpper()} for {item.Value.ToMerchantBuyPrice(actor.Character, merchant)}.", cancellationToken);
+                                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} sells {item.Name} to {merchant.FirstName.FirstCharToUpper()}.", cancellationToken);
+                                        actor.Character.Currency += price;
+                                        var newItem = item.DeepCopy();
+                                        merchant.Equipment.Add(newItem);
+                                        merchant.Currency -= price;
+                                        actor.Character.Inventory.Remove(item);
+
+                                        await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_SELL, cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} likes {item.Name}, but lacks the funds to purchase it at that price.", cancellationToken);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You do not have that for sale.", cancellationToken);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                }
+            }
         }
 
         [HelpText("<p>When accompanied by a trainer, use this skill to train up your vital attributes.<ul><li>train str</li><li>train hp</li></ul></p>")]
@@ -330,6 +494,55 @@ namespace Legendary.Engine.Processors
 
                         await this.communicator.SaveCharacter(actor);
                     }
+                }
+            }
+        }
+
+        [HelpText("<p>Gets the appraised value of an item from a merchant. See also: HELP LIST, HELP BUY<ul><li>sell item</li><ul></p>")]
+        private async Task DoValue(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Get the value of what?", cancellationToken);
+            }
+            else
+            {
+                var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+
+                if (mobs != null)
+                {
+                    var merchant = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
+                    if (merchant == null)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                    }
+                    else
+                    {
+                        if (actor.Character.Inventory != null && actor.Character.Inventory.Count > 0)
+                        {
+                            var item = actor.Character.Inventory.ParseTargetName(args.Method);
+
+                            if (item != null)
+                            {
+                                if (item.Value == 0)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} tells you \"<span class='tell'>{item.Name.FirstCharToUpper()} is useless to me. I have no interest in it.</span>\"", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} tells you \"<span class='tell'>I'd be willing to give you {item.Value.ToMerchantBuyPrice(actor.Character, merchant)} for {item.Name}.</span>\"", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You do not have that to appraise.", cancellationToken);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
                 }
             }
         }

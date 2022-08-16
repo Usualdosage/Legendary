@@ -160,5 +160,15 @@ namespace Legendary.Core
         /// Wind fade MP3.
         /// </summary>
         public const string WINDFADE = "https://legendary.file.core.windows.net/audio/weather/windfade.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Selling sound.
+        /// </summary>
+        public const string COINS_SELL = "https://legendary.file.core.windows.net/audio/soundfx/coins_sell.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Buying sound.
+        /// </summary>
+        public const string COINS_BUY = "https://legendary.file.core.windows.net/audio/soundfx/coins_buy.mp3" + SAS_TOKEN;
     }
 }

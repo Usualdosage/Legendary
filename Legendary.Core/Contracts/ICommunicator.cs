@@ -371,5 +371,19 @@ namespace Legendary.Core.Contracts
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         Task CheckMobCommunication(Character character, KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Gets the remaining amount of experience a player needs until they level.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <returns>long.</returns>
+        long GetRemainingExperienceToLevel(Character character);
+
+        /// <summary>
+        /// Gets the total amount of experience needed to get to the next level.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <returns>long.</returns>
+        long GetExperienceToLevel(Character character);
     }
 }

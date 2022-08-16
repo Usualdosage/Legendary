@@ -11,6 +11,7 @@ namespace Legendary.Engine.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
 
@@ -61,6 +62,504 @@ namespace Legendary.Engine.Extensions
 
                 return $"<span class='currency-gold'>{gold}</span> gold<br/><span class='currency-silver'>{silver}</span> silver<br/><span class='currency-copper'>{copper}</span> copper";
             }
+        }
+
+        /// <summary>
+        /// Converts a value of an item to the correct currency.
+        /// </summary>
+        /// <param name="price">The the value of the item.</param>
+        /// <param name="actor">The player.</param>
+        /// <param name="merchant">The merchant.</param>
+        /// <returns>String.</returns>
+        public static string ToMerchantSellPrice(this decimal price, Character actor, Mobile merchant)
+        {
+            if (price == 0)
+            {
+                return "not currently for sale.";
+            }
+            else
+            {
+                price = price.AdjustSellPrice(actor, merchant);
+
+                // Currency is a decimal, so like, 23.49. This would represent
+                // 23 gold, 4 silver, and 9 copper.
+                var currencyParts = price.ToString().Split('.');
+                int gold = 0;
+                int silver = 0;
+                int copper = 0;
+
+                if (currencyParts.Length > 0)
+                {
+                    gold = int.Parse(currencyParts[0]);
+                }
+
+                if (currencyParts.Length > 1)
+                {
+                    // Section segment will be something like 4 or 49
+                    if (currencyParts[1].Length == 1)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                    }
+
+                    if (currencyParts[1].Length == 2)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                        copper = int.Parse(currencyParts[1][1].ToString());
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                if (gold > 0)
+                {
+                    sb.Append($"{gold} gold");
+                }
+
+                if (silver > 0)
+                {
+                    if (gold > 0)
+                    {
+                        sb.Append($", {silver} silver");
+                    }
+                    else
+                    {
+                        sb.Append($"{silver} silver");
+                    }
+                }
+
+                if (copper > 0)
+                {
+                    if (gold > 0 || silver > 0)
+                    {
+                        sb.Append($", and {copper} copper");
+                    }
+                    else
+                    {
+                        sb.Append($"{copper} copper");
+                    }
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Converts a value of an item to the correct currency.
+        /// </summary>
+        /// <param name="price">The the value of the item.</param>
+        /// <param name="actor">The player.</param>
+        /// <param name="merchant">The merchant.</param>
+        /// <returns>String.</returns>
+        public static string ToMerchantBuyPrice(this decimal price, Character actor, Mobile merchant)
+        {
+            if (price == 0)
+            {
+                return "nothing at all";
+            }
+            else
+            {
+                price = price.AdjustBuyPrice(actor, merchant);
+
+                // Currency is a decimal, so like, 23.49. This would represent
+                // 23 gold, 4 silver, and 9 copper.
+                var currencyParts = price.ToString().Split('.');
+                int gold = 0;
+                int silver = 0;
+                int copper = 0;
+
+                if (currencyParts.Length > 0)
+                {
+                    gold = int.Parse(currencyParts[0]);
+                }
+
+                if (currencyParts.Length > 1)
+                {
+                    // Section segment will be something like 4 or 49
+                    if (currencyParts[1].Length == 1)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                    }
+
+                    if (currencyParts[1].Length == 2)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                        copper = int.Parse(currencyParts[1][1].ToString());
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                if (gold > 0)
+                {
+                    sb.Append($"{gold} gold");
+                }
+
+                if (silver > 0)
+                {
+                    if (gold > 0)
+                    {
+                        sb.Append($", {silver} silver");
+                    }
+                    else
+                    {
+                        sb.Append($"{silver} silver");
+                    }
+                }
+
+                if (copper > 0)
+                {
+                    if (gold > 0 || silver > 0)
+                    {
+                        sb.Append($", and {copper} copper");
+                    }
+                    else
+                    {
+                        sb.Append($"{copper} copper");
+                    }
+                }
+
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Adjust the selling price of an item based on character alignment and race.
+        /// </summary>
+        /// <param name="price">The price.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="merchant">The merchant.</param>
+        /// <returns>decimal</returns>
+        public static decimal AdjustSellPrice(this decimal price, Character actor, Mobile merchant)
+        {
+            decimal modifier = 0;
+
+            switch (merchant.Alignment)
+            {
+                case Alignment.Good:
+                    {
+                        switch (actor.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    modifier = 1.3m;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    modifier = 1.8m;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    modifier = 2.6m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Alignment.Neutral:
+                    {
+                        switch (actor.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    modifier = 1.75m;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    modifier = 1.25m;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    modifier = 1.75m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Alignment.Evil:
+                    {
+                        switch (actor.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    modifier = 2.8m;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    modifier = 2.1m;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    modifier = 1.5m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+            }
+
+            switch (merchant.Race)
+            {
+                default:
+                    break;
+                case Race.Elf:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Dwarf:
+                                {
+                                    modifier += .15m;
+                                    break;
+                                }
+
+                            case Race.HalfOrc:
+                                {
+                                    modifier += .75m;
+                                    break;
+                                }
+
+                            case Race.Drow:
+                                {
+                                    modifier += 3.76m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Race.Duergar:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Dwarf:
+                                {
+                                    modifier += 3.76m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Race.Dwarf:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Duergar:
+                                {
+                                    modifier += 4.23m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Race.Drow:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Elf:
+                                {
+                                    modifier += 4.23m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+            }
+
+            price *= modifier;
+
+            return price;
+        }
+
+        /// <summary>
+        /// Adjust the purchase price of an item based on character alignment and race.
+        /// </summary>
+        /// <param name="price">The price.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="merchant">The merchant.</param>
+        /// <returns>decimal</returns>
+        public static decimal AdjustBuyPrice(this decimal price, Character actor, Mobile merchant)
+        {
+            decimal modifier = 0;
+
+            switch (merchant.Alignment)
+            {
+                case Alignment.Good:
+                    {
+                        switch (actor.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    modifier = .4m;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    modifier = .5m;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    modifier = .6m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Alignment.Neutral:
+                    {
+                        switch (actor.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    modifier = .5m;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    modifier = .6m;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    modifier = .5m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Alignment.Evil:
+                    {
+                        switch (actor.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    modifier = .4m;
+                                    break;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    modifier = .5m;
+                                    break;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    modifier = .6m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+            }
+
+            switch (merchant.Race)
+            {
+                default:
+                    break;
+                case Race.Elf:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Dwarf:
+                                {
+                                    modifier -= .01m;
+                                    break;
+                                }
+
+                            case Race.HalfOrc:
+                                {
+                                    modifier -= .08m;
+                                    break;
+                                }
+
+                            case Race.Drow:
+                                {
+                                    modifier -= .15m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Race.Duergar:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Dwarf:
+                                {
+                                    modifier -= .15m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Race.Dwarf:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Duergar:
+                                {
+                                    modifier -= .15m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case Race.Drow:
+                    {
+                        switch (actor.Race)
+                        {
+                            case Race.Elf:
+                                {
+                                    modifier -= .15m;
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+            }
+
+            price *= modifier;
+
+            return price;
         }
 
         /// <summary>
