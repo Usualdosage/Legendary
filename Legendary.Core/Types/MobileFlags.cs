@@ -44,14 +44,14 @@ namespace Legendary.Core.Types
         /// </summary>
         Trainer = 5,
 
-        // <summary>
+        /// <summary>
         /// Can practice skills.
         /// </summary>
-        Guildmaster = 5,
+        Guildmaster = 6,
 
-        // <summary>
+        /// <summary>
         /// Can teach new skill/spell trees.
         /// </summary>
-        Teacher = 5,
+        Teacher = 7,
     }
 }

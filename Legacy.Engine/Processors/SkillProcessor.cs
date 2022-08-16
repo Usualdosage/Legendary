@@ -111,6 +111,7 @@ namespace Legendary.Engine.Processors
                     else
                     {
                         await this.communicator.SendToPlayer(actor.Connection, "You lost your concentration.", cancellationToken);
+                        await skill.CheckImprove(actor.Character, cancellationToken);
                         return;
                     }
                 }

@@ -9,8 +9,10 @@
 
 namespace Legendary.Engine.Processors
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -18,6 +20,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Attributes;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Models;
 
@@ -110,6 +113,12 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Command not yet available.</p>")]
+        private async Task DoLearn(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+        }
+
         [HelpText("<p>Lists all items for sale by a merchant. See also: HELP SELL, HELP BUY</p>")]
         private async Task DoList(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -174,10 +183,212 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
         }
 
-        [HelpText("<p>Command not yet available.</p>")]
+        [HelpText("<p>When accompanied by a guild master, use this command to train up your skills.<ul><li>practice skill</li><li>practice spell</li></ul></p></p>")]
         private async Task DoPractice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+            if (mobs != null)
+            {
+                var gm = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Guildmaster));
+                if (gm == null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a guildmaster here.", cancellationToken);
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(args.Method))
+                    {
+                        StringBuilder sb = new StringBuilder();
+
+                        if (actor.Character.Practices > 0)
+                        {
+                            bool canPractice = false;
+
+                            sb.Append("<div class='skillgroups'>");
+                            var engine = Assembly.Load("Legendary.Engine");
+
+                            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
+
+                            foreach (var tree in skillTrees)
+                            {
+                                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+
+                                if (treeInstance != null && treeInstance is IActionTree instance)
+                                {
+                                    var groupProps = tree.GetProperties();
+
+                                    StringBuilder sbTree = new StringBuilder();
+
+                                    bool hasSkillInGroup = false;
+
+                                    for (var x = 1; x <= 5; x++)
+                                    {
+                                        var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                                        if (spellGroup != null)
+                                        {
+                                            var obj = spellGroup.GetValue(treeInstance);
+
+                                            if (obj != null)
+                                            {
+                                                var group = (List<IAction>)obj;
+
+                                                foreach (var action in group)
+                                                {
+                                                    if (actor.Character.HasSkill(action.Name.ToLower()))
+                                                    {
+                                                        var proficiency = actor.Character.GetSkillProficiency(action.Name.ToLower());
+                                                        if (proficiency != null && proficiency.Proficiency < 75)
+                                                        {
+                                                            sbTree.Append($"<span class='skillinfo'>{proficiency.SkillName} {proficiency.Proficiency}% <progress class='skillprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
+                                                            hasSkillInGroup = true;
+                                                            canPractice = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (hasSkillInGroup)
+                                    {
+                                        sb.Append($"<div><span class='skillgroup'>{instance.Name}</span>");
+                                        sb.Append(sbTree.ToString());
+                                    }
+                                }
+
+                                sb.Append("</div>");
+                            }
+
+                            var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
+
+                            foreach (var tree in spellTrees)
+                            {
+                                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+
+                                if (treeInstance != null && treeInstance is IActionTree instance)
+                                {
+                                    StringBuilder sbTree = new StringBuilder();
+
+                                    var groupProps = tree.GetProperties();
+
+                                    bool hasSpellInGroup = false;
+
+                                    for (var x = 1; x <= 5; x++)
+                                    {
+                                        var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                                        if (spellGroup != null)
+                                        {
+                                            var obj = spellGroup.GetValue(treeInstance);
+
+                                            if (obj != null)
+                                            {
+                                                var group = (List<IAction>)obj;
+
+                                                foreach (var action in group)
+                                                {
+                                                    if (actor.Character.HasSpell(action.Name.ToLower()))
+                                                    {
+                                                        var proficiency = actor.Character.GetSpellProficiency(action.Name.ToLower());
+                                                        if (proficiency != null && proficiency.Proficiency < 75)
+                                                        {
+                                                            sbTree.Append($"<span class='spellinfo'>{proficiency.SpellName} {proficiency.Proficiency}% <progress class='spellprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
+                                                            hasSpellInGroup = true;
+                                                            canPractice = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (hasSpellInGroup)
+                                    {
+                                        sb.Append($"<div><span class='skillgroup'>{instance.Name}</span>");
+                                        sb.Append(sbTree.ToString());
+                                    }
+                                }
+
+                                sb.Append("</div>");
+                            }
+
+                            sb.Append("</div>");
+
+                            if (canPractice)
+                            {
+                                await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>Sure, {actor.Character.FirstName.FirstCharToUpper()}, you have {actor.Character.Practices} practice sessions, and here's what we can practice.</span>\"", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>Sorry, {actor.Character.FirstName.FirstCharToUpper()}, looks like you'll have to practice the rest on your own.</span>\"", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, but you have no practice sessions available.</span>\"", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder();
+
+                        if (actor.Character.Practices > 0)
+                        {
+                            if (actor.Character.HasSkill(args.Method))
+                            {
+                                var skillProf = actor.Character.GetSkillProficiency(args.Method);
+
+                                if (skillProf != null)
+                                {
+                                    int advance = ((int)actor.Character.Wis.Current * 2) + this.random.Next(1, (int)actor.Character.Dex.Current);
+                                    skillProf.Proficiency = Math.Min(75, skillProf.Proficiency + advance);
+                                    skillProf.Progress = 0;
+                                    actor.Character.Practices -= 1;
+
+                                    await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {skillProf.SkillName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Character, "You are not proficient in that.", cancellationToken);
+                                }
+
+                            }
+                            else if (actor.Character.HasSpell(args.Method))
+                            {
+                                var spellProf = actor.Character.GetSpellProficiency(args.Method);
+
+                                if (spellProf != null)
+                                {
+                                    int advance = ((int)actor.Character.Wis.Current * 2) + this.random.Next(1, (int)actor.Character.Int.Current);
+                                    spellProf.Proficiency = Math.Min(75, spellProf.Proficiency + advance);
+                                    spellProf.Progress = 0;
+                                    actor.Character.Practices -= 1;
+
+                                    await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {spellProf.SpellName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Character, "You are not proficient in that.", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, I can't help you practice that.</span>\"", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, but you have no practice sessions available.</span>\"", cancellationToken);
+                        }
+
+                        await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+
+                        await this.communicator.SaveCharacter(actor);
+                    }
+                }
+            }
         }
 
         [HelpText("<p>Puts an item or items from your inventory into another item.</p><ul><li>put <em>item</em> <em>target</em></li><li>put all <em>target</em></li></ul>")]
@@ -333,7 +544,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>When accompanied by a trainer, use this skill to train up your vital attributes.<ul><li>train str</li><li>train hp</li></ul></p>")]
+        [HelpText("<p>When accompanied by a trainer, use this command to train up your vital attributes.<ul><li>train str</li><li>train hp</li></ul></p>")]
         private async Task DoTrain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
