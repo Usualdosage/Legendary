@@ -11,6 +11,7 @@ namespace Legendary.Engine.Models.SpellTrees
 {
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
     using Legendary.Engine.Models.Spells;
 
     /// <summary>
@@ -31,6 +32,9 @@ namespace Legendary.Engine.Models.SpellTrees
 
         /// <inheritdoc/>
         public override string Name => "Conjuring Group";
+
+        /// <inheritdoc/>
+        public override SchoolType SchoolType => SchoolType.Magic;
 
         /// <inheritdoc/>
         public override List<IAction> Group1

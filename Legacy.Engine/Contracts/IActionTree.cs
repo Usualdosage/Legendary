@@ -12,6 +12,7 @@ namespace Legendary.Engine.Contracts
     using System;
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
 
     /// <summary>
     /// Implementation contract for a skill or a spell tree.
@@ -22,6 +23,11 @@ namespace Legendary.Engine.Contracts
         /// Gets the name of the tree.
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Gets the type of school this skill or spell tree can be learned in.
+        /// </summary>
+        public SchoolType SchoolType { get; }
 
         /// <summary>
         /// Gets the skills or spells available in group 1.

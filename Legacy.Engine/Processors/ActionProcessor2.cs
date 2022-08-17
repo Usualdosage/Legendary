@@ -113,10 +113,54 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>Command not yet available.</p>")]
+        [HelpText("<p>When accompanied by a teacher, use this command to learn new skill or spell trees. See also: HELP PRACTICE, HELP TRAIN<ul><<li>learn tree</li></ul></p></p></p>")]
         private async Task DoLearn(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+            if (mobs != null)
+            {
+                var teacher = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Teacher));
+                if (teacher == null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a teacher here.", cancellationToken);
+                }
+                else
+                {
+                    var engine = Assembly.Load("Legendary.Engine");
+
+                    var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
+                    var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
+
+                    foreach (var tree in skillTrees)
+                    {
+                        var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+
+                        if (treeInstance != null && treeInstance is IActionTree instance)
+                        {
+                            var groupProps = tree.GetProperties();
+                        }
+                    }
+
+                    switch (teacher.SchoolType)
+                    {
+                        default:
+                        case Core.Types.SchoolType.General:
+                            break;
+                        case Core.Types.SchoolType.War:
+                            break;
+                        case Core.Types.SchoolType.Magic:
+                            break;
+                        case Core.Types.SchoolType.Divinity:
+                            break;
+                    }
+
+                    await this.communicator.SendToPlayer(actor.Character, $"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, I'm afraid I'm not able to teach you anything right now.</span>\"", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a teacher here.", cancellationToken);
+            }
         }
 
         [HelpText("<p>Lists all items for sale by a merchant. See also: HELP SELL, HELP BUY</p>")]
@@ -183,7 +227,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
         }
 
-        [HelpText("<p>When accompanied by a guild master, use this command to train up your skills.<ul><li>practice skill</li><li>practice spell</li></ul></p></p>")]
+        [HelpText("<p>When accompanied by a guild master, use this command to train up your skills. See also: HELP LEARN, HELP TRAIN<ul><li>practice skill</li><li>practice spell</li></ul></p>")]
         private async Task DoPractice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
@@ -544,7 +588,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>When accompanied by a trainer, use this command to train up your vital attributes.<ul><li>train str</li><li>train hp</li></ul></p>")]
+        [HelpText("<p>When accompanied by a trainer, use this command to train up your vital attributes. See also: HELP PRACTICE, HELP LEARN<ul><li>train str</li><li>train hp</li></ul></p>")]
         private async Task DoTrain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);

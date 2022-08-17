@@ -23,5 +23,10 @@ namespace Legendary.Core.Contracts
         /// <param name="gameTicks">The game ticks.</param>
         /// <param name="gameHour">The hour of the game.</param>
         void ProcessEnvironmentChanges(int gameTicks, int gameHour);
+
+        /// <summary>
+        /// Randomly generates the weather for the world.
+        /// </summary>
+        void GenerateWeather();
     }
 }

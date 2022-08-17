@@ -9,8 +9,6 @@
 
 namespace Legendary.Engine.Models
 {
-    using System;
-
     /// <summary>
     /// Class to handle weather expressions.
     /// </summary>
@@ -22,11 +20,15 @@ namespace Legendary.Engine.Models
         /// <param name="order">The order.</param>
         /// <param name="message">The message.</param>
         /// <param name="sound">The sound.</param>
-        public Weather(int order, string message, string sound)
+        /// <param name="status">The status.</param>
+        /// <param name="temp">The temperature.</param>
+        public Weather(int order, string message, string sound, string status, int temp)
         {
             this.Order = order;
             this.Message = message;
             this.Sound = sound;
+            this.Status = status;
+            this.Temp = temp;
         }
 
         /// <summary>
@@ -43,5 +45,15 @@ namespace Legendary.Engine.Models
         /// Gets or sets the sound.
         /// </summary>
         public string Sound { get; set; }
+
+        /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        public string Status { get; set; }
+
+        /// <summary>
+        /// Gets or sets the temp.
+        /// </summary>
+        public int Temp { get; set; }
     }
 }

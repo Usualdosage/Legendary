@@ -61,6 +61,16 @@ namespace Legendary.Core.Contracts
         Task PlaySoundToRoom(Character actor, Character? target, string sound, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Plays a sound to everyone in the room.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <param name="channel">The sound channel.</param>
+        /// <param name="sound">The sound.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task PlaySoundToRoom(KeyValuePair<long, long> location, AudioChannel channel, string sound, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Resolves a given player to the connected user, given that the character is a player, and not a mobile.
         /// </summary>
         /// <param name="character">The character.</param>
@@ -254,6 +264,15 @@ namespace Legendary.Core.Contracts
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
         Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character? target, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a message to all players in a room.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task<CommResult> SendToRoom(KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to everyone in an area, EXCEPT the sender.

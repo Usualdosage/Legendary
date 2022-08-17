@@ -11,6 +11,7 @@ namespace Legendary.Engine.Models.SkillTrees
 {
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
@@ -31,6 +32,9 @@ namespace Legendary.Engine.Models.SkillTrees
 
         /// <inheritdoc/>
         public override string Name => "Weapon Group";
+
+        /// <inheritdoc/>
+        public override SchoolType SchoolType => SchoolType.War;
 
         /// <inheritdoc/>
         public override List<IAction> Group1

@@ -1257,7 +1257,20 @@ namespace Legendary.Engine.Processors
 
                         if (area != null)
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"Looking at the sky, you seem to be in the vicinty of {area.Name}.", cancellationToken);
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append($"Looking at the sky, you seem to be in the vicinity of {area.Name}. ");
+
+                            if (Legendary.Engine.Environment.CurrentWeather.ContainsKey(area.AreaId))
+                            {
+                                var weather = Legendary.Engine.Environment.CurrentWeather[area.AreaId];
+
+                                if (weather != null)
+                                {
+                                    sb.Append($"{weather.Status} You guess it to be around {weather.Temp} degrees outside.");
+                                }
+                            }
+
+                            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
                         }
                     }
                 }

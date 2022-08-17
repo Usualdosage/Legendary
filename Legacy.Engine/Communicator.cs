@@ -54,6 +54,7 @@ namespace Legendary.Engine
         private readonly IEngine engine;
         private readonly IRandom random;
         private readonly IWorld world;
+        private readonly IEnvironment environment;
         private readonly IServerSettings serverSettings;
         private readonly IWebHostEnvironment webHostEnvironment;
         private SkillProcessor? skillProcessor;
@@ -91,8 +92,11 @@ namespace Legendary.Engine
                     new CommChannel("imm", true, false),
                 };
 
+            // Set the environment to handle global events.
+            this.environment = new Environment(this, random, this.world);
+
             // Start the engine.
-            this.engine = new Engine(this.logger, this.world);
+            this.engine = new Engine(this.logger, this.world, this.environment);
             this.engine.Tick += this.Engine_Tick;
             this.engine.VioTick += this.Engine_VioTick;
 
@@ -110,6 +114,11 @@ namespace Legendary.Engine
 
             // Create the title generator.
             this.titleGenerator = new TitleGenerator(this, this.random, this.combat);
+
+            // Create instances of the action, skill, and spell processors.
+            this.skillProcessor = new SkillProcessor(this, this.random, this.combat, this.logger);
+            this.spellProcessor = new SpellProcessor(this, this.random, this.combat, this.logger);
+            this.actionProcessor = new ActionProcessor(this, this.world, this.logger, this.random, this.combat);
         }
 
         /// <summary>
@@ -166,10 +175,8 @@ namespace Legendary.Engine
                     throw new Exception(message);
                 }
 
-                // Configure the user and add the environment handler.
+                // Configure the user.
                 var userData = new UserData(socketId, currentSocket, user ?? "Unknown", character);
-                var environment = new Environment(this, this.random, userData, this.combat);
-                userData.Environment = environment;
 
                 // If the user is already connected, remove, and then re-add.
                 var connectedUser = Users?.FirstOrDefault(u => u.Value.Username == character.FirstName);
@@ -201,12 +208,6 @@ namespace Legendary.Engine
 
                 // TODO: Just add all skills and spells for now.
                 this.ApplySkillsAndSpells(userData);
-
-                // Create instances of the action, skill, and spell processors.
-                // TODO: Can these be global somehow, so we don't have to create these for each character the logs in?
-                this.skillProcessor = new SkillProcessor(this, this.random, this.combat, this.logger);
-                this.spellProcessor = new SpellProcessor(this, this.random, this.combat, this.logger);
-                this.actionProcessor = new ActionProcessor(this, this.world, this.logger, this.random, this.combat);
 
                 // Display the welcome content.
                 await this.ShowWelcomeScreen(userData);
@@ -733,6 +734,25 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default)
+        {
+            var buffer = Encoding.UTF8.GetBytes(message);
+            var segment = new ArraySegment<byte>(buffer);
+
+            if (Users != null)
+            {
+                var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(location)).ToList();
+
+                foreach (var user in usersInRoom)
+                {
+                    await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                }
+            }
+
+            return CommResult.Ok;
+        }
+
+        /// <inheritdoc/>
         public async Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character? target, string message, CancellationToken cancellationToken = default)
         {
             var buffer = Encoding.UTF8.GetBytes(message);
@@ -1167,6 +1187,20 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public async Task PlaySoundToRoom(KeyValuePair<long, long> location, AudioChannel channel, string sound, CancellationToken cancellationToken = default)
+        {
+            var players = this.GetPlayersInRoom(location);
+
+            if (players != null)
+            {
+                foreach (var player in players)
+                {
+                    await this.PlaySound(player, channel, sound, cancellationToken);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
         public long GetRemainingExperienceToLevel(Character character)
         {
             var experience = character.Experience;
@@ -1578,11 +1612,8 @@ namespace Legendary.Engine
                             // Update the player info
                             this.SendGameUpdate(user.Value.Character, null, null).Wait();
 
-                            // See what's going on around the player.
-                            if (user.Value.Environment != null)
-                            {
-                                user.Value.Environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
-                            }
+                            // See what's going on around the players.
+                            this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
 
                             // Autosave the user each tick.
                             this.SaveCharacter(user.Value).Wait();

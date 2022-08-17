@@ -12,6 +12,7 @@ namespace Legendary.Engine.Models
     using System.Collections.Generic;
     using System.Linq;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
 
     /// <summary>
@@ -34,6 +35,9 @@ namespace Legendary.Engine.Models
 
         /// <inheritdoc/>
         public abstract string Name { get; }
+
+        /// <inheritdoc/>
+        public abstract SchoolType SchoolType { get; }
 
         /// <inheritdoc/>
         public abstract List<IAction> Group1 { get; }

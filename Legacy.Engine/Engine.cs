@@ -22,6 +22,7 @@ namespace Legendary.Engine
     {
         private readonly ILogger logger;
         private readonly IWorld world;
+        private readonly IEnvironment environment;
         private int gameTicks = 0;
         private int gameHour = 0;
 
@@ -35,10 +36,12 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="world">The world.</param>
-        public Engine(ILogger logger, IWorld world)
+        /// <param name="environment">The environment.</param>
+        public Engine(ILogger logger, IWorld world, IEnvironment environment)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.world = world ?? throw new ArgumentNullException(nameof(world));
+            this.environment = environment ?? throw new ArgumentNullException(nameof(environment));
 
             Task.Run(async () => await this.Initialize());
         }
@@ -69,6 +72,9 @@ namespace Legendary.Engine
 
             await this.world.CleanupWorld();
             this.world.Populate();
+
+            this.logger.Info("Creating weather...", null);
+            this.environment.GenerateWeather();
 
             this.logger.Info("Starting main loop...", null);
 

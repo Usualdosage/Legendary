@@ -10,9 +10,7 @@
 namespace Legendary.Core.Models
 {
     using System.Net.WebSockets;
-    using Legendary.Core.Contracts;
-    using Legendary.Core.Models;
-
+   
     /// <summary>
     /// Used to track a player with their connection.
     /// </summary>
@@ -52,11 +50,6 @@ namespace Legendary.Core.Models
         /// Gets the character.
         /// </summary>
         public Character Character { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the character's environment.
-        /// </summary>
-        public IEnvironment? Environment { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()

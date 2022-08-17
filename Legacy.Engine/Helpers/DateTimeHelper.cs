@@ -61,6 +61,22 @@ namespace Legendary.Engine.Helpers
             return displayText;
         }
 
+        /// <summary>
+        /// Gets the current season based on the month.
+        /// </summary>
+        /// <param name="gameMonth">The game month.</param>
+        /// <returns>string.</returns>
+        public static string FormatSeason(int gameMonth)
+        {
+            return gameMonth switch
+            {
+                4 or 5 or 6 => "summer",
+                7 or 8 or 9 => "autumn",
+                10 or 11 or 12 => "winter",
+                _ => "spring",
+            };
+        }
+
         private static Tuple<string, string> GetMoon(int day)
         {
             var moonMessage = string.Empty;
@@ -145,17 +161,6 @@ namespace Legendary.Engine.Helpers
             {
                 return gameDay + "th";
             }
-        }
-
-        private static string FormatSeason(int gameMonth)
-        {
-            return gameMonth switch
-            {
-                4 or 5 or 6 => "summer",
-                7 or 8 or 9 => "autumn",
-                10 or 11 or 12 => "winter",
-                _ => "spring",
-            };
         }
 
         private static string FormatTime(int hour, int minute)
