@@ -15,6 +15,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Extensions;
 
     /// <summary>
@@ -92,6 +93,8 @@ namespace Legendary.Engine.Models.Spells
             string title = $"a {adj} {food}";
             string shortDesc = $"A {adj} {food} is here.";
 
+            var foodValue = this.Random.Next(4, 24);
+
             var item = new Item()
             {
                 ItemType = Core.Types.ItemType.Food,
@@ -101,6 +104,7 @@ namespace Legendary.Engine.Models.Spells
                 RotTimer = this.Random.Next(8, 36),
                 Weight = this.Random.Next(1, 4),
                 Value = this.Random.Next(4, 24),
+                Food = new MaxCurrent(foodValue, foodValue),
             };
 
             return item;

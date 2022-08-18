@@ -69,6 +69,8 @@ namespace Legendary.Engine.Models.Spells
                 RotTimer = 48,
                 ItemFlags = new List<ItemFlags>() { ItemFlags.Glowing },
                 WearLocation = new List<WearLocation>() { WearLocation.None },
+                LiquidType = LiquidType.Water,
+                Drinks = new MaxCurrent(100, 100),
             };
 
             return item;

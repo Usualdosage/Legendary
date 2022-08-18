@@ -51,10 +51,54 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
-        [HelpText("<p>Command not yet available.</p>")]
+        [HelpText("<p>Lists all awards and accomplishments you have received.</p>")]
         private async Task DoAwards(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+            if (actor.Character.Awards.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<div class='award-container'>");
+
+                foreach (var award in actor.Character.Awards)
+                {
+                    string color = "bronze";
+                    string level = "I";
+
+                    switch (award.AwardLevel)
+                    {
+                        default:
+                        case 0:
+                            color = "bronze";
+                            level = "I";
+                            break;
+                        case 1:
+                            color = "silver";
+                            level = "II";
+                            break;
+                        case 2:
+                            color = "gold";
+                            level = "III";
+                            break;
+                        case 3:
+                            color = "platinum";
+                            level = "IV";
+                            break;
+                    }
+
+                    sb.Append("<div class='award'>");
+                    sb.Append($"<div class='quiz-medal'><div class='quiz-medal-circle quiz-medal-circle-{color}'><span><i class='fa-solid {award.Image}'></i></span></div><div class='quiz-medal-ribbon quiz-medal-ribbon-left'></div><div class='quiz-medal-ribbon quiz-medal-ribbon-right'></div></div>");
+                    sb.Append($"<div class='ribbon-row'><div class='ribbon-block'><h1><span>{award.Name} {level}</span></h1></div></div>");
+                    sb.Append("</div>");
+                }
+
+                sb.Append("</div>");
+
+                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You do not currently have any awards.", cancellationToken);
+            }
         }
 
         [HelpText("<p>Buys an item from a merchant. See also: HELP LIST, HELP SELL<ul><li>buy item</li><ul></p>")]

@@ -741,7 +741,7 @@ namespace Legendary.Engine
 
             if (Users != null)
             {
-                var usersInRoom = Users.Where(u => u.Value.Character.Location.InSamePlace(location)).ToList();
+                var usersInRoom = Users.Where(u => u.Value.Character.Location.Key == location.Key && u.Value.Character.Location.Value == location.Value).ToList();
 
                 foreach (var user in usersInRoom)
                 {

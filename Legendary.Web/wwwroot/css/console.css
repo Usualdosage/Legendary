@@ -763,3 +763,179 @@ video {
             font-family: Courier New, Courier, monospace;
         }
 
+
+/* Award Medals */
+
+.award-container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.award {
+    width: 140px;
+    height: 80px;
+    display: inline-block;    
+    text-align: center;
+}
+
+.quiz-medal {
+    position: relative;
+    display: inline-block;
+}
+
+.quiz-medal-circle {
+    font-family: "Roboto", sans-serif;
+    font-size: 28px;
+    font-weight: 500;
+    width: 56px;
+    height: 56px;
+    border-radius: 100%;
+    color: white;
+    text-align: center;
+    line-height: 46px;
+    vertical-align: middle;
+    position: relative;
+    border-width: 0.2em;
+    border-style: solid;
+    z-index: 1;
+    box-shadow: inset 0 0 0 #a7b2b8, 2px 2px 0 rgba(0, 0, 0, 0.08);
+    border-color: #edeff1;
+    text-shadow: 2px 2px 0 #98a6ad;
+    background: linear-gradient(to bottom right, #d1d7da 50%, #c3cbcf 50%);
+}
+
+    .quiz-medal-circle.quiz-medal-circle-platinum {
+        box-shadow: inset 0 0 0 #b67d05, 2px 2px 0 rgba(0, 0, 0, 0.08);
+        border-color: #edeff1;
+        text-shadow: 0 0 4px #98a6ad;
+        background: linear-gradient(to bottom right, #dcedf6 50%, #cccccc 50%);
+    }
+
+    .quiz-medal-circle.quiz-medal-circle-gold {
+        box-shadow: inset 0 0 0 #b67d05, 2px 2px 0 rgba(0, 0, 0, 0.08);
+        border-color: #fadd40;
+        text-shadow: 0 0 4px #9d6c04;
+        background: linear-gradient(to bottom right, #f9ad0e 50%, #e89f06 50%);
+    }
+
+    .quiz-medal-circle.quiz-medal-circle-silver {
+        box-shadow: inset 0 0 0 #a7b2b8, 2px 2px 0 rgba(0, 0, 0, 0.08);
+        border-color: #edeff1;
+        text-shadow: 0px 0px 4px #98a6ad;
+        background: linear-gradient(to bottom right, #d1d7da 50%, #c3cbcf 50%);
+    }
+
+    .quiz-medal-circle.quiz-medal-circle-bronze {
+        box-shadow: inset 0 0 0 #955405, 2px 2px 0 rgba(0, 0, 0, 0.08);
+        border-color: #f7bb23;
+        text-shadow: 0 0 4px #7d4604;
+        background: linear-gradient(to bottom right, #df7e08 50%, #c67007 50%);
+    }
+
+.quiz-medal-ribbon {
+    content: "";
+    display: block;
+    position: absolute;
+    border-style: solid;
+    border-width: 6px 10px;
+    width: 0;
+    height: 20px;
+    top: 50px;
+}
+
+.quiz-medal-ribbon-left {
+    border-color: #FC402D #FC402D transparent #FC402D;
+    left: 8px;
+    transform: rotate(20deg) translateZ(-32px);
+}
+
+.quiz-medal-ribbon-right {
+    left: 28px;
+    border-color: #f31903 #f31903 transparent #f31903;
+    transform: rotate(-20deg) translateZ(-48px);
+}
+
+.ribbon-row {
+    display: table;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+
+.ribbon-block {
+    display: table-cell;
+    width: 100%;
+    vertical-align: middle;
+    position: relative;
+}
+
+.ribbon-row h1 {
+    position: relative;
+    display: inline-block;
+    font-family: "Times New Roman", times, serif;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+    text-align: center;
+    font-size: .5em;
+    text-transform: uppercase;
+}
+
+    .ribbon-row h1:after, .ribbon-row h1:before {
+        content: " ";
+        display: block;
+        position: absolute;
+        bottom: -.5em;
+        width: 1em;
+        height: 100%;
+        background-color: #69c48d;
+        pointer-events: none;
+    }
+
+.ribbon-row h1:after {
+    right: -.57em;
+    z-index: -1;
+}
+
+.ribbon-row h1:before {
+    bottom: auto;
+    top: -.5em;
+    left: -.57em;
+    z-index: -1;
+}
+
+.ribbon-row h1 span {
+    display: inline-block;
+    position: relative;
+    padding: .15em .75em;
+    text-decoration: none;
+    color: #192238;
+    background-color: #8ed2a9;
+}
+
+.ribbon-row h1 span:after, h1 span:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: -.5em;
+    left: -.05em;
+    pointer-events: none;
+    -webkit-mask: none;
+}
+
+.ribbon-row h1 span:before {
+    bottom: auto;
+    top: -.5em;
+    border-bottom: 0.5em solid #398e5b;
+    border-left: .5em solid transparent;
+}
+
+.ribbon-row h1 span:after {
+    left: auto;
+    right: -.05em;
+    border-top: 0.5em solid #398e5b;
+    border-right: .5em solid transparent;
+}

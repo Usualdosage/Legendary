@@ -7,36 +7,41 @@
 //  This header must remain on all derived works.
 // </copyright>
 
-namespace Legendary.Core.Types
+namespace Legendary.Core.Models
 {
     /// <summary>
-    /// Represents an award a player can earn.
+    /// Represents an award that a player can earn.
     /// </summary>
     public class Award
     {
         /// <summary>
+        /// Gets or sets the name of the award.
+        /// </summary>
+        public string? Name { get; set; }
+
+        /// <summary>
         /// Gets or sets the award level.
         /// </summary>
-        public AwardLevel AwardLevel { get; set; }
+        public int AwardLevel { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets the award title.
+        /// Gets or sets the image.
         /// </summary>
-        public string? Title { get; set; }
+        public string? Image { get; set; }
 
         /// <summary>
-        /// Gets or sets the award content.
+        /// Gets or sets the description.
         /// </summary>
-        public string? Content { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the experience per award level.
+        /// Gets or sets the experience per level.
         /// </summary>
-        public int ExperiencePerLevel { get; set; }
+        public int ExperiencePerLevel { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets the award image.
+        /// Gets or sets the rank or order of the award.
         /// </summary>
-        public string? AwardImage { get; set; }
+        public int Order { get; set; } = 0;
     }
 }
