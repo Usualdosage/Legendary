@@ -113,18 +113,17 @@ class LegendaryClient {
                 }
             }
             else {
-
                 $console.append("<span class='message'>" + message + "</span>");
+            }
 
-                // Autoscroll
-                $console.prop("scrollTop", $console.prop("scrollHeight"));
+            // Autoscroll
+            $console.prop("scrollTop", $console.prop("scrollHeight"));
 
-                // Autotrim if there are more than 500 messages
-                var $remove = $(".message");
+            // Autotrim if there are more than 500 messages
+            var $remove = $(".message");
 
-                if ($remove.length > 500) {
-                    $remove[0].remove();
-                }
+            if ($remove.length > 500) {
+                $remove[0].remove();
             }
         };
 

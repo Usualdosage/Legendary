@@ -24,6 +24,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Handles actions in combat related to skill and spell usage.
@@ -33,18 +34,24 @@ namespace Legendary.Engine
         private readonly IRandom random;
         private readonly ICommunicator communicator;
         private readonly ILogger logger;
+        private readonly IWorld world;
+        private readonly AwardProcessor awardProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Combat"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
+        /// <param name="world">The world.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="logger">The logger.</param>
-        public Combat(ICommunicator communicator, IRandom random, ILogger logger)
+        public Combat(ICommunicator communicator, IWorld world, IRandom random, ILogger logger)
         {
             this.random = random;
             this.communicator = communicator;
             this.logger = logger;
+            this.world = world;
+
+            this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
         }
 
         /// <summary>
@@ -495,6 +502,28 @@ namespace Legendary.Engine
             await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
             await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
 
+            killer.Metrics.MobKills += 1;
+
+            var mobKills = killer.Metrics.MobKills;
+
+            switch (mobKills)
+            {
+                default:
+                    break;
+                case 10:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
+                case 100:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
+                case 500:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
+                case 1000:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
+            }
+
             var room = this.communicator.ResolveRoom(killer.Location);
 
             if (room != null)
@@ -528,6 +557,28 @@ namespace Legendary.Engine
                 await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName.FirstCharToUpper()} is DEAD!");
 
                 await this.communicator.PlaySound(actor, Core.Types.AudioChannel.Actor, Sounds.DEATH, cancellationToken);
+
+                killer.Metrics.PlayerKills += 1;
+
+                var playerKills = killer.Metrics.PlayerKills;
+
+                switch (playerKills)
+                {
+                    default:
+                        break;
+                    case 1:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 10:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 50:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 100:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                }
 
                 // Make dead and ghost.
                 actor.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);

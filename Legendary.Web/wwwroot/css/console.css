@@ -398,6 +398,7 @@ video {
     border: solid 1px #666;
     border-radius: 8px;
     box-shadow: 2px 2px 2px #444;
+    margin-bottom: 50px;
 }
 
     .room-video i {
@@ -770,6 +771,15 @@ video {
     padding-top: 20px;
     padding-bottom: 20px;
     margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.award-message {
+    display: inline-block;
+    border: solid 1px #666;
+    padding: 10px;
+    font-weight: bold;
+    color: dodgerblue;
 }
 
 .award {

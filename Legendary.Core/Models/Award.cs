@@ -9,11 +9,24 @@
 
 namespace Legendary.Core.Models
 {
+    using System.Collections.Generic;
+    using MongoDB.Bson;
+    using MongoDB.Bson.Serialization.Attributes;
+
     /// <summary>
     /// Represents an award that a player can earn.
     /// </summary>
+    [BsonIgnoreExtraElements]
     public class Award
     {
+        /// <summary>
+        /// Gets or sets the award id.
+        /// </summary>
+        [BsonId]
+        [BsonRepresentation(BsonType.Int32)]
+        [BsonElement("_id")]
+        public int AwardId { get; set; }
+
         /// <summary>
         /// Gets or sets the name of the award.
         /// </summary>
@@ -43,5 +56,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the rank or order of the award.
         /// </summary>
         public int Order { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets the award metadata.
+        /// </summary>
+        public List<string>? Metadata { get; set; }
     }
 }

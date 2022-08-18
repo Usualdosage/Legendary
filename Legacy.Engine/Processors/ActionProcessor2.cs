@@ -436,6 +436,7 @@ namespace Legendary.Engine.Processors
                                     actor.Character.Practices -= 1;
 
                                     await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {skillProf.SkillName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
+                                    await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
                                 }
                                 else
                                 {
@@ -455,6 +456,7 @@ namespace Legendary.Engine.Processors
                                     actor.Character.Practices -= 1;
 
                                     await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {spellProf.SpellName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
+                                    await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
                                 }
                                 else
                                 {
@@ -783,6 +785,8 @@ namespace Legendary.Engine.Processors
                                     actor.Character.Trains -= 1;
                                     break;
                             }
+
+                            await this.awardProcessor.GrantAward(4, actor.Character, "met a trainer", cancellationToken);
                         }
                         else
                         {

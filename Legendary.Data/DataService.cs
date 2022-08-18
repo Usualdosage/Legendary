@@ -58,6 +58,11 @@ namespace Legendary.Data
         public IMongoCollection<Mobile> Mobiles { get => this.dbConnection.Database.GetCollection<Mobile>("Mobiles"); }
 
         /// <summary>
+        /// Gets the awards.
+        /// </summary>
+        public IMongoCollection<Award> Awards { get => this.dbConnection.Database.GetCollection<Award>("Awards"); }
+
+        /// <summary>
         /// Gets the game metrics.
         /// </summary>
         public IMongoCollection<GameMetrics> GameMetrics { get => this.dbConnection.Database.GetCollection<GameMetrics>("GameMetrics"); }

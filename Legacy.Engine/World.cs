@@ -59,6 +59,9 @@ namespace Legendary.Engine
         public HashSet<Mobile> Mobiles { get; private set; } = new HashSet<Mobile>();
 
         /// <inheritdoc/>
+        public HashSet<Award> Awards { get; private set; } = new HashSet<Award>();
+
+        /// <inheritdoc/>
         public GameMetrics? GameMetrics { get; internal set; } = null;
 
         /// <inheritdoc/>
@@ -67,11 +70,13 @@ namespace Legendary.Engine
             var areas = await this.dataService.Areas.Find(Builders<Area>.Filter.Empty).ToListAsync();
             var items = await this.dataService.Items.Find(Builders<Item>.Filter.Empty).ToListAsync();
             var mobiles = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
+            var awards = await this.dataService.Awards.Find(Builders<Award>.Filter.Empty).ToListAsync();
 
             // Cache common lookups as hash sets for faster reads.
             this.Areas = new HashSet<Area>(areas);
             this.Items = new HashSet<Item>(items);
             this.Mobiles = new HashSet<Mobile>(mobiles);
+            this.Awards = new HashSet<Award>(awards);
         }
 
         /// <inheritdoc/>

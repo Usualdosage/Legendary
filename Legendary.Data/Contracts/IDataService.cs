@@ -42,6 +42,11 @@ namespace Legendary.Data.Contracts
         public IMongoCollection<Character> Characters { get; }
 
         /// <summary>
+        /// Gets the awards.
+        /// </summary>
+        public IMongoCollection<Award> Awards { get; }
+
+        /// <summary>
         /// Finds a character using the given filter.
         /// </summary>
         /// <param name="filter">The filter.</param>

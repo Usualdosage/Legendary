@@ -101,7 +101,7 @@ namespace Legendary.Engine
             this.engine.VioTick += this.Engine_VioTick;
 
             // Create the combat processor.
-            this.combat = new Combat(this, this.random, this.logger);
+            this.combat = new Combat(this, this.world, this.random, this.logger);
 
             // Create the language generator.
             this.languageGenerator = new LanguageGenerator(this.random);

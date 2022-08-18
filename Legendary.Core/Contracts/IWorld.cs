@@ -38,6 +38,11 @@ namespace Legendary.Core.Contracts
         HashSet<Mobile> Mobiles { get; }
 
         /// <summary>
+        /// Gets a hashset of awards currently loaded into memory.
+        /// </summary>
+        HashSet<Award> Awards { get; }
+
+        /// <summary>
         /// Gets the game metrics.
         /// </summary>
         GameMetrics? GameMetrics { get; }

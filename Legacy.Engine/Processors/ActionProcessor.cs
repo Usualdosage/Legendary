@@ -43,6 +43,7 @@ namespace Legendary.Engine.Processors
         private readonly IWorld world;
         private readonly ILogger logger;
         private readonly ActionHelper actionHelper;
+        private readonly AwardProcessor awardProcessor;
         private readonly IRandom random;
         private readonly Combat combat;
         private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
@@ -64,6 +65,7 @@ namespace Legendary.Engine.Processors
             this.random = random;
             this.combat = combat;
             this.actionHelper = new ActionHelper(this.communicator, random, combat);
+            this.awardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
 
             this.ConfigureActions();
             this.ConfigureWizActions();
