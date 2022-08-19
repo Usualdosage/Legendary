@@ -52,7 +52,7 @@ namespace Legendary.Engine.Processors
         {
             var proficiency = actor.Character.GetSpellProficiency(args.Method);
 
-            if (proficiency != null && proficiency.Proficiency > 0)
+            if (proficiency != null && proficiency.Proficiency > 1)
             {
                 var spell = this.actionHelper.CreateActionInstance<Spell>("Legendary.Engine.Models.Spells", proficiency.SpellName.Replace(" ", string.Empty));
 

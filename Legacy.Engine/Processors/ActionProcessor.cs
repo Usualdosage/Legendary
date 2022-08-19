@@ -797,7 +797,7 @@ namespace Legendary.Engine.Processors
                             target.Character.Followers.Add(actor.Character.CharacterId);
                             actor.Character.Following = target.Character.CharacterId;
                             await this.communicator.SendToPlayer(actor.Connection, $"You begin following {target.Character.FirstName}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, target.Character, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
                             await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} now follows you.", cancellationToken);
                         }
                         else
@@ -1341,36 +1341,45 @@ namespace Legendary.Engine.Processors
                     if (newArea != null && newRoom != null)
                     {
                         string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                        var moves = GetTerrainMovementPenalty(newRoom);
 
-                        if (actor.Character.Following == null)
+                        if ((actor.Character.Movement.Current - moves) < 0)
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You are too exhausted.", cancellationToken);
+                            return;
                         }
-
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
-
-                        await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
-
-                        actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                        actor.Character.Movement.Current -= GetTerrainMovementPenalty(newRoom);
-
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
-                        await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
-
-                        // Check if there are followers.
-                        if (actor.Character.Followers.Count > 0)
+                        else
                         {
-                            foreach (var follower in actor.Character.Followers)
+                            if (actor.Character.Following == null)
                             {
-                                // Resolve the follower.
-                                var target = this.communicator.ResolveCharacter(follower);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+                            }
 
-                                // Make sure they are still following the actor.
-                                if (target != null && target.Character.Following == actor.Character.CharacterId)
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+
+                            await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
+
+                            actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                            actor.Character.Movement.Current -= moves;
+
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                            await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
+
+                            // Check if there are followers.
+                            if (actor.Character.Followers.Count > 0)
+                            {
+                                foreach (var follower in actor.Character.Followers)
                                 {
-                                    await this.communicator.SendToPlayer(target.Connection, $"You follow {actor.Character.FirstName} {dir}.", cancellationToken);
-                                    await this.DoMove(target, args, cancellationToken);
+                                    // Resolve the follower.
+                                    var target = this.communicator.ResolveCharacter(follower);
+
+                                    // Make sure they are still following the actor.
+                                    if (target != null && target.Character.Following == actor.Character.CharacterId)
+                                    {
+                                        await this.communicator.SendToPlayer(target.Connection, $"You follow {actor.Character.FirstName} {dir}.", cancellationToken);
+                                        await this.DoMove(target, args, cancellationToken);
+                                    }
                                 }
                             }
                         }
@@ -1589,9 +1598,16 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Rests. Your player will recover mana, health, and movement more quickly when resting. See also: HELP SLEEP, HELP WAKE.</p><ul><li>rest</li></ul>")]
         private async Task DoRest(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} kicks back and rests.", cancellationToken);
-            actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You are already resting.", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} kicks back and rests.", cancellationToken);
+                actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
+            }
         }
 
         [HelpText("<p>Sacrifices an item to your deity in return for some divine favor. Not all items can be sacrificed.</p><ul><li>sacrifice <em>target</em></li><li>sacrifice <em>all</em></li></ul>")]
@@ -1737,9 +1753,16 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Sleeps. Your player will recover mana, health, and movement more quickly when sleeping, but will be unable to react to the environment around them. See also: HELP REST, HELP WAKE.</p><ul><li>rest</li></ul>")]
         private async Task DoSleep(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            await this.communicator.SendToPlayer(actor.Connection, $"You go to sleep.", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} goes to sleep.", cancellationToken);
-            actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You are already sleeping.", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You go to sleep.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} goes to sleep.", cancellationToken);
+                actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
+            }
         }
 
         [HelpText("<p>Displays all current spell groups, spells, and spell progressions.</p><ul><li>skills</li></ul>")]

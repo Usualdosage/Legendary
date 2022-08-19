@@ -117,7 +117,7 @@ namespace Legendary.Engine.Models
                     }
 
                     // The lower the skill percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
-                    int modifier = (int)(1 / (skillProficiency.Proficiency / 5) * 100);
+                    int modifier = (int)(1 / (Math.Max(skillProficiency.Proficiency, 5) / 5) * 100);
 
                     skillProficiency.Progress += this.Random.Next(8, maxImprove) + modifier;
 
@@ -154,7 +154,7 @@ namespace Legendary.Engine.Models
                     }
 
                     // The lower the spell percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
-                    int modifier = (int)(1 / (spellProficiency.Proficiency / 5) * 100);
+                    int modifier = (int)(1 / (Math.Max(spellProficiency.Proficiency, 5) / 5) * 100);
 
                     spellProficiency.Progress += this.Random.Next(0, maxImprove) + modifier;
 

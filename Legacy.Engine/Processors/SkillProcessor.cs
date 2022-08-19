@@ -54,7 +54,7 @@ namespace Legendary.Engine.Processors
         {
             var proficiency = actor.Character.GetSkillProficiency(args.Action);
 
-            if (proficiency != null && proficiency.Proficiency > 0)
+            if (proficiency != null && proficiency.Proficiency > 1)
             {
                 var skill = this.actionHelper.CreateActionInstance<Skill>("Legendary.Engine.Models.Skills", args.Action.FirstCharToUpper());
 

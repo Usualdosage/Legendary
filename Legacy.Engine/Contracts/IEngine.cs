@@ -37,5 +37,10 @@ namespace Legendary.Engine.Contracts
         /// </summary>
         /// <returns>Task.</returns>
         Task Initialize();
+
+        /// <summary>
+        /// Starts the main game loop.
+        /// </summary>
+        void StartGameLoop();
     }
 }

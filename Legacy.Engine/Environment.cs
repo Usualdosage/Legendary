@@ -140,6 +140,9 @@ namespace Legendary.Engine
                 // TODO ProcessItemRot for each room (springs, corpses, etc).
                 // TODO Repop!
 
+                // BUGS:
+                // TODO Combat is not initiating - fix timer? Timer stalls on crash.
+
                 tasks.Add(this.ProcessTime(gameHour));
                 tasks.Add(this.ProcessMobiles());
                 tasks.Add(this.ProcessWeather());

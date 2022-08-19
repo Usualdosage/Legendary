@@ -143,6 +143,7 @@ namespace Legendary.Engine.Processors
                 await this.world.LoadWorld();
                 await this.world.CleanupWorld();
                 this.world.Populate();
+                this.communicator.RestartGameLoop();
                 await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
                 this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);
             }

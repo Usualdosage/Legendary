@@ -90,6 +90,7 @@ namespace Legendary.Engine
                     new CommChannel("pray", false, true),
                     new CommChannel("newbie", false, true),
                     new CommChannel("imm", true, false),
+                    new CommChannel("wiznet", true, false),
                 };
 
             // Set the environment to handle global events.
@@ -278,6 +279,13 @@ namespace Legendary.Engine
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
                 currentSocket.Dispose();
             }
+        }
+
+        /// <inheritdoc/>
+        public void RestartGameLoop()
+        {
+            this.logger.Info("Restarting main engine loop...", null);
+            this.engine.StartGameLoop();
         }
 
         /// <inheritdoc/>

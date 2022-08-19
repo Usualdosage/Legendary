@@ -76,6 +76,14 @@ namespace Legendary.Engine
             this.logger.Info("Creating weather...", null);
             this.environment.GenerateWeather();
 
+            this.StartGameLoop();
+        }
+
+        /// <summary>
+        /// Starts the main game loop.
+        /// </summary>
+        public void StartGameLoop()
+        {
             this.logger.Info("Starting main loop...", null);
 
             this.timer = new System.Threading.Timer(
@@ -109,12 +117,13 @@ namespace Legendary.Engine
                     }
                     catch (Exception ex)
                     {
-                        this.logger.Debug(ex.ToString(), null);
+                        this.logger.Error(ex.ToString(), null);
 
                         await this.world.UpdateGameMetrics(ex);
 
                         // If we hit an exception, we need to restart the timer.
-                        this.timer?.Change(2000, 2000);
+                        // this.timer?.Change(2000, 2000);
+                        this.StartGameLoop();
                     }
                 },
                 null,
@@ -175,5 +184,7 @@ namespace Legendary.Engine
                 this.logger.Error(exc, null);
             }
         }
+
+        
     }
 }

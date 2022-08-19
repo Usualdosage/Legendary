@@ -106,6 +106,11 @@ namespace Legendary.Core.Contracts
         Mobile? ResolveMobile(string? name);
 
         /// <summary>
+        /// Restarts the main game engine loop.
+        /// </summary>
+        void RestartGameLoop();
+
+        /// <summary>
         /// Gets the first mobile matching the ID.
         /// </summary>
         /// <param name="characterId">The id.</param>
