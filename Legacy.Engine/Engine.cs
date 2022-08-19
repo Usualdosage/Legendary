@@ -58,25 +58,33 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task Initialize()
         {
-            this.logger.Info("Legendary is starting up...", null);
+            try
+            {
+                this.logger.Info("Legendary is starting up...", null);
 
-            this.logger.Info("Loading the world from the database...", null);
+                this.logger.Info("Loading the world from the database...", null);
 
-            await this.world.LoadWorld();
+                await this.world.LoadWorld();
 
-            this.logger.Info("Updating the game metrics...", null);
+                this.logger.Info("Updating the game metrics...", null);
 
-            await this.world.UpdateGameMetrics(null);
+                await this.world.UpdateGameMetrics(null);
 
-            this.logger.Info("Populating the world with mobiles and items...", null);
+                this.logger.Info("Populating the world with mobiles and items...", null);
 
-            await this.world.CleanupWorld();
-            this.world.Populate();
+                await this.world.CleanupWorld();
+                this.world.Populate();
 
-            this.logger.Info("Creating weather...", null);
-            this.environment.GenerateWeather();
+                this.logger.Info("Creating weather...", null);
+                this.environment.GenerateWeather();
 
-            this.StartGameLoop();
+                this.logger.Info("Starting main loop...", null);
+                this.StartGameLoop();
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, null);
+            }
         }
 
         /// <summary>
@@ -84,7 +92,8 @@ namespace Legendary.Engine
         /// </summary>
         public void StartGameLoop()
         {
-            this.logger.Info("Starting main loop...", null);
+
+            this.logger.Info("Waiting for connections...", null);
 
             this.timer = new System.Threading.Timer(
                 async t =>

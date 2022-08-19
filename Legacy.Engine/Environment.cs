@@ -366,7 +366,7 @@ namespace Legendary.Engine
                         break;
                 }
 
-                Weather weatherMessage = this.dayWeatherForward[this.dayWeatherIndex];
+                Weather weatherMessage = this.dayWeatherForward[0];
 
                 if (chance == 0)
                 {

@@ -46,7 +46,7 @@ namespace Legendary.Engine.Helpers
             ", the " +
             FormatNumber((gameDay % 30) + 1) +
             " day of " +
-            MonthsOfYear[gameMonth] +
+            MonthsOfYear[gameMonth - 1] +
             ", in the year " +
             gameYear +
             ". It is the " +

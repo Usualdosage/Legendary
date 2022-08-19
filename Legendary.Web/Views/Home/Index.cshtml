@@ -13,8 +13,24 @@
                 <input id="inputField" type="text" placeholder="What do you want to do?" />
             </div>
         </div>
-        <div id="control-panel" class="col control-panel">
-
+        <div class="col control-panel">
+            <div id="control-panel" >
+                <!-- This is rendered dynamically -->
+            </div>
+            <div class="component">
+                <table class="vol-table">
+                    <tr>
+                        <td>
+                            <label for="audioBackground" class="form-label">Music Volume</label>
+                            <input type="range" class="form-range" min="0" max="100" onchange="changeBgAudio(this)" id="audioBackground">
+                        </td>
+                        <td>
+                            <label for="audioSFXVolume" class="form-label">SFX Volume</label>
+                            <input type="range" class="form-range" min="0" max="100" onchange="changeSfxAudio(this)" id="audioSFX">
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -76,20 +92,7 @@
             </tr>
         </table>
     </div>
-    <div class="component">
-        <table class="vol-table">
-            <tr>
-                <td>
-                    <label for="audioBackground" class="form-label">Music Volume</label>
-                    <input type="range" class="form-range" min="0" max="100" onchange="changeBgAudio(this)" id="audioBackground">
-                </td>
-                <td>
-                    <label for="audioSFXVolume" class="form-label">SFX Volume</label>
-                    <input type="range" class="form-range" min="0" max="100" onchange="changeSfxAudio(this)" id="audioSFX">
-                </td>
-            </tr>
-        </table>
-    </div>
+    
 </script>
 
 <!-- Score Template -->

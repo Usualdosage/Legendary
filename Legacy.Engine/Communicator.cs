@@ -261,23 +261,24 @@ namespace Legendary.Engine
                             continue;
                         }
                     }
-                    catch
+                    catch (Exception exc)
                     {
-                        this.logger.Info("A socket was closed or in an error state.", this);
+                        this.logger.Error($"A socket was closed or in an error state. {exc}", this);
+
+                        // Disconnected, remove the socket & user from the dictionary, remove from channels.
+                        UserData? dummy = null;
+                        Users?.TryRemove(socketId, out dummy);
+                        this.RemoveFromChannels(socketId, dummy);
+
+                        string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
+                        this.logger.Info(logout, this);
+
+                        await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
+                        currentSocket.Dispose();
+
                         break;
                     }
                 }
-
-                // Disconnected, remove the socket & user from the dictionary, remove from channels.
-                UserData? dummy = null;
-                Users?.TryRemove(socketId, out dummy);
-                this.RemoveFromChannels(socketId, dummy);
-
-                string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
-                this.logger.Info(logout, this);
-
-                await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
-                currentSocket.Dispose();
             }
         }
 
@@ -1400,49 +1401,57 @@ namespace Legendary.Engine
                 return;
             }
 
-            CommandArgs? args = CommandArgs.ParseCommand(input);
-
-            if (args == null)
+            try
             {
-                await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
-            }
-            else
-            {
-                // See if this is a single emote
-                var emote = Emotes.Get(args.Action);
+                CommandArgs? args = CommandArgs.ParseCommand(input);
 
-                if (emote != null)
+                if (args == null)
                 {
-                    await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
-                    await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
+                    await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
                 }
                 else
                 {
-                    // See if this is a skill
-                    if (!string.IsNullOrWhiteSpace(args.Action) && user.Character.HasSkill(args.Action))
+                    // See if this is a single emote
+                    var emote = Emotes.Get(args.Action);
+
+                    if (emote != null)
                     {
-                        if (this.skillProcessor != null)
-                        {
-                            await this.skillProcessor.DoSkill(user, args, cancellationToken);
-                            return;
-                        }
-                        else
-                        {
-                            await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
-                            return;
-                        }
+                        await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
+                        await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
                     }
-                    else if (IsCasting(args.Action))
+                    else
                     {
-                        // If casting, see what they are casting and see if they can cast it.
-                        if (!string.IsNullOrWhiteSpace(args.Method))
+                        // See if this is a skill
+                        if (!string.IsNullOrWhiteSpace(args.Action) && user.Character.HasSkill(args.Action))
                         {
-                            if (user.Character.HasSpell(args.Method))
+                            if (this.skillProcessor != null)
                             {
-                                if (this.spellProcessor != null)
+                                await this.skillProcessor.DoSkill(user, args, cancellationToken);
+                                return;
+                            }
+                            else
+                            {
+                                await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                                return;
+                            }
+                        }
+                        else if (IsCasting(args.Action))
+                        {
+                            // If casting, see what they are casting and see if they can cast it.
+                            if (!string.IsNullOrWhiteSpace(args.Method))
+                            {
+                                if (user.Character.HasSpell(args.Method))
                                 {
-                                    await this.spellProcessor.DoSpell(user, args, cancellationToken);
-                                    return;
+                                    if (this.spellProcessor != null)
+                                    {
+                                        await this.spellProcessor.DoSpell(user, args, cancellationToken);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                                        return;
+                                    }
                                 }
                                 else
                                 {
@@ -1452,25 +1461,25 @@ namespace Legendary.Engine
                             }
                             else
                             {
-                                await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
-                                return;
+                                await this.SendToPlayer(user.Connection, "Commune or cast what?", cancellationToken);
                             }
                         }
                         else
                         {
-                            await this.SendToPlayer(user.Connection, "Commune or cast what?", cancellationToken);
-                        }
-                    }
-                    else
-                    {
-                        // Not casting, using a skill, or emoting, so check actions.
-                        if (this.actionProcessor != null)
-                        {
-                            await this.actionProcessor.DoAction(user, args, cancellationToken);
-                            return;
+                            // Not casting, using a skill, or emoting, so check actions.
+                            if (this.actionProcessor != null)
+                            {
+                                await this.actionProcessor.DoAction(user, args, cancellationToken);
+                                return;
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception exc)
+            {
+                await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                this.logger.Error(exc, this);
             }
         }
 
