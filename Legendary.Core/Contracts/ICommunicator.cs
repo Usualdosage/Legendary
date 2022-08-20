@@ -250,17 +250,6 @@ namespace Legendary.Core.Contracts
         Task<CommResult> SendToPlayer(string? sender, string target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Sends a message to everyone in the room, EXCEPT the sender.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="location">The room.</param>
-        /// <param name="socketId">The socket ID of the sender.</param>
-        /// <param name="message">The message to send.</param>
-        /// <param name="cancellationToken">CancellationToken.</param>
-        /// <returns>Task with result.</returns>
-        Task<CommResult> SendToRoom(Character? sender, KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default);
-
-        /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the actor and target.
         /// </summary>
         /// <param name="location">The location.</param>
@@ -270,6 +259,16 @@ namespace Legendary.Core.Contracts
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
         Task<CommResult> SendToRoom(KeyValuePair<long, long> location, Character actor, Character? target, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Sends a message to everyone in the room, EXCEPT the actor.
+        /// </summary>
+        /// <param name="actor">The sender.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
+        /// <returns>Task with result.</returns>
+        Task<CommResult> SendToRoom(Character actor, KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to all players in a room.

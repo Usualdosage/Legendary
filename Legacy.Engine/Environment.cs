@@ -232,7 +232,7 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="userData">The user.</param>
         /// <returns>Task.</returns>
-        private async Task ProcessItemRot(UserData userData)
+        private async Task ProcessItemRot(UserData userData, CancellationToken cancellationToken = default)
         {
             foreach (var item in userData.Character.Inventory)
             {
@@ -246,7 +246,7 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name.FirstCharToUpper()} disintegrates.");
+                        await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                     }
                 }
             }
@@ -265,7 +265,7 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(null, userData.Character.Location, string.Empty, $"{item.Name.FirstCharToUpper()} disintegrates.");
+                        await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                     }
                 }
             }

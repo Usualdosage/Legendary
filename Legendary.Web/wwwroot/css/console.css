@@ -410,7 +410,7 @@ video {
     display: block;
 }
 
-.mobile {
+.mobile, .player {
     display: block;
     padding-left: 5px;
 }

@@ -34,6 +34,7 @@ namespace Legendary.Engine.Processors
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
             this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
             this.wizActions.Add("reload", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReload)));
+            this.wizActions.Add("restore", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRestore)));
             this.wizActions.Add("slay", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSlay)));
             this.wizActions.Add("snoop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSnoop)));
             this.wizActions.Add("switch", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSwitch)));
@@ -126,7 +127,7 @@ namespace Legendary.Engine.Processors
                 }
 
                 await this.communicator.SendToPlayer(actor.Connection, "You stop all fighting in the room.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
             }
         }
 
@@ -146,6 +147,44 @@ namespace Legendary.Engine.Processors
                 this.communicator.RestartGameLoop();
                 await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
                 this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);
+            }
+        }
+
+        [MinimumLevel(100)]
+        private async Task DoRestore(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.Level < 100)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(args.Method))
+                {
+                    actor.Character.Mana.Current = actor.Character.Mana.Max;
+                    actor.Character.Movement.Current = actor.Character.Movement.Max;
+                    actor.Character.Health.Current = actor.Character.Health.Max;
+                    await this.communicator.SendToPlayer(actor.Connection, "You have restored yourself.", cancellationToken);
+                }
+                else
+                {
+                    var target = args.Method;
+
+                    var player = this.communicator.ResolveCharacter(target);
+
+                    if (player != null)
+                    {
+                        player.Character.Mana.Current = player.Character.Mana.Max;
+                        player.Character.Movement.Current = player.Character.Movement.Max;
+                        player.Character.Health.Current = player.Character.Health.Max;
+                        await this.communicator.SendToPlayer(actor.Connection, $"You have restored {player.Character.FirstName.FirstCharToUpper()}.", cancellationToken);
+                        await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} has restored you.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, "The aren't here.", cancellationToken);
+                    }
+                }
             }
         }
 
@@ -250,7 +289,7 @@ namespace Legendary.Engine.Processors
                     player.Character.Location = actor.Character.Location;
                     await this.communicator.SendToPlayer(actor.Connection, $"You have transferred {player.Character.FirstName} here.", cancellationToken);
                     await this.communicator.SendToRoom(actor.Character.Location, actor.Character, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} arrives in a puff of smoke.", cancellationToken);
-                    await this.communicator.SendToPlayer(player.Connection, $"{actor.Character} has summoned you!", cancellationToken);
+                    await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} has summoned you!", cancellationToken);
                     await this.communicator.SendToRoom(player.Character.Location, actor.Character, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} vanishes in a flash of light.", cancellationToken);
                 }
                 else
@@ -313,7 +352,7 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     await this.communicator.SendToPlayer(user.Connection, $"You suddenly teleport to {targetRoom.Name}.", cancellationToken);
-                    await this.communicator.SendToRoom(null, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} vanishes.", cancellationToken);
+                    await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} vanishes.", cancellationToken);
                     user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
                     await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
                     return;

@@ -245,7 +245,7 @@ namespace Legendary.Engine
 
                     foreach (var item in items)
                     {
-                        await this.communicator.SendToRoom(null, location, string.Empty, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
                     }
 
                     // Apply affects to mobiles.
@@ -450,7 +450,7 @@ namespace Legendary.Engine
                                     else
                                     {
                                         string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                                        await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
                                         // Remove the mobile from the prior location.
                                         var lastRoom = this.communicator.ResolveRoom(mobile.Location);
@@ -476,7 +476,7 @@ namespace Legendary.Engine
                                         if (nextRoom != null)
                                         {
                                             nextRoom.Mobiles.Add(mobile);
-                                            await this.communicator.SendToRoom(mobile, mobile.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                                         }
                                     }
                                 }

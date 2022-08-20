@@ -614,13 +614,20 @@ namespace Legendary.Engine.Processors
 
                                 if (skillProf != null)
                                 {
-                                    int advance = ((int)actor.Character.Wis.Current * 2) + this.random.Next(1, (int)actor.Character.Dex.Current);
-                                    skillProf.Proficiency = Math.Min(75, skillProf.Proficiency + advance);
-                                    skillProf.Progress = 0;
-                                    actor.Character.Practices -= 1;
+                                    if (skillProf.Proficiency >= 75)
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, but I have helped you all I can on skill.</span>\"", cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        int advance = ((int)actor.Character.Wis.Current * 2) + this.random.Next(1, (int)actor.Character.Dex.Current);
+                                        skillProf.Proficiency = Math.Min(75, skillProf.Proficiency + advance);
+                                        skillProf.Progress = 0;
+                                        actor.Character.Practices -= 1;
 
-                                    await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {skillProf.SkillName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
-                                    await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
+                                        await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {skillProf.SkillName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
+                                        await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
+                                    }
                                 }
                                 else
                                 {
@@ -634,13 +641,20 @@ namespace Legendary.Engine.Processors
 
                                 if (spellProf != null)
                                 {
-                                    int advance = ((int)actor.Character.Wis.Current * 2) + this.random.Next(1, (int)actor.Character.Int.Current);
-                                    spellProf.Proficiency = Math.Min(75, spellProf.Proficiency + advance);
-                                    spellProf.Progress = 0;
-                                    actor.Character.Practices -= 1;
+                                    if (spellProf.Proficiency >= 75)
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, but I have helped you all I can on that spell.</span>\"", cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        int advance = ((int)actor.Character.Wis.Current * 2) + this.random.Next(1, (int)actor.Character.Int.Current);
+                                        spellProf.Proficiency = Math.Min(75, spellProf.Proficiency + advance);
+                                        spellProf.Progress = 0;
+                                        actor.Character.Practices -= 1;
 
-                                    await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {spellProf.SpellName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
-                                    await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
+                                        await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {spellProf.SpellName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
+                                        await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
+                                    }
                                 }
                                 else
                                 {
@@ -709,7 +723,7 @@ namespace Legendary.Engine.Processors
                                     item.Contains.Add(target);
 
                                     await this.communicator.SendToPlayer(actor.Connection, $"You put {target.Name} in {item.Name}.", cancellationToken);
-                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} puts {target.Name} in {item.Name}.", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} puts {target.Name} in {item.Name}.", cancellationToken);
                                 }
                             }
 
@@ -728,7 +742,7 @@ namespace Legendary.Engine.Processors
                                 item.Contains.Add(target);
 
                                 await this.communicator.SendToPlayer(actor.Connection, $"You put {target.Name} in {item.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} puts {target.Name} in {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} puts {target.Name} in {item.Name}.", cancellationToken);
                             }
                             else if (target == item)
                             {

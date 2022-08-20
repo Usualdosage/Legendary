@@ -268,12 +268,12 @@ namespace Legendary.Engine.Processors
             this.actions.Add("rest", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRest)));
             this.actions.Add("remove", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRemove)));
             this.actions.Add("reply", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReply)));
-            this.actions.Add("sacrifice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSacrifice)));
-            this.actions.Add("save", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSave)));
-            this.actions.Add("say", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(7, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSay)));
-            this.actions.Add("scan", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScan)));
+            this.actions.Add("sacrifice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSacrifice)));
+            this.actions.Add("save", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSave)));
+            this.actions.Add("say", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSay)));
+            this.actions.Add("scan", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScan)));
             this.actions.Add("sell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSell)));
-            this.actions.Add("score", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScore)));
+            this.actions.Add("score", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScore)));
             this.actions.Add("skills", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(6, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSkills)));
             this.actions.Add("sleep", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(7, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSleep)));
             this.actions.Add("south", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
@@ -620,7 +620,7 @@ namespace Legendary.Engine.Processors
                 {
                     sentence = sentence.ToLower();
                     await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence}.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence}.", cancellationToken);
                 }
             }
         }
@@ -759,13 +759,13 @@ namespace Legendary.Engine.Processors
                 {
                     string? dir = Enum.GetName(typeof(Direction), randomExit.Direction)?.ToLower();
                     await this.communicator.SendToPlayer(actor.Connection, $"You flee from combat!", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} flees {dir}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} flees {dir}.", cancellationToken);
 
                     await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
 
                     actor.Character.Location = new KeyValuePair<long, long>(randomExit.ToArea, randomExit.ToRoom);
 
-                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} runs in!", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} runs in!", cancellationToken);
                     await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
                 }
             }
@@ -867,7 +867,7 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                         await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
 
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                     }
                     else
                     {
@@ -1367,7 +1367,7 @@ namespace Legendary.Engine.Processors
                                 await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
                             }
 
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
                             await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
 
@@ -1375,7 +1375,7 @@ namespace Legendary.Engine.Processors
 
                             actor.Character.Movement.Current -= moves;
 
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                             await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
 
                             // Check if there are followers.
@@ -1580,7 +1580,7 @@ namespace Legendary.Engine.Processors
                         itemsToRemove.Add(target);
                         actor.Character.Inventory.Add(target);
                         await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
                     }
 
                     actor.Character.Equipment.RemoveAll(i => itemsToRemove.Contains(i));
@@ -1595,7 +1595,7 @@ namespace Legendary.Engine.Processors
                         actor.Character.Inventory.Add(target);
                         actor.Character.Equipment.Remove(target);
                         await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
                     }
                     else
                     {
@@ -1619,7 +1619,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"You kick back and rest.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} kicks back and rests.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} kicks back and rests.", cancellationToken);
                 actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Resting);
             }
         }
@@ -1649,7 +1649,7 @@ namespace Legendary.Engine.Processors
         {
             var sentence = args.Method;
             await this.communicator.SendToPlayer(actor.Connection, $"You say \"<span class='say'>{sentence}</span>\"", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
         }
 
         [HelpText("<p>Displays your player's score card.</p><ul><li>score</li></ul>")]
@@ -1669,7 +1669,7 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(actor.Connection, $"You scan in all directions.", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} scans all around.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} scans all around.", cancellationToken);
 
             StringBuilder sb = new StringBuilder();
 
@@ -1774,7 +1774,7 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"You go to sleep.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} goes to sleep.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} goes to sleep.", cancellationToken);
                 actor.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Sleeping);
             }
         }
@@ -2212,7 +2212,7 @@ namespace Legendary.Engine.Processors
             if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting) || actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"You wake and and stand up.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} wakes and stands up.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} wakes and stands up.", cancellationToken);
                 actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Resting);
                 actor.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Sleeping);
             }
@@ -2352,7 +2352,7 @@ namespace Legendary.Engine.Processors
                 actor.Character.Equipment.Add(item);
                 actor.Character.Inventory.Remove(item);
                 await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location,  $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
             }
             else if (equipped != null)
             {
@@ -2362,7 +2362,7 @@ namespace Legendary.Engine.Processors
                     {
                         // Replace the item, removing the old and putting it back into the inventory.
                         await this.communicator.SendToPlayer(actor.Connection, $"You stop {verb}ing {equipped.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} stops {verb}ing {equipped.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} stops {verb}ing {equipped.Name}.", cancellationToken);
 
                         actor.Character.Equipment.Remove(equipped);
                         actor.Character.Inventory.Add(equipped);
@@ -2371,7 +2371,7 @@ namespace Legendary.Engine.Processors
                         actor.Character.Equipment.Add(item);
                         actor.Character.Inventory.Remove(item);
                         await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location,  $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
                     }
                 }
             }
@@ -2408,7 +2408,7 @@ namespace Legendary.Engine.Processors
                         {
                             user.Character.DivineFavor += 1;
                             await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to your deity for some divine favor.", cancellationToken);
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
                             itemsToRemove.Add(item);
                         }
                     }
@@ -2442,7 +2442,7 @@ namespace Legendary.Engine.Processors
                     {
                         user.Character.DivineFavor += 1;
                         await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to your deity for some divine favor.", cancellationToken);
-                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
                         itemsToRemove.Add(item);
                     }
                 }
@@ -2586,7 +2586,7 @@ namespace Legendary.Engine.Processors
                     else
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
 
                         actor.Character.Inventory.Add(item);
                         itemsToRemove.Add(item);
@@ -2863,7 +2863,7 @@ namespace Legendary.Engine.Processors
 
                         // If a food value is 3, that equates to 3 meals. So when a player eats, each food value means 8 hours of food.
                         user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 8));
-                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} eats {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} eats {item.Name}.", cancellationToken);
 
                         if (item.Food.Current <= 0)
                         {
@@ -2909,7 +2909,7 @@ namespace Legendary.Engine.Processors
                         {
                             room.Items.Add(item.Clone());
                             await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
                             itemsToRemove.Add(item);
                         }
                     }
@@ -2935,7 +2935,7 @@ namespace Legendary.Engine.Processors
                     {
                         room.Items.Add(item.Clone());
                         await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
                         itemsToRemove.Add(item);
                     }
                     else
