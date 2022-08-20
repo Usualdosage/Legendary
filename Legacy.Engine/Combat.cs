@@ -170,7 +170,8 @@ namespace Legendary.Engine
                 > 501 and <= 700 => "<span class='damage damage_10'>*** DISINTEGRATES ***</span>", // 501-700
                 > 701 and <= 900 => "<span class='damage damage_11'>*** ANNIHILIATES ***</span>", // 701-900
                 > 901 and <= 1100 => "<span class='damage damage_12'>=== EVISCERATES ===</span>", // 901-1100
-                _ => "<span class='damage damage_13'>does UNSPEAKABLE things</span>" // Over 1100
+                > 1100 and <= 100000 => "<span class='damage damage_13'>does UNSPEAKABLE things</span>" // Over 1100
+                _ => "<span class='damage damage_0'>has no effect on</span>",
             };
 
             return message;
@@ -254,7 +255,7 @@ namespace Legendary.Engine
                         // This was a total martial combat miss. Show the miss and exit.
                         await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                         await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {actor.LastName}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
 
                         // Run post action to check if the skill improved.
                         await combatAction.PostAction(actor, target, cancellationToken);
@@ -266,7 +267,7 @@ namespace Legendary.Engine
                     // This was a total miss because the character is not proficient. Don't allow an increase.
                     await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                     await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {actor.LastName}.", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                     return;
                 }
             }

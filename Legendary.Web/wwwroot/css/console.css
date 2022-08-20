@@ -499,8 +499,13 @@ video {
     font-weight: bold;
 }
 
-.newbie {
+.pray {
     color: lightblue;
+    font-weight: bold;
+}
+
+.newbie {
+    color: dodgerblue;
     font-weight: bold;
 }
 

@@ -312,5 +312,17 @@ namespace Legendary.Engine.Output
         /// </summary>
         [JsonProperty("la")]
         public string? LastLogin { get; set; }
+
+        /// <summary>
+        /// Gets or sets hit dice.
+        /// </summary>
+        [JsonProperty("hd")]
+        public string? HitDice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the damage dice.
+        /// </summary>
+        [JsonProperty("dd")]
+        public string? DamageDice { get; set; }
     }
 }

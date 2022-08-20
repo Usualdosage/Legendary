@@ -1368,12 +1368,7 @@ namespace Legendary.Engine.Processors
                             }
 
                             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
-
                             await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
-
-                            actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                            actor.Character.Movement.Current -= moves;
 
                             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                             await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
@@ -1386,14 +1381,18 @@ namespace Legendary.Engine.Processors
                                     // Resolve the follower.
                                     var target = this.communicator.ResolveCharacter(follower);
 
-                                    // Make sure they are still following the actor.
-                                    if (target != null && target.Character.Following == actor.Character.CharacterId)
+                                    // Make sure they are still following the actor and they're in the same room.
+                                    if (target != null && target.Character.Following == actor.Character.CharacterId && target.Character.Location.InSamePlace(actor.Character.Location))
                                     {
                                         await this.communicator.SendToPlayer(target.Connection, $"You follow {actor.Character.FirstName} {dir}.", cancellationToken);
                                         await this.DoMove(target, args, cancellationToken);
                                     }
                                 }
                             }
+
+                            // Put the char in the new room.
+                            actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+                            actor.Character.Movement.Current -= moves;
                         }
                     }
                     else
@@ -1545,7 +1544,7 @@ namespace Legendary.Engine.Processors
                 if (channel != null)
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"You pray \"<span class='pray'>{sentence}</span>\"", cancellationToken);
-                    await this.communicator.SendToChannel(channel, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} prays \"<span class='newbie'>{sentence}</span>\"", cancellationToken);
+                    await this.communicator.SendToChannel(channel, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} prays \"<span class='pray'>{sentence}</span>\"", cancellationToken);
                 }
             }
             else
@@ -2953,9 +2952,6 @@ namespace Legendary.Engine.Processors
 
         private async Task Tell(UserData user, string target, string message, CancellationToken cancellationToken = default)
         {
-            message = char.ToUpper(message[0]) + message[1..];
-            target = char.ToUpper(target[0]) + target[1..];
-
             var commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{user.Character.FirstName.FirstCharToUpper()} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
 
             switch (commResult)
