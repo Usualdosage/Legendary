@@ -170,7 +170,7 @@ namespace Legendary.Engine
                 > 501 and <= 700 => "<span class='damage damage_10'>*** DISINTEGRATES ***</span>", // 501-700
                 > 701 and <= 900 => "<span class='damage damage_11'>*** ANNIHILIATES ***</span>", // 701-900
                 > 901 and <= 1100 => "<span class='damage damage_12'>=== EVISCERATES ===</span>", // 901-1100
-                > 1100 and <= 100000 => "<span class='damage damage_13'>does UNSPEAKABLE things</span>" // Over 1100
+                > 1100 and <= 100000 => "<span class='damage damage_13'>does UNSPEAKABLE things</span>", // Over 1100
                 _ => "<span class='damage damage_0'>has no effect on</span>",
             };
 
