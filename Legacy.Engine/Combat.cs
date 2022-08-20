@@ -235,7 +235,17 @@ namespace Legendary.Engine
             // This is an automatic martial skill.
             if (combatAction.ActionType == ActionType.Skill && !combatAction.CanInvoke)
             {
-                var proficiency = actor.GetSkillProficiency(combatAction.Name);
+                SkillProficiency? proficiency;
+
+                // If it's an NPC, give it at least a fighting chance with H2H if it's not wielding anything.
+                if (actor.IsNPC)
+                {
+                    proficiency = this.GetDefaultMobileProficiency(actor, target);
+                }
+                else
+                {
+                    proficiency = actor.GetSkillProficiency(combatAction.Name);
+                }
 
                 if (proficiency != null && proficiency.Proficiency > 0)
                 {
@@ -777,6 +787,18 @@ namespace Legendary.Engine
             }
 
             return saveThrow < saves;
+        }
+
+        /// <summary>
+        /// Gets the skill proficiency of basic hand to hand based on the mob and the target.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>Skill proficiency.</returns>
+        private SkillProficiency GetDefaultMobileProficiency(Character mobile, Character target)
+        {
+            var skillProf = new SkillProficiency("hand to hand", 50);
+            return skillProf;
         }
 
         /// <summary>

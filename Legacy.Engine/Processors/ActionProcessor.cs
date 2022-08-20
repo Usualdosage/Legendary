@@ -730,6 +730,12 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Flee from combat, as long as there is an exit to flee through.</p><ul><li>flee</li></ul>")]
         private async Task DoFlee(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
+            if (!actor.Character.CharacterFlags.Contains(CharacterFlags.Fighting))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You're not in combat.", cancellationToken);
+                return;
+            }
+
             var room = this.communicator.ResolveRoom(actor.Character.Location);
 
             if (room == null || room.Exits.Count == 0)
@@ -3111,6 +3117,8 @@ namespace Legendary.Engine.Processors
                         Gold = currencyTuple.Item1.ToString(),
                         Silver = currencyTuple.Item2.ToString(),
                         Copper = currencyTuple.Item3.ToString(),
+                        HitDice = user.Character.HitDice.ToString(),
+                        DamageDice = user.Character.DamageDice.ToString(),
                     },
                 },
             };
