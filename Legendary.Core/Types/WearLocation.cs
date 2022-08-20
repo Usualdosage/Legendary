@@ -24,7 +24,7 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Inventory.
         /// </summary>
-        Inventory = 1,
+        InventoryOnly = 1,
 
         /// <summary>
         /// Head.

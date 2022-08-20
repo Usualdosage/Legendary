@@ -39,12 +39,12 @@ namespace Legendary.Core
         /// <summary>
         /// Time of a tick in milliseconds.
         /// </summary>
-        public const int TICK = 60000;
+        public const int TICK = 30000;
 
         /// <summary>
         /// Time of a viotick in milliseconds.
         /// </summary>
-        public const int VIOTICK = 1000;
+        public const int VIOTICK = 2000;
 
         /// <summary>
         /// Amount of health restored each tick.

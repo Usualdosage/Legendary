@@ -19,9 +19,11 @@ namespace Legendary.Engine.Processors
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Attributes;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
 
     /// <summary>
@@ -83,10 +85,38 @@ namespace Legendary.Engine.Processors
                             color = "platinum";
                             level = "IV";
                             break;
+                        case 4:
+                            color = "amethyst";
+                            level = "V";
+                            break;
+                        case 5:
+                            color = "emerald";
+                            level = "VI";
+                            break;
+                        case 6:
+                            color = "sapphire";
+                            level = "VII";
+                            break;
+                        case 7:
+                            color = "ruby";
+                            level = "VIII";
+                            break;
+                        case 8:
+                            color = "diamond";
+                            level = "IX";
+                            break;
                     }
 
                     sb.Append("<div class='award'>");
-                    sb.Append($"<div class='quiz-medal'><div class='quiz-medal-circle quiz-medal-circle-{color}'><span><i class='fa-solid {award.Image}'></i></span></div><div class='quiz-medal-ribbon quiz-medal-ribbon-left'></div><div class='quiz-medal-ribbon quiz-medal-ribbon-right'></div></div>");
+                    if (award.AwardLevel <= 3)
+                    {
+                        sb.Append($"<div class='quiz-medal'><div class='quiz-medal-circle quiz-medal-circle-{color}'><span><i class='fa-solid {award.Image}'></i></span></div><div class='quiz-medal-ribbon quiz-medal-ribbon-left'></div><div class='quiz-medal-ribbon quiz-medal-ribbon-right'></div></div>");
+                    }
+                    else
+                    {
+                        sb.Append($"<div class='gem-award' id='gem-{color}'><div><i class='fa-solid {award.Image}'></i></div></div>");
+                    }
+
                     sb.Append($"<div class='ribbon-row'><div class='ribbon-block'><h1><span>{award.Name} {level}</span></h1></div></div>");
                     sb.Append("</div>");
                 }
@@ -269,6 +299,160 @@ namespace Legendary.Engine.Processors
         private async Task DoGain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+        }
+
+        [HelpText("<p>Adds a member to your group. Groups can communicate privately with GTELL See HELP GTELL.<p><ul><li>group <em>player</em></li></ul>")]
+        private async Task DoGroup(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                // TODO How to get the group for everyone?
+                // Show players in group
+                if (Communicator.Groups.ContainsKey(actor.Character.CharacterId))
+                {
+                    var group = Communicator.Groups[actor.Character.CharacterId];
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("<span class='group-info'>");
+
+                    foreach (var characterId in group)
+                    {
+                        var player = this.communicator.ResolveCharacter(characterId);
+
+                        if (player != null)
+                        {
+                            sb.Append($"<span class='group-member'>{player.Character.FirstName}");
+                            sb.Append($"<progress class='group-health' max='100' value='{player.Character.Health.GetPercentage()}'></progress>");
+                            sb.Append($"<progress class='group-mana' max='100' value='{player.Character.Mana.GetPercentage()}'></progress>");
+                            sb.Append($"<progress class='group-movement' max='100' value='{player.Character.Movement.GetPercentage()}'></progress>");
+                            sb.Append($"</span>");
+                        }
+                    }
+
+                    sb.Append("</span>");
+
+                    await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There is nobody in your group.", cancellationToken);
+                }
+            }
+            else
+            {
+                var targetPlayer = this.communicator.ResolveCharacter(args.Method);
+
+                if (targetPlayer != null)
+                {
+                    if (targetPlayer.Character.Following != actor.Character.CharacterId)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"{targetPlayer.Character.FirstName} isn't following you.", cancellationToken);
+                    }
+                    else
+                    {
+                        if (Communicator.Groups.ContainsKey(actor.Character.CharacterId))
+                        {
+                            Communicator.Groups[actor.Character.CharacterId].Add(targetPlayer.Character.CharacterId);
+                        }
+                        else
+                        {
+                            Communicator.Groups.TryAdd(actor.Character.CharacterId, new List<long>() { targetPlayer.Character.CharacterId });
+                        }
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"You add {targetPlayer.Character.FirstName} to your group.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                }
+            }
+        }
+
+        [HelpText("<p>Sends a message to everyone in your group.</p><ul><li>gtell <em>message</em></li></ul>")]
+        private async Task DoGTell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var sentence = args.Method;
+            if (!string.IsNullOrWhiteSpace(sentence))
+            {
+
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Tell your group what?", cancellationToken);
+            }
+        }
+
+        [HelpText("<p>Outfits your player with a very basic set of travel equipment. Useful if you find yourself naked.</p><ul><li>outfit</li></ul>")]
+        private async Task DoOutfit(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.DivineFavor < 0)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"The Gods do not deem you worthy of their attention. Perhaps do something to garner their favor.", cancellationToken);
+            }
+            else
+            {
+                var head = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Head));
+
+                List<Item> itemsToEquip = new List<Item>();
+
+                if (head == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Head));
+                }
+
+                var torso = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Torso));
+
+                if (torso == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Torso));
+                }
+
+                var feet = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Feet));
+
+                if (feet == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Feet));
+                }
+
+                var arms = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Arms));
+
+                if (torso == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Arms));
+                }
+
+                var hands = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Hands));
+
+                if (hands == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Hands));
+                }
+
+                var weapon = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Wielded));
+
+                if (weapon == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreatePracticeWeapon(this.random));
+                }
+
+                if (itemsToEquip.Count > 0)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"The Gods have taken pity on you, and you have been re-equipped by them. You have lost some divine favor.", cancellationToken);
+                    actor.Character.DivineFavor -= itemsToEquip.Count;
+
+                    foreach (var item in itemsToEquip)
+                    {
+                        actor.Character.Inventory.Add(item);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You have received {item.Name}.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"The Gods are insulted, and do not feel you presently need their handouts. You have lost some divine favor.", cancellationToken);
+                    actor.Character.DivineFavor -= 10;
+                }
+            }
         }
 
         [HelpText("<p>When accompanied by a guild master, use this command to train up your skills. See also: HELP LEARN, HELP TRAIN<ul><li>practice skill</li><li>practice spell</li></ul></p>")]
@@ -797,6 +981,29 @@ namespace Legendary.Engine.Processors
 
                         await this.communicator.SaveCharacter(actor);
                     }
+                }
+            }
+        }
+
+        [HelpText("<p>Removes a member from your group. Groups can communicate privately with GTELL See HELP GTELL.<p><ul><li>group <em>player</em></li></ul>")]
+        private async Task DoUngroup(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Who do you want to remove from your group?", cancellationToken);
+            }
+            else
+            {
+                // Giving to player or mob?
+                var targetPlayer = this.communicator.ResolveCharacter(args.Method);
+
+                if (targetPlayer != null)
+                {
+
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
                 }
             }
         }

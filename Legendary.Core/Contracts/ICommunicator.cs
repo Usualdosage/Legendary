@@ -10,6 +10,7 @@
 namespace Legendary.Core.Contracts
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Net.WebSockets;
     using System.Threading;

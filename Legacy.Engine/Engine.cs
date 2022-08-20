@@ -11,6 +11,7 @@ namespace Legendary.Engine
 {
     using System;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
@@ -92,7 +93,6 @@ namespace Legendary.Engine
         /// </summary>
         public void StartGameLoop()
         {
-
             this.logger.Info("Waiting for connections...", null);
 
             this.timer = new System.Threading.Timer(
@@ -102,13 +102,13 @@ namespace Legendary.Engine
                     {
                         this.gameTicks++;
 
-                        // Fires each second to calculate combat.
+                        // Fires every 2 seconds to calculate combat.
                         this.OnVioTick(this, new EngineEventArgs(this.gameTicks, this.gameHour, null));
 
                         // One "hour" game time, or 30 seconds.
-                        if (this.gameTicks == 30)
+                        if (this.gameTicks == Constants.TICK)
                         {
-                            this.logger.Debug("TICK.", null);
+                            this.logger.Info("TICK.", null);
 
                             this.gameHour++;
                             if (this.gameHour == 24)
@@ -131,13 +131,12 @@ namespace Legendary.Engine
                         await this.world.UpdateGameMetrics(ex);
 
                         // If we hit an exception, we need to restart the timer.
-                        // this.timer?.Change(2000, 2000);
                         this.StartGameLoop();
                     }
                 },
                 null,
-                2000,
-                2000);
+                Constants.VIOTICK,
+                Constants.VIOTICK);
         }
 
         /// <summary>
@@ -193,7 +192,5 @@ namespace Legendary.Engine
                 this.logger.Error(exc, null);
             }
         }
-
-        
     }
 }

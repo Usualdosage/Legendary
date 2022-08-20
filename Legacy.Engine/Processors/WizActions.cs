@@ -291,12 +291,12 @@ namespace Legendary.Engine.Processors
             // Sub/unsub to wiznet channel
             if (this.communicator.IsSubscribed("wiznet", actor.ConnectionId, actor))
             {
-                await this.communicator.SendToPlayer(actor.Connection, $"Unsubscribed from WIZNET.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"Unsubscribed from WIZNET. You will no longer see all logs.", cancellationToken);
                 this.communicator.RemoveFromChannel("wiznet", actor.ConnectionId, actor);
             }
             else
             {
-                await this.communicator.SendToPlayer(actor.Connection, $"Welcome to WIZNET!", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"Welcome to WIZNET! You will now see all logs.", cancellationToken);
                 this.communicator.AddToChannel("wiznet", actor.ConnectionId, actor);
             }
         }

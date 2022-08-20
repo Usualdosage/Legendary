@@ -133,6 +133,11 @@ namespace Legendary.Engine
         public static ConcurrentDictionary<string, string> Tells { get; set; } = new ConcurrentDictionary<string, string>();
 
         /// <summary>
+        /// Gets or sets a concurrent dictionary of players in groups. The key is the player who is leading the group.
+        /// </summary>
+        public static ConcurrentDictionary<long, List<long>> Groups { get; set; } = new ConcurrentDictionary<long, List<long>>();
+
+        /// <summary>
         /// Gets or sets a concurrent dictionary of people ignoring other people for this session. Item1 is the ignorer, Item2 is the ignoree. (Bob ignores Alice).
         /// </summary>
         public static List<Tuple<string, string>> Ignores { get; set; } = new List<Tuple<string, string>>();
@@ -351,8 +356,14 @@ namespace Legendary.Engine
                     user.Value.Value.Character.Followers = new List<long>();
                     user.Value.Value.Character.Following = null;
 
+                    // Remove from any groups.
+                    Communicator.Groups.TryRemove(user.Value.Value.Character.CharacterId, out List<long>? dummy);
+
                     Users?.TryRemove(user.Value);
                 }
+
+                await this.SendToPlayer(user.Value.Value.Connection, $"You have disconnected.", cancellationToken);
+                await this.SendToRoom(null, user.Value.Value.Character.Location, user.Value.Value.ConnectionId, $"{user.Value.Value.Character.FirstName} has left the realms.", cancellationToken);
             }
 
             string message = $"{DateTime.UtcNow}: {player} has quit.";
@@ -1390,11 +1401,11 @@ namespace Legendary.Engine
         /// <summary>
         /// Processes the user's command.
         /// </summary>
-        /// <param name="user">The user.</param>
+        /// <param name="actor">The actor.</param>
         /// <param name="input">The input.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task ProcessMessage(UserData user, string? input, CancellationToken cancellationToken = default)
+        private async Task ProcessMessage(UserData actor, string? input, CancellationToken cancellationToken = default)
         {
             if (input == null)
             {
@@ -1407,7 +1418,7 @@ namespace Legendary.Engine
 
                 if (args == null)
                 {
-                    await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                    await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
                 }
                 else
                 {
@@ -1416,52 +1427,64 @@ namespace Legendary.Engine
 
                     if (emote != null)
                     {
-                        await this.SendToPlayer(user.Connection, emote.ToSelf, cancellationToken);
-                        await this.SendToRoom(user.Character, user.Character.Location, user.ConnectionId, emote.ToRoom.Replace("{0}", user.Character.FirstName), cancellationToken);
+                        await this.SendToPlayer(actor.Connection, emote.ToSelf, cancellationToken);
+                        await this.SendToRoom(actor.Character, actor.Character.Location, actor.ConnectionId, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
                     }
                     else
                     {
                         // See if this is a skill
-                        if (!string.IsNullOrWhiteSpace(args.Action) && user.Character.HasSkill(args.Action))
+                        if (!string.IsNullOrWhiteSpace(args.Action) && actor.Character.HasSkill(args.Action))
                         {
+                            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                            {
+                                await this.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
+                                return;
+                            }
+
                             if (this.skillProcessor != null)
                             {
-                                await this.skillProcessor.DoSkill(user, args, cancellationToken);
+                                await this.skillProcessor.DoSkill(actor, args, cancellationToken);
                                 return;
                             }
                             else
                             {
-                                await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                                await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
                                 return;
                             }
                         }
                         else if (IsCasting(args.Action))
                         {
+                            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                            {
+                                await this.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
+                                return;
+                            }
+
                             // If casting, see what they are casting and see if they can cast it.
                             if (!string.IsNullOrWhiteSpace(args.Method))
                             {
-                                if (user.Character.HasSpell(args.Method))
+                                if (actor.Character.HasSpell(args.Method))
                                 {
                                     if (this.spellProcessor != null)
                                     {
-                                        await this.spellProcessor.DoSpell(user, args, cancellationToken);
+                                        await this.spellProcessor.DoSpell(actor, args, cancellationToken);
                                         return;
                                     }
                                     else
                                     {
-                                        await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                                        await this.SendToPlayer(actor.Connection, "You don't know how to cast that.", cancellationToken);
                                         return;
                                     }
                                 }
                                 else
                                 {
-                                    await this.SendToPlayer(user.Connection, "You don't know how to cast that.", cancellationToken);
+                                    await this.SendToPlayer(actor.Connection, "You don't know how to cast that.", cancellationToken);
                                     return;
                                 }
                             }
                             else
                             {
-                                await this.SendToPlayer(user.Connection, "Commune or cast what?", cancellationToken);
+                                await this.SendToPlayer(actor.Connection, "Commune or cast what?", cancellationToken);
                             }
                         }
                         else
@@ -1469,7 +1492,7 @@ namespace Legendary.Engine
                             // Not casting, using a skill, or emoting, so check actions.
                             if (this.actionProcessor != null)
                             {
-                                await this.actionProcessor.DoAction(user, args, cancellationToken);
+                                await this.actionProcessor.DoAction(actor, args, cancellationToken);
                                 return;
                             }
                         }
@@ -1478,7 +1501,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                await this.SendToPlayer(user.Connection, "You don't know how to do that.", cancellationToken);
+                await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
                 this.logger.Error(exc, this);
             }
         }

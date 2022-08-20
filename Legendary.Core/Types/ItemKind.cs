@@ -33,5 +33,10 @@ namespace Legendary.Core.Types
         /// Legendary.
         /// </summary>
         Legendary = 3,
+
+        /// <summary>
+        /// Practice items.
+        /// </summary>
+        Practice = 4,
     }
 }
