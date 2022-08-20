@@ -317,16 +317,6 @@ namespace Legendary.Engine
                 // See if the player advanced a level.
                 var advance = this.communicator.CheckLevelAdvance(actor, cancellationToken);
             }
-            else
-            {
-                // Show the opponent's condition.
-                string? condition = GetPlayerCondition(target);
-
-                if (!string.IsNullOrWhiteSpace(condition))
-                {
-                    await this.communicator.SendToPlayer(actor, condition);
-                }
-            }
         }
 
         /// <summary>
@@ -355,6 +345,14 @@ namespace Legendary.Engine
 
                         // Update the player info.
                         await this.communicator.SendGameUpdate(user.Value.Character, null, null, cancellationToken);
+
+                        // Show the opponent's condition.
+                        string? condition = GetPlayerCondition(target);
+
+                        if (!string.IsNullOrWhiteSpace(condition))
+                        {
+                            await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
+                        }
                     }
                 }
             }
