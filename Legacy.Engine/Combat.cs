@@ -284,7 +284,7 @@ namespace Legendary.Engine
 
             await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
             await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
-            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {actor.LastName}!", cancellationToken);
+            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
 
             bool isDead = ApplyDamage(target, damage);
 

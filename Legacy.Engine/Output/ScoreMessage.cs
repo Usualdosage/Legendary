@@ -199,7 +199,7 @@ namespace Legendary.Engine.Output
         /// <summary>
         /// Gets or sets con.
         /// </summary>
-        [JsonProperty("con")]
+        [JsonProperty("co")]
         public string? Con { get; set; }
     }
 
