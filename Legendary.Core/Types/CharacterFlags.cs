@@ -48,5 +48,15 @@ namespace Legendary.Core.Types
         /// Character is a ghost.
         /// </summary>
         Ghost = 6,
+
+        /// <summary>
+        /// Autolooting.
+        /// </summary>
+        Autoloot = 7,
+
+        /// <summary>
+        /// Autosacrifice corpses.
+        /// </summary>
+        Autosac = 8,
     }
 }

@@ -53,6 +53,36 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        [HelpText("<p>Toggles automatic looting. When active, corpses will be automatically looted when killed.</p>")]
+        private async Task DoAutoloot(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Autoloot))
+            {
+                actor.Character.CharacterFlags.Remove(CharacterFlags.Autoloot);
+                await this.communicator.SendToPlayer(actor.Connection, "You will no longer automatically loot corpses.", cancellationToken);
+            }
+            else
+            {
+                actor.Character.CharacterFlags.Add(CharacterFlags.Autoloot);
+                await this.communicator.SendToPlayer(actor.Connection, "You will now automatically loot corpses.", cancellationToken);
+            }
+        }
+
+        [HelpText("<p>Toggles automatic sacrificing. When active, corpses will be automatically sacrificed when killed.</p>")]
+        private async Task DoAutosac(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Autosac))
+            {
+                actor.Character.CharacterFlags.Remove(CharacterFlags.Autosac);
+                await this.communicator.SendToPlayer(actor.Connection, "You will no longer automatically sacrifice corpses.", cancellationToken);
+            }
+            else
+            {
+                actor.Character.CharacterFlags.Add(CharacterFlags.Autosac);
+                await this.communicator.SendToPlayer(actor.Connection, "You will now automatically sacrifice corpses.", cancellationToken);
+            }
+        }
+
         [HelpText("<p>Lists all awards and accomplishments you have received.</p>")]
         private async Task DoAwards(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -187,7 +217,102 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>When accompanied by a teacher, use this command to learn new skill or spell trees. See also: HELP PRACTICE, HELP TRAIN<ul><<li>learn tree</li></ul></p></p></p>")]
+        [HelpText("<p>Considers a target before attacking it. Among consideration are the target's level, strength, and power.<ul><li>consider <em>target</em></li></ul></p>")]
+        private async Task DoConsider(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Consider whom?", cancellationToken);
+            }
+            else
+            {
+                var targetName = args.Method.ToLower();
+
+                if (targetName == actor.Character.FirstName || targetName == "self")
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "You consider yourself...yourself.", cancellationToken);
+                }
+                else
+                {
+                    var target = Communicator.Users?.FirstOrDefault(u => u.Value.Character.FirstName?.ToLower() == targetName.ToLower());
+
+                    if (target == null || target.Value.Value == null)
+                    {
+                        var mobiles = this.communicator.GetMobilesInRoom(actor.Character.Location);
+
+                        if (mobiles != null)
+                        {
+                            var mobile = mobiles.ParseTargetName(targetName);
+
+                            if (mobile != null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You carefully size up {mobile.FirstName}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} carefully sizes up {mobile.FirstName}.", cancellationToken);
+
+                                var characterPower = (actor.Character.Level * (actor.Character.HitDice + actor.Character.DamageDice)) + actor.Character.Health.Current;
+                                var mobilePower = (mobile.Level * (mobile.HitDice + mobile.DamageDice)) + mobile.Health.Current;
+
+                                var powerVariance = characterPower - mobilePower;
+
+                                var message = powerVariance switch
+                                {
+                                    >= -10000 and <= -101 => $"{mobile.FirstName} you may as well try to kill a God.",
+                                    >= -100 and <= -51 => $"{mobile.FirstName} would most likely annihilate you.",
+                                    >= -50 and <= -21 => "You would need a LOT of luck!",
+                                    >= -20 and <= -6 => "You would need a little luck.",
+                                    >= -5 and <= 5 => $"{mobile.FirstName} seems like a perfect match.",
+                                    >= 6 and <= 20 => $"You're pretty sure you could take {mobile.FirstName}.",
+                                    >= 21 and <= 50 => $"You have little doubt you could kill {mobile.FirstName}.",
+                                    >= 51 and <= 100 => $"{mobile.FirstName} looks like an easy kill.",
+                                    >= 101 and <= 10000 => $"Killing {mobile.FirstName} would be like killing an infant.",
+                                    _ => $"You have no idea if you could take {mobile.FirstName} or not."
+                                };
+
+                                await this.communicator.SendToPlayer(actor.Connection, message, cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "They're not here.", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, "They're not here.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        var targetPlayer = target.Value.Value.Character;
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"You carefully size up {targetPlayer.FirstName}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} carefully sizes up {targetPlayer.FirstName}.", cancellationToken);
+
+                        var characterPower = (actor.Character.Level * (actor.Character.HitDice + actor.Character.DamageDice)) + actor.Character.Health.Current;
+                        var targetPower = (targetPlayer.Level * (targetPlayer.HitDice + targetPlayer.DamageDice)) + targetPlayer.Health.Current;
+
+                        var powerVariance = characterPower - targetPower;
+
+                        var message = powerVariance switch
+                        {
+                            >= -10000 and <= -101 => $"You may as well try to kill a God.",
+                            >= -100 and <= -51 => $"{targetPlayer.FirstName} would most likely annihilate you.",
+                            >= -50 and <= -21 => "You would need a LOT of luck!",
+                            >= -20 and <= -6 => "You would need a little luck.",
+                            >= -5 and <= 5 => $"{targetPlayer.FirstName} seems like a perfect match.",
+                            >= 6 and <= 20 => $"You're pretty sure you could take {targetPlayer.FirstName}.",
+                            >= 21 and <= 50 => $"You have little doubt you could kill {targetPlayer.FirstName}.",
+                            >= 51 and <= 100 => $"{targetPlayer.FirstName} looks like an easy kill.",
+                            >= 101 and <= 10000 => $"Killing {targetPlayer.FirstName} would be like killing an infant.",
+                            _ => $"You have no idea if you could take {targetPlayer.FirstName} or not."
+                        };
+
+                        await this.communicator.SendToPlayer(actor.Connection, message, cancellationToken);
+                    }
+                }
+            }
+        }
+
+        [HelpText("<p>When accompanied by a teacher, use this command to learn new skill or spell trees. See also: HELP PRACTICE, HELP TRAIN<ul><li>learn <em>tree</em></li></ul></p>")]
         private async Task DoLearn(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
@@ -375,7 +500,7 @@ namespace Legendary.Engine.Processors
             var sentence = args.Method;
             if (!string.IsNullOrWhiteSpace(sentence))
             {
-
+                await this.communicator.SendToPlayer(actor.Connection, "Not yet implemented.", cancellationToken);
             }
             else
             {

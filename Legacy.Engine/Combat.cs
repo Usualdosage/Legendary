@@ -36,6 +36,7 @@ namespace Legendary.Engine
         private readonly ILogger logger;
         private readonly IWorld world;
         private readonly AwardProcessor awardProcessor;
+        private readonly ActionProcessor actionProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Combat"/> class.
@@ -52,6 +53,7 @@ namespace Legendary.Engine
             this.world = world;
 
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
+            this.actionProcessor = new ActionProcessor(communicator, world, logger, random, this);
         }
 
         /// <summary>
@@ -533,7 +535,23 @@ namespace Legendary.Engine
                 if (room.Mobiles.Contains(mobile))
                 {
                     room.Mobiles.Remove(mobile);
-                    this.GenerateCorpse(killer.Location, target);
+                    var corpse = this.GenerateCorpse(killer.Location, target);
+
+                    if (killer.CharacterFlags.Contains(CharacterFlags.Autoloot))
+                    {
+                        await this.actionProcessor.ItemsFromContainer(killer, corpse, cancellationToken);
+                    }
+
+                    if (killer.CharacterFlags.Contains(CharacterFlags.Autosac))
+                    {
+                        if (corpse != null)
+                        {
+                            killer.DivineFavor += 1;
+                            await this.communicator.SendToPlayer(killer, $"You sacrifice {corpse.Name} to your deity for some divine favor.", cancellationToken);
+                            await this.communicator.SendToRoom(killer, killer.Location, $"{killer.FirstName.FirstCharToUpper()} sacrifices {corpse.Name} to their deity.", cancellationToken);
+                            room.Items.Remove(corpse);
+                        }
+                    }
                 }
             }
         }
@@ -814,7 +832,7 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="location">The room to generate the corpse in.</param>
         /// <param name="victim">The victim to generate the corpse from.</param>
-        private void GenerateCorpse(KeyValuePair<long, long> location, Character victim)
+        private Item? GenerateCorpse(KeyValuePair<long, long> location, Character victim)
         {
             try
             {
@@ -864,10 +882,13 @@ namespace Legendary.Engine
                 {
                     room.Items.Add(corpse);
                 }
+
+                return corpse;
             }
             catch (Exception exc)
             {
                 this.logger.Error(exc, this.communicator);
+                return null;
             }
         }
     }

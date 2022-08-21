@@ -152,6 +152,63 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Gets all items from a given container and places them in the actor's inventory.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="container">The container.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task ItemsFromContainer(Character actor, Item? container, CancellationToken cancellationToken)
+        {
+            if (container != null)
+            {
+                if (container.Contains != null && container.Contains.Count > 0)
+                {
+                    List<IItem> itemsToRemove = new List<IItem>();
+
+                    foreach (var item in container.Contains)
+                    {
+                        // Item, no container, check the item.
+                        if (item.ItemType == ItemType.Currency)
+                        {
+                            await this.communicator.SendToPlayer(actor, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                            await this.communicator.PlaySound(actor, AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
+                            actor.Currency += item.Value;
+                            itemsToRemove.Add(item);
+                        }
+                        else if (item.WearLocation.Contains(WearLocation.None))
+                        {
+                            await this.communicator.SendToPlayer(actor, $"You can't get {item.Name} from {container.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            if (item != null)
+                            {
+                                await this.communicator.SendToPlayer(actor, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+
+                                var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
+                                actor.Inventory.Add(itemClone);
+
+                                itemsToRemove.Add(item);
+                            }
+                        }
+                    }
+
+                    container.Contains.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor, $"{container.Name.FirstCharToUpper()} has nothing in it.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor, $"That isn't here.", cancellationToken);
+            }
+        }
+
+        /// <summary>
         /// Parses a direction enum from a string value.
         /// </summary>
         /// <param name="direction">The direction.</param>
@@ -223,11 +280,14 @@ namespace Legendary.Engine.Processors
         {
             this.actions.Add("advance", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAdvance)));
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
-            this.actions.Add("areas", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAreas)));
+            this.actions.Add("areas", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAreas)));
+            this.actions.Add("autoloot", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAutoloot)));
+            this.actions.Add("autosac", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAutosac)));
             this.actions.Add("awards", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAwards)));
             this.actions.Add("buy", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoBuy)));
             this.actions.Add("close", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoClose)));
-            this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
+            this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
+            this.actions.Add("consider", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoConsider)));
             this.actions.Add("dice", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDice)));
             this.actions.Add("down", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("drink", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoDrink)));
@@ -2378,6 +2438,10 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character, actor.Character.Location,  $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
                     }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't wield {item.Name}.", cancellationToken);
+                    }
                 }
             }
         }
@@ -2629,52 +2693,7 @@ namespace Legendary.Engine.Processors
                 container = itemsInRoom.ParseTargetName(args.Target);
             }
 
-            if (container != null)
-            {
-                if (container.Contains != null && container.Contains.Count > 0)
-                {
-                    List<IItem> itemsToRemove = new List<IItem>();
-
-                    foreach (var item in container.Contains)
-                    {
-                        // Item, no container, check the item.
-                        if (item.ItemType == ItemType.Currency)
-                        {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
-                            await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
-                            actor.Character.Currency += item.Value;
-                            itemsToRemove.Add(item);
-                        }
-                        else if (item.WearLocation.Contains(WearLocation.None))
-                        {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You can't get {item.Name} from {container.Name}.", cancellationToken);
-                        }
-                        else
-                        {
-                            if (item != null)
-                            {
-                                await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
-
-                                var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
-                                actor.Character.Inventory.Add(itemClone);
-
-                                itemsToRemove.Add(item);
-                            }
-                        }
-                    }
-
-                    container.Contains.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
-                }
-                else
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"{container.Name.FirstCharToUpper()} has nothing in it.", cancellationToken);
-                }
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"That isn't here.", cancellationToken);
-            }
+            await ItemsFromContainer(actor.Character, container, cancellationToken);
         }
 
         private async Task GetItemFromRoom(UserData actor, CommandArgs args, CancellationToken cancellationToken)
