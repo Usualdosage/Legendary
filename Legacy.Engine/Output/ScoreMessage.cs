@@ -119,7 +119,6 @@ namespace Legendary.Engine.Output
         /// </summary>
         [JsonProperty("ti")]
         public string? Title { get; set; }
-
     }
 
     /// <summary>
@@ -163,7 +162,6 @@ namespace Legendary.Engine.Output
         /// </summary>
         [JsonProperty("le")]
         public string? Level { get; set; }
-
     }
 
     /// <summary>

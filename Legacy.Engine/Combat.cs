@@ -72,19 +72,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Starts combat between two characters.
-        /// </summary>
-        /// <param name="actor">The first character.</param>
-        /// <param name="target">The second character.</param>
-        public static void StartFighting(Character actor, Character target)
-        {
-            actor.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
-            actor.Fighting = target.CharacterId;
-            target.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
-            target.Fighting = actor.CharacterId;
-        }
-
-        /// <summary>
         /// Shows the player's physical condition.
         /// </summary>
         /// <param name="target">The player.</param>
@@ -175,6 +162,34 @@ namespace Legendary.Engine
             };
 
             return message;
+        }
+
+        /// <summary>
+        /// Starts combat between two characters.
+        /// </summary>
+        /// <param name="actor">The first character.</param>
+        /// <param name="target">The second character.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task StartFighting(Character actor, Character target, CancellationToken cancellationToken)
+        {
+            if (!actor.IsNPC && !target.IsNPC && actor.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                // PVP, where actor is a ghost.
+                await this.communicator.SendToPlayer(actor, $"You can't attack {target.FirstName} while you're a ghost.", cancellationToken);
+            }
+            else if (!target.IsNPC && target.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                // PVP, where target is a ghost.
+                await this.communicator.SendToPlayer(actor, $"You can't attack {target.FirstName} because they are a ghost.", cancellationToken);
+            }
+            else
+            {
+                actor.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
+                actor.Fighting = target.CharacterId;
+                target.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
+                target.Fighting = actor.CharacterId;
+            }
         }
 
         /// <summary>
@@ -571,7 +586,7 @@ namespace Legendary.Engine
                 await this.communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
                 await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName.FirstCharToUpper()} is DEAD!");
 
-                await this.communicator.PlaySound(actor, Core.Types.AudioChannel.Actor, Sounds.DEATH, cancellationToken);
+                await this.communicator.PlaySound(actor, AudioChannel.Actor, Sounds.DEATH, cancellationToken);
 
                 killer.Metrics.PlayerKills += 1;
 
@@ -595,9 +610,10 @@ namespace Legendary.Engine
                         break;
                 }
 
-                // Make dead and ghost.
-                actor.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Dead);
-                actor.CharacterFlags?.AddIfNotExists(Core.Types.CharacterFlags.Ghost);
+                // Make a ghost and add effects
+                actor.CharacterFlags?.AddIfNotExists(CharacterFlags.Ghost);
+                actor.AffectedBy.Add(new Effect() { Name = "Ghost", Duration = 6 });
+                await this.communicator.SendToPlayer(actor, $"You have been turned into a ghost for a few hours, unless you attack something.", cancellationToken);
 
                 var room = this.communicator.ResolveRoom(killer.Location);
 

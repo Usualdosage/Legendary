@@ -10,7 +10,7 @@
 namespace Legendary.Core.Models
 {
     using System.Net.WebSockets;
-   
+
     /// <summary>
     /// Used to track a player with their connection.
     /// </summary>

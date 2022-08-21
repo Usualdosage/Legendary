@@ -228,7 +228,7 @@ namespace Legendary.Engine.Extensions
         /// <param name="price">The price.</param>
         /// <param name="actor">The actor.</param>
         /// <param name="merchant">The merchant.</param>
-        /// <returns>decimal</returns>
+        /// <returns>decimal.</returns>
         public static decimal AdjustSellPrice(this decimal price, Character actor, Mobile merchant)
         {
             decimal modifier = 0;
@@ -398,7 +398,7 @@ namespace Legendary.Engine.Extensions
         /// <param name="price">The price.</param>
         /// <param name="actor">The actor.</param>
         /// <param name="merchant">The merchant.</param>
-        /// <returns>decimal</returns>
+        /// <returns>decimal.</returns>
         public static decimal AdjustBuyPrice(this decimal price, Character actor, Mobile merchant)
         {
             decimal modifier = 0;

@@ -22,6 +22,19 @@ body {
     text-shadow: 3px 3px #000;
 }
 
+/* Globals */
+h4 {
+    font-family: 'Balgruf';
+    font-size: 1.2em;
+    color: maroon;
+}
+
+/* Spell/Skill Effects */
+
+.translucent {
+    color: teal;
+}
+
 /* Login/Create Pages */
 
 .card {
@@ -582,6 +595,11 @@ video {
     width: 100%;
     text-align: justify-all;
     display: block;
+}
+
+.who {
+    margin-left: 10px;
+    display: inline-block;
 }
 
 .wear-location {

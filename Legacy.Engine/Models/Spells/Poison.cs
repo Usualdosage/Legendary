@@ -92,7 +92,7 @@ namespace Legendary.Engine.Models.Spells
 
                     if (target != null)
                     {
-                        Combat.StartFighting(actor, target);
+                        await this.Combat.StartFighting(actor, target, cancellationToken);
                     }
                 }
             }

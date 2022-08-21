@@ -33,6 +33,8 @@ namespace Legendary.Engine
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Output;
+    using Legendary.Engine.Models.Spells;
+    using Legendary.Engine.Output;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
@@ -405,6 +407,12 @@ namespace Legendary.Engine
 
                         if (mobile != null)
                         {
+                            // If they're a ghost, remove the flag if they attack a mob.
+                            if (user.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                            {
+                                user.Character.CharacterFlags.Remove(CharacterFlags.Ghost);
+                            }
+
                             await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
                             await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
 
@@ -414,7 +422,7 @@ namespace Legendary.Engine
                             }
 
                             // Start the fight.
-                            Combat.StartFighting(user.Character, mobile);
+                            await this.combat.StartFighting(user.Character, mobile, cancellationToken);
                         }
                         else
                         {
@@ -424,14 +432,28 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    this.logger.Info($"{user.Character.FirstName.FirstCharToUpper()} has attacked {target.Value.Value.Character.FirstName} in room {user.Character.Location.Value}.", this);
+                    var targetChar = target.Value.Value.Character;
 
-                    await this.SendToPlayer(user.Connection, $"You attack {target.Value.Value.Character.FirstName}!", cancellationToken);
-                    await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} attacks {target.Value.Value.Character.FirstName}!", cancellationToken);
-                    await this.SendToArea(user.Character.Location, string.Empty, $"{target.Value.Value.Character.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                    // If they're a ghost, remove the flag if they attack a mob.
+                    if (user.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                    {
+                        await this.SendToPlayer(user.Connection, $"You can't attack {targetChar.FirstName} right now, because you're a ghost.", cancellationToken);
+                    }
+                    else if (targetChar.CharacterFlags.Contains(CharacterFlags.Ghost))
+                    {
+                        await this.SendToPlayer(user.Connection, $"You can't attack the ghost of {targetChar.FirstName}.", cancellationToken);
+                    }
+                    else
+                    {
+                        this.logger.Info($"{user.Character.FirstName.FirstCharToUpper()} has attacked {targetChar.FirstName} in room {user.Character.Location.Value}.", this);
 
-                    // Start the fight.
-                    Combat.StartFighting(user.Character, target.Value.Value.Character);
+                        await this.SendToPlayer(user.Connection, $"You attack {targetChar.FirstName}!", cancellationToken);
+                        await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} attacks {targetChar.FirstName}!", cancellationToken);
+                        await this.SendToArea(user.Character.Location, string.Empty, $"{targetChar.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+
+                        // Start the fight.
+                        await this.combat.StartFighting(user.Character, target.Value.Value.Character, cancellationToken);
+                    }
                 }
             }
         }
@@ -605,17 +627,25 @@ namespace Legendary.Engine
 
                 foreach (var other in usersInRoom)
                 {
+                    string prefix = string.Empty;
+                    string effects = this.GetEffects(other.Value.Character);
+
+                    if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                    {
+                        prefix = "The ghost of ";
+                    }
+
                     if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Resting))
                     {
-                        sb.Append($"<span class='player'>{other.Value.Character.FirstName} is resting here.</span>");
+                        sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is resting here.</span>");
                     }
                     else if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
                     {
-                        sb.Append($"<span class='player'>{other.Value.Character.FirstName} is sleeping here.</span>");
+                        sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is sleeping here.</span>");
                     }
                     else
                     {
-                        sb.Append($"<span class='player'>{other.Value.Character.FirstName} is here.</span>");
+                        sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is here.</span>");
                     }
                 }
             }
@@ -650,7 +680,7 @@ namespace Legendary.Engine
 
             var outputMessage = new OutputMessage()
             {
-                Message = new Message()
+                Message = new Legendary.Engine.Models.Output.Message()
                 {
                     FirstName = actor.FirstName,
                     Level = actor.Level,
@@ -1302,6 +1332,23 @@ namespace Legendary.Engine
                 "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
                 _ => false
             };
+        }
+
+        /// <summary>
+        /// Displays spell or skill effects on a character.
+        /// </summary>
+        /// <param name="actor">The character.</param>
+        /// <returns>string.</returns>
+        private string GetEffects(Character actor)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (actor.IsAffectedBy(nameof(PassDoor)) || actor.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                sb.Append("(<span class='translucent'>Translucent</span>) ");
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>

@@ -758,7 +758,6 @@ namespace Legendary.Engine.Processors
                                 {
                                     await this.communicator.SendToPlayer(actor.Character, "You are not proficient in that.", cancellationToken);
                                 }
-
                             }
                             else if (actor.Character.HasSpell(args.Method))
                             {
@@ -1133,12 +1132,11 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                // Giving to player or mob?
                 var targetPlayer = this.communicator.ResolveCharacter(args.Method);
 
                 if (targetPlayer != null)
                 {
-
+                    // TODO!
                 }
                 else
                 {

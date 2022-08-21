@@ -28,6 +28,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Output;
     using Microsoft.AspNetCore.Hosting;
     using MongoDB.Driver;
@@ -388,6 +389,12 @@ namespace Legendary.Engine.Processors
                 return;
             }
 
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You can't do that, you're a ghost.", cancellationToken);
+                return;
+            }
+
             // Check if there is a container in the room
             var room = this.communicator.ResolveRoom(actor.Character.Location);
             var container = room?.Items.FirstOrDefault(i => i.ItemType == ItemType.Container);
@@ -422,7 +429,7 @@ namespace Legendary.Engine.Processors
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"It's already close.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"It's already closed.", cancellationToken);
                         }
                     }
                     else
@@ -904,7 +911,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        [HelpText("<p>Gives an item from your inventory to a target.<p><ul><li>give <em>item</em> <em>target</em></li></ul>")]
+        [HelpText("<p>Gives an item from your inventory to a target.<p><ul><li>give <em>item</em> <em>target</em></li><li>give <em>10</em> gold <em>target</em></li></ul>")]
         private async Task DoGive(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrEmpty(args.Target))
@@ -913,6 +920,17 @@ namespace Legendary.Engine.Processors
             }
             else
             {
+                switch (args.Method.ToLower())
+                {
+                    default:
+                        break;
+                    case "gold":
+                    case "silver":
+                    case "copper":
+                        await this.GiveCurrency(actor, args, cancellationToken);
+                        return;
+                }
+
                 // Get the thing first.
                 var itemToGive = actor.Character.Inventory.FirstOrDefault(f => f.Name.ToLower().Contains(args.Method));
 
@@ -1405,9 +1423,11 @@ namespace Legendary.Engine.Processors
 
             Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
 
+            bool isGhost = actor.Character.CharacterFlags.Contains(CharacterFlags.Ghost) || actor.Character.IsAffectedBy(nameof(PassDoor));
+
             if (exit != null)
             {
-                if (exit.IsDoor && exit.IsClosed)
+                if (exit.IsDoor && exit.IsClosed && !isGhost)
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is closed.", cancellationToken);
                 }
@@ -1430,7 +1450,14 @@ namespace Legendary.Engine.Processors
                         {
                             if (actor.Character.Following == null)
                             {
-                                await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+                                if (isGhost)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You float {dir}.", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You go {dir}.", cancellationToken);
+                                }
                             }
 
                             // Check if there are followers.
@@ -1450,14 +1477,29 @@ namespace Legendary.Engine.Processors
                                 }
                             }
 
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
-                            await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
+                            if (isGhost)
+                            {
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} floats {dir}.", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+                                await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
+                            }
 
                             // Put the char in the new room.
                             actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-                            actor.Character.Movement.Current -= moves;
 
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                            if (isGhost)
+                            {
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} floats in.", cancellationToken);
+                            }
+                            else
+                            {
+                                actor.Character.Movement.Current -= moves;
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                            }
+
                             await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
                         }
                     }
@@ -1498,6 +1540,12 @@ namespace Legendary.Engine.Processors
             if (string.IsNullOrWhiteSpace(args.Method))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Open what?", cancellationToken);
+                return;
+            }
+
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You can't do that, you're a ghost.", cancellationToken);
                 return;
             }
 
@@ -2188,10 +2236,12 @@ namespace Legendary.Engine.Processors
         {
             if (Communicator.Users != null)
             {
+                var sb = new StringBuilder();
+                sb.Append("<h4>Online Players</h4>");
+
                 foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
                 {
-                    var sb = new StringBuilder();
-                    sb.Append($"<span class='who'>{player?.Value.Character.FirstName}");
+                    sb.Append($"<span class='who'>[{player?.Value.Character.Level}] {player?.Value.Character.FirstName}");
 
                     if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
                     {
@@ -2204,9 +2254,9 @@ namespace Legendary.Engine.Processors
                     }
 
                     sb.Append("</span");
-
-                    await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
                 }
+
+                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
 
                 await this.communicator.SendToPlayer(actor.Connection, $"There are {Communicator.Users?.Count} players connected.", cancellationToken);
             }
@@ -2693,7 +2743,7 @@ namespace Legendary.Engine.Processors
                 container = itemsInRoom.ParseTargetName(args.Target);
             }
 
-            await ItemsFromContainer(actor.Character, container, cancellationToken);
+            await this.ItemsFromContainer(actor.Character, container, cancellationToken);
         }
 
         private async Task GetItemFromRoom(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -3115,7 +3165,7 @@ namespace Legendary.Engine.Processors
                         Int = $"{actor.Int.Max} ({actor.Int.Current})",
                         Con = $"{actor.Con.Max} ({actor.Con.Current})",
                     },
-                    Armor = new Armor()
+                    Armor = new Output.Armor()
                     {
                         Blunt = $"{bluntTotal}%",
                         Pierce = $"{pierceTotal}%",
@@ -3153,6 +3203,69 @@ namespace Legendary.Engine.Processors
         {
             var message = this.ShowStatistics(user.Character);
             await this.communicator.SendToPlayer(user.Connection, message, cancellationToken);
+        }
+
+        private async Task GiveCurrency(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrEmpty(args.Target))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Give what to whom?", cancellationToken);
+            }
+            else
+            {
+                decimal amount = 0m;
+                string type = args.Method.ToLower();
+
+                switch (type)
+                {
+                    default:
+                        return;
+                    case "gold":
+                        amount = (decimal)args.Index;
+                        break;
+                    case "silver":
+                        amount = (decimal)args.Index / 10m;
+                        break;
+                    case "copper":
+                        amount = (decimal)args.Index / 100m;
+                        break;
+                }
+
+                if (actor.Character.Currency < amount)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You don't have that much {type} to give.", cancellationToken);
+                }
+                else
+                {
+                    // Giving to player or mob?
+                    var targetPlayer = this.communicator.ResolveCharacter(args.Target);
+
+                    if (targetPlayer != null)
+                    {
+                        targetPlayer.Character.Currency += amount;
+                        actor.Character.Currency -= amount;
+                        await this.communicator.SendToPlayer(actor.Connection, $"You give {args.Index} {type} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                        await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {args.Index} {type}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gives some {type} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                    }
+                    else
+                    {
+                        var targetMob = this.communicator.ResolveMobile(args.Target);
+
+                        if (targetMob != null)
+                        {
+                            targetMob.Currency += amount;
+                            actor.Character.Currency -= amount;
+                            await this.communicator.SendToPlayer(actor.Connection, $"You give {args.Index} {args.Method.ToLower()} to {targetMob.FirstName}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gives some {type} to {targetMob.FirstName}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                        }
+                    }
+                }
+            }
         }
     }
 }

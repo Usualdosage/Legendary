@@ -75,7 +75,7 @@ namespace Legendary.Engine.Models
                 await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Die, {actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
             }
 
-            Combat.StartFighting(actor, target);
+            await this.Combat.StartFighting(actor, target, cancellationToken);
             await this.Combat.DoDamage(actor, target, this, cancellationToken);
         }
 
@@ -94,7 +94,7 @@ namespace Legendary.Engine.Models
                     // TODO: Do damage to everything in the room that isn't the player, or in the player's group.
                     if (user.Value.Character.Location.InSamePlace(actor.Location) && user.Value.Character.FirstName != actor.FirstName)
                     {
-                        Combat.StartFighting(actor, user.Value.Character);
+                        await this.Combat.StartFighting(actor, user.Value.Character, cancellationToken);
                         await this.Combat.DoDamage(actor, user.Value.Character, this, cancellationToken);
                     }
                 }
@@ -107,7 +107,7 @@ namespace Legendary.Engine.Models
             {
                 foreach (var mobile in mobiles)
                 {
-                    Combat.StartFighting(actor, mobile);
+                    await this.Combat.StartFighting(actor, mobile, cancellationToken);
                     await this.Combat.DoDamage(actor, mobile, this, cancellationToken);
                 }
             }

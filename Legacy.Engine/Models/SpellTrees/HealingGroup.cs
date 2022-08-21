@@ -53,6 +53,7 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new CureSerious(this.Communicator, this.Random, this.Combat) },
+                { new CauseSerious(this.Communicator, this.Random, this.Combat) },
             };
         }
 
@@ -62,6 +63,7 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new CureCritical(this.Communicator, this.Random, this.Combat) },
+                { new Harm(this.Communicator, this.Random, this.Combat) },
             };
         }
 

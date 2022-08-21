@@ -137,12 +137,6 @@ namespace Legendary.Engine
                     tasks.Add(this.ProcessAffects(user.Value));
                 }
 
-                // TODO ProcessItemRot for each room (springs, corpses, etc).
-                // TODO Repop!
-
-                // BUGS:
-                // TODO Combat is not initiating - fix timer? Timer stalls on crash.
-
                 tasks.Add(this.ProcessTime(gameHour));
                 tasks.Add(this.ProcessMobiles());
                 tasks.Add(this.ProcessWeather());
@@ -217,7 +211,14 @@ namespace Legendary.Engine
 
                     if (effect.Duration < 0)
                     {
-                        await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                        if (effect.Name?.ToLower() == "ghost")
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"You are no longer a ghost.");
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                        }
                     }
                     else
                     {
@@ -236,6 +237,7 @@ namespace Legendary.Engine
         /// Iterates over all user items that may decompose and removes them if they decay.
         /// </summary>
         /// <param name="userData">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         private async Task ProcessItemRot(UserData userData, CancellationToken cancellationToken = default)
         {

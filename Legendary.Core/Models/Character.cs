@@ -12,10 +12,12 @@ namespace Legendary.Core.Models
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
+    using static MongoDB.Driver.WriteConcern;
 
     /// <summary>
     /// Represents a single character.
@@ -597,6 +599,17 @@ namespace Legendary.Core.Models
         public bool IsAffectedBy(IAction action)
         {
             return this.AffectedBy.Any(a => a.Name == action.Name);
+        }
+
+        /// <summary>
+        /// Gets whether this character is affected by an action.
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <returns>True if affected.</returns>
+        public bool IsAffectedBy(string action)
+        {
+            string effectName = Regex.Replace(action, "([a-z])([A-Z])", "$1 $2");
+            return this.AffectedBy.Any(a => a.Name == effectName);
         }
     }
 }
