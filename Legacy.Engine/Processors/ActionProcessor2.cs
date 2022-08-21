@@ -256,7 +256,7 @@ namespace Legendary.Engine.Processors
 
                                 var message = powerVariance switch
                                 {
-                                    >= -10000 and <= -101 => $"{mobile.FirstName} you may as well try to kill a God.",
+                                    >= -10000 and <= -101 => $"You may as well try to kill a God.",
                                     >= -100 and <= -51 => $"{mobile.FirstName} would most likely annihilate you.",
                                     >= -50 and <= -21 => "You would need a LOT of luck!",
                                     >= -20 and <= -6 => "You would need a little luck.",

@@ -111,6 +111,17 @@ namespace Legendary.Engine
                             this.logger.Debug("TICK.", null);
 
                             this.gameHour++;
+
+                            // Repopulate an area with mobiles 4x per day.
+                            if (this.gameHour % 6 == 0)
+                            {
+                                this.logger.Debug("Repopulating areas...", null);
+                                foreach (var area in this.world.Areas)
+                                {
+                                    this.world.RepopulateMobiles(area);
+                                }
+                            }
+
                             if (this.gameHour == 24)
                             {
                                 this.gameHour = 0;

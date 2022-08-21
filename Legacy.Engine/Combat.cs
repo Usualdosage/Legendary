@@ -10,7 +10,6 @@
 namespace Legendary.Engine
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -22,7 +21,6 @@ namespace Legendary.Engine
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
-    using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Processors;
 

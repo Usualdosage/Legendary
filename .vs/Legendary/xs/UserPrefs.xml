@@ -1,34 +1,27 @@
-﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Data/DataService.cs" relfile="Legendary.Data/DataService.cs" line="119" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="708" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="77" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="98" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="1191" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="271" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2354" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2415" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Startup.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Combat.cs">
     <Files>
-      <File FileName="Legendary.Core/Constants.cs" Line="68" Column="1" />
-      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="89" Column="38" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="69" Column="9" />
-      <File FileName="Legacy.Engine/Models/Emotes.cs" Line="33" Column="65" />
-      <File FileName="Legacy.Engine/Models/Spells/Poison.cs" Line="115" Column="49" />
-      <File FileName="Legendary.Core/Models/Effect.cs" Line="25" Column="51" />
-      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" Line="106" Column="30" />
-      <File FileName="Legacy.Engine/Processors/SpellProcessor.cs" Line="96" Column="1" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="918" Column="21" />
-      <File FileName="Legacy.Engine/Models/SpellTrees/HealingGroup.cs" Line="36" Column="45" />
-      <File FileName="Legacy.Engine/Models/Spell.cs" Line="42" Column="1" />
-      <File FileName="Legacy.Engine/World.cs" Line="331" Column="29" />
-      <File FileName="Legendary.Core/Contracts/IWorld.cs" Line="54" Column="73" />
-      <File FileName="Legendary.Web/Program.cs" Line="22" Column="53" />
-      <File FileName="Legacy.Engine/Combat.cs" Line="312" Column="17" />
-      <File FileName="Legendary.Web/Startup.cs" Line="82" Column="10" />
+      <File FileName="Legendary.Core/Types/ItemKind.cs" Line="42" Column="2" />
+      <File FileName="Legacy.Engine/Engine.cs" Line="121" Column="66" />
+      <File FileName="Legacy.Engine/World.cs" Line="143" Column="30" />
+      <File FileName="Legacy.Engine/Output/ScoreMessage.cs" Line="241" Column="20" />
+      <File FileName="Legacy.Engine/Combat.cs" Line="220" Column="1" />
+      <File FileName="Legendary.Core/Models/Character.cs" Line="318" Column="14" />
+      <File FileName="Legacy.Engine/Models/Action.cs" Line="127" Column="55" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="436" Column="14" />
+      <File FileName="Legacy.Engine/Environment.cs" Line="195" Column="52" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="484" Column="44" />
+      <File FileName="Legendary.Core/Models/Mobile.cs" Line="17" Column="42" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -37,27 +30,32 @@
             <Node name="Legendary.Core" expanded="True">
               <Node name="Contracts" expanded="True" />
               <Node name="Models" expanded="True" />
+              <Node name="Types" expanded="True" />
+            </Node>
+            <Node name="Legendary.Data" expanded="True">
+              <Node name="Contracts" expanded="True" />
             </Node>
             <Node name="Legendary.Engine" expanded="True">
-              <Node name="Attributes" expanded="True" />
-              <Node name="Contracts" expanded="True" />
-              <Node name="Extensions" expanded="True" />
-              <Node name="Generators" expanded="True" />
               <Node name="Helpers" expanded="True" />
               <Node name="Models" expanded="True">
-                <Node name="SkillTrees" expanded="True" />
+                <Node name="Skills" expanded="True" />
                 <Node name="Spells" expanded="True" />
                 <Node name="SpellTrees" expanded="True" />
               </Node>
+              <Node name="Output" expanded="True" />
               <Node name="Processors" expanded="True" />
-              <Node name="Types" expanded="True" />
+            </Node>
+            <Node name="Legendary.Networking" expanded="True">
+              <Node name="Models" expanded="True" />
             </Node>
             <Node name="Legendary.Web" expanded="True">
-              <Node name="Data" expanded="True">
-                <Node name="HelpFiles" expanded="True" />
+              <Node name="Views" expanded="True">
+                <Node name="Home" expanded="True" />
               </Node>
-              <Node name="wwwroot" expanded="True" />
-              <Node name="appsettings.json" expanded="True" />
+              <Node name="wwwroot" expanded="True">
+                <Node name="css" expanded="True" />
+                <Node name="js" expanded="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -67,4 +65,8 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
 </Properties>

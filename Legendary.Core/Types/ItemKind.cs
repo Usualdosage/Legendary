@@ -20,17 +20,17 @@ namespace Legendary.Core.Types
         Common = 0,
 
         /// <summary>
-        /// Rare.
+        /// Rare. Only 10 of these in the world at a time.
         /// </summary>
         Rare = 1,
 
         /// <summary>
-        /// Unique.
+        /// Unique. Only 5 of these in the world at a time.
         /// </summary>
         Unique = 2,
 
         /// <summary>
-        /// Legendary.
+        /// Legendary. Only 1 of these in the world at a time.
         /// </summary>
         Legendary = 3,
 

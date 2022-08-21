@@ -218,5 +218,25 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <returns>Task.</returns>
         Task LoadWorld();
+
+        /// <summary>
+        /// Repopulates an area with mobiles.
+        /// </summary>
+        /// <param name="area">The area.</param>
+        void RepopulateMobiles(Area area);
+
+        /// <summary>
+        /// Removes all mobs from the area.
+        /// </summary>
+        /// <param name="area">The area.</param>
+        /// <returns>Task.</returns>
+        Task CleanupMobiles(Area area);
+
+        /// <summary>
+        /// Removes all items from the area.
+        /// </summary>
+        /// <param name="area">The area.</param>
+        /// <returns>Task.</returns>
+        Task CleanupItems(Area area);
     }
 }

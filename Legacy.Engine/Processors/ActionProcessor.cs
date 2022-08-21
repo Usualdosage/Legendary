@@ -3073,11 +3073,11 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
-        private async Task ShowPlayerScore(UserData user, CancellationToken cancellationToken = default)
+        private string ShowStatistics(Character actor)
         {
-            List<Item> equipment = user.Character.Equipment;
-            List<Effect> effects = user.Character.AffectedBy;
-            var currencyTuple = user.Character.Currency.GetCurrency();
+            List<Item> equipment = actor.Equipment;
+            List<Effect> effects = actor.AffectedBy;
+            var currencyTuple = actor.Currency.GetCurrency();
 
             int pierceTotal = equipment.Sum(a => a?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
             int slashTotal = equipment.Sum(a => a?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
@@ -3090,30 +3090,30 @@ namespace Legendary.Engine.Processors
                 {
                     Personal = new Personal()
                     {
-                        Alignment = user.Character.Alignment.ToString(),
-                        Ethos = user.Character.Ethos.ToString(),
-                        Gender = user.Character.Gender.ToString(),
-                        Hometown = "Griffonshire",
-                        Name = user.Character.FirstName,
-                        Race = user.Character.Race.ToString(),
-                        Title = user.Character.Title,
+                        Alignment = actor.Alignment.ToString(),
+                        Ethos = actor.Ethos.ToString(),
+                        Gender = actor.Gender.ToString(),
+                        Hometown = actor.IsNPC ? "N/A" : "Griffonshire",
+                        Name = actor.FirstName,
+                        Race = actor.Race.ToString(),
+                        Title = actor.Title,
                     },
                     Vitals = new Vitals()
                     {
-                        Health = $"{user.Character.Health.Current}/{user.Character.Health.Max}",
-                        Mana = $"{user.Character.Mana.Current}/{user.Character.Mana.Max}",
-                        Movement = $"{user.Character.Movement.Current}/{user.Character.Movement.Max}",
-                        Experience = user.Character.Experience.ToString(),
+                        Health = $"{actor.Health.Current}/{actor.Health.Max}",
+                        Mana = $"{actor.Mana.Current}/{actor.Mana.Max}",
+                        Movement = $"{actor.Movement.Current}/{actor.Movement.Max}",
+                        Experience = actor.IsNPC ? "N/A" : actor.Experience.ToString(),
                         Carry = "100/100",
-                        Level = user.Character.Level.ToString(),
+                        Level = actor.Level.ToString(),
                     },
                     Attributes = new Attributes()
                     {
-                        Str = $"{user.Character.Str.Max} ({user.Character.Str.Current})",
-                        Dex = $"{user.Character.Dex.Max} ({user.Character.Dex.Current})",
-                        Wis = $"{user.Character.Wis.Max} ({user.Character.Wis.Current})",
-                        Int = $"{user.Character.Int.Max} ({user.Character.Int.Current})",
-                        Con = $"{user.Character.Con.Max} ({user.Character.Con.Current})",
+                        Str = $"{actor.Str.Max} ({actor.Str.Current})",
+                        Dex = $"{actor.Dex.Max} ({actor.Dex.Current})",
+                        Wis = $"{actor.Wis.Max} ({actor.Wis.Current})",
+                        Int = $"{actor.Int.Max} ({actor.Int.Current})",
+                        Con = $"{actor.Con.Max} ({actor.Con.Current})",
                     },
                     Armor = new Armor()
                     {
@@ -3124,29 +3124,35 @@ namespace Legendary.Engine.Processors
                     },
                     Saves = new Saves()
                     {
-                        Aff = $"{user.Character.SaveAfflictive}%",
-                        Mal = $"{user.Character.SaveMaledictive}%",
-                        Neg = $"{user.Character.SaveNegative}%",
-                        Spell = $"{user.Character.SaveSpell}%",
-                        Death = $"{user.Character.SaveDeath}%",
+                        Aff = $"{actor.SaveAfflictive}%",
+                        Mal = $"{actor.SaveMaledictive}%",
+                        Neg = $"{actor.SaveNegative}%",
+                        Spell = $"{actor.SaveSpell}%",
+                        Death = $"{actor.SaveDeath}%",
                     },
                     Other = new Other()
                     {
-                        Trains = user.Character.Trains.ToString(),
-                        Pracs = user.Character.Practices.ToString(),
-                        LastLogin = user.Character.Metrics.LastLogin.ToShortDateString(),
+                        Trains = actor.IsNPC ? "N/A" : actor.Trains.ToString(),
+                        Pracs = actor.IsNPC ? "N/A" : actor.Practices.ToString(),
+                        LastLogin = actor.IsNPC ? "N/A" : actor.Metrics.LastLogin.ToShortDateString(),
                         Gold = currencyTuple.Item1.ToString(),
                         Silver = currencyTuple.Item2.ToString(),
                         Copper = currencyTuple.Item3.ToString(),
-                        HitDice = user.Character.HitDice.ToString(),
-                        DamageDice = user.Character.DamageDice.ToString(),
+                        HitDice = actor.HitDice.ToString(),
+                        DamageDice = actor.DamageDice.ToString(),
                     },
                 },
             };
 
             var objModel = JsonConvert.SerializeObject(message);
 
-            await this.communicator.SendToPlayer(user.Connection, objModel, cancellationToken);
+            return objModel;
+        }
+
+        private async Task ShowPlayerScore(UserData user, CancellationToken cancellationToken = default)
+        {
+            var message = this.ShowStatistics(user.Character);
+            await this.communicator.SendToPlayer(user.Connection, message, cancellationToken);
         }
     }
 }

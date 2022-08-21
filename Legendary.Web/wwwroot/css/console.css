@@ -553,6 +553,7 @@ video {
 .score-container {
     border: solid 1px #888;
     border-radius: 5px;
+    margin-top: 10px;
 }
 
 .alt {

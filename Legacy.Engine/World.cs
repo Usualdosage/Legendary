@@ -80,6 +80,55 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public void RepopulateMobiles(Area area)
+        {
+            foreach (var room in area.Rooms)
+            {
+                // Group the resets by the mobile ID
+                var resetGroups = room.MobileResets.GroupBy(g => g);
+
+                foreach (var resetGroup in resetGroups)
+                {
+                    var group = resetGroup.First();
+
+                    var areaHasMobs = area.Rooms.Any(r => r.Mobiles.Any(m => m.CharacterId == group));
+
+                    // Only repop if all mobs of a particular kind are gone.
+                    if (!areaHasMobs)
+                    {
+                        // Populate mobs from resets
+                        foreach (var reset in room.MobileResets)
+                        {
+                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
+
+                            if (mobile != null)
+                            {
+                                var clone = mobile.DeepCopy();
+                                clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                                // Add items to mobs.
+                                foreach (var itemReset in clone.EquipmentResets)
+                                {
+                                    var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+
+                                    if (item != null)
+                                    {
+                                        var itemClone = item.DeepCopy();
+                                        clone.Equipment.Add(itemClone);
+                                    }
+                                }
+
+                                this.ApplyMobileSkills(clone);
+
+                                room.Mobiles.Add(clone);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
         public void Populate()
         {
             foreach (var area in this.Areas)
@@ -158,15 +207,8 @@ namespace Legendary.Engine
             {
                 await Parallel.ForEachAsync(this.Areas, async (area, cancellationToken) =>
                 {
-                    await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
-                    {
-                        await Task.Run(
-                            () =>
-                            {
-                                room.Mobiles.RemoveAll(m => m.Location.Value != room.RoomId);
-                                room.Items.RemoveAll(i => i.RotTimer == 0);
-                            }, cancellationToken);
-                    });
+                    await this.CleanupMobiles(area);
+                    await this.CleanupItems(area);
                 });
             }
             catch (Exception exc)
@@ -174,6 +216,32 @@ namespace Legendary.Engine
                 this.logger.Error(exc, null);
                 throw;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task CleanupMobiles(Area area)
+        {
+            await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
+            {
+                await Task.Run(
+                    () =>
+                    {
+                        room.Mobiles.RemoveAll(m => m.Location.Value != room.RoomId);
+                    }, cancellationToken);
+            });
+        }
+
+        /// <inheritdoc/>
+        public async Task CleanupItems(Area area)
+        {
+            await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
+            {
+                await Task.Run(
+                    () =>
+                    {
+                        room.Items.RemoveAll(i => i.RotTimer == 0);
+                    }, cancellationToken);
+            });
         }
 
         /// <inheritdoc/>

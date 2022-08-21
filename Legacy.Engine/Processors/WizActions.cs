@@ -20,6 +20,8 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Attributes;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Output;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Contains methods that are specific to wizard (immortal) actions.
@@ -34,9 +36,11 @@ namespace Legendary.Engine.Processors
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
             this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
             this.wizActions.Add("reload", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReload)));
-            this.wizActions.Add("restore", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRestore)));
+            this.wizActions.Add("repop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRepop)));
+            this.wizActions.Add("restore", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRestore)));
             this.wizActions.Add("slay", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSlay)));
             this.wizActions.Add("snoop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSnoop)));
+            this.wizActions.Add("stat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoStat)));
             this.wizActions.Add("switch", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSwitch)));
             this.wizActions.Add("title", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTitle)));
             this.wizActions.Add("transfer", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTransfer)));
@@ -150,6 +154,32 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [MinimumLevel(90)]
+        private async Task DoRepop(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.Level < 100)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+            }
+            else
+            {
+                var area = this.communicator.ResolveArea(actor.Character.Location);
+
+                if (area != null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "Repopulating this area...", cancellationToken);
+                    await this.world.CleanupMobiles(area);
+                    this.world.RepopulateMobiles(area);
+                    await this.communicator.SendToPlayer(actor.Connection, "You have repopulated this area.", cancellationToken);
+                    this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has repopulated {area.Name}.", this.communicator);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "This area cannot be repopulated.", cancellationToken);
+                }
+            }
+        }
+
         [MinimumLevel(100)]
         private async Task DoRestore(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -229,12 +259,49 @@ namespace Legendary.Engine.Processors
         [MinimumLevel(100)]
         private async Task DoSnoop(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
+            // TODO
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
+        }
+
+        [MinimumLevel(90)]
+        private async Task DoStat(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Stat who or what?", cancellationToken);
+            }
+            else
+            {
+                var target = args.Method;
+
+                var player = this.communicator.ResolveCharacter(target);
+
+                if (player != null)
+                {
+                    var message = this.ShowStatistics(player.Character);
+                    await this.communicator.SendToPlayer(actor.Connection, message, cancellationToken);
+                }
+                else
+                {
+                    var mobile = this.communicator.ResolveMobile(target);
+
+                    if (mobile != null)
+                    {
+                        var message = this.ShowStatistics(mobile);
+                        await this.communicator.SendToPlayer(actor.Connection, message, cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                }
+            }
         }
 
         [MinimumLevel(100)]
         private async Task DoSwitch(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
+            // TODO
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
         }
 
