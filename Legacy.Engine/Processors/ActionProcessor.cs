@@ -1824,7 +1824,7 @@ namespace Legendary.Engine.Processors
                                         var proficiency = actor.Character.GetSpellProficiency(action.Name.ToLower());
                                         if (proficiency != null)
                                         {
-                                            builder.Append($"<span class='spellinfo'>{proficiency.SpellName} {proficiency.Proficiency}% <progress class='spellprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
+                                            builder.Append($"<span class='spellinfo'>{proficiency.SpellName} {proficiency.Proficiency}% ({action.ManaCost} mana) <progress class='spellprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
                                             hasSkillInGroup = true;
                                         }
                                     }
@@ -2640,6 +2640,8 @@ namespace Legendary.Engine.Processors
                         // Item, no container, check the item.
                         if (item.ItemType == ItemType.Currency)
                         {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                            await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
                             actor.Character.Currency += item.Value;
                             itemsToRemove.Add(item);
                         }
