@@ -270,22 +270,21 @@ namespace Legendary.Engine
                     }
                     catch (Exception exc)
                     {
-                        this.logger.Error($"A socket was closed or in an error state. {exc}", this);
-
-                        // Disconnected, remove the socket & user from the dictionary, remove from channels.
-                        UserData? dummy = null;
-                        Users?.TryRemove(socketId, out dummy);
-                        this.RemoveFromChannels(socketId, dummy);
-
-                        string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
-                        this.logger.Info(logout, this);
-
-                        await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
-                        currentSocket.Dispose();
-
+                        this.logger.Error($"A socket was closed or moved into an error state. {exc}", this);
                         break;
                     }
                 }
+
+                // Disconnected, remove the socket & user from the dictionary, remove from channels.
+                UserData? dummy = null;
+                Users?.TryRemove(socketId, out dummy);
+                this.RemoveFromChannels(socketId, dummy);
+
+                string logout = $"{DateTime.UtcNow}: {user} ({socketId}) has disconnected.";
+                this.logger.Info(logout, this);
+
+                await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
+                currentSocket.Dispose();
             }
         }
 

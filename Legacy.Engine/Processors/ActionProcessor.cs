@@ -2577,7 +2577,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private async Task<Tuple<IItem?, IItem?>?> ItemFromRoom(UserData user, CommandArgs args, CancellationToken cancellationToken)
+        private Tuple<IItem?, IItem?>? ItemFromRoom(UserData user, CommandArgs args, CancellationToken cancellationToken)
         {
             IItem? item = null;
 
@@ -3054,6 +3054,8 @@ namespace Legendary.Engine.Processors
 
                 case CommResult.Ok:
                     {
+                        await this.communicator.SendToPlayer(user.Character.FirstName, target, $"[NOTIFICATION]|../img/notifications/message.png|{user.Character.FirstName} has sent you a message.", cancellationToken);
+
                         await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
 
                         // Create the link between the two who are engaged in conversation.

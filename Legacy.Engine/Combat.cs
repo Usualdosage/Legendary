@@ -13,6 +13,7 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using System.Threading.Channels;
     using System.Threading.Tasks;
     using Legendary.Core;
     using Legendary.Core.Contracts;
@@ -23,6 +24,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Processors;
+    using MongoDB.Driver;
 
     /// <summary>
     /// Handles actions in combat related to skill and spell usage.
@@ -185,6 +187,8 @@ namespace Legendary.Engine
             }
             else
             {
+                await this.communicator.SendToPlayer(target, $"[NOTIFICATION]|../img/notifications/attack.png|{actor.FirstName} has attacked you!", cancellationToken);
+
                 actor.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
                 actor.Fighting = target.CharacterId;
                 target.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
@@ -549,6 +553,9 @@ namespace Legendary.Engine
 
                 await this.communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
                 await this.communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
+
+                await this.communicator.SendToPlayer(actor, $"[NOTIFICATION]|../img/notifications/death.png|{killer.FirstName} has killed you.", cancellationToken);
+
                 await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName.FirstCharToUpper()} is DEAD!");
 
                 await this.communicator.PlaySound(actor, AudioChannel.Actor, Sounds.DEATH, cancellationToken);

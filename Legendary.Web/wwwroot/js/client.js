@@ -13,7 +13,13 @@ class LegendaryClient {
         let commands = [];
         const $console = $("#console");
         var updateUI = true;
- 
+
+        window.onfocus = function () {
+            if (document.title.indexOf("*") > -1) {
+                document.title = document.title.replace("*", "");
+            }
+        }
+
         socket.onopen = e => {
             console.log("Created a secure connection to Legendary.", e);
         };
@@ -67,6 +73,18 @@ class LegendaryClient {
                     }
                 }
                 return;
+            }
+            else if (message.startsWith("[NOTIFICATION]"))
+            {
+                if (!document.hasFocus()) {
+                    document.title = "*" + document.title;
+                }
+
+                var messageParts = message.split('|');
+                var img = messageParts[1];
+                var text = messageParts[2];
+
+                displayNotification(img, text);
             }
             else if (message.startsWith("{"))
             {

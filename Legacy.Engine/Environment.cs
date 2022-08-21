@@ -21,7 +21,6 @@ namespace Legendary.Engine
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
-    using Microsoft.CodeAnalysis;
 
     /// <summary>
     /// Represents the user environment.
@@ -33,7 +32,6 @@ namespace Legendary.Engine
         private readonly IWorld world;
         private readonly ILogger logger;
         private int dayWeatherIndex = 0;
-        private int nightWeatherIndex = 0;
 
         private List<Weather> dayWeatherForward = new List<Weather>()
         {
@@ -161,9 +159,9 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessRecovery(UserData user)
         {
-            var standardHPRecover = user.Character.Health.Max / 24;
-            var standardManaRecover = user.Character.Mana.Max / 24;
-            var standardMoveRecover = user.Character.Movement.Max / 24;
+            var standardHPRecover = user.Character.Health.Max / 48;
+            var standardManaRecover = user.Character.Mana.Max / 48;
+            var standardMoveRecover = user.Character.Movement.Max / 48;
 
             if (user.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
             {
@@ -290,33 +288,36 @@ namespace Legendary.Engine
             {
                 var playersInAreaGroup = Communicator.Users.GroupBy(a => a.Value.Character.Location.Key).ToList();
 
-                foreach (var grouping in playersInAreaGroup)
+                foreach (var areaGrouping in playersInAreaGroup)
                 {
-                    var first = grouping.First();
+                    // Get all the players in room groups.
+                    var playersInRoom = areaGrouping.GroupBy(g => g.Value.Character.Location.Value);
 
-                    var room = this.communicator.ResolveRoom(first.Value.Character.Location);
+                    foreach (var roomGrouping in playersInRoom)
+                    {
+                        // Get the location of the first player. All the rest in here are in the same area and room.
+                        var location = roomGrouping.First().Value.Character.Location;
 
-                    if (room != null && room.Flags.Contains(Core.Types.RoomFlags.Indoors))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        if (gameHour == 6)
+                        var room = this.communicator.ResolveRoom(location);
+
+                        if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
                         {
-                            await this.communicator.SendToRoom(first.Value.Character.Location, "The sun rises in the east.");
-                        }
-                        else if (gameHour == 19)
-                        {
-                            await this.communicator.SendToRoom(first.Value.Character.Location, "The sun sets in the west.");
-                        }
-                        else if (gameHour == 21)
-                        {
-                            await this.communicator.SendToRoom(first.Value.Character.Location, "The moon rises in east.");
-                        }
-                        else if (gameHour == 2)
-                        {
-                            await this.communicator.SendToRoom(first.Value.Character.Location, "The moon sets in the west.");
+                            if (gameHour == 6)
+                            {
+                                await this.communicator.SendToRoom(location, "The sun sets in the west.");
+                            }
+                            else if (gameHour == 19)
+                            {
+                                await this.communicator.SendToRoom(location, "The sun sets in the west.");
+                            }
+                            else if (gameHour == 21)
+                            {
+                                await this.communicator.SendToRoom(location, "The moon rises in east.");
+                            }
+                            else if (gameHour == 2)
+                            {
+                                await this.communicator.SendToRoom(location, "The moon sets in the west.");
+                            }
                         }
                     }
                 }
@@ -439,7 +440,7 @@ namespace Legendary.Engine
 
                             var room = this.communicator.ResolveRoom(location);
 
-                            if (room != null)
+                            if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
                             {
                                 var weatherMessage = this.GenerateRandomWeather(room);
 

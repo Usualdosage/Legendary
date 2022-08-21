@@ -34,6 +34,7 @@
     <Content Remove="wwwroot\img\rooms\" />
     <Content Remove="wwwroot\fonts\" />
     <Content Remove="stylecop.json" />
+    <Content Remove="wwwroot\img\notifications\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
@@ -43,6 +44,7 @@
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="Views\Creator\" />
     <Folder Include="Data\" />
+    <Folder Include="wwwroot\img\notifications\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />

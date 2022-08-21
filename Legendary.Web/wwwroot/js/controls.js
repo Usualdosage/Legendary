@@ -1,6 +1,19 @@
-﻿$(function () {    
-    document.getElementById("channel0").volume = .3;
+﻿$(function () {
+
+    var volume = document.getElementById("channel0");
+
+    if (volume) {
+        volume.volume = .3;
+    }
+
+    Notification.requestPermission().then((result) => {
+        
+    });
 });
+
+function displayNotification(img, text) {
+    const notification = new Notification('Legendary', { body: text, icon: img });
+}
 
 function changeBgAudio(e) {
     var newVolume = (e.value / 100);
