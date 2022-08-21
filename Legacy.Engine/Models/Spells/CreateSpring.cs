@@ -62,7 +62,8 @@ namespace Legendary.Engine.Models.Spells
 
             var item = new Item()
             {
-                ItemType = Core.Types.ItemType.Spring,
+                ItemType = ItemType.Spring,
+                ItemId = Constants.ITEM_SPRING,
                 Name = title,
                 ShortDescription = shortDesc,
                 LongDescription = shortDesc,

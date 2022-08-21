@@ -302,6 +302,8 @@ namespace Legendary.Engine
 
                         if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
                         {
+                            // TODO: FIX ME
+                            /*
                             if (gameHour == 6)
                             {
                                 await this.communicator.SendToRoom(location, "The sun sets in the west.");
@@ -318,6 +320,7 @@ namespace Legendary.Engine
                             {
                                 await this.communicator.SendToRoom(location, "The moon sets in the west.");
                             }
+                            */
                         }
                     }
                 }

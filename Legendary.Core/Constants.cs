@@ -52,6 +52,11 @@ namespace Legendary.Core
         public const long ITEM_FOOD = 1000000;
 
         /// <summary>
+        /// Spring items that come from create spring.
+        /// </summary>
+        public const long ITEM_SPRING = 1000001;
+
+        /// <summary>
         /// Amount of health restored each tick.
         /// </summary>
         public const int STANDARD_HP_RECOVERY = 50;

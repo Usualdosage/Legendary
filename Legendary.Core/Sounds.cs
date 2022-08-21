@@ -52,6 +52,16 @@ namespace Legendary.Core
         public const string PUNCH = "https://legendary.file.core.windows.net/audio/soundfx/punch.mp3" + SAS_TOKEN;
 
         /// <summary>
+        /// Blunt MP3.
+        /// </summary>
+        public const string BLUNT = "https://legendary.file.core.windows.net/audio/soundfx/blunt.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Pierce MP3.
+        /// </summary>
+        public const string PIERCE = "https://legendary.file.core.windows.net/audio/soundfx/pierce.mp3" + SAS_TOKEN;
+
+        /// <summary>
         /// Armor MP3.
         /// </summary>
         public const string DEATH = "https://legendary.file.core.windows.net/audio/soundfx/death.mp3" + SAS_TOKEN;

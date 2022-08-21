@@ -332,6 +332,7 @@ namespace Legendary.Engine
                 // Add the experience to the player.
                 var experience = this.CalculateExperience(actor, target);
                 await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                actor.Experience += experience;
 
                 // See if the player advanced a level.
                 var advance = this.communicator.CheckLevelAdvance(actor, cancellationToken);
@@ -437,7 +438,7 @@ namespace Legendary.Engine
         /// <returns>Int.</returns>
         public int CalculateExperience(Character actor, Character target)
         {
-            int baseExperience = target.Level * 10;
+            int baseExperience = (target.Level * 8) + this.random.Next(1, 199);
 
             if (actor.Level <= target.Level)
             {
@@ -797,6 +798,10 @@ namespace Legendary.Engine
                     return Sounds.PUNCH;
                 case "slash":
                     return Sounds.SLASH;
+                case "pound":
+                    return Sounds.BLUNT;
+                case "pierce":
+                    return Sounds.PIERCE;
             }
         }
 
