@@ -156,11 +156,16 @@ namespace Legendary.Engine
             // TODO
         }
 
+        /// <summary>
+        /// Recovery is based on the player's vitals, assuming it would take 8 hours of uninterrupted sleep to fully recover.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task.</returns>
         private async Task ProcessRecovery(UserData user)
         {
-            int standardHPRecover = Constants.STANDARD_HP_RECOVERY;
-            int standardManaRecover = Constants.STANDARD_MANA_RECOVERY;
-            int standardMoveRecover = Constants.STANDARD_MOVE_RECOVERY;
+            var standardHPRecover = user.Character.Health.Max / 24;
+            var standardManaRecover = user.Character.Mana.Max / 24;
+            var standardMoveRecover = user.Character.Movement.Max / 24;
 
             if (user.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
             {
@@ -184,7 +189,7 @@ namespace Legendary.Engine
             var hitRestore = Math.Min(user.Character.Health.Max - user.Character.Health.Current, standardHPRecover);
             user.Character.Health.Current += hitRestore;
 
-            // TODO Cumulative effects, and add damage as these increase.
+            // TODO Cumulative effects, and add damage as these increase. Don't add over max.
             if (user.Character.Level < Constants.WIZLEVEL)
             {
                 user.Character.Hunger.Current += 1;

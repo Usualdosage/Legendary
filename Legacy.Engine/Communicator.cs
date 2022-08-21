@@ -741,7 +741,10 @@ namespace Legendary.Engine
                 {
                     if (user.Value.Character.CharacterId != actor.CharacterId)
                     {
-                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                        if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        {
+                            await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                        }
                     }
                 }
             }
@@ -761,7 +764,10 @@ namespace Legendary.Engine
 
                 foreach (var user in usersInRoom)
                 {
-                    await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                    if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                    {
+                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                    }
                 }
             }
 
@@ -781,7 +787,10 @@ namespace Legendary.Engine
 
                 foreach (var user in usersToSendTo)
                 {
-                    await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                    if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                    {
+                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                    }
                 }
             }
 
@@ -800,7 +809,10 @@ namespace Legendary.Engine
                 {
                     if (user.Key != socketId && user.Value.Character.Location.Key == location.Key)
                     {
-                        await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                        if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        {
+                            await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                        }
                     }
                 }
             }
@@ -1178,7 +1190,10 @@ namespace Legendary.Engine
                 return;
             }
 
-            await this.SendToPlayer(user, $"[AUDIO]|{(int)channel}|{sound}", cancellationToken);
+            if (!user.CharacterFlags.Contains(CharacterFlags.Sleeping))
+            {
+                await this.SendToPlayer(user, $"[AUDIO]|{(int)channel}|{sound}", cancellationToken);
+            }
         }
 
         /// <inheritdoc/>
@@ -1662,7 +1677,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                this.logger.Warn($"Attempted to send information to disconnected sockets. Continuing. Error: {exc.Message}", this);
+                this.logger.Warn($"Error processing Tick: {exc}", this);
             }
         }
 

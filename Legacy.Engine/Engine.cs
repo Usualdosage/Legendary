@@ -108,7 +108,7 @@ namespace Legendary.Engine
                         // One "hour" game time, or 30 seconds.
                         if (this.gameTicks == Constants.TICK)
                         {
-                            this.logger.Info("TICK.", null);
+                            this.logger.Debug("TICK.", null);
 
                             this.gameHour++;
                             if (this.gameHour == 24)

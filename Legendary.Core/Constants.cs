@@ -37,9 +37,9 @@ namespace Legendary.Core
         public const long GRIFFONSHIRE_NEUTRAL_TEMPLE = 7017;
 
         /// <summary>
-        /// Time of a tick in milliseconds.
+        /// Time of a tick in seconds * 2. (15 = 30 seconds).
         /// </summary>
-        public const int TICK = 30000;
+        public const int TICK = 15;
 
         /// <summary>
         /// Time of a viotick in milliseconds.
@@ -49,17 +49,17 @@ namespace Legendary.Core
         /// <summary>
         /// Amount of health restored each tick.
         /// </summary>
-        public const int STANDARD_HP_RECOVERY = 20;
+        public const int STANDARD_HP_RECOVERY = 50;
 
         /// <summary>
         /// Amount of mana restored each tick.
         /// </summary>
-        public const int STANDARD_MANA_RECOVERY = 20;
+        public const int STANDARD_MANA_RECOVERY = 50;
 
         /// <summary>
         /// Amount of movement restored each tick.
         /// </summary>
-        public const int STANDARD_MOVE_RECOVERY = 20;
+        public const int STANDARD_MOVE_RECOVERY = 50;
 
         /// <summary>
         /// The multiplier to standard recovery while resting.

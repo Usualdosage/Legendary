@@ -237,15 +237,7 @@ namespace Legendary.Engine
             {
                 SkillProficiency? proficiency;
 
-                // If it's an NPC, give it at least a fighting chance with H2H if it's not wielding anything.
-                if (actor.IsNPC)
-                {
-                    proficiency = this.GetDefaultMobileProficiency(actor, target);
-                }
-                else
-                {
-                    proficiency = actor.GetSkillProficiency(combatAction.Name);
-                }
+                proficiency = actor.GetSkillProficiency(combatAction.Name);
 
                 if (proficiency != null && proficiency.Proficiency > 0)
                 {
@@ -350,7 +342,7 @@ namespace Legendary.Engine
                         // If the target is an NPC, do damage from it to the player (unless it's dead). Otherwise, for PvP, the loop will just pick up the next fighter.
                         if (target.CharacterFlags.Contains(CharacterFlags.Fighting) && target.IsNPC)
                         {
-                            await this.DoDamage(target, character, this.GetCombatAction(character), cancellationToken);
+                            await this.DoDamage(target, character, this.GetCombatAction(target), cancellationToken);
                         }
 
                         // Update the player info.
@@ -393,8 +385,8 @@ namespace Legendary.Engine
             }
             else
             {
-                hitDice = actor.HitDice;
-                damDice = actor.DamageDice;
+                hitDice = Math.Max(1, actor.HitDice);
+                damDice = Math.Max(4, actor.DamageDice);
             }
 
             // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
@@ -790,18 +782,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Gets the skill proficiency of basic hand to hand based on the mob and the target.
-        /// </summary>
-        /// <param name="mobile">The mobile.</param>
-        /// <param name="target">The target.</param>
-        /// <returns>Skill proficiency.</returns>
-        private SkillProficiency GetDefaultMobileProficiency(Character mobile, Character target)
-        {
-            var skillProf = new SkillProficiency("hand to hand", 50);
-            return skillProf;
-        }
-
-        /// <summary>
         /// Gets the hit sound effect based on the damage noun.
         /// </summary>
         /// <param name="damageNoun">The damage noun.</param>
@@ -816,6 +796,19 @@ namespace Legendary.Engine
                 case "slash":
                     return Sounds.SLASH;
             }
+        }
+
+        /// <summary>
+        /// Gets the skill proficiency of basic hand to hand based on the mob and the target.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>Skill proficiency.</returns>
+        private SkillProficiency GetDefaultMobileProficiency(Character mobile, Character target)
+        {
+            // TODO: Adjust this.
+            var skillProf = new SkillProficiency("hand to hand", 50);
+            return skillProf;
         }
 
         /// <summary>
