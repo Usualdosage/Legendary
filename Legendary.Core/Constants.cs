@@ -47,6 +47,11 @@ namespace Legendary.Core
         public const int VIOTICK = 2000;
 
         /// <summary>
+        /// Food items that come from create food.
+        /// </summary>
+        public const long ITEM_FOOD = 1000000;
+
+        /// <summary>
         /// Amount of health restored each tick.
         /// </summary>
         public const int STANDARD_HP_RECOVERY = 50;

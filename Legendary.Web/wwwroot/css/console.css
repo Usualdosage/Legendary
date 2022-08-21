@@ -599,7 +599,7 @@ video {
 
 .who {
     margin-left: 10px;
-    display: inline-block;
+    display: block;
 }
 
 .wear-location {

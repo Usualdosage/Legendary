@@ -96,7 +96,7 @@ namespace Legendary.Engine
                 };
 
             // Set the environment to handle global events.
-            this.environment = new Environment(this, random, this.world);
+            this.environment = new Environment(this, random, this.world, this.logger);
 
             // Start the engine.
             this.engine = new Engine(this.logger, this.world, this.environment);

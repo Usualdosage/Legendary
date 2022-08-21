@@ -17,6 +17,7 @@ namespace Legendary.Engine
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
@@ -30,6 +31,7 @@ namespace Legendary.Engine
         private readonly ICommunicator communicator;
         private readonly IRandom random;
         private readonly IWorld world;
+        private readonly ILogger logger;
         private int dayWeatherIndex = 0;
         private int nightWeatherIndex = 0;
 
@@ -74,11 +76,13 @@ namespace Legendary.Engine
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="world">The world.</param>
-        public Environment(ICommunicator communicator, IRandom random, IWorld world)
+        /// <param name="logger">The logger.</param>
+        public Environment(ICommunicator communicator, IRandom random, IWorld world, ILogger logger)
         {
             this.communicator = communicator;
             this.random = random;
             this.world = world;
+            this.logger = logger;
 
             this.dayWeatherIndex = this.random.Next(0, this.dayWeatherForward.Count - 1);
         }
@@ -175,13 +179,13 @@ namespace Legendary.Engine
             }
 
             var moveRestore = Math.Min(user.Character.Movement.Max - user.Character.Movement.Current, standardMoveRecover);
-            user.Character.Movement.Current += moveRestore;
+            user.Character.Movement.Current += (int)moveRestore;
 
             var manaRestore = Math.Min(user.Character.Mana.Max - user.Character.Mana.Current, standardManaRecover);
-            user.Character.Mana.Current += manaRestore;
+            user.Character.Mana.Current += (int)manaRestore;
 
             var hitRestore = Math.Min(user.Character.Health.Max - user.Character.Health.Current, standardHPRecover);
-            user.Character.Health.Current += hitRestore;
+            user.Character.Health.Current += (int)hitRestore;
 
             // TODO Cumulative effects, and add damage as these increase. Don't add over max.
             if (user.Character.Level < Constants.WIZLEVEL)
@@ -335,9 +339,20 @@ namespace Legendary.Engine
                 {
                     case 0:
                         this.dayWeatherIndex += 1;
+
+                        if (this.dayWeatherIndex >= this.dayWeatherForward.Count - 1)
+                        {
+                            this.dayWeatherIndex = this.dayWeatherForward.Count - 1;
+                        }
+
                         break;
                     case 1:
                         this.dayWeatherIndex -= 1;
+                        if (this.dayWeatherIndex < 0)
+                        {
+                            this.dayWeatherIndex = 0;
+                        }
+
                         break;
                     case 2:
                     case 3:
@@ -375,13 +390,20 @@ namespace Legendary.Engine
 
                 Weather weatherMessage = this.dayWeatherForward[0];
 
-                if (chance == 0)
+                try
                 {
-                    weatherMessage = this.dayWeatherForward[Math.Min(this.dayWeatherIndex, this.dayWeatherForward.Count - 1)];
+                    if (chance == 0)
+                    {
+                        weatherMessage = this.dayWeatherForward[Math.Min(this.dayWeatherIndex, this.dayWeatherForward.Count - 1)];
+                    }
+                    else if (chance == 1)
+                    {
+                        weatherMessage = this.dayWeatherBackward[Math.Min(this.dayWeatherIndex, this.dayWeatherBackward.Count - 1)];
+                    }
                 }
-                else if (chance == 1)
+                catch
                 {
-                    weatherMessage = this.dayWeatherBackward[Math.Min(this.dayWeatherIndex, this.dayWeatherBackward.Count - 1)];
+                    this.logger.Debug($"Didn't process weather change. Index out of range. Weather index was {this.dayWeatherIndex}.", this.communicator);
                 }
 
                 weatherMessage.Message = weatherMessage.Message.Replace("{precipitate}", precipitate);

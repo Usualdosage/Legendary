@@ -97,7 +97,8 @@ namespace Legendary.Engine.Models.Spells
 
             var item = new Item()
             {
-                ItemType = Core.Types.ItemType.Food,
+                ItemType = ItemType.Food,
+                WearLocation = new List<WearLocation>() { WearLocation.InventoryOnly },
                 Name = title,
                 ShortDescription = shortDesc,
                 LongDescription = shortDesc,
@@ -105,6 +106,7 @@ namespace Legendary.Engine.Models.Spells
                 Weight = this.Random.Next(1, 4),
                 Value = this.Random.Next(4, 24),
                 Food = new MaxCurrent(foodValue, foodValue),
+                ItemId = Constants.ITEM_FOOD,
             };
 
             return item;

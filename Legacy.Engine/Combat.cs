@@ -433,73 +433,38 @@ namespace Legendary.Engine
         /// <returns>Int.</returns>
         public int CalculateExperience(Character actor, Character target)
         {
-            // The greater the level difference, the more experience, and vice versa.
+            int baseExperience = target.Level * 10;
 
-            // Start with the base experience per kill.
-            int baseExperience = this.random.Next(0, 400);
-
-            // e.g. 10, 50 = -40 * 10 = -400
-            int levelOffset = (target.Level - actor.Level) * 10;
-
-            if (levelOffset == 0)
+            if (actor.Level <= target.Level)
             {
-                levelOffset = 1;
+                double levelDiff = target.Level - actor.Level;
+
+                double experienceResult = (double)baseExperience * Math.Max(1, levelDiff);
+
+                var modified = experienceResult * this.GetModifier(actor, target);
+
+                return (int)modified;
             }
-
-            // Calculate the modifier
-            double expModifier = levelOffset / 100; // e.g. -4
-
-            // Bonus if char is evil vs good, vice versa.
-            double bonus = 1;
-
-            switch (actor.Alignment)
+            else
             {
-                case Alignment.Good:
-                    {
-                        switch (target.Alignment)
-                        {
-                            case Alignment.Good:
-                                {
-                                    bonus = .5;
-                                    break;
-                                }
+                double levelDiff = actor.Level - target.Level;
 
-                            case Alignment.Evil:
-                                {
-                                    bonus = 2;
-                                    break;
-                                }
-                        }
+                // If more than ten levels higher than target, no experience.
+                if (levelDiff > 10)
+                {
+                    return 0;
+                }
+                else
+                {
+                    double levelModifier = 1d / (double)(actor.Level - target.Level);
 
-                        break;
-                    }
+                    double experienceResult = (double)baseExperience * levelModifier;
 
-                case Alignment.Evil:
-                    {
-                        switch (target.Alignment)
-                        {
-                            case Alignment.Good:
-                                {
-                                    bonus = 2;
-                                    break;
-                                }
+                    var modified = experienceResult * this.GetModifier(actor, target);
 
-                            case Alignment.Evil:
-                                {
-                                    bonus = .75;
-                                    break;
-                                }
-                        }
-
-                        break;
-                    }
+                    return (int)modified;
+                }
             }
-
-            double expResult = Math.Max(0, (baseExperience * expModifier) * bonus);
-
-            actor.Experience += (int)expResult;
-
-            return (int)expResult;
         }
 
         /// <summary>
@@ -826,6 +791,87 @@ namespace Legendary.Engine
                 case "slash":
                     return Sounds.SLASH;
             }
+        }
+
+        /// <summary>
+        /// Gets the modifier applied based on the difference of alignments of the target and actor.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>decimal.</returns>
+        private double GetModifier(Character actor, Character target)
+        {
+            switch (actor.Alignment)
+            {
+                case Alignment.Good:
+                    {
+                        switch (target.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    return .75d;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    return 1d;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    return 2d;
+                                }
+                        }
+                    }
+
+                    break;
+                case Alignment.Neutral:
+                    {
+                        switch (target.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    return 1.25d;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    return 1d;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    return 1.25d;
+                                }
+                        }
+                    }
+
+                    break;
+                case Alignment.Evil:
+                    {
+                        switch (target.Alignment)
+                        {
+                            case Alignment.Good:
+                                {
+                                    return 2d;
+                                }
+
+                            case Alignment.Neutral:
+                                {
+                                    return 1d;
+                                }
+
+                            case Alignment.Evil:
+                                {
+                                    return .75d;
+                                }
+                        }
+                    }
+
+                    break;
+            }
+
+            return 1d;
         }
 
         /// <summary>
