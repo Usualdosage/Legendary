@@ -9,7 +9,10 @@
 
 namespace Legendary.Engine.Models
 {
+    using System.Threading;
+    using System.Threading.Tasks;
     using Legendary.Core.Contracts;
+    using Legendary.Core.Models;
     using Legendary.Core.Types;
 
     /// <summary>
@@ -30,5 +33,11 @@ namespace Legendary.Engine.Models
 
         /// <inheritdoc/>
         public override ActionType ActionType => ActionType.Skill;
+
+        /// <inheritdoc/>
+        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        {
+            await this.CheckImprove(actor, cancellationToken);
+        }
     }
 }

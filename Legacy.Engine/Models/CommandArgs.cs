@@ -120,9 +120,15 @@ namespace Legendary.Engine.Models
             }
         }
 
+        /// <summary>
+        /// TODO: Not sure this is the best approach for this. Probably stands to be refactored.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <returns>True if communication action.</returns>
         private static bool IsCommunication(string message)
         {
             if (message.StartsWith("say ") ||
+                message.StartsWith("sa ") ||
                 message.StartsWith("tell ") ||
                 message.StartsWith("yell ") ||
                 message.StartsWith("pray ") ||

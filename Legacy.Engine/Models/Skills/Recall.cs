@@ -56,7 +56,6 @@ namespace Legendary.Engine.Models.Skills
         public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
             await this.Communicator.ShowRoomToPlayer(actor, cancellationToken);
-
             await this.CheckImprove(actor, cancellationToken);
         }
     }

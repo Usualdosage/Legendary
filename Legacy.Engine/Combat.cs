@@ -250,7 +250,6 @@ namespace Legendary.Engine
                         await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
                         await combatAction.PreAction(actor, target, cancellationToken);
                         await combatAction.Act(actor, target, cancellationToken);
-                        await combatAction.PostAction(actor, target, cancellationToken);
                     }
                     else
                     {
@@ -258,11 +257,10 @@ namespace Legendary.Engine
                         await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                         await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-
-                        // Run post action to check if the skill improved.
-                        await combatAction.PostAction(actor, target, cancellationToken);
-                        return;
                     }
+
+                    // Run post action to check if the skill improved.
+                    await combatAction.PostAction(actor, target, cancellationToken);
                 }
                 else
                 {
