@@ -142,6 +142,8 @@ namespace Legendary.Engine
                                 }
                             }
 
+                            this.ApplyMobileSkills(clone);
+
                             room.Mobiles.Add(clone);
                         }
                     }
@@ -387,6 +389,41 @@ namespace Legendary.Engine
                 replacement,
                 options,
                 cancellationToken);
+        }
+
+        private void ApplyMobileSkills(Mobile mobile)
+        {
+            // Apply skills to mobs based on their equipment.
+            var wielded = mobile.Equipment.FirstOrDefault(c => c.WearLocation.Contains(WearLocation.Wielded));
+
+            var proficiency = Math.Max(99, 50 + mobile.Level);
+
+            if (wielded != null)
+            {
+                switch (wielded.DamageType)
+                {
+                    case DamageType.Blunt:
+                        {
+                            mobile.Skills.Add(new SkillProficiency("blunt weapons", proficiency));
+                            break;
+                        }
+
+                    case DamageType.Slash:
+                        {
+                            mobile.Skills.Add(new SkillProficiency("edged weapons", proficiency));
+                            break;
+                        }
+
+                    case DamageType.Pierce:
+                        {
+                            mobile.Skills.Add(new SkillProficiency("piercing weapons", proficiency));
+                            break;
+                        }
+                }
+            }
+
+            // All mobs have basic hand to hand
+            mobile.Skills.Add(new SkillProficiency("hand to hand", proficiency));
         }
 
         private async Task ProcessMobileAffects(Room room)

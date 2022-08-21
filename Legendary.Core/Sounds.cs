@@ -170,5 +170,10 @@ namespace Legendary.Core
         /// Buying sound.
         /// </summary>
         public const string COINS_BUY = "https://legendary.file.core.windows.net/audio/soundfx/coins_buy.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Harm MP3.
+        /// </summary>
+        public const string HARM = "https://legendary.file.core.windows.net/audio/soundfx/harm.mp3" + SAS_TOKEN;
     }
 }

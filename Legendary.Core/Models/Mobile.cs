@@ -52,5 +52,14 @@ namespace Legendary.Core.Models
         /// </summary>
         public SchoolType? SchoolType { get; set; }
 
+        /// <summary>
+        /// Gets or sets the hit dice.
+        /// </summary>
+        public override int HitDice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the damage dice.
+        /// </summary>
+        public override int DamageDice { get; set; }
     }
 }

@@ -35,6 +35,8 @@ namespace Legendary.Core.Models
         private int saveMaledictive = 8;
         private int saveNegative = 8;
         private int saveAfflictive = 8;
+        private int hitDice = 0;
+        private int damDice = 0;
 
         /// <summary>
         /// Gets or sets the Id.
@@ -265,9 +267,9 @@ namespace Legendary.Core.Models
         public Alignment Alignment { get; set; } = Alignment.Neutral;
 
         /// <summary>
-        /// Gets the hit dice.
+        /// Gets or sets the hit dice.
         /// </summary>
-        public int HitDice
+        public virtual int HitDice
         {
             get
             {
@@ -284,12 +286,17 @@ namespace Legendary.Core.Models
 
                 return (int)hitDice;
             }
+
+            set
+            {
+                this.hitDice = value;
+            }
         }
 
         /// <summary>
-        /// Gets the damage dice.
+        /// Gets or sets the damage dice.
         /// </summary>
-        public int DamageDice
+        public virtual int DamageDice
         {
             get
             {
@@ -305,6 +312,11 @@ namespace Legendary.Core.Models
                 damDice += this.AffectedBy.Sum(s => s.DamageDice ?? 0);
 
                 return (int)damDice;
+            }
+
+            set
+            {
+                this.damDice = value;
             }
         }
 

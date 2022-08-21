@@ -36,33 +36,55 @@ namespace Legendary.Engine.Models.Spells
             this.HitDice = 1;
             this.DamageDice = 8;
             this.AffectDuration = 0;
+            this.DamageType = Core.Types.DamageType.Negative;
             this.DamageNoun = "spell";
-        }
-
-        /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            if (target == null)
-            {
-                await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
-            }
-            else
-            {
-                await base.PreAction(actor, target, cancellationToken);
-            }
         }
 
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            var result = this.Random.Next(1, 8) + (actor.Level / 10);
-
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
+                if (actor.Fighting.HasValue)
+                {
+                    var player = this.Communicator.ResolveCharacter(actor.Fighting.Value);
+
+                    if (player == null)
+                    {
+                        var mobile = this.Communicator.ResolveMobile(actor.Fighting.Value);
+
+                        if (mobile != null)
+                        {
+                            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
+                            await this.Communicator.PlaySoundToRoom(actor, target, Sounds.HARM, cancellationToken);
+
+                            await this.DamageToTarget(actor, mobile, cancellationToken);
+                        }
+                        else
+                        {
+                            await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
+                        await this.Communicator.PlaySound(player.Character, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
+                        await this.Communicator.PlaySoundToRoom(actor, target, Sounds.HARM, cancellationToken);
+
+                        await this.DamageToTarget(actor, player.Character, cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.Communicator.SendToPlayer(actor, "Cast the spell on whom?", cancellationToken);
+                }
             }
             else
             {
+                await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
+                await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
+                await this.Communicator.PlaySoundToRoom(actor, target, Sounds.HARM, cancellationToken);
+
                 await this.DamageToTarget(actor, target, cancellationToken);
             }
         }
