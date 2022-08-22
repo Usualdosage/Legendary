@@ -122,7 +122,7 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Processes all environment changes that are relevant to the connected user.
+        /// Processes all environment changes that are relevant to the game environment.
         /// </summary>
         /// <param name="gameTicks">The game ticks.</param>
         /// <param name="gameHour">The game hour.</param>
@@ -185,11 +185,28 @@ namespace Legendary.Engine
             var hitRestore = Math.Min(user.Character.Health.Max - user.Character.Health.Current, standardHPRecover);
             user.Character.Health.Current += (int)hitRestore;
 
-            // TODO Cumulative effects, and add damage as these increase. Don't add over max.
+            // TODO Cumulative effects, and add damage as these increase
             if (user.Character.Level < Constants.WIZLEVEL)
             {
-                user.Character.Hunger.Current += 1;
-                user.Character.Thirst.Current += 1;
+                if (user.Character.Hunger.Current < user.Character.Hunger.Max * 4)
+                {
+                    user.Character.Hunger.Current += 1;
+                }
+                else
+                {
+                    // TODO Don't increment, and just apply damage
+                    user.Character.Hunger.Current = user.Character.Hunger.Max * 4;
+                }
+
+                if (user.Character.Thirst.Current < user.Character.Thirst.Max * 3)
+                {
+                    user.Character.Thirst.Current += 1;
+                }
+                else
+                {
+                    // TODO Don't increment, and just apply damage
+                    user.Character.Thirst.Current = user.Character.Thirst.Max * 3;
+                }
 
                 if (user.Character.Hunger.Current >= user.Character.Hunger.Max)
                 {
@@ -286,41 +303,27 @@ namespace Legendary.Engine
         {
             if (Communicator.Users != null)
             {
-                var playersInAreaGroup = Communicator.Users.GroupBy(a => a.Value.Character.Location.Key).ToList();
-
-                foreach (var areaGrouping in playersInAreaGroup)
+                foreach (var user in Communicator.Users)
                 {
-                    // Get all the players in room groups.
-                    var playersInRoom = areaGrouping.GroupBy(g => g.Value.Character.Location.Value);
+                    var room = this.communicator.ResolveRoom(user.Value.Character.Location);
 
-                    foreach (var roomGrouping in playersInRoom)
+                    if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
                     {
-                        // Get the location of the first player. All the rest in here are in the same area and room.
-                        var location = roomGrouping.First().Value.Character.Location;
-
-                        var room = this.communicator.ResolveRoom(location);
-
-                        if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
+                        if (gameHour == 6)
                         {
-                            // TODO: FIX ME
-                            /*
-                            if (gameHour == 6)
-                            {
-                                await this.communicator.SendToRoom(location, "The sun sets in the west.");
-                            }
-                            else if (gameHour == 19)
-                            {
-                                await this.communicator.SendToRoom(location, "The sun sets in the west.");
-                            }
-                            else if (gameHour == 21)
-                            {
-                                await this.communicator.SendToRoom(location, "The moon rises in east.");
-                            }
-                            else if (gameHour == 2)
-                            {
-                                await this.communicator.SendToRoom(location, "The moon sets in the west.");
-                            }
-                            */
+                            await this.communicator.SendToPlayer(user.Value.Character, "The sun sets in the west.");
+                        }
+                        else if (gameHour == 19)
+                        {
+                            await this.communicator.SendToPlayer(user.Value.Character, "The sun sets in the west.");
+                        }
+                        else if (gameHour == 21)
+                        {
+                            await this.communicator.SendToPlayer(user.Value.Character, "The moon rises in east.");
+                        }
+                        else if (gameHour == 2)
+                        {
+                            await this.communicator.SendToPlayer(user.Value.Character, "The moon sets in the west.");
                         }
                     }
                 }

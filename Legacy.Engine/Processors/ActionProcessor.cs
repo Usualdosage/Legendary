@@ -14,6 +14,7 @@ namespace Legendary.Engine.Processors
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
     using System.Text;
     using System.Threading;
@@ -597,7 +598,10 @@ namespace Legendary.Engine.Processors
                 await this.communicator.SendToPlayer(actor.Connection, $"You drink {liquid} from {spring.Name}.", cancellationToken);
                 await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} drinks {liquid} from {spring.Name}.", cancellationToken);
 
-                actor.Character.Thirst.Current = Math.Min(8, actor.Character.Thirst.Current);
+                actor.Character.Thirst.Current = 0;
+
+                // Bugfix.
+                actor.Character.Thirst.Max = 72;
 
                 if (actor.Character.Thirst.Current <= 2)
                 {
@@ -626,7 +630,11 @@ namespace Legendary.Engine.Processors
                                 var liquid = ActionHelper.GetLiquidDescription(item.LiquidType);
                                 await this.communicator.SendToPlayer(actor.Connection, $"You drink {liquid} from {item.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} drinks {liquid} from {item.Name}.", cancellationToken);
-                                actor.Character.Thirst.Current = Math.Min(8, actor.Character.Thirst.Current);
+
+                                actor.Character.Thirst.Current -= 8;
+
+                                // Bugfix.
+                                actor.Character.Thirst.Max = 72;
 
                                 if (actor.Character.Thirst.Current <= 2)
                                 {
@@ -1558,7 +1566,7 @@ namespace Legendary.Engine.Processors
                 // Check if it's locked.
                 if (container.IsClosed && container.IsLocked)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"It's locked.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"{container.Name.FirstCharToUpper()} locked.", cancellationToken);
                 }
                 else if (container.IsClosed)
                 {
@@ -1568,7 +1576,8 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
+                    container.IsClosed = false;
+                    await this.communicator.SendToPlayer(actor.Connection, $"{container.Name.FirstCharToUpper()} is already open.", cancellationToken);
                 }
             }
             else
@@ -1583,7 +1592,7 @@ namespace Legendary.Engine.Processors
                         // Check if it's locked.
                         if (item.IsClosed && item.IsLocked)
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"It's locked.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"{item.Name.FirstCharToUpper()} is locked.", cancellationToken);
                         }
                         else if (item.IsClosed)
                         {
@@ -1593,7 +1602,8 @@ namespace Legendary.Engine.Processors
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"It's already open.", cancellationToken);
+                            item.IsClosed = false;
+                            await this.communicator.SendToPlayer(actor.Connection, $"{item.Name.FirstCharToUpper()} is already open.", cancellationToken);
                         }
                     }
                     else
@@ -2938,7 +2948,11 @@ namespace Legendary.Engine.Processors
                         item.Food.Current -= 1;
 
                         // If a food value is 3, that equates to 3 meals. So when a player eats, each food value means 8 hours of food.
-                        user.Character.Hunger = new MaxCurrent(24, Math.Max(user.Character.Hunger.Current - 8, 8));
+                        user.Character.Hunger.Current -= 8;
+
+                        // Bugfix.
+                        user.Character.Hunger.Max = 96;
+
                         await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} eats {item.Name}.", cancellationToken);
 
                         if (item.Food.Current <= 0)

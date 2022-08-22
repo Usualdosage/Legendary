@@ -9,11 +9,9 @@
 
 namespace Legendary.Engine.Models.SkillTrees
 {
-    using System;
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
-    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
@@ -45,19 +43,45 @@ namespace Legendary.Engine.Models.SkillTrees
             {
                 { new HandToHand(this.Communicator, this.Random, this.Combat) },
                 { new Recall(this.Communicator, this.Random, this.Combat) },
+                { new Dodge(this.Communicator, this.Random, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group2 { get => new List<IAction>(); }
+        public override List<IAction> Group2
+        {
+            get => new List<IAction>()
+            {
+                { new Parry(this.Communicator, this.Random, this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
-        public override List<IAction> Group3 { get => new List<IAction>(); }
+        public override List<IAction> Group3
+        {
+            get => new List<IAction>()
+            {
+                { new SecondAttack(this.Communicator, this.Random, this.Combat) },
+                { new EvasiveManeuvers(this.Communicator, this.Random, this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
-        public override List<IAction> Group4 { get => new List<IAction>(); }
+        public override List<IAction> Group4
+        {
+            get => new List<IAction>()
+            {
+                { new ThirdAttack(this.Communicator, this.Random, this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
-        public override List<IAction> Group5 { get => new List<IAction>(); }
+        public override List<IAction> Group5
+        {
+            get => new List<IAction>()
+            {
+                { new FourthAttack(this.Communicator, this.Random, this.Combat) },
+            };
+        }
     }
 }

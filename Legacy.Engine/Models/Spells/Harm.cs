@@ -29,7 +29,7 @@ namespace Legendary.Engine.Models.Spells
         public Harm(ICommunicator communicator, IRandom random, Combat combat)
             : base(communicator, random, combat)
         {
-            this.Name = "Cause Serious";
+            this.Name = "Harm";
             this.ManaCost = 30;
             this.CanInvoke = true;
             this.IsAffect = false;

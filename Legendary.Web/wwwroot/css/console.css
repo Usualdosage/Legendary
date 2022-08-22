@@ -600,6 +600,7 @@ video {
 .who {
     margin-left: 10px;
     display: block;
+    width: 100%;
 }
 
 .wear-location {

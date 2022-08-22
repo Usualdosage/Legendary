@@ -106,7 +106,7 @@ namespace Legendary.Engine.Models.Spells
                 if (effect.Effector != null)
                 {
                     var damage = this.Combat.CalculateDamage(effect.Effector, actor, effect.Action);
-                    var damageVerb = Combat.CalculateDamageVerb(damage, false);
+                    var damageVerb = Combat.CalculateDamageVerb(damage);
 
                     await this.Communicator.SendToPlayer(actor, $"{effect.Effector.FirstName.FirstCharToUpper()}'s {effect.Action.DamageNoun} {damageVerb} you.", cancellationToken);
                     await this.Communicator.SendToPlayer(effect.Effector, $"Your {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);

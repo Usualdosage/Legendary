@@ -116,10 +116,7 @@ namespace Legendary.Engine.Models
                         return;
                     }
 
-                    // The lower the skill percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
-                    int modifier = (int)(1 / (Math.Max(skillProficiency.Proficiency, 5) / 5) * 100);
-
-                    skillProficiency.Progress += this.Random.Next(8, maxImprove) + modifier;
+                    skillProficiency.Progress += this.Random.Next(0, maxImprove);
 
                     if (skillProficiency.Progress >= 100)
                     {
@@ -153,10 +150,7 @@ namespace Legendary.Engine.Models
                         return;
                     }
 
-                    // The lower the spell percentage, the higher the modifier. So at 25%, the bonus is 25. At 50% it's 10, etc.
-                    int modifier = (int)(1 / (Math.Max(spellProficiency.Proficiency, 5) / 5) * 100);
-
-                    spellProficiency.Progress += this.Random.Next(0, maxImprove) + modifier;
+                    spellProficiency.Progress += this.Random.Next(0, maxImprove);
 
                     if (spellProficiency.Progress >= 100)
                     {
@@ -193,9 +187,9 @@ namespace Legendary.Engine.Models
         }
 
         /// <inheritdoc/>
-        public virtual Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public virtual async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
         {
-            return Task.CompletedTask;
+            await this.Communicator.SendGameUpdate(actor, null, null, cancellationToken);
         }
 
         /// <inheritdoc/>

@@ -93,7 +93,7 @@ namespace Legendary.Engine.Models.Spells
             string title = $"a {adj} {food}";
             string shortDesc = $"A {adj} {food} is here.";
 
-            var foodValue = this.Random.Next(4, 24);
+            var foodValue = this.Random.Next(1, 3);
 
             var item = new Item()
             {

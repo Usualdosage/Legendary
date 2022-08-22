@@ -15,13 +15,13 @@ namespace Legendary.Engine
     using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
-    using Legendary.Engine.Helpers;
     using MongoDB.Driver;
 
     /// <summary>
@@ -80,49 +80,36 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public void RepopulateMobiles(Area area)
+        public async Task RepopulateMobiles(Area area)
         {
+            await this.CleanupMobiles(area);
+
             foreach (var room in area.Rooms)
             {
-                // Group the resets by the mobile ID
-                var resetGroups = room.MobileResets.GroupBy(g => g);
-
-                foreach (var resetGroup in resetGroups)
+                foreach (var reset in room.MobileResets)
                 {
-                    var group = resetGroup.First();
+                    var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
 
-                    var areaHasMobs = area.Rooms.Any(r => r.Mobiles.Any(m => m.CharacterId == group));
-
-                    // Only repop if all mobs of a particular kind are gone.
-                    if (!areaHasMobs)
+                    if (mobile != null)
                     {
-                        // Populate mobs from resets
-                        foreach (var reset in room.MobileResets)
+                        var clone = mobile.DeepCopy();
+                        clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                        // Add items to mobs.
+                        foreach (var itemReset in clone.EquipmentResets)
                         {
-                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
+                            var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
 
-                            if (mobile != null)
+                            if (item != null)
                             {
-                                var clone = mobile.DeepCopy();
-                                clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
-
-                                // Add items to mobs.
-                                foreach (var itemReset in clone.EquipmentResets)
-                                {
-                                    var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
-
-                                    if (item != null)
-                                    {
-                                        var itemClone = item.DeepCopy();
-                                        clone.Equipment.Add(itemClone);
-                                    }
-                                }
-
-                                this.ApplyMobileSkills(clone);
-
-                                room.Mobiles.Add(clone);
+                                var itemClone = item.DeepCopy();
+                                clone.Equipment.Add(itemClone);
                             }
                         }
+
+                        this.ApplyMobileSkills(clone);
+
+                        room.Mobiles.Add(clone);
                     }
                 }
             }
@@ -226,7 +213,7 @@ namespace Legendary.Engine
                 await Task.Run(
                     () =>
                     {
-                        room.Mobiles.RemoveAll(m => m.Location.Value != room.RoomId);
+                        room.Mobiles.RemoveAll(m => m.Location.Value != room.RoomId && !m.CharacterFlags.Contains(CharacterFlags.Fighting));
                     }, cancellationToken);
             });
         }
@@ -315,7 +302,27 @@ namespace Legendary.Engine
 
                     foreach (var item in items)
                     {
-                        await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        if (item.ItemId == Constants.ITEM_SPRING)
+                        {
+                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} dries up.", cancellationToken);
+                        }
+                        else if (item.ItemId == Constants.ITEM_FOOD)
+                        {
+                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} rots away.", cancellationToken);
+                        }
+                        else if (item.ItemId == Constants.ITEM_CORPSE)
+                        {
+                            if (!item.IsNPCCorpse)
+                            {
+                                // TODO: Move PC inventory to a pit
+                            }
+
+                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} decomposes into dust.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        }
                     }
 
                     // Apply affects to mobiles.
@@ -473,18 +480,21 @@ namespace Legendary.Engine
                     case DamageType.Blunt:
                         {
                             mobile.Skills.Add(new SkillProficiency("blunt weapons", proficiency));
+                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
                             break;
                         }
 
                     case DamageType.Slash:
                         {
                             mobile.Skills.Add(new SkillProficiency("edged weapons", proficiency));
+                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
                             break;
                         }
 
                     case DamageType.Pierce:
                         {
                             mobile.Skills.Add(new SkillProficiency("piercing weapons", proficiency));
+                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
                             break;
                         }
                 }
@@ -492,6 +502,21 @@ namespace Legendary.Engine
 
             // All mobs have basic hand to hand
             mobile.Skills.Add(new SkillProficiency("hand to hand", proficiency));
+
+            // All mobs have basic dodge
+            mobile.Skills.Add(new SkillProficiency("dodge", proficiency));
+
+            // Mobs with a dex of 16 or above get evasive
+            if (mobile.Dex.Current >= 16)
+            {
+                mobile.Skills.Add(new SkillProficiency("evasive maneuvers", proficiency));
+            }
+
+            // Mobs >= level 20 have second attack
+            if (mobile.Level >= 20)
+            {
+                mobile.Skills.Add(new SkillProficiency("second attack", proficiency));
+            }
         }
 
         private async Task ProcessMobileAffects(Room room)

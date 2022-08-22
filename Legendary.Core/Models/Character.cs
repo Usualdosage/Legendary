@@ -166,12 +166,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's hunger counter.
         /// </summary>
-        public MaxCurrent Hunger { get; set; } = new MaxCurrent(72, 0);
+        public MaxCurrent Hunger { get; set; } = new MaxCurrent(96, 0);
 
         /// <summary>
         /// Gets or sets the player's thirst counter.
         /// </summary>
-        public MaxCurrent Thirst { get; set; } = new MaxCurrent(48, 0);
+        public MaxCurrent Thirst { get; set; } = new MaxCurrent(72, 0);
 
         /// <summary>
         /// Gets or sets the character's home room (recall point).

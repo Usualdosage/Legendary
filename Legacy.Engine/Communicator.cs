@@ -415,9 +415,11 @@ namespace Legendary.Engine
                             await this.SendToPlayer(user.Connection, $"You attack {mobile.FirstName}!", cancellationToken);
                             await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} attacks {mobile.FirstName}!", cancellationToken);
 
-                            if ((int)mobile.Race <= 13)
+                            var room = this.ResolveRoom(user.Character.Location);
+
+                            if ((int)mobile.Race <= 13 && room != null && room.Terrain == Terrain.City)
                             {
-                                await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                                await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
                             }
 
                             // Start the fight.
@@ -448,7 +450,13 @@ namespace Legendary.Engine
 
                         await this.SendToPlayer(user.Connection, $"You attack {targetChar.FirstName}!", cancellationToken);
                         await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} attacks {targetChar.FirstName}!", cancellationToken);
-                        await this.SendToArea(user.Character.Location, string.Empty, $"{targetChar.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help! I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+
+                        var room = this.ResolveRoom(user.Character.Location);
+
+                        if (room != null && room.Terrain == Terrain.City)
+                        {
+                            await this.SendToArea(user.Character.Location, string.Empty, $"{targetChar.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                        }
 
                         // Start the fight.
                         await this.combat.StartFighting(user.Character, target.Value.Value.Character, cancellationToken);
@@ -679,7 +687,7 @@ namespace Legendary.Engine
 
             var outputMessage = new OutputMessage()
             {
-                Message = new Legendary.Engine.Models.Output.Message()
+                Message = new Models.Output.Message()
                 {
                     FirstName = actor.FirstName,
                     Level = actor.Level,

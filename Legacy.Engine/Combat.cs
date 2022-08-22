@@ -13,7 +13,6 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using System.Threading.Channels;
     using System.Threading.Tasks;
     using Legendary.Core;
     using Legendary.Core.Contracts;
@@ -135,18 +134,12 @@ namespace Legendary.Engine
         /// Calculates the damage verb messages based on the raw damage.
         /// </summary>
         /// <param name="damage">The damage as a total.</param>
-        /// <param name="blocked">Whether or not the attack was blocked.</param>
         /// <returns>String.</returns>
-        public static string CalculateDamageVerb(int damage, bool blocked)
+        public static string CalculateDamageVerb(int damage)
         {
-            if (blocked)
-            {
-                return "<span class='damage damage_0'>was blocked by</span>";
-            }
-
             var message = damage switch
             {
-                <= 0 => "<span class='damage damage_0'>has no effect on</span>",
+                <= 0 => "<span class='damage damage_0'>has no real effect on</span>",
                 > 0 and <= 10 => "<span class='damage damage_1'>scratches</span>", // 1-10
                 > 11 and <= 20 => "<span class='damage damage_2'>injures</span>", // 11-20
                 > 21 and <= 30 => "<span class='damage damage_3'>wounds</span>", // 21-30
@@ -242,8 +235,8 @@ namespace Legendary.Engine
         /// <param name="target">The target.</param>
         /// <param name="action">The action.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
-        public async Task DoDamage(Character actor, Character target, IAction? action, CancellationToken cancellationToken = default)
+        /// <returns>True if the target was killed.</returns>
+        public async Task<bool> DoDamage(Character actor, Character target, IAction? action, CancellationToken cancellationToken = default)
         {
             // Get the action the character is using to fight.
             IAction combatAction = action ?? this.GetCombatAction(actor);
@@ -262,8 +255,14 @@ namespace Legendary.Engine
                 {
                     if (await combatAction.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
+                        // This should be a hit, so check ability to dodge/parry/evade.
+                        blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+
                         // This was a hit, check armor block.
-                        blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                        if (!blocked)
+                        {
+                            blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                        }
 
                         await this.communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
                         await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
@@ -287,55 +286,136 @@ namespace Legendary.Engine
                     await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                     await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
                     await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                    return;
                 }
             }
             else
             {
-                // This is a spell that automatically hits, check armor block.
-                blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                // This is a spell that automatically hits, but certain spells can be evaded.
+                blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+
+                // Check if the armor takes the hit.
+                if (!blocked)
+                {
+                    blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                }
             }
 
-            // Calculate damage FROM character TO target.
-            var damage = this.CalculateDamage(actor, target, combatAction);
-
-            // Calculate the damage verb.
-            var damFromVerb = CalculateDamageVerb(damage, blocked);
-
-            await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
-            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
-            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
-
-            bool isDead = ApplyDamage(target, damage);
-
-            if (isDead)
+            if (!blocked)
             {
-                // Target is dead.
-                StopFighting(actor, target);
+                // Calculate damage FROM character TO target.
+                var damage = this.CalculateDamage(actor, target, combatAction);
 
-                if (actor.IsNPC && target.IsNPC)
-                {
-                    // Mob killed mob.
-                    await this.KillMobile(target, actor);
-                }
-                else if (target.IsNPC)
-                {
-                    // Player killed mobile.
-                    await this.KillMobile(target, actor);
-                }
-                else
-                {
-                    // Player killed player.
-                    await this.KillPlayer(target, actor, cancellationToken);
-                }
+                // Calculate the damage verb.
+                var damFromVerb = CalculateDamageVerb(damage);
 
-                // Add the experience to the player.
-                var experience = this.CalculateExperience(actor, target);
-                await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
-                actor.Experience += experience;
+                await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
+                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
+                await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
 
-                // See if the player advanced a level.
-                var advance = this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                bool isDead = ApplyDamage(target, damage);
+
+                if (isDead)
+                {
+                    // Target is dead.
+                    StopFighting(actor, target);
+
+                    if (actor.IsNPC && target.IsNPC)
+                    {
+                        // Mob killed mob.
+                        await this.KillMobile(target, actor);
+                    }
+                    else if (target.IsNPC)
+                    {
+                        // Player killed mobile.
+                        await this.KillMobile(target, actor);
+                    }
+                    else
+                    {
+                        // Player killed player.
+                        await this.KillPlayer(target, actor, cancellationToken);
+                    }
+
+                    // Add the experience to the player.
+                    var experience = this.CalculateExperience(actor, target);
+                    await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                    actor.Experience += experience;
+
+                    // See if the player advanced a level.
+                    var advance = this.communicator.CheckLevelAdvance(actor, cancellationToken);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Executes all available martial attacks on a target.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="target">The victim.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task ExecuteAttacks(Character character, Character target, CancellationToken cancellationToken = default)
+        {
+            bool dead = false;
+
+            // First attack
+            dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+
+            // Second attack
+            if (!dead)
+            {
+                SkillProficiency? secondAttack = character.GetSkillProficiency("second attack");
+
+                if (secondAttack != null && secondAttack.Proficiency > 1)
+                {
+                    var result = this.random.Next(1, 99);
+                    if (result < secondAttack.Proficiency)
+                    {
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                    }
+
+                    SecondAttack skill = new SecondAttack(this.communicator, this.random, this);
+                    await skill.CheckImprove(character, cancellationToken);
+                }
+            }
+
+            // Third attack
+            if (!dead)
+            {
+                SkillProficiency? thirdAttack = character.GetSkillProficiency("third attack");
+
+                if (thirdAttack != null && thirdAttack.Proficiency > 1)
+                {
+                    var result = this.random.Next(1, 99);
+                    if (result < thirdAttack.Proficiency)
+                    {
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                    }
+
+                    ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this);
+                    await skill.CheckImprove(character, cancellationToken);
+                }
+            }
+
+            // Fourth attack
+            if (!dead)
+            {
+                SkillProficiency? fourthAttack = character.GetSkillProficiency("fourth attack");
+
+                if (fourthAttack != null && fourthAttack.Proficiency > 1)
+                {
+                    var result = this.random.Next(1, 99);
+                    if (result < fourthAttack.Proficiency)
+                    {
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                    }
+
+                    FourthAttack skill = new FourthAttack(this.communicator, this.random, this);
+                    await skill.CheckImprove(character, cancellationToken);
+                }
             }
         }
 
@@ -355,12 +435,12 @@ namespace Legendary.Engine
 
                     if (character != null && character.CharacterFlags.Contains(CharacterFlags.Fighting) && target != null)
                     {
-                        await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                        await this.ExecuteAttacks(character, target, cancellationToken);
 
                         // If the target is an NPC, do damage from it to the player (unless it's dead). Otherwise, for PvP, the loop will just pick up the next fighter.
                         if (target.CharacterFlags.Contains(CharacterFlags.Fighting) && target.IsNPC)
                         {
-                            await this.DoDamage(target, character, this.GetCombatAction(target), cancellationToken);
+                            await this.ExecuteAttacks(target, character, cancellationToken);
                         }
 
                         // Update the player info.
@@ -410,7 +490,7 @@ namespace Legendary.Engine
             // Reduce the damage inversely by level. So if the player is 10, target is 10, damage modifier is normal.
             // If the player is 20, target is 10, damage modifier is doubled.
             // If the player is 10, target is 20, damage modifier is halved.
-            double adjust = (actor.Level / target.Level) * action.DamageModifier;
+            double adjust = ((double)actor.Level / (double)target.Level) * (double)action.DamageModifier;
 
             var damage = 0;
             for (var x = 0; x < hitDice; x++)
@@ -438,13 +518,13 @@ namespace Legendary.Engine
         /// <returns>Int.</returns>
         public int CalculateExperience(Character actor, Character target)
         {
-            int baseExperience = (target.Level * 8) + this.random.Next(1, 199);
+            int baseExperience = (target.Level * 6) + this.random.Next(1, 199);
 
             if (actor.Level <= target.Level)
             {
                 double levelDiff = target.Level - actor.Level;
 
-                double experienceResult = (double)baseExperience * Math.Max(1, levelDiff);
+                double experienceResult = (double)baseExperience * Math.Max(1, levelDiff - 2);
 
                 var modified = experienceResult * this.GetModifier(actor, target);
 
@@ -512,12 +592,15 @@ namespace Legendary.Engine
 
             if (room != null)
             {
-                var mobile = (Mobile)target;
+                var mobile = room.Mobiles.FirstOrDefault(m => m.CharacterId == target.CharacterId);
 
-                // Let's just do this once.
-                if (room.Mobiles.Contains(mobile))
+                if (mobile != null)
                 {
-                    room.Mobiles.Remove(mobile);
+                    if (room.Mobiles.Contains(mobile))
+                    {
+                        room.Mobiles.Remove(mobile);
+                    }
+
                     var corpse = this.GenerateCorpse(killer.Location, target);
 
                     if (killer.CharacterFlags.Contains(CharacterFlags.Autoloot))
@@ -639,6 +722,108 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Checks all possible defensive skills to see if a player was able to get out of the way of a hit.
+        /// </summary>
+        /// <param name="actor">The attacker.</param>
+        /// <param name="target">The victim.</param>
+        /// <param name="action">The action being performed.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>True if blocked.</returns>
+        public async Task<bool> CheckDefensiveSkills(Character actor, Character target, IAction action, CancellationToken cancellationToken)
+        {
+            SkillProficiency? dodge = target.GetSkillProficiency("dodge");
+            SkillProficiency? parry = target.GetSkillProficiency("parry");
+            SkillProficiency? evasive = target.GetSkillProficiency("evasive");
+
+            switch (action.DamageType)
+            {
+                default:
+                    break;
+                case DamageType.Slash:
+                case DamageType.Pierce:
+                case DamageType.Blunt:
+                    if (dodge != null && dodge.Proficiency > 1)
+                    {
+                        var dodged = false;
+                        var dodgeResult = this.random.Next(1, 99);
+                        if (dodgeResult < dodge.Proficiency)
+                        {
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} dodges your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You dodge {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} dodges {actor.FirstName}'s attack!", cancellationToken);
+                            dodged = true;
+                        }
+
+                        Dodge skill = new Dodge(this.communicator, this.random, this);
+                        await skill.CheckImprove(target, cancellationToken);
+
+                        return dodged;
+                    }
+
+                    // Must be wielding a weapon in order to parry.
+                    if (parry != null && parry.Proficiency > 1 && target.Equipment.Any(e => e.WearLocation.Contains(WearLocation.Wielded)))
+                    {
+                        var parried = false;
+                        var parryResult = this.random.Next(1, 99);
+                        if (parryResult < parry.Proficiency)
+                        {
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} parries your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You parry {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} parries {actor.FirstName}'s attack!", cancellationToken);
+                            parried = true;
+                        }
+
+                        Parry skill = new Parry(this.communicator, this.random, this);
+                        await skill.CheckImprove(target, cancellationToken);
+
+                        return parried;
+                    }
+
+                    if (evasive != null && evasive.Proficiency > 1)
+                    {
+                        bool evaded = false;
+                        var evadeResult = this.random.Next(1, 99);
+                        if (evadeResult < evasive.Proficiency)
+                        {
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} cleverly evades your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You cleverly evade {actor.FirstName}'s attack!", cancellationToken);
+                            evaded = true;
+                        }
+
+                        EvasiveManeuvers skill = new EvasiveManeuvers(this.communicator, this.random, this);
+                        await skill.CheckImprove(target, cancellationToken);
+
+                        return evaded;
+                    }
+
+                    break;
+                case DamageType.Lightning:
+                case DamageType.Energy:
+                    if (evasive != null && evasive.Proficiency > 1)
+                    {
+                        bool evaded = false;
+                        var evadeResult = this.random.Next(1, 99);
+                        if (evadeResult < evasive.Proficiency)
+                        {
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} deftly evades your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You deftly evade {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} deftly evades {actor.FirstName}'s attack!", cancellationToken);
+                            evaded = true;
+                        }
+
+                        EvasiveManeuvers skill = new EvasiveManeuvers(this.communicator, this.random, this);
+                        await skill.CheckImprove(target, cancellationToken);
+
+                        return evaded;
+                    }
+
+                    break;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Checks to see if a player's armor blocks a particular attack. If it blocks, apply damage to the armor.
         /// </summary>
         /// <param name="actor">The actor.</param>
@@ -710,16 +895,16 @@ namespace Legendary.Engine
 
                         if (randomGear != null)
                         {
-                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} blocked your attack with their armor!", cancellationToken);
-                            await this.communicator.SendToPlayer(target, $"You absorbed {actor.FirstName}'s attack with {randomGear.Name}!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} blocks your attack with their armor!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You absorb {actor.FirstName}'s attack with {randomGear.Name}!", cancellationToken);
 
                             randomGear.Durability.Current -= 1;
 
                             if (randomGear.Durability.Current <= 0)
                             {
                                 // It's destroyed.
-                                await this.communicator.SendToPlayer(actor, $"You destroyed {randomGear.Name}!", cancellationToken);
-                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroyed {randomGear.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor, $"You destroy {randomGear.Name}!", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Name}.", cancellationToken);
 
                                 target.Equipment.Remove(randomGear);
                             }
@@ -923,6 +1108,7 @@ namespace Legendary.Engine
                     Contains = new List<IItem>(),
                     IsPlayerCorpse = !victim.IsNPC,
                     IsNPCCorpse = victim.IsNPC,
+                    ItemId = Constants.ITEM_CORPSE,
                 };
 
                 // If the victim was a mob, randomize the currency a little bit. If not, just use the full value.

@@ -49,12 +49,17 @@ namespace Legendary.Core
         /// <summary>
         /// Food items that come from create food.
         /// </summary>
-        public const long ITEM_FOOD = 1000000;
+        public const long ITEM_FOOD = 9000000;
 
         /// <summary>
         /// Spring items that come from create spring.
         /// </summary>
-        public const long ITEM_SPRING = 1000001;
+        public const long ITEM_SPRING = 9000001;
+
+        /// <summary>
+        /// Mobile corpse.
+        /// </summary>
+        public const long ITEM_CORPSE = 9000002;
 
         /// <summary>
         /// Amount of health restored each tick.

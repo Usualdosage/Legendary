@@ -44,9 +44,19 @@ namespace Legendary.Engine.Generators
             { 10, "Warrior" },
             { 11, "Enraged" },
             { 12, "Powerful" },
-            { 13, "Violent" },
+            { 13, "Violent,Vicious" },
             { 14, "Myrmidon" },
-            { 15, "Great Warrior" },
+            { 15, "Warrior" },
+            { 16, "Infamous" },
+            { 17, "Outlaw" },
+            { 18, "Barbarian" },
+            { 19, "Fighter" },
+            { 20, "Great Warrior" },
+            { 21, "Brutal,Seeker" },
+            { 22, "Tenacious" },
+            { 23, "Victorious" },
+            { 24, "Basher" },
+            { 25, "Warlord" },
         };
 
         private readonly Dictionary<int, string> mageTitles = new Dictionary<int, string>()
@@ -60,7 +70,17 @@ namespace Legendary.Engine.Generators
             { 12, "Conjurer" },
             { 13, "Summoner" },
             { 14, "Invoker" },
-            { 15, "Great Magus" },
+            { 15, "Great Mage,Great Magus" },
+            { 16, "Magician" },
+            { 17, "Sorceror" },
+            { 18, "Illuminated" },
+            { 19, "Brilliant" },
+            { 20, "Wizard" },
+            { 21, "Student of the Arcane" },
+            { 22, "Acolyte of the Arcane" },
+            { 23, "Adept of the Arcane" },
+            { 24, "Wizard of the Arcane" },
+            { 25, "Master of the Arcane" },
         };
 
         private readonly Dictionary<int, string> clericTitles = new Dictionary<int, string>()
@@ -75,6 +95,16 @@ namespace Legendary.Engine.Generators
             { 13, "Curer" },
             { 14, "Studious" },
             { 15, "Great Cleric" },
+            { 16, "Diligent" },
+            { 17, "Peacemaker" },
+            { 18, "Wise" },
+            { 19, "Sage" },
+            { 20, "Priest" },
+            { 21, "Healer" },
+            { 22, "Shaman" },
+            { 23, "Student of Faith" },
+            { 24, "Witch Doctor" },
+            { 25, "Pillar of Faith" },
         };
 
         /// <summary>
@@ -191,6 +221,7 @@ namespace Legendary.Engine.Generators
         {
             switch (basis)
             {
+                default:
                 case ClassBasis.Warrior:
                     {
                         var titles = this.warriorTitles[character.Level].Split(',');
@@ -209,6 +240,8 @@ namespace Legendary.Engine.Generators
                         return titles[this.random.Next(0, titles.Length - 1)];
                     }
 
+                    // TODO
+                    /*
                 case ClassBasis.Rogue:
                     break;
                 case ClassBasis.ClericRogue:
@@ -223,9 +256,8 @@ namespace Legendary.Engine.Generators
                     break;
                 case ClassBasis.WarriorRogue:
                     break;
+                    */
             }
-
-            return string.Empty;
         }
 
         private void CalculateSkillTrees(Character character, Dictionary<ClassBasis, int> classBalance)
