@@ -145,5 +145,17 @@ namespace Legendary.Core.Types
         /// </summary>
         [WearDescription("Worn as a shield")]
         Shield = 21,
+
+        /// <summary>
+        /// Shield.
+        /// </summary>
+        [WearDescription("Worn about the body")]
+        Body = 22,
+
+        /// <summary>
+        /// Shield.
+        /// </summary>
+        [WearDescription("Used as a light")]
+        Light = 23,
     }
 }

@@ -93,5 +93,30 @@ namespace Legendary.Core.Types
         /// Other race, not specified.
         /// </summary>
         Other = 15,
+
+        /// <summary>
+        /// Goblin.
+        /// </summary>
+        Goblin = 16,
+
+        /// <summary>
+        /// Troll.
+        /// </summary>
+        Troll = 17,
+
+        /// <summary>
+        /// Orc.
+        /// </summary>
+        Orc = 18,
+
+        /// <summary>
+        /// Creature.
+        /// </summary>
+        Creature = 19,
+
+        /// <summary>
+        /// Gremlin.
+        /// </summary>
+        Gremlin = 20,
     }
 }

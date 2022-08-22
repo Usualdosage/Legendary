@@ -23,5 +23,10 @@ namespace Legendary.Core.Types
         /// Unaffected by weather.
         /// </summary>
         Indoors = 1,
+
+        /// <summary>
+        /// Mobs cannot enter or exist in this room.
+        /// </summary>
+        NoMobs = 2,
     }
 }

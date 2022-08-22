@@ -53,5 +53,10 @@ namespace Legendary.Core.Types
         /// Can teach new skill/spell trees.
         /// </summary>
         Teacher = 7,
+
+        /// <summary>
+        /// Will assist other mobs if attacked.
+        /// </summary>
+        Assist = 8,
     }
 }

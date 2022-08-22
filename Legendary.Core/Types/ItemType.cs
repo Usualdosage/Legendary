@@ -68,5 +68,25 @@ namespace Legendary.Core.Types
         /// Map.
         /// </summary>
         Map = 11,
+
+        /// <summary>
+        /// Potion.
+        /// </summary>
+        Potion = 12,
+
+        /// <summary>
+        /// Pill.
+        /// </summary>
+        Pill = 13,
+
+        /// <summary>
+        /// Scroll.
+        /// </summary>
+        Scroll = 14,
+
+        /// <summary>
+        /// Herb.
+        /// </summary>
+        Herb = 15,
     }
 }

@@ -223,8 +223,13 @@ namespace Legendary.Core.Contracts
         /// Repopulates an area with mobiles.
         /// </summary>
         /// <param name="area">The area.</param>
-        /// <returns>Task.</returns>
-        Task RepopulateMobiles(Area area);
+        void RepopulateMobiles(Area area);
+
+        /// <summary>
+        /// Repopulates an area with items.
+        /// </summary>
+        /// <param name="area">The area.</param>
+        void RepopulateItems(Area area);
 
         /// <summary>
         /// Removes all mobs from the area.

@@ -167,9 +167,9 @@ namespace Legendary.Engine.Processors
 
                 if (area != null)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, "Repopulating this area...", cancellationToken);
-                    await this.world.CleanupMobiles(area);
+                    await this.communicator.SendToPlayer(actor.Connection, "Repopulating this area with mobiles and items...", cancellationToken);
                     this.world.RepopulateMobiles(area);
+                    this.world.RepopulateItems(area);
                     await this.communicator.SendToPlayer(actor.Connection, "You have repopulated this area.", cancellationToken);
                     this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has repopulated {area.Name}.", this.communicator);
                 }

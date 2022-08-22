@@ -112,13 +112,14 @@ namespace Legendary.Engine
 
                             this.gameHour++;
 
-                            // Repopulate an area with mobiles 4x per day.
-                            if (this.gameHour % 6 == 0)
+                            // Repopulate an area with mobiles 3x per day.
+                            if (this.gameHour % 8 == 0)
                             {
                                 this.logger.Debug("Repopulating areas...", null);
                                 foreach (var area in this.world.Areas)
                                 {
                                     this.world.RepopulateMobiles(area);
+                                    this.world.RepopulateItems(area);
                                 }
                             }
 

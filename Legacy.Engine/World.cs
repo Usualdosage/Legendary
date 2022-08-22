@@ -80,36 +80,161 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task RepopulateMobiles(Area area)
+        public void RepopulateItems(Area area)
         {
-            await this.CleanupMobiles(area);
+            var resets = area.Rooms.SelectMany(r => r.ItemResets);
 
-            foreach (var room in area.Rooms)
+            var resetGroups = resets.GroupBy(g => g);
+
+            foreach (var resetGroup in resetGroups)
             {
-                foreach (var reset in room.MobileResets)
+                var itemId = resetGroup.Key;
+                var maxItems = resetGroup.Count();
+                var currentItems = area.Rooms.Sum(r => r.Items.Where(i => i.ItemId == itemId).Count());
+
+                if (maxItems == currentItems)
                 {
-                    var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
+                    // All good, we are balanced.
+                    continue;
+                }
+                else if (currentItems < maxItems)
+                {
+                    // We are short some mobs, so repop.
+                    var diff = maxItems - currentItems;
 
-                    if (mobile != null)
+                    this.logger.Info($"Repop: Area {area.AreaId} is under by {diff} items of ID {itemId}. Adding more.", this.communicator);
+
+                    // Get all the possible rooms the item could repop in.
+                    var repopRooms = area.Rooms.Where(r => r.ItemResets.Contains(itemId)).ToList();
+
+                    for (int x = 0; x < diff; x++)
                     {
-                        var clone = mobile.DeepCopy();
-                        clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                        // Get one of the rooms it normally would populate in at random.
+                        var room = repopRooms[this.random.Next(0, repopRooms.Count - 1)];
 
-                        // Add items to mobs.
-                        foreach (var itemReset in clone.EquipmentResets)
+                        var item = this.Items.FirstOrDefault(i => i.ItemId == itemId);
+
+                        // Get the item.
+                        if (item != null)
                         {
-                            var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+                            // Create a copy.
+                            var clone = item.DeepCopy();
 
-                            if (item != null)
-                            {
-                                var itemClone = item.DeepCopy();
-                                clone.Equipment.Add(itemClone);
-                            }
+                            clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
+
+                            // Add the item to the room.
+                            room.Items.Add(clone);
                         }
+                    }
+                }
+                else
+                {
+                    // We have too many mobs in this area.
+                    var diff = currentItems - maxItems;
 
-                        this.ApplyMobileSkills(clone);
+                    this.logger.Info($"Repop: Area {area.AreaId} is over by {diff} items of ID {itemId}. Removing excess.", this.communicator);
 
-                        room.Mobiles.Add(clone);
+                    var removalRooms = area.Rooms.Where(r => r.Items.Any(i => i.ItemId == itemId)).ToList();
+
+                    for (int x = 0; x < diff; x++)
+                    {
+                        var room = removalRooms[this.random.Next(0, removalRooms.Count - 1)];
+
+                        // Get the first item in the room that matches our key.
+                        var item = room.Items.FirstOrDefault(r => r.ItemId == itemId);
+
+                        if (item != null)
+                        {
+                            room.Items.Remove(item);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        public void RepopulateMobiles(Area area)
+        {
+            var resets = area.Rooms.SelectMany(r => r.MobileResets);
+
+            var resetGroups = resets.GroupBy(g => g);
+
+            foreach (var resetGroup in resetGroups)
+            {
+                var mobCharacterId = resetGroup.Key;
+                var maxMobs = resetGroup.Count();
+                var currentMobs = area.Rooms.Sum(r => r.Mobiles.Where(m => m.CharacterId == mobCharacterId).Count());
+
+                if (maxMobs == currentMobs)
+                {
+                    // All good, we are balanced.
+                    continue;
+                }
+                else if (currentMobs < maxMobs)
+                {
+                    // We are short some mobs, so repop.
+                    var diff = maxMobs - currentMobs;
+
+                    this.logger.Info($"Repop: Area {area.AreaId} is under by {diff} mobiles of ID {mobCharacterId}. Adding more.", this.communicator);
+
+                    // Get all the possible rooms they could repop in.
+                    var repopRooms = area.Rooms.Where(r => r.MobileResets.Contains(mobCharacterId)).ToList();
+
+                    for (int x = 0; x < diff; x++)
+                    {
+                        // Get one of the rooms they normally would populate in at random.
+                        var room = repopRooms[this.random.Next(0, repopRooms.Count - 1)];
+
+                        var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == mobCharacterId);
+
+                        // Get the mobile.
+                        if (mobile != null)
+                        {
+                            // Create a copy.
+                            var clone = mobile.DeepCopy();
+
+                            clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
+
+                            // Equip the mobile.
+                            foreach (var itemReset in clone.EquipmentResets)
+                            {
+                                var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+
+                                if (item != null)
+                                {
+                                    var itemClone = item.DeepCopy();
+                                    clone.Equipment.Add(itemClone);
+                                }
+                            }
+
+                            // Apply skills.
+                            this.ApplyMobileSkills(clone);
+
+                            // Add the mobile to the room.
+                            room.Mobiles.Add(clone);
+                        }
+                    }
+                }
+                else
+                {
+                    // We have too many mobs in this area.
+                    var diff = currentMobs - maxMobs;
+
+                    this.logger.Info($"Repop: Area {area.AreaId} is over by {diff} mobs of ID {mobCharacterId}. Removing excess.", this.communicator);
+
+                    var removalRooms = area.Rooms.Where(r => r.Mobiles.Any(m => m.CharacterId == mobCharacterId)).ToList();
+
+                    for (int x = 0; x < diff; x++)
+                    {
+                        var room = removalRooms[this.random.Next(0, removalRooms.Count - 1)];
+
+                        // Get the first mob in the room that matches our key and isn't fighting.
+                        var mobile = room.Mobiles.FirstOrDefault(r => r.CharacterId == mobCharacterId && !r.CharacterFlags.Contains(CharacterFlags.Fighting));
+
+                        if (mobile != null)
+                        {
+                            room.Mobiles.Remove(mobile);
+                        }
                     }
                 }
             }
@@ -471,7 +596,7 @@ namespace Legendary.Engine
             // Apply skills to mobs based on their equipment.
             var wielded = mobile.Equipment.FirstOrDefault(c => c.WearLocation.Contains(WearLocation.Wielded));
 
-            var proficiency = Math.Max(99, 50 + mobile.Level);
+            var proficiency = Math.Min(95, 50 + mobile.Level);
 
             if (wielded != null)
             {
@@ -570,7 +695,7 @@ namespace Legendary.Engine
                                 var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
                                 var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
 
-                                if (newArea != null && newRoom != null)
+                                if (newArea != null && newRoom != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
                                 {
                                     // Don't let mobs leave their home area.
                                     if (mobile.Location.Key != newArea.AreaId)
@@ -580,33 +705,42 @@ namespace Legendary.Engine
                                     else
                                     {
                                         string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
-                                        // Remove the mobile from the prior location.
-                                        var lastRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                        if (lastRoom != null)
+                                        if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                                         {
-                                            if (removeMobiles.ContainsKey(lastRoom))
-                                            {
-                                                removeMobiles[lastRoom].Add(mobile);
-                                            }
-                                            else
-                                            {
-                                                removeMobiles.Add(room, new List<Mobile>() { mobile });
-                                            }
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
+                                            exit.IsClosed = false;
                                         }
-
-                                        // Set the mobile's new location.
-                                        mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                                        // Add the mobile to the new location.
-                                        var nextRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                        if (nextRoom != null)
+                                        else
                                         {
-                                            nextRoom.Mobiles.Add(mobile);
-                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+
+                                            // Remove the mobile from the prior location.
+                                            var lastRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                            if (lastRoom != null)
+                                            {
+                                                if (removeMobiles.ContainsKey(lastRoom))
+                                                {
+                                                    removeMobiles[lastRoom].Add(mobile);
+                                                }
+                                                else
+                                                {
+                                                    removeMobiles.Add(lastRoom, new List<Mobile>() { mobile });
+                                                }
+                                            }
+
+                                            // Set the mobile's new location.
+                                            mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                                            // Add the mobile to the new location.
+                                            var nextRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                            if (nextRoom != null)
+                                            {
+                                                nextRoom.Mobiles.Add(mobile);
+                                                await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                            }
                                         }
                                     }
                                 }
