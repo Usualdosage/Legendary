@@ -386,8 +386,12 @@ namespace Legendary.Engine.Processors
                     {
                         sb.Append($"{merchant.FirstName.FirstCharToUpper()} offers the following items for sale:<br/><ul>");
 
-                        foreach (var item in merchant.Equipment)
+                        var equipment = merchant.Equipment.GroupBy(g => g.ItemId);
+
+                        foreach (var group in equipment)
                         {
+                            var item = group.First();
+
                             if (item.WearLocation != null && !item.WearLocation.Contains(Core.Types.WearLocation.None))
                             {
                                 switch (item.ItemType)

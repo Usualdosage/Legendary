@@ -75,6 +75,7 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new Poison(this.Communicator, this.Random, this.Combat) },
+                { new Sanctuary(this.Communicator, this.Random, this.Combat) },
             };
         }
 

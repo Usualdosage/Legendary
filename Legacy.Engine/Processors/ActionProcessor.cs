@@ -389,12 +389,12 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var effect in actor.Character.AffectedBy)
                 {
-                    sb.Append($"<span class='player-affect'> - {effect.Name} for {effect.Duration} hours.</span>");
+                    sb.Append($"<span class='player-affect'><li>{effect.Name} for {effect.Duration} hours.</li></span>");
                 }
             }
             else
             {
-                sb.Append($"<span class='player-affect'>You are not affected by anything.</span>");
+                sb.Append($"<span class='player-affect'><li>You are not affected by anything.</li></span>");
             }
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
@@ -718,8 +718,20 @@ namespace Legendary.Engine.Processors
                 if (!string.IsNullOrWhiteSpace(sentence))
                 {
                     sentence = sentence.ToLower();
-                    await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence}.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence}.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+
+                    var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+                    if (players != null)
+                    {
+                        foreach (var player in players)
+                        {
+                            if (this.communicator.CanPlayerSee(player))
+                            {
+                                await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1826,7 +1838,23 @@ namespace Legendary.Engine.Processors
         {
             var sentence = args.Method;
             await this.communicator.SendToPlayer(actor.Connection, $"You say \"<span class='say'>{sentence}</span>\"", cancellationToken);
-            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
+
+            var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+            if (players != null)
+            {
+                foreach (var player in players)
+                {
+                    if (this.communicator.CanPlayerSee(player))
+                    {
+                        await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(player, $"Someone says \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                    }
+                }
+            }
         }
 
         [HelpText("<p>Displays your player's score card.</p><ul><li>score</li></ul>")]
@@ -1912,7 +1940,7 @@ namespace Legendary.Engine.Processors
                             {
                                 var group = (List<IAction>)obj;
 
-                                foreach (var action in group)
+                                foreach (var action in group.OrderBy(g => g.Name))
                                 {
                                     if (actor.Character.HasSkill(action.Name.ToLower()))
                                     {
@@ -1990,7 +2018,7 @@ namespace Legendary.Engine.Processors
                             {
                                 var group = (List<IAction>)obj;
 
-                                foreach (var action in group)
+                                foreach (var action in group.OrderBy(g => g.Name))
                                 {
                                     if (actor.Character.HasSpell(action.Name.ToLower()))
                                     {
@@ -3104,7 +3132,16 @@ namespace Legendary.Engine.Processors
 
         private async Task Tell(UserData user, string target, string message, CancellationToken cancellationToken = default)
         {
-            var commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{user.Character.FirstName.FirstCharToUpper()} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
+            var targetUser = Communicator.Users?.FirstOrDefault(u => u.Value.Username == target);
+
+            string senderName = user.Character.FirstName.FirstCharToUpper();
+
+            if (targetUser != null && !this.communicator.CanPlayerSee(targetUser.Value.Value.Character))
+            {
+                senderName = "Someone";
+            }
+
+            var commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{senderName} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
 
             switch (commResult)
             {

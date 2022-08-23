@@ -54,6 +54,7 @@ namespace Legendary.Engine.Models
             { "snort", new Emote("You snort.", "{0} snorts derisively.") },
             { "tongue", new Emote("You stick out your tongue.", "{0} sticks out their tongue.") },
             { "twiddle", new Emote("You twiddle your thumbs.", "{0} twiddles their thumbs.") },
+            { "wave", new Emote("You wave.", "{0} waves.") },
             { "whine", new Emote("You whine loudly to anyone who will liste.", "{0} whines pitifully to anyone who will listen.") },
             { "wince", new Emote("You wince painfully.", "{0} winces painfully.") },
             { "wink", new Emote("You wink.", "{0} winks.") },

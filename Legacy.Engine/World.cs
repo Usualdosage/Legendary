@@ -685,7 +685,7 @@ namespace Legendary.Engine
                 if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
                 {
                     if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed))
-                    {                        
+                    {
                         // Mobiles have a 50% chance each tick to move around.
                         var move = this.random.Next(0, 100);
 

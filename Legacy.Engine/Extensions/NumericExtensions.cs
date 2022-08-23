@@ -53,7 +53,7 @@ namespace Legendary.Engine.Extensions
                         silver = int.Parse(currencyParts[1][0].ToString());
                     }
 
-                    if (currencyParts[1].Length == 2)
+                    if (currencyParts[1].Length >= 2)
                     {
                         silver = int.Parse(currencyParts[1][0].ToString());
                         copper = int.Parse(currencyParts[1][1].ToString());
@@ -101,7 +101,7 @@ namespace Legendary.Engine.Extensions
                         silver = int.Parse(currencyParts[1][0].ToString());
                     }
 
-                    if (currencyParts[1].Length == 2)
+                    if (currencyParts[1].Length >= 2)
                     {
                         silver = int.Parse(currencyParts[1][0].ToString());
                         copper = int.Parse(currencyParts[1][1].ToString());
@@ -180,7 +180,7 @@ namespace Legendary.Engine.Extensions
                         silver = int.Parse(currencyParts[1][0].ToString());
                     }
 
-                    if (currencyParts[1].Length == 2)
+                    if (currencyParts[1].Length >= 2)
                     {
                         silver = int.Parse(currencyParts[1][0].ToString());
                         copper = int.Parse(currencyParts[1][1].ToString());

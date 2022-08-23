@@ -498,6 +498,11 @@ namespace Legendary.Engine
                 damage += this.random.Next(1, damDice);
             }
 
+            if (target.IsAffectedBy(EffectName.SANCTUARY))
+            {
+                // Reduce by half.
+                return (int)((damage + adjust) / 2);
+            }
             if (this.DidSave(target, action))
             {
                 // Save for half damage.
@@ -928,7 +933,7 @@ namespace Legendary.Engine
         /// <returns>True if the target saved.</returns>
         public bool DidSave(Character target, IAction action)
         {
-            var saveThrow = this.random.Next(1, 20);
+            var saveThrow = this.random.Next(1, 100);
 
             // Critical failure.
             if (saveThrow == 1)

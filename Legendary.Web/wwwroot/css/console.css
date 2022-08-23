@@ -35,6 +35,11 @@ h4 {
     color: teal;
 }
 
+.sanctuary {
+    color: white;
+    font-weight: bold;
+}
+
 /* Login/Create Pages */
 
 .card {
@@ -697,7 +702,7 @@ video {
 }
 
 .skillinfo, .spellinfo {
-    width: 300px;
+    width: 320px;
     display: inline-block;
     text-indent: 20px;
 }

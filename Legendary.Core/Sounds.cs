@@ -185,5 +185,15 @@ namespace Legendary.Core
         /// Harm MP3.
         /// </summary>
         public const string HARM = "https://legendary.file.core.windows.net/audio/soundfx/harm.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Sanctuary MP3.
+        /// </summary>
+        public const string SANCTUARY = "https://legendary.file.core.windows.net/audio/soundfx/sanctuary.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Summon MP3.
+        /// </summary>
+        public const string SUMMON = "https://legendary.file.core.windows.net/audio/soundfx/summon.mp3" + SAS_TOKEN;
     }
 }

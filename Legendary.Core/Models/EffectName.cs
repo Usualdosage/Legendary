@@ -23,5 +23,10 @@ namespace Legendary.Core.Models
 		/// Poison effect.
 		/// </summary>
 		public const string POISON = "poison";
-	}
+
+        /// <summary>
+        /// Poison effect.
+        /// </summary>
+        public const string SANCTUARY = "sanctuary";
+    }
 }

@@ -653,19 +653,20 @@ namespace Legendary.Engine
             // Show the mobiles
             if (room?.Mobiles != null)
             {
-                var mobGroups = room.Mobiles.GroupBy(g => g.FirstName);
+                var mobGroups = room.Mobiles.GroupBy(g => g.CharacterId);
 
                 foreach (var mobGroup in mobGroups)
                 {
                     var mob = mobGroup.First();
+                    string effects = this.GetEffects(mob);
 
                     if (mobGroup.Count() == 1)
                     {
-                        sb.Append($"<span class='mobile'>{mob.ShortDescription}</span>");
+                        sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
                     }
                     else
                     {
-                        sb.Append($"<span class='mobile'>({mobGroup.Count()}) {mob.ShortDescription}</span>");
+                        sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
                     }
                 }
             }
@@ -1398,6 +1399,11 @@ namespace Legendary.Engine
                 sb.Append("(<span class='translucent'>Translucent</span>) ");
             }
 
+            if (actor.IsAffectedBy(nameof(Sanctuary)))
+            {
+                sb.Append("(<span class='sanctuary'>White Aura</span>) ");
+            }
+
             return sb.ToString();
         }
 
@@ -1536,7 +1542,19 @@ namespace Legendary.Engine
                     if (emote != null)
                     {
                         await this.SendToPlayer(actor.Connection, emote.ToSelf, cancellationToken);
-                        await this.SendToRoom(actor.Character, actor.Character.Location, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
+
+                        var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+                        if (players != null)
+                        {
+                            foreach (var player in players)
+                            {
+                                if (this.CanPlayerSee(player))
+                                {
+                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
+                                }
+                            }
+                        }
                     }
                     else
                     {
