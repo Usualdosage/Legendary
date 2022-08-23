@@ -202,10 +202,18 @@ namespace Legendary.Engine.Helpers
                     continue;
                 }
 
-                sb.Append("<tr>");
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{DecorateItem(actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location)), null) ?? "nothing."}</td>");
-                sb.Append("</tr>");
+                var item = actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location));
+
+                sb.Append("<tr>");
+                sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{DecorateItem(item, null) ?? "nothing."}");
+
+                if (item != null && item.ItemType == ItemType.Armor && item.Durability.Max != 0)
+                {
+                    sb.Append($"<span class='equipmentwear'><progress max='{item?.Durability.Max}' value='{item?.Durability.Current}'></progress></span>");
+                }
+
+                sb.Append("</td></tr>");
             }
 
             sb.Append("</table>");

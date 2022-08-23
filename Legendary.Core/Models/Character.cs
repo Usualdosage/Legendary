@@ -609,7 +609,7 @@ namespace Legendary.Core.Models
         public bool IsAffectedBy(string action)
         {
             string effectName = Regex.Replace(action, "([a-z])([A-Z])", "$1 $2");
-            return this.AffectedBy.Any(a => a.Name == effectName);
+            return this.AffectedBy.Any(a => a.Name?.ToLower() == effectName.ToLower());
         }
     }
 }

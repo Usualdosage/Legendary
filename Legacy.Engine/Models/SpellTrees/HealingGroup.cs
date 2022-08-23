@@ -54,6 +54,8 @@ namespace Legendary.Engine.Models.SpellTrees
             {
                 { new CureSerious(this.Communicator, this.Random, this.Combat) },
                 { new CauseSerious(this.Communicator, this.Random, this.Combat) },
+                { new CureBlindness(this.Communicator, this.Random, this.Combat) },
+                { new Blindness(this.Communicator, this.Random, this.Combat) },
             };
         }
 

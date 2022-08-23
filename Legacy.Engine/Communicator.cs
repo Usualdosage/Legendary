@@ -270,7 +270,7 @@ namespace Legendary.Engine
                     }
                     catch (Exception exc)
                     {
-                        this.logger.Error($"A socket was closed or moved into an error state. {exc}", this);
+                        this.logger.Error($"A socket was closed or moved into an error state.", this);
                         break;
                     }
                 }
@@ -509,12 +509,19 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName.FirstCharToUpper()} looks at you.", cancellationToken);
-                    await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
-                    await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
+                    if (target.Value.Value.Character.Location.InSamePlace(actor.Location))
+                    {
+                        await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName.FirstCharToUpper()} looks at you.", cancellationToken);
+                        await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
+                        await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
 
-                    // Update player stats
-                    await this.SendGameUpdate(actor, target.Value.Value.Character.FirstName, target.Value.Value.Character.Image, cancellationToken);
+                        // Update player stats
+                        await this.SendGameUpdate(actor, target.Value.Value.Character.FirstName, target.Value.Value.Character.Image, cancellationToken);
+                    }
+                    else
+                    {
+                        await this.SendToPlayer(actor, "They are not here.", cancellationToken);
+                    }
                 }
             }
         }
@@ -544,6 +551,37 @@ namespace Legendary.Engine
             await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
         }
 
+        /// <inheritdoc/>
+        public bool CanPlayerSee(Character actor)
+        {
+            if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS))
+            {
+                return false;
+            }
+
+            var room = this.ResolveRoom(actor.Location);
+
+            if (room != null)
+            {
+                if (this.environment.IsNight || room.Flags.Contains(RoomFlags.Dark))
+                {
+                    var light = actor.Equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Light));
+                    if (light == null)
+                    {
+                        // See if there is a light in the room
+                        var lightInRoom = room.Items.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Light));
+
+                        if (lightInRoom == null)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Shows the information in a room to a single player.
         /// </summary>
@@ -555,6 +593,11 @@ namespace Legendary.Engine
             var room = this.ResolveRoom(actor.Location);
 
             StringBuilder sb = new ();
+
+            if (!this.CanPlayerSee(actor))
+            {
+                sb.Append("You can't see anything, it's pitch black.");
+            }
 
             var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
 

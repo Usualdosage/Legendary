@@ -42,6 +42,7 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new CreateFood(this.Communicator, this.Random, this.Combat) },
+                { new ContinualLight(this.Communicator, this.Random, this.Combat) },
             };
         }
 

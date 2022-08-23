@@ -78,5 +78,10 @@ namespace Legendary.Core.Types
         /// Snow.
         /// </summary>
         Snow = 12,
+
+        /// <summary>
+        /// Shallow water.
+        /// </summary>
+        Shallows = 13,
     }
 }

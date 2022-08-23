@@ -88,5 +88,10 @@ namespace Legendary.Core.Types
         /// Herb.
         /// </summary>
         Herb = 15,
+
+        /// <summary>
+        /// Boat.
+        /// </summary>
+        Boat = 16,
     }
 }

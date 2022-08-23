@@ -708,6 +708,18 @@ video {
     height: 12px;
 }
 
+/* Equipment Status */
+
+.equipmentwear {
+    display: inline-block;
+    margin-left: 10px;    
+}
+
+    .equipmentwear > progress {
+        width: 60px;
+        height: 12px;
+    }
+
 /* Combat Things */
 .damage {
     color: indianred;
@@ -1013,4 +1025,23 @@ video {
         line-height: 80px;
         vertical-align: middle;
         font-size: 16px;
+    }
+
+.worth {
+    width: 100%;
+}
+
+    .worth .gold {
+        font-weight: bold;
+        color: gold;
+    }
+
+    .worth .silver {
+        font-weight: bold;
+        color: silver;
+    }
+
+    .worth .copper {
+        font-weight: bold;
+        color: orange;
     }

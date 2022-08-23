@@ -17,6 +17,7 @@ namespace Legendary.Engine.Processors
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
+    using Legendary.Core.Attributes;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -161,6 +162,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Buys an item from a merchant. See also: HELP LIST, HELP SELL<ul><li>buy item</li><ul></p>")]
         private async Task DoBuy(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -217,6 +219,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Considers a target before attacking it. Among consideration are the target's level, strength, and power.<ul><li>consider <em>target</em></li></ul></p>")]
         private async Task DoConsider(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -312,6 +315,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>When accompanied by a teacher, use this command to learn new skill or spell trees. See also: HELP PRACTICE, HELP TRAIN<ul><li>learn <em>tree</em></li></ul></p>")]
         private async Task DoLearn(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -362,6 +366,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Lists all items for sale by a merchant. See also: HELP SELL, HELP BUY</p>")]
         private async Task DoList(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -420,12 +425,14 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Command not yet available.</p>")]
         private async Task DoGain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
         }
 
+        [SightRequired]
         [HelpText("<p>Adds a member to your group. Groups can communicate privately with GTELL See HELP GTELL.<p><ul><li>group <em>player</em></li></ul>")]
         private async Task DoGroup(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -580,6 +587,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>When accompanied by a guild master, use this command to train up your skills. See also: HELP LEARN, HELP TRAIN<ul><li>practice skill</li><li>practice spell</li></ul></p>")]
         private async Task DoPractice(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -803,6 +811,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Puts an item or items from your inventory into another item.</p><ul><li>put <em>item</em> <em>target</em></li><li>put all <em>target</em></li></ul>")]
         private async Task DoPut(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -890,6 +899,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Sells an item to a merchant. See also: HELP LIST, HELP BUY<ul><li>sell item</li><ul></p>")]
         private async Task DoSell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -956,6 +966,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>When accompanied by a trainer, use this command to train up your vital attributes. See also: HELP PRACTICE, HELP LEARN<ul><li>train str</li><li>train hp</li></ul></p>")]
         private async Task DoTrain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -1123,6 +1134,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Removes a member from your group. Groups can communicate privately with GTELL See HELP GTELL.<p><ul><li>group <em>player</em></li></ul>")]
         private async Task DoUngroup(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -1145,6 +1157,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Gets the appraised value of an item from a merchant. See also: HELP LIST, HELP BUY<ul><li>sell item</li><ul></p>")]
         private async Task DoValue(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -1194,6 +1207,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [SightRequired]
         [HelpText("<p>Watches a brief scene as mentioned in the room description.<ul><li>watch scene</li></ul></p>")]
         private async Task DoWatch(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -1221,6 +1235,19 @@ namespace Legendary.Engine.Processors
                     await this.communicator.SendToPlayer(actor.Connection, $"There's really nothing here to watch.", cancellationToken);
                 }
             }
+        }
+
+        [SightRequired]
+        [HelpText("<p>Shows your current worth in gold, silver, and copper.</p>")]
+        private async Task DoWorth(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var currency = actor.Character.Currency.GetCurrency();
+
+            sb.Append($"<span class='worth'>You currently have <span class='gold'>{currency.Item1}</span> gold, <span class='silver'>{currency.Item2}</span> silver, and <span class='copper'>{currency.Item3}</span> copper.</span>");
+
+            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
     }
 }

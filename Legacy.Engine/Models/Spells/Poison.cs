@@ -42,19 +42,6 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            if (target == null)
-            {
-                await this.Communicator.SendToPlayer(actor, "Cast poison on whom?", cancellationToken);
-            }
-            else
-            {
-                await base.PreAction(actor, target, cancellationToken);
-            }
-        }
-
-        /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
             if (target == null)

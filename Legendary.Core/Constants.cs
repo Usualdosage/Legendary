@@ -62,6 +62,11 @@ namespace Legendary.Core
         public const long ITEM_CORPSE = 9000002;
 
         /// <summary>
+        /// Mobile corpse.
+        /// </summary>
+        public const long ITEM_LIGHT = 9000003;
+
+        /// <summary>
         /// Amount of health restored each tick.
         /// </summary>
         public const int STANDARD_HP_RECOVERY = 50;

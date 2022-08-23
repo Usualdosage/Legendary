@@ -18,7 +18,6 @@ namespace Legendary.Engine
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
-    using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
 
@@ -89,6 +88,9 @@ namespace Legendary.Engine
         /// Gets or sets the current weather for an area.
         /// </summary>
         public static Dictionary<long, Weather> CurrentWeather { get; set; } = new Dictionary<long, Weather>();
+
+        /// <inheritdoc/>
+        public bool IsNight { get; set; } = false;
 
         /// <summary>
         /// Populates the current weather randomly for every area.
@@ -260,6 +262,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessItemRot(UserData userData, CancellationToken cancellationToken = default)
         {
+
             foreach (var item in userData.Character.Inventory)
             {
                 if (item.RotTimer == -1)
@@ -272,7 +275,22 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
+                        if (item.ItemId == Constants.ITEM_SPRING)
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} dries up.", cancellationToken);
+                        }
+                        else if (item.ItemId == Constants.ITEM_LIGHT)
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                        }
+                        else if (item.ItemId == Constants.ITEM_FOOD)
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} rots away.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        }
                     }
                 }
             }
@@ -291,7 +309,22 @@ namespace Legendary.Engine
 
                     if (item.RotTimer == 0)
                     {
-                        await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
+                        if (item.ItemId == Constants.ITEM_SPRING)
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} dries up.", cancellationToken);
+                        }
+                        else if (item.ItemId == Constants.ITEM_LIGHT)
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                        }
+                        else if (item.ItemId == Constants.ITEM_FOOD)
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} rots away.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                        }
                     }
                 }
             }
@@ -301,6 +334,15 @@ namespace Legendary.Engine
 
         private async Task ProcessTime(int gameHour)
         {
+            if (gameHour >= 6 && gameHour <= 19)
+            {
+                this.IsNight = false;
+            }
+            else
+            {
+                this.IsNight = true;
+            }
+
             if (Communicator.Users != null)
             {
                 foreach (var user in Communicator.Users)
@@ -311,7 +353,7 @@ namespace Legendary.Engine
                     {
                         if (gameHour == 6)
                         {
-                            await this.communicator.SendToPlayer(user.Value.Character, "The sun sets in the west.");
+                            await this.communicator.SendToPlayer(user.Value.Character, "The sun rises in the east.");
                         }
                         else if (gameHour == 19)
                         {
@@ -321,7 +363,7 @@ namespace Legendary.Engine
                         {
                             await this.communicator.SendToPlayer(user.Value.Character, "The moon rises in east.");
                         }
-                        else if (gameHour == 2)
+                        else if (gameHour == 4)
                         {
                             await this.communicator.SendToPlayer(user.Value.Character, "The moon sets in the west.");
                         }
@@ -446,7 +488,7 @@ namespace Legendary.Engine
 
                             var room = this.communicator.ResolveRoom(location);
 
-                            if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
+                            if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
                             {
                                 var weatherMessage = this.GenerateRandomWeather(room);
 
@@ -514,6 +556,7 @@ namespace Legendary.Engine
                 case Core.Types.Terrain.City:
                     baseTemp += this.random.Next(1, 3);
                     break;
+                case Core.Types.Terrain.Shallows:
                 case Core.Types.Terrain.Water:
                 case Core.Types.Terrain.Air:
                     baseTemp -= this.random.Next(8, 20);

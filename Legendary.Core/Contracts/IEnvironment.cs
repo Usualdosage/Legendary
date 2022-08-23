@@ -18,6 +18,11 @@ namespace Legendary.Core.Contracts
     public interface IEnvironment
     {
         /// <summary>
+        /// Gets or sets a value indicating whether it is nighttime.
+        /// </summary>
+        public bool IsNight { get; set; }
+
+        /// <summary>
         /// Processes changes to the connected user's environment each game hour.
         /// </summary>
         /// <param name="gameTicks">The game ticks.</param>
