@@ -91,7 +91,7 @@ namespace Legendary.Engine
             {
                 var itemId = resetGroup.Key;
                 var maxItems = resetGroup.Count();
-                var currentItems = area.Rooms.Sum(r => r.Items.Where(i => i.ItemId == itemId).Count());
+                var currentItems = area.Rooms.Sum(r => r.Items?.Where(i => i.ItemId == itemId).Count());
 
                 if (maxItems == currentItems)
                 {
@@ -124,7 +124,7 @@ namespace Legendary.Engine
                             clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
 
                             // Add the item to the room.
-                            room.Items.Add(clone);
+                            room.Items?.Add(clone);
                         }
                     }
                 }
@@ -142,11 +142,11 @@ namespace Legendary.Engine
                         var room = removalRooms[this.random.Next(0, removalRooms.Count - 1)];
 
                         // Get the first item in the room that matches our key.
-                        var item = room.Items.FirstOrDefault(r => r.ItemId == itemId);
+                        var item = room.Items?.FirstOrDefault(r => r.ItemId == itemId);
 
                         if (item != null)
                         {
-                            room.Items.Remove(item);
+                            room.Items?.Remove(item);
                         }
                     }
                 }
@@ -164,7 +164,7 @@ namespace Legendary.Engine
             {
                 var mobCharacterId = resetGroup.Key;
                 var maxMobs = resetGroup.Count();
-                var currentMobs = area.Rooms.Sum(r => r.Mobiles.Where(m => m.CharacterId == mobCharacterId).Count());
+                var currentMobs = area.Rooms.Sum(r => r.Mobiles?.Where(m => m.CharacterId == mobCharacterId).Count());
 
                 if (maxMobs == currentMobs)
                 {
@@ -212,7 +212,7 @@ namespace Legendary.Engine
                             this.ApplyMobileSkills(clone);
 
                             // Add the mobile to the room.
-                            room.Mobiles.Add(clone);
+                            room.Mobiles?.Add(clone);
                         }
                     }
                 }
@@ -230,11 +230,11 @@ namespace Legendary.Engine
                         var room = removalRooms[this.random.Next(0, removalRooms.Count - 1)];
 
                         // Get the first mob in the room that matches our key and isn't fighting.
-                        var mobile = room.Mobiles.FirstOrDefault(r => r.CharacterId == mobCharacterId && !r.CharacterFlags.Contains(CharacterFlags.Fighting));
+                        var mobile = room.Mobiles?.FirstOrDefault(r => r.CharacterId == mobCharacterId && !r.CharacterFlags.Contains(CharacterFlags.Fighting));
 
                         if (mobile != null)
                         {
-                            room.Mobiles.Remove(mobile);
+                            room.Mobiles?.Remove(mobile);
                         }
                     }
                 }
@@ -278,7 +278,7 @@ namespace Legendary.Engine
                                 }
                             }
 
-                            room.Items.Add(clone);
+                            room.Items?.Add(clone);
                         }
                     }
 
@@ -306,7 +306,7 @@ namespace Legendary.Engine
 
                             this.ApplyMobileSkills(clone);
 
-                            room.Mobiles.Add(clone);
+                            room.Mobiles?.Add(clone);
                         }
                     }
                 }
@@ -339,7 +339,7 @@ namespace Legendary.Engine
                 await Task.Run(
                     () =>
                     {
-                        room.Mobiles.RemoveAll(m => m.Location.Value != room.RoomId && !m.CharacterFlags.Contains(CharacterFlags.Fighting));
+                        room.Mobiles?.RemoveAll(m => m.Location.Value != room.RoomId && !m.CharacterFlags.Contains(CharacterFlags.Fighting));
                     }, cancellationToken);
             });
         }
@@ -352,7 +352,7 @@ namespace Legendary.Engine
                 await Task.Run(
                     () =>
                     {
-                        room.Items.RemoveAll(i => i.RotTimer == 0);
+                        room.Items?.RemoveAll(i => i.RotTimer == 0);
                     }, cancellationToken);
             });
         }
@@ -422,36 +422,39 @@ namespace Legendary.Engine
                 foreach (var room in area.Rooms)
                 {
                     // Decompose items.
-                    var items = room.Items.Where(i => i.RotTimer == 0);
+                    var items = room.Items?.Where(i => i.RotTimer == 0);
 
                     var location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
 
-                    foreach (var item in items)
+                    if (items != null)
                     {
-                        if (item.ItemId == Constants.ITEM_SPRING)
+                        foreach (var item in items)
                         {
-                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} dries up.", cancellationToken);
-                        }
-                        else if (item.ItemId == Constants.ITEM_LIGHT)
-                        {
-                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
-                        }
-                        else if (item.ItemId == Constants.ITEM_FOOD)
-                        {
-                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} rots away.", cancellationToken);
-                        }
-                        else if (item.ItemId == Constants.ITEM_CORPSE)
-                        {
-                            if (!item.IsNPCCorpse)
+                            if (item.ItemId == Constants.ITEM_SPRING)
                             {
-                                // TODO: Move PC inventory to a pit
+                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} dries up.", cancellationToken);
                             }
+                            else if (item.ItemId == Constants.ITEM_LIGHT)
+                            {
+                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                            }
+                            else if (item.ItemId == Constants.ITEM_FOOD)
+                            {
+                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} rots away.", cancellationToken);
+                            }
+                            else if (item.ItemId == Constants.ITEM_CORPSE)
+                            {
+                                if (!item.IsNPCCorpse)
+                                {
+                                    // TODO: Move PC inventory to a pit
+                                }
 
-                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} decomposes into dust.", cancellationToken);
-                        }
-                        else
-                        {
-                            await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} decomposes into dust.", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                            }
                         }
                     }
 
@@ -701,13 +704,13 @@ namespace Legendary.Engine
                             bool isGhost = mobile.CharacterFlags.Contains(CharacterFlags.Ghost) || mobile.IsAffectedBy(nameof(PassDoor));
                             bool isFlying = mobile.Race == Race.Avian || mobile.IsAffectedBy(nameof(Fly));
 
-                            if (newArea != null && newRoom != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
+                            if (newArea != null && newRoom != null && newRoom.Flags != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
                             {
                                 if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost)
                                 {
                                     return;
                                 }
-                                else if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
+                                else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
                                 {
                                     return;
                                 }
@@ -758,7 +761,7 @@ namespace Legendary.Engine
                                     }
                                 }
                             }
-                        }                        
+                        }
                     }
                 }
             }

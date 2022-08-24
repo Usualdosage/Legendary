@@ -267,6 +267,12 @@ namespace Legendary.Engine.Output
         /// </summary>
         [JsonProperty("ne")]
         public string? Neg { get; set; }
+
+        /// <summary>
+        /// Gets or sets learns.
+        /// </summary>
+        [JsonProperty("lr")]
+        public string? Learn { get; set; }
     }
 
     /// <summary>

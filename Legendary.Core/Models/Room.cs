@@ -71,13 +71,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets available exits.
         /// </summary>
-        public IList<Exit> Exits { get; set; } = new List<Exit>();
+        public List<Exit> Exits { get; set; } = new List<Exit>();
 
         /// <summary>
         /// Gets or sets the room flags.
         /// </summary>
-        [BsonIgnore]
-        public IList<RoomFlags> Flags { get; set; } = new List<RoomFlags>();
+        public List<RoomFlags>? Flags { get; set; } = new List<RoomFlags>();
 
         /// <summary>
         /// Gets or sets the room's terrain.
@@ -97,12 +96,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the items reset in the room.
         /// </summary>
-        public IList<long> ItemResets { get; set; } = new List<long>();
+        public List<long> ItemResets { get; set; } = new List<long>();
 
         /// <summary>
         /// Gets or sets the mobiles reset in the room.
         /// </summary>
-        public IList<long> MobileResets { get; set; } = new List<long>();
+        public List<long> MobileResets { get; set; } = new List<long>();
 
         /// <summary>
         /// Determines whether one room is equal to another matching on area and room IDs.

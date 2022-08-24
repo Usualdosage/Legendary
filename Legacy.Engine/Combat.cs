@@ -503,7 +503,7 @@ namespace Legendary.Engine
                 // Reduce by half.
                 return (int)((damage + adjust) / 2);
             }
-            if (this.DidSave(target, action))
+            else if (this.DidSave(target, action))
             {
                 // Save for half damage.
                 return (int)((damage + adjust) / 2);
@@ -591,6 +591,15 @@ namespace Legendary.Engine
                 case 1000:
                     await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
+                case 2000:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
+                case 5000:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
+                case 10000:
+                    await this.awardProcessor.GrantAward(3, killer, $"killed {mobKills} creatures", cancellationToken);
+                    break;
             }
 
             var room = this.communicator.ResolveRoom(killer.Location);
@@ -667,6 +676,15 @@ namespace Legendary.Engine
                         await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 100:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 250:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 500:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 1000:
                         await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                 }

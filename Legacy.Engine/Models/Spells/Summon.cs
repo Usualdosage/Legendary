@@ -105,14 +105,14 @@ namespace Legendary.Engine.Models.Spells
                             var oldRoom = this.Communicator.ResolveRoom(mobile.Location);
                             var newRoom = this.Communicator.ResolveRoom(actor.Location);
 
-                            var oldMob = oldRoom != null ? oldRoom.Mobiles.FirstOrDefault(m => m.CharacterId == mobile.CharacterId) : null;
+                            var oldMob = oldRoom != null ? oldRoom.Mobiles?.FirstOrDefault(m => m.CharacterId == mobile.CharacterId) : null;
 
                             if (oldMob != null)
                             {
-                                oldRoom?.Mobiles.Remove(oldMob);
+                                oldRoom?.Mobiles?.Remove(oldMob);
                             }
 
-                            newRoom?.Mobiles.Add(mobile);
+                            newRoom?.Mobiles?.Add(mobile);
 
                             mobile.Location = actor.Location;
 

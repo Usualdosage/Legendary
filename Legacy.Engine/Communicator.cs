@@ -268,7 +268,7 @@ namespace Legendary.Engine
                             continue;
                         }
                     }
-                    catch (Exception exc)
+                    catch
                     {
                         this.logger.Error($"A socket was closed or moved into an error state.", this);
                         break;
@@ -561,7 +561,7 @@ namespace Legendary.Engine
 
             var room = this.ResolveRoom(actor.Location);
 
-            if (room != null)
+            if (room != null && room.Flags != null)
             {
                 if (this.environment.IsNight || room.Flags.Contains(RoomFlags.Dark))
                 {
@@ -597,6 +597,8 @@ namespace Legendary.Engine
             if (!this.CanPlayerSee(actor))
             {
                 sb.Append("You can't see anything, it's pitch black.");
+                await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
+                return;
             }
 
             var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
@@ -1408,30 +1410,47 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Ensures a new character's location is properly set.
+        /// Ensures a new character's location, home, and starting stats are all set.
         /// </summary>
         /// <param name="character">The character.</param>
         private void CheckNewCharacter(Character character)
         {
-            switch (character.Alignment)
+            if (character.Level == 1 && character.Experience == 0 && character.Metrics.FirstLogin.Day == DateTime.Now.Day && character.Metrics.FirstLogin.Hour == DateTime.Now.Hour && character.Metrics.FirstLogin.Minute == DateTime.Now.Minute)
             {
-                case Alignment.Good:
-                    {
-                        character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
-                        break;
-                    }
+                // New player starting point.
+                character.Location = new KeyValuePair<long, long>(31866, 32075);
 
-                case Alignment.Evil:
-                    {
-                        character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
-                        break;
-                    }
+                switch (character.Alignment)
+                {
+                    case Alignment.Good:
+                        {
+                            character.Deity = Deities.Atrina;
+                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
+                            break;
+                        }
 
-                case Alignment.Neutral:
-                    {
-                        character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
-                        break;
-                    }
+                    case Alignment.Evil:
+                        {
+                            character.Deity = Deities.Saurath;
+                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
+                            break;
+                        }
+
+                    case Alignment.Neutral:
+                        {
+                            character.Deity = Deities.Khoda;
+                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
+                            break;
+                        }
+                }
+
+                // Calculate the advance trains and practices.
+                var trains = character.Int.Max / 4;
+                var pracs = character.Wis.Max / 4;
+
+                character.Trains += (int)trains;
+                character.Practices += (int)pracs;
+                character.Learns = 3;
             }
         }
 
@@ -1461,6 +1480,12 @@ namespace Legendary.Engine
             // Calculate the advance trains and practices.
             var trains = character.Int.Max / 4;
             var pracs = character.Wis.Max / 4;
+
+            // Every 5 levels, character gets a learning session.
+            if (character.Level % 5 == 0)
+            {
+                character.Learns += 1;
+            }
 
             character.Trains += (int)trains;
             character.Practices += (int)pracs;
@@ -1541,20 +1566,7 @@ namespace Legendary.Engine
 
                     if (emote != null)
                     {
-                        await this.SendToPlayer(actor.Connection, emote.ToSelf, cancellationToken);
-
-                        var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
-
-                        if (players != null)
-                        {
-                            foreach (var player in players)
-                            {
-                                if (this.CanPlayerSee(player))
-                                {
-                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
-                                }
-                            }
-                        }
+                        await this.ProcessEmote(emote, actor, args, cancellationToken);
                     }
                     else
                     {
@@ -1629,6 +1641,82 @@ namespace Legendary.Engine
             {
                 await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
                 this.logger.Error(exc, this);
+            }
+        }
+
+        private async Task ProcessEmote(Emote emote, UserData actor, CommandArgs args, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                // Simple emote with no target. "Bob nods." "You nod."
+                await this.SendToPlayer(actor.Connection, emote.ToSelf, cancellationToken);
+
+                var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+                if (players != null)
+                {
+                    foreach (var player in players)
+                    {
+                        if (this.CanPlayerSee(player))
+                        {
+                            await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Is target a player or mob?
+                var targetChar = this.ResolveCharacter(args.Method);
+
+                var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+                if (targetChar != null)
+                {
+                    if (players != null)
+                    {
+                        await this.SendToPlayer(actor.Connection, emote.SelfToTarget.Replace("{1}", targetChar.Character.FirstName.FirstCharToUpper()), cancellationToken);
+
+                        foreach (var player in players)
+                        {
+                            if (this.CanPlayerSee(player))
+                            {
+                                if (player.CharacterId == targetChar.Character.CharacterId)
+                                {
+                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", "you"), cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", targetChar.Character.FirstName.FirstCharToUpper()), cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    var mobile = this.ResolveMobile(args.Method);
+
+                    if (mobile != null)
+                    {
+                        if (players != null)
+                        {
+                            await this.SendToPlayer(actor.Connection, emote.SelfToTarget.Replace("{1}", mobile.FirstName), cancellationToken);
+
+                            foreach (var player in players)
+                            {
+                                if (this.CanPlayerSee(player))
+                                {
+                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", targetChar?.Character.FirstName.FirstCharToUpper()), cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await this.SendToPlayer(actor.Character, "They aren't here.", cancellationToken);
+                    }
+                }
             }
         }
 

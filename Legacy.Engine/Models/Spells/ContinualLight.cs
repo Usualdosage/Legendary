@@ -51,7 +51,7 @@ namespace Legendary.Engine.Models.Spells
 
             if (room != null)
             {
-                room.Items.Add(item);
+                room.Items?.Add(item);
             }
         }
 

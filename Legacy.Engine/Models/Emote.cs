@@ -19,10 +19,14 @@ namespace Legendary.Engine.Models
         /// </summary>
         /// <param name="toSelf">Message to self.</param>
         /// <param name="toRoom">Message to room.</param>
-        public Emote(string toSelf, string toRoom)
+        /// <param name="toChar">Message with target.</param>
+        /// <param name="selfToTarget">Message from self to target.</param>
+        public Emote(string toSelf, string toRoom, string toChar, string selfToTarget)
         {
             this.ToSelf = toSelf;
+            this.SelfToTarget = selfToTarget;
             this.ToRoom = toRoom;
+            this.ToChar = toChar;
         }
 
         /// <summary>
@@ -34,5 +38,15 @@ namespace Legendary.Engine.Models
         /// Gets the message the room sees when a player emotes.
         /// </summary>
         public string ToRoom { get; private set; }
+
+        /// <summary>
+        /// Gets the message everyone sees if there's a target.
+        /// </summary>
+        public string ToChar { get; private set; }
+
+        /// <summary>
+        /// Gets the message a player sees when emoting at a target.
+        /// </summary>
+        public string SelfToTarget { get; private set; }
     }
 }

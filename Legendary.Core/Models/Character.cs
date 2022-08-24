@@ -134,6 +134,11 @@ namespace Legendary.Core.Models
         public int Trains { get; set; } = 0;
 
         /// <summary>
+        /// Gets or sets number of learning sessions.
+        /// </summary>
+        public int Learns { get; set; } = 0;
+
+        /// <summary>
         /// Gets or sets the character flags.
         /// </summary>
         public IList<CharacterFlags> CharacterFlags { get; set; } = new List<CharacterFlags>();
@@ -267,6 +272,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the alignment.
         /// </summary>
         public Alignment Alignment { get; set; } = Alignment.Neutral;
+
+        /// <summary>
+        /// Gets or sets the deity.
+        /// </summary>
+        public Deities Deity { get; set; } = Deities.Khoda;
 
         /// <summary>
         /// Gets or sets the hit dice.

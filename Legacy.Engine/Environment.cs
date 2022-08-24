@@ -102,7 +102,7 @@ namespace Legendary.Engine
             foreach (var area in areas)
             {
                 // Grab the first non-indoor room.
-                var defaultRoom = area.Rooms.FirstOrDefault(r => !r.Flags.Contains(Core.Types.RoomFlags.Indoors));
+                var defaultRoom = area.Rooms.FirstOrDefault(r => r.Flags != null && !r.Flags.Contains(Core.Types.RoomFlags.Indoors));
 
                 if (defaultRoom != null)
                 {
@@ -262,7 +262,6 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessItemRot(UserData userData, CancellationToken cancellationToken = default)
         {
-
             foreach (var item in userData.Character.Inventory)
             {
                 if (item.RotTimer == -1)
@@ -349,7 +348,7 @@ namespace Legendary.Engine
                 {
                     var room = this.communicator.ResolveRoom(user.Value.Character.Location);
 
-                    if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
+                    if (room != null && room.Flags != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors) && !room.Flags.Contains(Core.Types.RoomFlags.Dark))
                     {
                         if (gameHour == 6)
                         {
@@ -375,7 +374,7 @@ namespace Legendary.Engine
         private Weather? GenerateRandomWeather(Room room)
         {
             // If they're indoors, don't show the weather.
-            if (room == null || room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+            if (room == null || (room.Flags != null && room.Flags.Contains(Core.Types.RoomFlags.Indoors)))
             {
                 return null;
             }
@@ -488,7 +487,7 @@ namespace Legendary.Engine
 
                             var room = this.communicator.ResolveRoom(location);
 
-                            if (room != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+                            if (room != null && room.Flags != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
                             {
                                 var weatherMessage = this.GenerateRandomWeather(room);
 

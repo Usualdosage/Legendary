@@ -48,7 +48,16 @@ namespace Legendary.Engine.Models.SkillTrees
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group2 { get => new List<IAction>(); }
+        public override List<IAction> Group2
+        {
+            get => new List<IAction>()
+            {
+                { new Polearms(this.Communicator, this.Random, this.Combat) },
+                { new Flails(this.Communicator, this.Random, this.Combat) },
+                { new Whips(this.Communicator, this.Random, this.Combat) },
+                { new Staffs(this.Communicator, this.Random, this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
         public override List<IAction> Group3 { get => new List<IAction>(); }

@@ -1078,11 +1078,15 @@ namespace Legendary.Engine.Processors
 
                     sb.Append($"{item.LongDescription}<br/>");
                     sb.Append($"{item.Name.FirstCharToUpper()} is of type {Enum.GetName<ItemType>(item.ItemType)?.ToString().ToLower()} and appears to have a durability of {item.Durability.Current}.<br/>");
-                    sb.Append($"You value it at approximately {this.random.Next(Math.Max((int)item.Value - 100, 2), Math.Max((int)item.Value + 100, 4))} gold.<br/>");
+                    sb.Append($"You value it at approximately {this.random.Next(Math.Max((int)item.Value - (item.Value * 2), 2), Math.Max((int)item.Value + (item.Value * 2), 4))} gold.<br/>");
 
                     if (item.ItemType == ItemType.Drink)
                     {
                         sb.Append($"{item.Name.FirstCharToUpper()} is a drink container. It has around {item.Drinks?.Current} draughts of {ActionHelper.GetLiquidDescription(item.LiquidType)} inside of it.");
+                    }
+                    else if (item.ItemType == ItemType.Map)
+                    {
+                        sb.Append($"<span class='map'><img src='{item.Image}'/></map>");
                     }
                     else if (item.ItemType == ItemType.Food)
                     {
@@ -1396,7 +1400,7 @@ namespace Legendary.Engine.Processors
                 {
                     var room = this.communicator.ResolveRoom(actor.Character.Location);
 
-                    if (room != null && room.Flags.Contains(RoomFlags.Indoors))
+                    if (room != null && room.Flags != null && room.Flags.Contains(RoomFlags.Indoors))
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"You're unable to see the sky from indoors.", cancellationToken);
                     }
@@ -1496,7 +1500,7 @@ namespace Legendary.Engine.Processors
                             return;
                         }
 
-                        if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost && actor.Character.Inventory.Any(i=> i.ItemType == ItemType.Boat))
+                        if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && actor.Character.Inventory.Any(i => i.ItemType == ItemType.Boat))
                         {
                             await this.communicator.SendToPlayer(actor.Connection, $"You need to be flying or have a boat to go there.", cancellationToken);
                             return;
@@ -1907,6 +1911,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
+        /*
         [HelpText("<p>Displays all current skill groups, skills, and skill progressions.</p><ul><li>skills</li></ul>")]
         private async Task DoSkills(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -1969,6 +1974,113 @@ namespace Legendary.Engine.Processors
 
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
+        */
+
+        [HelpText("<p>Displays all current skill groups, skills, and skill progressions.</p><ul><li>skills</li></ul>")]
+        private async Task DoSkills(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var builder = new StringBuilder();
+
+            var engine = Assembly.Load("Legendary.Engine");
+
+            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
+
+            foreach (var tree in skillTrees)
+            {
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+
+                // If there are no skills in this instance, don't render it.
+                if (treeInstance != null && treeInstance is IActionTree instance)
+                {
+                    var groupProps = tree.GetProperties();
+
+                    var skillGroup1 = groupProps.FirstOrDefault(g => g.Name == $"Group1");
+                    var skillGroup2 = groupProps.FirstOrDefault(g => g.Name == $"Group2");
+                    var skillGroup3 = groupProps.FirstOrDefault(g => g.Name == $"Group3");
+                    var skillGroup4 = groupProps.FirstOrDefault(g => g.Name == $"Group4");
+                    var skillGroup5 = groupProps.FirstOrDefault(g => g.Name == $"Group5");
+
+                    var skillGroup1Obj = skillGroup1?.GetValue(treeInstance);
+                    var skillGroup2Obj = skillGroup2?.GetValue(treeInstance);
+                    var skillGroup3Obj = skillGroup3?.GetValue(treeInstance);
+                    var skillGroup4Obj = skillGroup4?.GetValue(treeInstance);
+                    var skillGroup5Obj = skillGroup5?.GetValue(treeInstance);
+
+                    var skillsGroup1 = skillGroup1Obj != null ? (List<IAction>)skillGroup1Obj : null;
+                    var skillsGroup2 = skillGroup2Obj != null ? (List<IAction>)skillGroup2Obj : null;
+                    var skillsGroup3 = skillGroup3Obj != null ? (List<IAction>)skillGroup3Obj : null;
+                    var skillsGroup4 = skillGroup4Obj != null ? (List<IAction>)skillGroup4Obj : null;
+                    var skillsGroup5 = skillGroup5Obj != null ? (List<IAction>)skillGroup5Obj : null;
+
+                    var sumSkills = skillsGroup1?.Count() + skillsGroup2?.Count() + skillsGroup3?.Count() + skillsGroup4?.Count() + skillsGroup5?.Count();
+
+                    // We have at least 1 skill in one of the groups, so render the tree category
+                    if (sumSkills != null && sumSkills > 0)
+                    {
+                        builder.Append("<table class=\"tree-table\">");
+
+                        // We have skills in this group, so render the group header.
+                        builder.Append($"<tr><td colspan=\"10\" class=\"tree-header\">{instance.Name}</td></tr>");
+
+                        builder.Append("<tr>");
+
+                        // Build the whole header row.
+                        for (var x = 1; x <= 5; x++)
+                        {
+                            builder.Append($"<td class=\"group-header\"><div class='ribbon-row'><div class='ribbon-block'><h1><span>{instance.Name} {x}</span></h1></div></div></td>");
+                        }
+
+                        builder.Append("</tr>");
+
+                        builder.Append("<tr>");
+
+                        // Loop over each group and render the skills the player has.
+                        for (var x = 1; x <= 5; x++)
+                        {
+                            var skillGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                            if (skillGroup != null)
+                            {
+                                builder.Append("<td class=\"group-content\"><ul>");
+
+                                var skills = skillGroup.GetValue(treeInstance);
+
+                                if (skills != null)
+                                {
+                                    var group = (List<IAction>)skills;
+
+                                    foreach (var action in group.OrderBy(g => g.Name))
+                                    {
+                                        if (actor.Character.HasSkill(action.Name.ToLower()))
+                                        {
+                                            var proficiency = actor.Character.GetSkillProficiency(action.Name.ToLower());
+                                            if (proficiency != null)
+                                            {
+                                                if (proficiency.Proficiency > 1)
+                                                {
+                                                    builder.Append($"<li>{proficiency.SkillName} <b>{proficiency.Proficiency}%</b> <progress class=\"skillprogress\" max=\"100\" value=\"{proficiency.Progress}\"></progress></li>");
+                                                }
+                                                else
+                                                {
+                                                    builder.Append($"<li class='unlearned'>{proficiency.SkillName} <b>{proficiency.Proficiency}%</b> <progress class=\"skillprogress\" max=\"100\" value=\"{proficiency.Progress}\"></progress></li>");
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                builder.Append("</ul></td>");
+                            }
+                        }
+
+                        builder.Append("</tr>");
+                        builder.Append("</table>");
+                    }
+                }
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
+        }
 
         [HelpText("<p>Sleeps. Your player will recover mana, health, and movement more quickly when sleeping, but will be unable to react to the environment around them. See also: HELP REST, HELP WAKE.</p><ul><li>rest</li></ul>")]
         private async Task DoSleep(UserData actor, CommandArgs args, CancellationToken cancellationToken)
@@ -1989,7 +2101,7 @@ namespace Legendary.Engine.Processors
         private async Task DoSpells(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var builder = new StringBuilder();
-            builder.Append("<div class='spellgroups'>");
+
             var engine = Assembly.Load("Legendary.Engine");
 
             var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
@@ -1998,52 +2110,95 @@ namespace Legendary.Engine.Processors
             {
                 var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
 
+                // If there are no spells in this instance, don't render it.
                 if (treeInstance != null && treeInstance is IActionTree instance)
                 {
                     var groupProps = tree.GetProperties();
 
-                    builder.Append($"<div><span class='spellgroup'>{instance.Name}</span>");
+                    var spellGroup1 = groupProps.FirstOrDefault(g => g.Name == $"Group1");
+                    var spellGroup2 = groupProps.FirstOrDefault(g => g.Name == $"Group2");
+                    var spellGroup3 = groupProps.FirstOrDefault(g => g.Name == $"Group3");
+                    var spellGroup4 = groupProps.FirstOrDefault(g => g.Name == $"Group4");
+                    var spellGroup5 = groupProps.FirstOrDefault(g => g.Name == $"Group5");
 
-                    bool hasSkillInGroup = false;
+                    var spellGroup1Obj = spellGroup1?.GetValue(treeInstance);
+                    var spellGroup2Obj = spellGroup2?.GetValue(treeInstance);
+                    var spellGroup3Obj = spellGroup3?.GetValue(treeInstance);
+                    var spellGroup4Obj = spellGroup4?.GetValue(treeInstance);
+                    var spellGroup5Obj = spellGroup5?.GetValue(treeInstance);
 
-                    for (var x = 1; x <= 5; x++)
+                    var spellsGroup1 = spellGroup1Obj != null ? (List<IAction>)spellGroup1Obj : null;
+                    var spellsGroup2 = spellGroup2Obj != null ? (List<IAction>)spellGroup2Obj : null;
+                    var spellsGroup3 = spellGroup3Obj != null ? (List<IAction>)spellGroup3Obj : null;
+                    var spellsGroup4 = spellGroup4Obj != null ? (List<IAction>)spellGroup4Obj : null;
+                    var spellsGroup5 = spellGroup5Obj != null ? (List<IAction>)spellGroup5Obj : null;
+
+                    var sumSpells = spellsGroup1?.Count() + spellsGroup2?.Count() + spellsGroup3?.Count() + spellsGroup4?.Count() + spellsGroup5?.Count();
+
+                    // We have at least 1 spell in one of the groups, so render the tree category
+                    if (sumSpells != null && sumSpells > 0)
                     {
-                        var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+                        builder.Append("<table class=\"tree-table\">");
 
-                        if (spellGroup != null)
+                        // We have spells in this group, so render the group header.
+                        builder.Append($"<tr><td colspan=\"10\" class=\"tree-header\">{instance.Name}</td></tr>");
+
+                        builder.Append("<tr>");
+
+                        // Build the whole header row.
+                        for (var x = 1; x <= 5; x++)
                         {
-                            var obj = spellGroup.GetValue(treeInstance);
+                            builder.Append($"<td class=\"group-header\"><div class='ribbon-row'><div class='ribbon-block'><h1><span>{instance.Name} {x}</span></h1></div></div></td>");
+                        }
 
-                            if (obj != null)
+                        builder.Append("</tr>");
+
+                        builder.Append("<tr>");
+
+                        // Loop over each group and render the spells the player has.
+                        for (var x = 1; x <= 5; x++)
+                        {
+                            var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                            if (spellGroup != null)
                             {
-                                var group = (List<IAction>)obj;
+                                builder.Append("<td class=\"group-content\"><ul>");
 
-                                foreach (var action in group.OrderBy(g => g.Name))
+                                var spells = spellGroup.GetValue(treeInstance);
+
+                                if (spells != null)
                                 {
-                                    if (actor.Character.HasSpell(action.Name.ToLower()))
+                                    var group = (List<IAction>)spells;
+
+                                    foreach (var action in group.OrderBy(g => g.Name))
                                     {
-                                        var proficiency = actor.Character.GetSpellProficiency(action.Name.ToLower());
-                                        if (proficiency != null)
+                                        if (actor.Character.HasSpell(action.Name.ToLower()))
                                         {
-                                            builder.Append($"<span class='spellinfo'>{proficiency.SpellName} {proficiency.Proficiency}% ({action.ManaCost} mana) <progress class='spellprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
-                                            hasSkillInGroup = true;
+                                            var proficiency = actor.Character.GetSpellProficiency(action.Name.ToLower());
+                                            if (proficiency != null)
+                                            {
+                                                if (proficiency.Proficiency > 1)
+                                                {
+                                                    builder.Append($"<li>{proficiency.SpellName} (<i>{action.ManaCost} mana</i>) <b>{proficiency.Proficiency}%</b> <progress class=\"skillprogress\" max=\"100\" value=\"{proficiency.Progress}\"></progress></li>");
+                                                }
+                                                else
+                                                {
+                                                    builder.Append($"<li class='unlearned'>{proficiency.SpellName} (<i>{action.ManaCost} mana</i>) <b>{proficiency.Proficiency}%</b> <progress class=\"skillprogress\" max=\"100\" value=\"{proficiency.Progress}\"></progress></li>");
+                                                }
+                                            }
                                         }
                                     }
                                 }
+
+                                builder.Append("</ul></td>");
                             }
                         }
-                    }
 
-                    if (!hasSkillInGroup)
-                    {
-                        builder.Append($"<span class='spellinfo'>No spells in this group.</span>");
+                        builder.Append("</tr>");
+                        builder.Append("</table>");
                     }
                 }
-
-                builder.Append("</div>");
             }
-
-            builder.Append("</div>");
 
             await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
         }
@@ -2625,8 +2780,8 @@ namespace Legendary.Engine.Processors
                         else
                         {
                             user.Character.DivineFavor += 1;
-                            await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to your deity for some divine favor.", cancellationToken);
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
+                            await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to {user.Character.Deity} for some divine favor.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to {user.Character.Deity}.", cancellationToken);
                             itemsToRemove.Add(item);
                         }
                     }
@@ -2659,8 +2814,8 @@ namespace Legendary.Engine.Processors
                     else
                     {
                         user.Character.DivineFavor += 1;
-                        await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to your deity for some divine favor.", cancellationToken);
-                        await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to their deity.", cancellationToken);
+                        await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to {user.Character.Deity} for some divine favor.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to {user.Character.Deity}.", cancellationToken);
                         itemsToRemove.Add(item);
                     }
                 }
@@ -3293,6 +3448,7 @@ namespace Legendary.Engine.Processors
                         Neg = $"{actor.SaveNegative}%",
                         Spell = $"{actor.SaveSpell}%",
                         Death = $"{actor.SaveDeath}%",
+                        Learn = actor.Learns.ToString(),
                     },
                     Other = new Other()
                     {

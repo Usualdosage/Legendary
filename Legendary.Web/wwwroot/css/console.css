@@ -40,8 +40,69 @@ h4 {
     font-weight: bold;
 }
 
-/* Login/Create Pages */
+/* Skill and Spell Trees */
 
+.tree-table {
+    width: 100%;
+}
+
+    .tree-table td {
+        width: 20%;
+        text-shadow: none !important;
+        vertical-align: top;
+    }
+
+.tree-header {
+    text-align: center;
+    border-top: solid 1px gold;
+    border-bottom: solid 1px gold;
+    font-family: 'Balgruf';
+        background-color: #333;
+}
+
+.group-header {
+    text-align: left;
+    font-size: .9em;
+    padding-left: 50px;
+}
+
+    .group-header h1 {
+        text-shadow: none !important;
+    }
+
+    .group-header div {
+        width: 100%;
+    }
+
+.group-content {
+    font-size: .65em;
+}
+
+    .group-content ul {
+        margin-left: 10px;
+    }
+
+    .group-content ul li {
+        color: #fff;
+        font-style: italic;
+        list-style-type: none;
+    }
+
+        .group-content ul li i {
+            color: lightgreen;
+            font-style: italic;
+        }
+
+        .group-content ul li progress {
+            margin-top: 3px;
+            margin-bottom: -2px;
+        }
+
+        .group-content ul li.unlearned {
+            color: #888
+        }
+
+/* Login/Create Pages */
 .card {
     box-shadow: 5px 5px 5px #666;
 }
@@ -107,7 +168,7 @@ h4 {
     padding-bottom: 80px;
     /* Firefox */
     scrollbar-width: thin; /* "auto" or "thin" */
-    scrollbar-color: blue orange; /* scroll thumb and track */
+    scrollbar-color: #333 #888; /* scroll thumb and track */
     background-image: url('../img/console-bg.jpg');
     background-repeat: no-repeat;
     background-position: center;
@@ -214,15 +275,49 @@ input:focus {
     font-size: .7em;
     font-style: italic;
     height: 50px;
-    overflow: hidden;
+    overflow: auto;
+    /* Firefox */
+    scrollbar-width: thin; /* "auto" or "thin" */
+    scrollbar-color: #333 #888; /* scroll thumb and track */
 }
+
+/* Chrome */
+    .image-caption::-webkit-scrollbar {
+        width: 8px; /* width of the entire scrollbar */
+    }
+
+    .image-caption::-webkit-scrollbar-track {
+        background: #888; /* color of the tracking area */
+    }
+
+    .image-caption::-webkit-scrollbar-thumb {
+        background-color: #333; /* color of the scroll thumb */
+        border-radius: 20px; /* roundness of the scroll thumb */
+    }
 
 .component-time-weather {
     font-size: .7em;
     font-style: italic;
     height: 110px;
-    overflow: hidden;
+    overflow: auto;
+    /* Firefox */
+    scrollbar-width: thin; /* "auto" or "thin" */
+    scrollbar-color: #333 #888; /* scroll thumb and track */
 }
+
+/* Chrome */
+    .component-time-weather::-webkit-scrollbar {
+        width: 8px; /* width of the entire scrollbar */
+    }
+
+    .component-time-weather::-webkit-scrollbar-track {
+        background: #888; /* color of the tracking area */
+    }
+
+    .component-time-weather::-webkit-scrollbar-thumb {
+        background-color: #333; /* color of the scroll thumb */
+        border-radius: 20px; /* roundness of the scroll thumb */
+    }
 
 .loader {
     padding: 15px;
@@ -347,6 +442,7 @@ component .vol-table {
 /* End Main Layout */
 
 /* Descriptive Content */
+
 .command {
     width: 100px;
     display: inline-block;
@@ -386,6 +482,16 @@ component .vol-table {
     text-indent: 20px;
     padding: 3px;
 }
+
+.map {
+    margin: 10px;
+    display: block;   
+}
+
+    .map img {
+        border-radius: 10px;
+        height: 700px;
+    }
 
 /* Room Data */
 
@@ -932,6 +1038,7 @@ video {
     text-align: center;
     font-size: .5em;
     text-transform: uppercase;
+    text-shadow: none !important;
 }
 
     .ribbon-row h1:after, .ribbon-row h1:before {
@@ -960,10 +1067,11 @@ video {
 .ribbon-row h1 span {
     display: inline-block;
     position: relative;
-    padding: .15em .75em;
+    padding: .15em 2em;
     text-decoration: none;
     color: #192238;
     background-color: #8ed2a9;
+    font-weight: bold;
 }
 
 .ribbon-row h1 span:after, h1 span:before {
@@ -993,43 +1101,62 @@ video {
 }
 
 .gem-award div {
-    position: absolute;
-    left: 50%;
-    top: 50%;
+    position: relative;
+    text-align: center;
 }
 
 #gem-amethyst div {
-    width: 60px;
-    height: 80px;
-    margin-left: -30px;
-    margin-top: -40px;
+    width: 40px;
+    height: 67px;
     background-repeat: no-repeat;
-    background-image: linear-gradient(25deg, #36a265 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #36a265 37%), linear-gradient(-25deg, #44c17b 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #44c17b 37%), linear-gradient(135deg, transparent 42%, #3db974 42%, #3db974 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #a0e0bc 42%, #a0e0bc 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #3db974 42%, #3db974 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #63cb91 42%, #63cb91 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #8dd9af, #8dd9af);
+    background-image: linear-gradient(25deg, #9132a8 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #9132a8 37%), linear-gradient(-25deg, #a449ba 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #a449ba 37%), linear-gradient(135deg, transparent 42%, #763a85 42%, #763a85 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #dd99de 42%, #dd99de 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #b93db7 42%, #b93db7 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #c963cb 42%, #c963cb 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #d98dd5, #d98dd5);
     background-size: 30% 50%, 30% 40%, 30% 50%, 30% 40%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 40% 50%, 40% 50%;
     background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
     text-align: center;
     text-shadow: 1px 1px 1px #185332, 0 0 0 #185332, 1px 1px 1px #185332;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -8px;
+    top: 0px;
 }
 
 #gem-emerald div {
-    width: 60px;
-    height: 80px;
-    margin-left: -30px;
-    margin-top: -40px;
+    width: 40px;
+    height: 67px;
     background-repeat: no-repeat;
     background-image: linear-gradient(25deg, #36a265 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #36a265 37%), linear-gradient(-25deg, #44c17b 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #44c17b 37%), linear-gradient(135deg, transparent 42%, #3db974 42%, #3db974 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #a0e0bc 42%, #a0e0bc 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #3db974 42%, #3db974 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #63cb91 42%, #63cb91 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #8dd9af, #8dd9af);
     background-size: 30% 50%, 30% 40%, 30% 50%, 30% 40%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 40% 50%, 40% 50%;
     background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
     text-align: center;
     text-shadow: 1px 1px 1px #185332, 0 0 0 #185332, 1px 1px 1px #185332;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -8px;
+    top: 0px;
 }
 
-    #gem div i {
+#gem-sapphire div {
+    width: 40px;
+    height: 67px;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(25deg, #3a36a2 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #3a36a2 37%), linear-gradient(-25deg, #5044c1 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #5044c1 37%), linear-gradient(135deg, transparent 42%, #473db9 42%, #473db9 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #a4a0e0 42%, #a4a0e0 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #413db9 42%, #413db9 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #6563cb 42%, #6563cb 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #918dd9, #918dd9);
+    background-size: 30% 50%, 30% 40%, 30% 50%, 30% 40%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 40% 50%, 40% 50%;
+    background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
+    text-align: center;
+    text-shadow: 1px 1px 1px #1e1853, 0 0 0 #1e1853, 1px 1px 1px #1e1853;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -8px;
+    top: 0px;
+}
+
+    .gem-award div i {
         height: 80px;
-        color: #339b60;
+        color: #ffffff;
         line-height: 80px;
         vertical-align: middle;
         font-size: 16px;
+        margin-top: -7px !important;
     }
 
 .worth {

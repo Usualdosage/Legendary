@@ -37,7 +37,13 @@ namespace Legendary.Engine.Models.SpellTrees
         public override SchoolType SchoolType => SchoolType.Magic;
 
         /// <inheritdoc/>
-        public override List<IAction> Group1 { get => new List<IAction>(); }
+        public override List<IAction> Group1
+        {
+            get => new List<IAction>()
+            {
+                { new Protection(this.Communicator, this.Random, this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
         public override List<IAction> Group2
