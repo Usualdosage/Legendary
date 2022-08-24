@@ -60,6 +60,11 @@ namespace Legendary.Core.Models
         public bool IsTrapped { get; set; } = false;
 
         /// <summary>
+        /// Gets or sets a value indicating whether this door is hidden.
+        /// </summary>
+        public bool IsHidden { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets the trap type.
         /// </summary>
         public TrapType? TrapType { get; set; }

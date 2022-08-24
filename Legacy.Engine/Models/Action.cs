@@ -15,7 +15,9 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Generators;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Abstract implementation of an action contract.
@@ -27,13 +29,16 @@ namespace Legendary.Engine.Models
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Action(ICommunicator communicator, IRandom random, Combat combat)
+        public Action(ICommunicator communicator, IRandom random, IWorld world, ILogger logger,  Combat combat)
         {
             this.Communicator = communicator;
             this.Random = random;
             this.LanguageGenerator = new LanguageGenerator(random);
             this.Combat = combat;
+            this.AwardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
         }
 
         /// <inheritdoc/>
@@ -73,6 +78,11 @@ namespace Legendary.Engine.Models
         /// Gets the communicator.
         /// </summary>
         public ICommunicator Communicator { get; private set; }
+
+        /// <summary>
+        /// Gets the award processor.
+        /// </summary>
+        public AwardProcessor AwardProcessor { get; private set; }
 
         /// <summary>
         /// Gets the combat generator.

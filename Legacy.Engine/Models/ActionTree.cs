@@ -25,12 +25,16 @@ namespace Legendary.Engine.Models
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
-        /// <param name="combat">The combat engine.</param>
-        public ActionTree(ICommunicator communicator, IRandom random, Combat combat)
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="combat">The combat generator.</param>
+        public ActionTree(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
         {
             this.Communicator = communicator;
             this.Random = random;
             this.Combat = combat;
+            this.World = world;
+            this.Logger = logger;
         }
 
         /// <inheritdoc/>
@@ -68,6 +72,16 @@ namespace Legendary.Engine.Models
         /// Gets the combat engine.
         /// </summary>
         protected Combat Combat { get; private set; }
+
+        /// <summary>
+        /// Gets the world.
+        /// </summary>
+        protected IWorld World { get; private set; }
+
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        protected ILogger Logger { get; private set; }
 
         /// <summary>
         /// When passed a list of proficiency names, gets a total count of matching items in the group.

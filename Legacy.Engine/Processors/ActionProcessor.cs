@@ -67,7 +67,7 @@ namespace Legendary.Engine.Processors
             this.logger = logger;
             this.random = random;
             this.combat = combat;
-            this.actionHelper = new ActionHelper(this.communicator, random, combat);
+            this.actionHelper = new ActionHelper(this.communicator, random, world, logger, combat);
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
 
             this.ConfigureActions();
@@ -300,10 +300,12 @@ namespace Legendary.Engine.Processors
         {
             this.actions.Add("advance", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAdvance)));
             this.actions.Add("affects", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAffects)));
-            this.actions.Add("areas", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAreas)));
+            this.actions.Add("area", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoArea)));
+            this.actions.Add("areas", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAreas)));
+            this.actions.Add("alist", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAreas)));
             this.actions.Add("autoloot", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAutoloot)));
             this.actions.Add("autosac", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAutosac)));
-            this.actions.Add("awards", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAwards)));
+            this.actions.Add("awards", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(6, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAwards)));
             this.actions.Add("buy", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoBuy)));
             this.actions.Add("close", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoClose)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
@@ -1562,6 +1564,23 @@ namespace Legendary.Engine.Processors
                             // Put the char in the new room.
                             actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
 
+                            // Track exploration for award purposes.
+                            if (actor.Character.Metrics.RoomsExplored.ContainsKey(exit.ToArea))
+                            {
+                                var roomList = actor.Character.Metrics.RoomsExplored[exit.ToArea];
+
+                                if (!roomList.Contains(exit.ToRoom))
+                                {
+                                    actor.Character.Metrics.RoomsExplored[exit.ToArea].Add(exit.ToRoom);
+                                    await this.awardProcessor.CheckVoyagerAward(exit.ToArea, actor.Character, cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                actor.Character.Metrics.RoomsExplored.Add(exit.ToArea, new List<long>() { exit.ToRoom });
+                                await this.awardProcessor.CheckVoyagerAward(exit.ToArea, actor.Character, cancellationToken);
+                            }
+
                             if (isGhost)
                             {
                                 await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} floats in.", cancellationToken);
@@ -1910,71 +1929,6 @@ namespace Legendary.Engine.Processors
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
-
-        /*
-        [HelpText("<p>Displays all current skill groups, skills, and skill progressions.</p><ul><li>skills</li></ul>")]
-        private async Task DoSkills(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            var builder = new StringBuilder();
-            builder.Append("<div class='skillgroups'>");
-            var engine = Assembly.Load("Legendary.Engine");
-
-            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
-
-            foreach (var tree in skillTrees)
-            {
-                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
-
-                if (treeInstance != null && treeInstance is IActionTree instance)
-                {
-                    var groupProps = tree.GetProperties();
-
-                    builder.Append($"<div><span class='skillgroup'>{instance.Name}</span>");
-
-                    bool hasSkillInGroup = false;
-
-                    for (var x = 1; x <= 5; x++)
-                    {
-                        var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
-
-                        if (spellGroup != null)
-                        {
-                            var obj = spellGroup.GetValue(treeInstance);
-
-                            if (obj != null)
-                            {
-                                var group = (List<IAction>)obj;
-
-                                foreach (var action in group.OrderBy(g => g.Name))
-                                {
-                                    if (actor.Character.HasSkill(action.Name.ToLower()))
-                                    {
-                                        var proficiency = actor.Character.GetSkillProficiency(action.Name.ToLower());
-                                        if (proficiency != null)
-                                        {
-                                            builder.Append($"<span class='skillinfo'>{proficiency.SkillName} {proficiency.Proficiency}% <progress class='skillprogress' max='100' value='{proficiency.Progress}'>{proficiency.Progress}%</progress></span>");
-                                            hasSkillInGroup = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (!hasSkillInGroup)
-                    {
-                        builder.Append($"<span class='skillinfo'>No skills in this group.</span>");
-                    }
-                }
-
-                builder.Append("</div>");
-            }
-
-            builder.Append("</div>");
-
-            await this.communicator.SendToPlayer(actor.Connection, builder.ToString(), cancellationToken);
-        }
-        */
 
         [HelpText("<p>Displays all current skill groups, skills, and skill progressions.</p><ul><li>skills</li></ul>")]
         private async Task DoSkills(UserData actor, CommandArgs args, CancellationToken cancellationToken)

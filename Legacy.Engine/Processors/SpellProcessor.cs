@@ -25,6 +25,7 @@ namespace Legendary.Engine.Processors
     {
         private readonly ICommunicator communicator;
         private readonly ILogger logger;
+        private readonly IWorld world;
         private readonly ActionHelper actionHelper;
 
         /// <summary>
@@ -32,13 +33,15 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
         /// <param name="combat">The combat generator.</param>
         /// <param name="logger">The logger.</param>
-        public SpellProcessor(ICommunicator communicator, IRandom random, Combat combat, ILogger logger)
+        public SpellProcessor(ICommunicator communicator, IRandom random, IWorld world, Combat combat, ILogger logger)
         {
             this.communicator = communicator;
-            this.actionHelper = new ActionHelper(communicator, random, combat);
+            this.actionHelper = new ActionHelper(communicator, random, world, logger, combat);
             this.logger = logger;
+            this.world = world;
         }
 
         /// <summary>

@@ -113,14 +113,14 @@ namespace Legendary.Engine
             this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.languageGenerator, this, this.random);
 
             // Create the action helper.
-            this.actionHelper = new ActionHelper(this, this.random, this.combat);
+            this.actionHelper = new ActionHelper(this, this.random, this.world, this.logger, this.combat);
 
             // Create the title generator.
-            this.titleGenerator = new TitleGenerator(this, this.random, this.combat);
+            this.titleGenerator = new TitleGenerator(this, this.random, this.world, this.logger, this.combat);
 
             // Create instances of the action, skill, and spell processors.
-            this.skillProcessor = new SkillProcessor(this, this.random, this.combat, this.logger);
-            this.spellProcessor = new SpellProcessor(this, this.random, this.combat, this.logger);
+            this.skillProcessor = new SkillProcessor(this, this.random, this.world, this.combat, this.logger);
+            this.spellProcessor = new SpellProcessor(this, this.random, this.world, this.combat, this.logger);
             this.actionProcessor = new ActionProcessor(this, this.world, this.logger, this.random, this.combat);
         }
 
@@ -623,6 +623,10 @@ namespace Legendary.Engine
                     {
                         sb.Append("(" + Enum.GetName(typeof(Direction), exit.Direction)?.ToLower() + ") ");
                     }
+                    else if (exit.IsHidden)
+                    {
+                        continue;
+                    }
                     else
                     {
                         sb.Append(Enum.GetName(typeof(Direction), exit.Direction)?.ToLower() + " ");
@@ -1075,6 +1079,12 @@ namespace Legendary.Engine
         public Area? ResolveArea(KeyValuePair<long, long> location)
         {
             return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key);
+        }
+
+        /// <inheritdoc/>
+        public Area? ResolveArea(long areaId)
+        {
+            return this.world.Areas.SingleOrDefault(a => a.AreaId == areaId);
         }
 
         /// <inheritdoc/>
@@ -1732,7 +1742,7 @@ namespace Legendary.Engine
 
             foreach (var tree in spellTrees)
             {
-                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.combat);
+                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
 
                 var groupProps = tree.GetProperties();
 
@@ -1763,7 +1773,7 @@ namespace Legendary.Engine
 
             foreach (var tree in skillTrees)
             {
-                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.combat);
+                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
 
                 var groupProps = tree.GetProperties();
 

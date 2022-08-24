@@ -12,6 +12,7 @@ namespace Legendary.Engine.Models.SpellTrees
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Spells;
 
     /// <summary>
@@ -24,9 +25,11 @@ namespace Legendary.Engine.Models.SpellTrees
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
-        /// <param name="combat">The combat engine.</param>
-        public HealingGroup(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="combat">The combat generator.</param>
+        public HealingGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
         }
 
@@ -41,9 +44,9 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new Armor(this.Communicator, this.Random, this.Combat) },
-                { new CureLight(this.Communicator, this.Random, this.Combat) },
-                { new CauseLight(this.Communicator, this.Random, this.Combat) },
+                { new Armor(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new CureLight(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new CauseLight(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
@@ -52,10 +55,10 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new CureSerious(this.Communicator, this.Random, this.Combat) },
-                { new CauseSerious(this.Communicator, this.Random, this.Combat) },
-                { new CureBlindness(this.Communicator, this.Random, this.Combat) },
-                { new Blindness(this.Communicator, this.Random, this.Combat) },
+                { new CureSerious(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new CauseSerious(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new CureBlindness(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Blindness(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
@@ -64,8 +67,8 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new CureCritical(this.Communicator, this.Random, this.Combat) },
-                { new Harm(this.Communicator, this.Random, this.Combat) },
+                { new CureCritical(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Harm(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
@@ -74,8 +77,8 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new Poison(this.Communicator, this.Random, this.Combat) },
-                { new Sanctuary(this.Communicator, this.Random, this.Combat) },
+                { new Poison(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Sanctuary(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 

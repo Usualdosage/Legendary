@@ -140,6 +140,13 @@ namespace Legendary.Core.Contracts
         Area? ResolveArea(KeyValuePair<long, long> location);
 
         /// <summary>
+        /// Gets a area by area Id.
+        /// </summary>
+        /// <param name="areaId">The area ID.</param>
+        /// <returns>Area.</returns>
+        Area? ResolveArea(long areaId);
+
+        /// <summary>
         /// Resolves which character someone is fighting. Could be a player or a mob.
         /// </summary>
         /// <param name="actor">The character.</param>

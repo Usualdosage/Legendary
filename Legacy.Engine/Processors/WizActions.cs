@@ -354,6 +354,24 @@ namespace Legendary.Engine.Processors
                 if (player != null)
                 {
                     player.Character.Location = actor.Character.Location;
+
+                    // Track exploration for award purposes.
+                    if (player.Character.Metrics.RoomsExplored.ContainsKey(actor.Character.Location.Key))
+                    {
+                        var roomList = player.Character.Metrics.RoomsExplored[actor.Character.Location.Key];
+
+                        if (!roomList.Contains(actor.Character.Location.Value))
+                        {
+                            player.Character.Metrics.RoomsExplored[actor.Character.Location.Key].Add(actor.Character.Location.Value);
+                            await this.awardProcessor.CheckVoyagerAward(actor.Character.Location.Key, player.Character, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        player.Character.Metrics.RoomsExplored.Add(actor.Character.Location.Key, new List<long>() { actor.Character.Location.Value });
+                        await this.awardProcessor.CheckVoyagerAward(actor.Character.Location.Key, player.Character, cancellationToken);
+                    }
+
                     await this.communicator.SendToPlayer(actor.Connection, $"You have transferred {player.Character.FirstName} here.", cancellationToken);
                     await this.communicator.SendToRoom(actor.Character.Location, actor.Character, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} arrives in a puff of smoke.", cancellationToken);
                     await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} has summoned you!", cancellationToken);

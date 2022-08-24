@@ -14,6 +14,7 @@ namespace Legendary.Engine.Generators
     using System.Text;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.SkillTrees;
     using Legendary.Engine.Models.SpellTrees;
 
@@ -24,6 +25,8 @@ namespace Legendary.Engine.Generators
     {
         private readonly IRandom random;
         private readonly ICommunicator communicator;
+        private readonly IWorld world;
+        private readonly ILogger logger;
         private readonly Combat combat;
 
         private readonly Dictionary<int, string> genericTitles = new Dictionary<int, string>()
@@ -112,11 +115,15 @@ namespace Legendary.Engine.Generators
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
-        public TitleGenerator(ICommunicator communicator, IRandom random, Combat combat)
+        public TitleGenerator(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
         {
             this.random = random;
             this.communicator = communicator;
+            this.world = world;
+            this.logger = logger;
             this.combat = combat;
         }
 
@@ -265,7 +272,7 @@ namespace Legendary.Engine.Generators
             List<string> skillList = character.Skills.Where(sk => sk.Proficiency > 0).Select(sk => sk.SkillName.ToLower()).ToList();
 
             // Warrior.
-            var martialCount = new MartialGroup(this.communicator, this.random, this.combat).GetMatches(skillList);
+            var martialCount = new MartialGroup(this.communicator, this.random, this.world, this.logger, this.combat).GetMatches(skillList);
 
             classBalance[ClassBasis.Warrior] += martialCount;
             classBalance[ClassBasis.WarriorCleric] += martialCount;
@@ -273,7 +280,7 @@ namespace Legendary.Engine.Generators
             classBalance[ClassBasis.WarriorRogue] += martialCount;
 
             // Warrior.
-            var weaponCount = new WeaponGroup(this.communicator, this.random, this.combat).GetMatches(skillList);
+            var weaponCount = new WeaponGroup(this.communicator, this.random, this.world, this.logger, this.combat).GetMatches(skillList);
 
             classBalance[ClassBasis.Warrior] += weaponCount;
             classBalance[ClassBasis.WarriorCleric] += weaponCount;
@@ -286,21 +293,21 @@ namespace Legendary.Engine.Generators
             List<string> spellList = character.Spells.Where(sp => sp.Proficiency > 0).Select(sp => sp.SpellName.ToLower()).ToList();
 
             // Mage.
-            var airCount = new AirGroup(this.communicator, this.random, this.combat).GetMatches(spellList);
+            var airCount = new AirGroup(this.communicator, this.random, this.world, this.logger, this.combat).GetMatches(spellList);
 
             classBalance[ClassBasis.Mage] += airCount;
             classBalance[ClassBasis.WarriorMage] += airCount;
             classBalance[ClassBasis.MageCleric] += airCount;
 
             // Mage.
-            var fireCount = new FireGroup(this.communicator, this.random, this.combat).GetMatches(spellList);
+            var fireCount = new FireGroup(this.communicator, this.random, this.world, this.logger, this.combat).GetMatches(spellList);
 
             classBalance[ClassBasis.Mage] += fireCount;
             classBalance[ClassBasis.WarriorMage] += fireCount;
             classBalance[ClassBasis.MageCleric] += fireCount;
 
             // Cleric.
-            var healingCount = new HealingGroup(this.communicator, this.random, this.combat).GetMatches(spellList);
+            var healingCount = new HealingGroup(this.communicator, this.random, this.world, this.logger, this.combat).GetMatches(spellList);
 
             classBalance[ClassBasis.Cleric] += healingCount;
             classBalance[ClassBasis.ClericRogue] += healingCount;

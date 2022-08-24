@@ -51,7 +51,34 @@ namespace Legendary.Engine.Processors
                 sb.Append($"<br/>");
             }
 
+            var explored = (actor.Character.Metrics.RoomsExplored.Sum(s => s.Value.Count) / this.world.Areas.Sum(a => a.Rooms.Count)) * 100;
+
+            sb.Append($"There are {this.world.Areas.Count} areas in Legendary, with a total of {this.world.Areas.Sum(a => a.Rooms.Count)} rooms. You have explored {explored}% of the entire world.");
+
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        [HelpText("<p>Information about the current area your are in.</p>")]
+        private async Task DoArea(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var area = this.communicator.ResolveArea(actor.Character.Location);
+
+            if (area != null)
+            {
+                var totalVisited = actor.Character.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Count();
+                var total = area.Rooms.Count();
+                var explorationPct = (totalVisited / total) * 100;
+
+                sb.Append($"<div class='player-section'>{area.Name}</div>");
+                sb.Append($"<span>{area.Description}</span><br/>");
+                sb.Append($"<span><em>Created by {area.Author} ({area.Rooms.Count} rooms)</em></span><br/>");
+                sb.Append($"<span>You have explored {explorationPct}% of this area.</span><br/>");
+                sb.Append($"<br/>");
+
+                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+            }
         }
 
         [HelpText("<p>Toggles automatic looting. When active, corpses will be automatically looted when killed.</p>")]
@@ -336,7 +363,7 @@ namespace Legendary.Engine.Processors
 
                     foreach (var tree in skillTrees)
                     {
-                        var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+                        var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
 
                         if (treeInstance != null && treeInstance is IActionTree instance)
                         {
@@ -620,7 +647,7 @@ namespace Legendary.Engine.Processors
 
                             foreach (var tree in skillTrees)
                             {
-                                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+                                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
 
                                 if (treeInstance != null && treeInstance is IActionTree instance)
                                 {
@@ -673,7 +700,7 @@ namespace Legendary.Engine.Processors
 
                             foreach (var tree in spellTrees)
                             {
-                                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+                                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
 
                                 if (treeInstance != null && treeInstance is IActionTree instance)
                                 {

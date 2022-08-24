@@ -11,10 +11,12 @@ namespace Legendary.Engine.Processors
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
 
     /// <summary>
@@ -65,7 +67,7 @@ namespace Legendary.Engine.Processors
                     // See if we are leveling up this award. If we don't have a metadata entry that matches, this is a level up.
                     playerAward.Metadata?.Add(metaData);
                     playerAward.AwardLevel += 1;
-                    await this.communicator.SendToPlayer(actor, $"<span class='award-message'>Congratulations, you have {metaData} and earn an award upgrade! Use \"awards\" to see your collection.</span>", cancellationToken);
+                    await this.communicator.SendToPlayer(actor, $"<span class='award-message'>Congratulations, you have {metaData} and earned an award upgrade! Use \"awards\" to see your collection.</span>", cancellationToken);
                     await this.communicator.SendToPlayer(actor, $"You gain {playerAward.ExperiencePerLevel * (playerAward.AwardLevel + 1)} experience!", cancellationToken);
                     actor.Experience += playerAward.ExperiencePerLevel * playerAward.AwardLevel;
                 }
@@ -92,6 +94,33 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SaveCharacter(actor);
+        }
+
+        /// <summary>
+        /// Check the voyager award.
+        /// </summary>
+        /// <param name="areaId">The area Id.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task CheckVoyagerAward(long areaId, Character actor, CancellationToken cancellationToken)
+        {
+            var area = this.communicator.ResolveArea(areaId);
+
+            if (area != null)
+            {
+                var roomsInArea = area.Rooms.Count();
+
+                var areaExplored = actor.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId);
+
+                if (areaExplored != null)
+                {
+                    if (areaExplored.Count() == roomsInArea)
+                    {
+                        await this.GrantAward(7, actor, $"explored all rooms in {area.Name}", cancellationToken);
+                    }
+                }
+            }
         }
     }
 }

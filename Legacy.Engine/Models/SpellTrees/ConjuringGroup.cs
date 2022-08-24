@@ -12,6 +12,7 @@ namespace Legendary.Engine.Models.SpellTrees
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Spells;
 
     /// <summary>
@@ -24,9 +25,11 @@ namespace Legendary.Engine.Models.SpellTrees
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
-        /// <param name="combat">The combat engine.</param>
-        public ConjuringGroup(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="combat">The combat generator.</param>
+        public ConjuringGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
         }
 
@@ -41,8 +44,8 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new CreateFood(this.Communicator, this.Random, this.Combat) },
-                { new ContinualLight(this.Communicator, this.Random, this.Combat) },
+                { new CreateFood(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new ContinualLight(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
@@ -54,7 +57,7 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new CreateSpring(this.Communicator, this.Random, this.Combat) },
+                { new CreateSpring(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
@@ -63,7 +66,7 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new Summon(this.Communicator, this.Random, this.Combat) },
+                { new Summon(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 

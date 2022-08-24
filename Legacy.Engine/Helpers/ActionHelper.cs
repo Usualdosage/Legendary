@@ -16,6 +16,7 @@ namespace Legendary.Engine.Helpers
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Helper for creating instances of skills and spells by reflection.
@@ -24,6 +25,8 @@ namespace Legendary.Engine.Helpers
     {
         private readonly ICommunicator communicator;
         private readonly IRandom random;
+        private readonly IWorld world;
+        private readonly ILogger logger;
         private readonly Combat combat;
 
         /// <summary>
@@ -31,12 +34,16 @@ namespace Legendary.Engine.Helpers
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public ActionHelper(ICommunicator communicator, IRandom random, Combat combat)
+        public ActionHelper(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
         {
             this.communicator = communicator;
             this.random = random;
             this.combat = combat;
+            this.world = world;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -282,7 +289,7 @@ namespace Legendary.Engine.Helpers
 
                     if (type != null)
                     {
-                        var instance = Activator.CreateInstance(type, this.communicator, this.random, this.combat);
+                        var instance = Activator.CreateInstance(type, this.communicator, this.random, this.world, this.logger, this.combat);
 
                         if (instance is not null and T)
                         {

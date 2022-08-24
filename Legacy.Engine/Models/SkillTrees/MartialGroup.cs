@@ -12,6 +12,7 @@ namespace Legendary.Engine.Models.SkillTrees
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
@@ -24,9 +25,11 @@ namespace Legendary.Engine.Models.SkillTrees
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
-        /// <param name="combat">The combat engine.</param>
-        public MartialGroup(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="combat">The combat generator.</param>
+        public MartialGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
         }
 
@@ -41,9 +44,9 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new HandToHand(this.Communicator, this.Random, this.Combat) },
-                { new Recall(this.Communicator, this.Random, this.Combat) },
-                { new Dodge(this.Communicator, this.Random, this.Combat) },
+                { new HandToHand(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Recall(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Dodge(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -52,7 +55,7 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new Parry(this.Communicator, this.Random, this.Combat) },
+                { new Parry(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -61,8 +64,8 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new SecondAttack(this.Communicator, this.Random, this.Combat) },
-                { new EvasiveManeuvers(this.Communicator, this.Random, this.Combat) },
+                { new SecondAttack(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new EvasiveManeuvers(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -71,7 +74,7 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new ThirdAttack(this.Communicator, this.Random, this.Combat) },
+                { new ThirdAttack(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -80,7 +83,7 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new FourthAttack(this.Communicator, this.Random, this.Combat) },
+                { new FourthAttack(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
     }

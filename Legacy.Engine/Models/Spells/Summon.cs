@@ -9,13 +9,14 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
 
     /// <summary>
@@ -28,9 +29,11 @@ namespace Legendary.Engine.Models.Spells
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Summon(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        public Summon(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
             this.Name = "Summon";
             this.ManaCost = 50;
@@ -70,6 +73,23 @@ namespace Legendary.Engine.Models.Spells
                         {
                             // Player gets a save vs. spell
                             player.Character.Location = actor.Location;
+
+                            // Track exploration for award purposes.
+                            if (player.Character.Metrics.RoomsExplored.ContainsKey(actor.Location.Key))
+                            {
+                                var roomList = player.Character.Metrics.RoomsExplored[actor.Location.Key];
+
+                                if (!roomList.Contains(actor.Location.Value))
+                                {
+                                    player.Character.Metrics.RoomsExplored[actor.Location.Key].Add(actor.Location.Value);
+                                    await this.AwardProcessor.CheckVoyagerAward(actor.Location.Key, actor, cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                player.Character.Metrics.RoomsExplored.Add(actor.Location.Key, new List<long>() { actor.Location.Value });
+                                await this.AwardProcessor.CheckVoyagerAward(actor.Location.Key, actor, cancellationToken);
+                            }
 
                             await this.Communicator.SendToPlayer(actor, $"You have summoned {player.Character.FirstName} here!", cancellationToken);
                             await this.Communicator.SendToRoom(actor.Location, actor, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} arrives in a puff of smoke.", cancellationToken);

@@ -205,27 +205,27 @@ namespace Legendary.Engine
                 {
                     default:
                         {
-                            return new HandToHand(this.communicator, this.random, this);
+                            return new HandToHand(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case DamageType.Slash:
                         {
-                            return new EdgedWeapons(this.communicator, this.random, this);
+                            return new EdgedWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case DamageType.Blunt:
                         {
-                            return new BluntWeapons(this.communicator, this.random, this);
+                            return new BluntWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case DamageType.Pierce:
                         {
-                            return new PiercingWeapons(this.communicator, this.random, this);
+                            return new PiercingWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
                 }
             }
 
-            return new HandToHand(this.communicator, this.random, this);
+            return new HandToHand(this.communicator, this.random, this.world, this.logger, this);
         }
 
         /// <summary>
@@ -377,7 +377,7 @@ namespace Legendary.Engine
                         dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
                     }
 
-                    SecondAttack skill = new SecondAttack(this.communicator, this.random, this);
+                    SecondAttack skill = new SecondAttack(this.communicator, this.random, this.world, this.logger, this);
                     await skill.CheckImprove(character, cancellationToken);
                 }
             }
@@ -395,7 +395,7 @@ namespace Legendary.Engine
                         dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
                     }
 
-                    ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this);
+                    ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this.world, this.logger, this);
                     await skill.CheckImprove(character, cancellationToken);
                 }
             }
@@ -413,7 +413,7 @@ namespace Legendary.Engine
                         dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
                     }
 
-                    FourthAttack skill = new FourthAttack(this.communicator, this.random, this);
+                    FourthAttack skill = new FourthAttack(this.communicator, this.random, this.world, this.logger, this);
                     await skill.CheckImprove(character, cancellationToken);
                 }
             }
@@ -777,7 +777,7 @@ namespace Legendary.Engine
                             dodged = true;
                         }
 
-                        Dodge skill = new Dodge(this.communicator, this.random, this);
+                        Dodge skill = new Dodge(this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return dodged;
@@ -796,7 +796,7 @@ namespace Legendary.Engine
                             parried = true;
                         }
 
-                        Parry skill = new Parry(this.communicator, this.random, this);
+                        Parry skill = new Parry(this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return parried;
@@ -813,7 +813,7 @@ namespace Legendary.Engine
                             evaded = true;
                         }
 
-                        EvasiveManeuvers skill = new EvasiveManeuvers(this.communicator, this.random, this);
+                        EvasiveManeuvers skill = new EvasiveManeuvers(this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return evaded;
@@ -834,7 +834,7 @@ namespace Legendary.Engine
                             evaded = true;
                         }
 
-                        EvasiveManeuvers skill = new EvasiveManeuvers(this.communicator, this.random, this);
+                        EvasiveManeuvers skill = new EvasiveManeuvers(this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return evaded;

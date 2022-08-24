@@ -13,6 +13,7 @@ namespace Legendary.Engine.Models.Spells
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
 
     /// <summary>
@@ -25,9 +26,11 @@ namespace Legendary.Engine.Models.Spells
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Blindness(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        public Blindness(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
             this.Name = "Blindness";
             this.ManaCost = 20;

@@ -118,5 +118,10 @@ namespace Legendary.Core.Types
         /// Gremlin.
         /// </summary>
         Gremlin = 20,
+
+        /// <summary>
+        /// Undead.
+        /// </summary>
+        Undead = 21,
     }
 }

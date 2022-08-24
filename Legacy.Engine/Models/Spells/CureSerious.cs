@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Casts the cure serious spell.
@@ -25,9 +26,11 @@ namespace Legendary.Engine.Models.Spells
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public CureSerious(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        public CureSerious(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
             this.Name = "Cure Serious";
             this.ManaCost = 20;

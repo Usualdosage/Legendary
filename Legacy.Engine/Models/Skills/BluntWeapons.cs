@@ -13,6 +13,7 @@ namespace Legendary.Engine.Models.Skills
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Recalls the player to their hometown recall point.
@@ -24,9 +25,11 @@ namespace Legendary.Engine.Models.Skills
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public BluntWeapons(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        public BluntWeapons(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
             this.Name = "Blunt Weapons";
             this.ManaCost = 0;

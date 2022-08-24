@@ -12,6 +12,7 @@ namespace Legendary.Engine.Models.SkillTrees
     using System.Collections.Generic;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
@@ -24,9 +25,11 @@ namespace Legendary.Engine.Models.SkillTrees
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
-        /// <param name="combat">The combat engine.</param>
-        public WeaponGroup(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="combat">The combat generator.</param>
+        public WeaponGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
         }
 
@@ -41,9 +44,9 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new EdgedWeapons(this.Communicator, this.Random, this.Combat) },
-                { new BluntWeapons(this.Communicator, this.Random, this.Combat) },
-                { new PiercingWeapons(this.Communicator, this.Random, this.Combat) },
+                { new EdgedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new BluntWeapons(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new PiercingWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -52,10 +55,10 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new Polearms(this.Communicator, this.Random, this.Combat) },
-                { new Flails(this.Communicator, this.Random, this.Combat) },
-                { new Whips(this.Communicator, this.Random, this.Combat) },
-                { new Staffs(this.Communicator, this.Random, this.Combat) },
+                { new Polearms(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Flails(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Whips(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Staffs(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

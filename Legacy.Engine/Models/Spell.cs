@@ -15,6 +15,7 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
 
     /// <summary>
@@ -27,9 +28,11 @@ namespace Legendary.Engine.Models
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="world">The world.</param>
+        /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        protected Spell(ICommunicator communicator, IRandom random, Combat combat)
-            : base(communicator, random, combat)
+        protected Spell(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+            : base(communicator, random, world, logger, combat)
         {
         }
 

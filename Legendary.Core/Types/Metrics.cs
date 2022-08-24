@@ -69,5 +69,10 @@ namespace Legendary.Core.Types
         /// Gets or sets the total game hours (ticks) played, to calculate age.
         /// </summary>
         public int GameHoursPlayed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rooms explored for each area.
+        /// </summary>
+        public Dictionary<long, List<long>> RoomsExplored { get; set; } = new Dictionary<long, List<long>>();
     }
 }

@@ -58,5 +58,15 @@ namespace Legendary.Core.Types
         /// Will assist other mobs if attacked.
         /// </summary>
         Assist = 8,
+
+        /// <summary>
+        /// Picks up items it finds laying around.
+        /// </summary>
+        Scavenger = 9,
+
+        /// <summary>
+        /// Flees after being attacked.
+        /// </summary>
+        Wimpy = 10,
     }
 }
