@@ -51,9 +51,9 @@ namespace Legendary.Engine.Processors
                 sb.Append($"<br/>");
             }
 
-            var explored = (actor.Character.Metrics.RoomsExplored.Sum(s => s.Value.Count) / this.world.Areas.Sum(a => a.Rooms.Count)) * 100;
+            var explored = (double)((double)actor.Character.Metrics.RoomsExplored.Sum(s => s.Value.Count) / (double)this.world.Areas.Sum(a => a.Rooms.Count)) * 100;
 
-            sb.Append($"There are {this.world.Areas.Count} areas in Legendary, with a total of {this.world.Areas.Sum(a => a.Rooms.Count)} rooms. You have explored {explored}% of the entire world.");
+            sb.Append($"There are {this.world.Areas.Count} areas in Legendary, with a total of {this.world.Areas.Sum(a => a.Rooms.Count)} rooms. You have explored {(int)explored}% of the entire world.");
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
@@ -67,14 +67,14 @@ namespace Legendary.Engine.Processors
 
             if (area != null)
             {
-                var totalVisited = actor.Character.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Count();
+                var totalVisited = actor.Character.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count());
                 var total = area.Rooms.Count();
-                var explorationPct = (totalVisited / total) * 100;
+                var explorationPct = (double)((double)totalVisited / (double)total) * 100;
 
                 sb.Append($"<div class='player-section'>{area.Name}</div>");
                 sb.Append($"<span>{area.Description}</span><br/>");
                 sb.Append($"<span><em>Created by {area.Author} ({area.Rooms.Count} rooms)</em></span><br/>");
-                sb.Append($"<span>You have explored {explorationPct}% of this area.</span><br/>");
+                sb.Append($"<span>You have explored {(int)explorationPct}% of this area.</span><br/>");
                 sb.Append($"<br/>");
 
                 await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);

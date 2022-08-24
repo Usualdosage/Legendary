@@ -12,6 +12,7 @@ namespace Legendary.Core.Types
     using System;
     using System.Collections.Generic;
     using MongoDB.Bson.Serialization.Attributes;
+    using MongoDB.Bson.Serialization.Options;
 
     /// <summary>
     /// Tracks various metrics for a character.
@@ -73,6 +74,7 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Gets or sets the rooms explored for each area.
         /// </summary>
+        [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<long, List<long>> RoomsExplored { get; set; } = new Dictionary<long, List<long>>();
     }
 }
