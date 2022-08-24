@@ -711,7 +711,7 @@ namespace Legendary.Engine
             // Play the music according to the terrain.
             if (room != null)
             {
-                var soundIndex = this.random.Next(0, 4);
+                var soundIndex = this.random.Next(0, 7);
                 await this.PlaySound(actor, AudioChannel.Background, $"https://legendary.file.core.windows.net/audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
 
                 // 40% chance to play the terrain SFX (e.g. forest, city)

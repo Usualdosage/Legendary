@@ -603,7 +603,11 @@ video {
 }
 
 .snow {
-    color: #fff;
+    color: #fff !important;
+}
+
+.shallows {
+    color: aqua !important;
 }
 
 /* Communication Channels */

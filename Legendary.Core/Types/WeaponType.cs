@@ -1,4 +1,4 @@
-﻿// <copyright file="Terrain.cs" company="Legendary™">
+﻿// <copyright file="WeaponType.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -10,78 +10,68 @@
 namespace Legendary.Core.Types
 {
     /// <summary>
-    /// Depending on the terrain, impacts movement, weather, and other game aspects.
+    /// Types of weaponry.
     /// </summary>
-    public enum Terrain : short
+    public enum WeaponType
     {
         /// <summary>
-        /// City. - 7
+        /// Sword.
         /// </summary>
-        City = 0,
+        Sword = 0,
 
         /// <summary>
-        /// Mountains. - 7
+        /// Dagger.
         /// </summary>
-        Mountains = 1,
+        Dagger = 1,
 
         /// <summary>
-        /// Hills. - 7
+        /// Polearm.
         /// </summary>
-        Hills = 2,
+        Polearm = 2,
 
         /// <summary>
-        /// Grasslands. - 7
+        /// Whip.
         /// </summary>
-        Grasslands = 3,
+        Whip = 3,
 
         /// <summary>
-        /// Water. - 7
+        /// Flail.
         /// </summary>
-        Water = 4,
+        Flail = 4,
 
         /// <summary>
-        /// Swamp. - 7
+        /// Axe.
         /// </summary>
-        Swamp = 5,
+        Axe = 5,
 
         /// <summary>
-        /// Air. - 7
+        /// Club.
         /// </summary>
-        Air = 6,
+        Club = 6,
 
         /// <summary>
-        /// Beach. - 7
+        /// Mace.
         /// </summary>
-        Beach = 7,
+        Mace = 7,
 
         /// <summary>
-        /// Ethereal. - 7
+        /// Spear.
         /// </summary>
-        Ethereal = 8,
+        Spear = 8,
 
         /// <summary>
-        /// Forest. - 7
+        /// Exotic.
         /// </summary>
-        Forest = 9,
+        Exotic = 9,
 
         /// <summary>
-        /// Jungle. - 7
+        /// Two-handed.
         /// </summary>
-        Jungle = 10,
+        TwoHanded = 10,
 
         /// <summary>
-        /// Desert. - 7
+        /// Staff.
         /// </summary>
-        Desert = 11,
-
-        /// <summary>
-        /// Snow. - 7
-        /// </summary>
-        Snow = 12,
-
-        /// <summary>
-        /// Shallow water. - 7
-        /// </summary>
-        Shallows = 13,
+        Staff = 11,
     }
 }

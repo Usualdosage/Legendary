@@ -114,6 +114,11 @@ namespace Legendary.Core.Models
         public DamageType DamageType { get; set; }
 
         /// <summary>
+        /// Gets or sets the weapon type.
+        /// </summary>
+        public WeaponType WeaponType { get; set; } = WeaponType.Sword;
+
+        /// <summary>
         /// Gets or sets the armor flags.
         /// </summary>
         public IList<ItemFlags> ItemFlags { get; set; } = new List<ItemFlags>();
