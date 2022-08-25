@@ -657,6 +657,13 @@ namespace Legendary.Engine
             {
                 mobile.Skills.Add(new SkillProficiency("second attack", proficiency));
             }
+
+            // If mobile is wimpy, set to 25% of total HP.
+            if (mobile.MobileFlags != null && mobile.MobileFlags.Contains(MobileFlags.Wimpy))
+            {
+                var wimpy = (double)mobile.Health.Max * .25d;
+                mobile.Wimpy = (int)wimpy;
+            }
         }
 
         private async Task ProcessMobileAffects(Room room)
