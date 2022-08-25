@@ -111,11 +111,11 @@ namespace Legendary.Engine.Processors
             {
                 var roomsInArea = area.Rooms.Count();
 
-                var areaExplored = actor.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId);
+                var areaExplored = actor.Metrics.RoomsExplored[area.AreaId];
 
                 if (areaExplored != null)
                 {
-                    if (areaExplored.Count() == roomsInArea)
+                    if (areaExplored.Count == roomsInArea)
                     {
                         await this.GrantAward(7, actor, $"explored all rooms in {area.Name}", cancellationToken);
                     }

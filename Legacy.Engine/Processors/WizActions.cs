@@ -12,6 +12,7 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Extensions;
@@ -440,7 +441,25 @@ namespace Legendary.Engine.Processors
                     await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} vanishes.", cancellationToken);
                     user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
                     await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
-                    return;
+
+                    // Track exploration for award purposes.
+                    if (user.Character.Metrics.RoomsExplored.ContainsKey(user.Character.Location.Key))
+                    {
+                        var roomList = user.Character.Metrics.RoomsExplored[user.Character.Location.Key];
+
+                        if (!roomList.Contains(user.Character.Location.Value))
+                        {
+                            user.Character.Metrics.RoomsExplored[user.Character.Location.Key].Add(user.Character.Location.Value);
+                            await this.awardProcessor.CheckVoyagerAward(user.Character.Location.Key, user.Character, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        user.Character.Metrics.RoomsExplored.Add(user.Character.Location.Key, new List<long>() { user.Character.Location.Value });
+                        await this.awardProcessor.CheckVoyagerAward(user.Character.Location.Key, user.Character, cancellationToken);
+                    }
+
+                    await this.awardProcessor.CheckVoyagerAward(user.Character.Location.Key, user.Character, cancellationToken);
                 }
             }
 

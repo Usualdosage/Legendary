@@ -15,6 +15,7 @@ namespace Legendary.Engine
     using System.IO;
     using System.Linq;
     using System.Net.WebSockets;
+    using System.Numerics;
     using System.Reflection;
     using System.Reflection.Emit;
     using System.Text;
@@ -64,6 +65,7 @@ namespace Legendary.Engine
         private SpellProcessor? spellProcessor;
         private ActionProcessor? actionProcessor;
         private ActionHelper actionHelper;
+        private AwardProcessor? awardProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -115,6 +117,9 @@ namespace Legendary.Engine
 
             // Create the action helper.
             this.actionHelper = new ActionHelper(this, this.random, this.world, this.logger, this.combat);
+
+            // Create the award processor.
+            this.awardProcessor = new AwardProcessor(this, this.world, this.logger, this.random, this.combat);
 
             // Create the title generator.
             this.titleGenerator = new TitleGenerator(this, this.random, this.world, this.logger, this.combat);
@@ -1508,6 +1513,11 @@ namespace Legendary.Engine
 
             await this.SendToPlayer(character, $"You advanced a level! You gained {hp} health, {mana} mana, and {move} movement. You have {character.Trains} training sessions and {character.Practices} practices.", cancellationToken);
             await this.PlaySound(character, AudioChannel.Actor, Sounds.LEVELUP, cancellationToken);
+
+            if (character.Level % 10 == 0 && this.awardProcessor != null)
+            {
+                await this.awardProcessor.GrantAward(6, character, $"advanced to level {character.Level}", cancellationToken);
+            }
         }
 
         private void UpdateTitle(Character character)
