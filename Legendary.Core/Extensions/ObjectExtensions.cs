@@ -11,6 +11,8 @@ namespace Legendary.Core.Extensions
 {
     using System;
     using System.Collections.Generic;
+    using Legendary.Core.Contracts;
+    using Legendary.Core.Models;
     using Newtonsoft.Json;
 
     /// <summary>

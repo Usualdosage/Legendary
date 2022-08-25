@@ -11,10 +11,7 @@ namespace Legendary.Engine.Processors
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.IO;
     using System.Linq;
-    using System.Numerics;
     using System.Reflection;
     using System.Text;
     using System.Threading;
@@ -207,9 +204,8 @@ namespace Legendary.Engine.Processors
                                 await this.communicator.SendToPlayer(actor, $"You get {item.Name} from {container.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
 
-                                var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
-                                actor.Inventory.Add(itemClone);
-
+                                var itemToClone = (Item)item;
+                                actor.Inventory.Add(itemToClone.Clone());
                                 itemsToRemove.Add(item);
                             }
                         }
@@ -225,6 +221,35 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor, $"That isn't here.", cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Moves all items from a corpse to the room. This happens if the corpse is sacrificed before being looted.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="corpse">The corpse.</param>
+        public void ItemsFromCorpseToRoom(Character actor, Item? corpse)
+        {
+            if (corpse != null)
+            {
+                if (corpse.Contains != null && corpse.Contains.Count > 0)
+                {
+                    List<IItem> itemsToRemove = new List<IItem>();
+                    var room = this.communicator.ResolveRoom(actor.Location);
+
+                    foreach (var item in corpse.Contains)
+                    {
+                        if (item != null)
+                        {
+                            var itemToClone = (Item)item;
+                            room?.Items.Add(itemToClone.Clone());
+                            itemsToRemove.Add(item);
+                        }
+                    }
+
+                    corpse.Contains.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
+                }
             }
         }
 
@@ -2353,17 +2378,17 @@ namespace Legendary.Engine.Processors
 
                     Exit? exit = room?.Exits?.FirstOrDefault(e => e.Direction == direction);
 
-                    if (exit != null)
+                    if (room != null && exit != null)
                     {
                         if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                         {
                             await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is already unlocked.", cancellationToken);
                         }
-                        else if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
+                        else if (exit.IsDoor && exit.IsClosed && exit.IsLocked)
                         {
                             if (!exit.KeyId.HasValue || exit.KeyId == 0)
                             {
-                                await this.communicator.SendToPlayer(actor.Connection, $"There is no lock.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, $"There is no key to this door.", cancellationToken);
                                 return;
                             }
 
@@ -2379,12 +2404,13 @@ namespace Legendary.Engine.Processors
 
                                 var exitToThisRoom = oppRoom?.Exits.FirstOrDefault(e => e.ToArea == room?.AreaId && e.ToRoom == room?.RoomId);
 
-                                if (exitToThisRoom != null)
+                                if (oppRoom != null && exitToThisRoom != null)
                                 {
-                                    exitToThisRoom.IsLocked = true;
+                                    exitToThisRoom.IsLocked = false;
                                 }
 
-                                exit.IsLocked = true;
+                                exit.IsLocked = false;
+
                                 await this.communicator.SendToPlayer(actor.Connection, $"You unlock the {exit.DoorName} {friendlyDirection} you with {key.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} unlocks the {exit.DoorName} {friendlyDirection} you with {key.Name}.", cancellationToken);
 
@@ -2765,6 +2791,19 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(user.Connection, $"You can't sacrifice {item.Name}.", cancellationToken);
                         return;
                     }
+                    else if (item.IsPlayerCorpse)
+                    {
+                        await this.communicator.SendToPlayer(user.Connection, $"You can't sacrifice {item.Name}.", cancellationToken);
+                        return;
+                    }
+                    else if (item.IsNPCCorpse)
+                    {
+                        this.ItemsFromCorpseToRoom(user.Character, item);
+                        user.Character.DivineFavor += 1;
+                        await this.communicator.SendToPlayer(user.Connection, $"You sacrifice {item.Name} to {user.Character.Deity} for some divine favor.", cancellationToken);
+                        await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} sacrifices {item.Name} to {user.Character.Deity}.", cancellationToken);
+                        itemsToRemove.Add(item);
+                    }
                     else
                     {
                         user.Character.DivineFavor += 1;
@@ -2904,6 +2943,7 @@ namespace Legendary.Engine.Processors
                     if (item.ItemType == ItemType.Currency)
                     {
                         actor.Character.Currency += item.Value;
+                        await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
                         itemsToRemove.Add(item);
                     }
                     else if (item.WearLocation.Contains(WearLocation.None))

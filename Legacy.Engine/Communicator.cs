@@ -39,6 +39,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.CodeAnalysis;
     using Newtonsoft.Json;
 
     /// <summary>

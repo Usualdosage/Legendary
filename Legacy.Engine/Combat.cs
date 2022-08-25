@@ -443,9 +443,6 @@ namespace Legendary.Engine
                             await this.ExecuteAttacks(target, character, cancellationToken);
                         }
 
-                        // Update the player info.
-                        await this.communicator.SendGameUpdate(user.Value.Character, null, null, cancellationToken);
-
                         // Show the opponent's condition.
                         string? condition = GetPlayerCondition(target);
 
@@ -454,6 +451,9 @@ namespace Legendary.Engine
                             await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
                         }
                     }
+
+                    // Update the player info.
+                    await this.communicator.SendGameUpdate(user.Value.Character, null, null, cancellationToken);
                 }
             }
         }
@@ -624,10 +624,16 @@ namespace Legendary.Engine
 
                     if (killer.CharacterFlags.Contains(CharacterFlags.Autosac))
                     {
-                        if (corpse != null)
+                        if (corpse != null && corpse.IsPlayerCorpse)
                         {
+                            await this.communicator.SendToPlayer(killer, $"You can't sacrifice {corpse.Name} to {killer.Deity}.", cancellationToken);
+                        }
+                        else if (corpse != null && corpse.IsNPCCorpse)
+                        {
+                            this.actionProcessor.ItemsFromCorpseToRoom(killer, corpse);
+
                             killer.DivineFavor += 1;
-                            await this.communicator.SendToPlayer(killer, $"You sacrifice {corpse.Name} to your deity for some divine favor.", cancellationToken);
+                            await this.communicator.SendToPlayer(killer, $"You sacrifice {corpse.Name} to {killer.Deity} for some divine favor.", cancellationToken);
                             await this.communicator.SendToRoom(killer, killer.Location, $"{killer.FirstName.FirstCharToUpper()} sacrifices {corpse.Name} to their deity.", cancellationToken);
                             room.Items.Remove(corpse);
                         }
@@ -695,13 +701,14 @@ namespace Legendary.Engine
                 await this.communicator.SendToPlayer(actor, $"You have been turned into a ghost for a few hours, unless you attack something.", cancellationToken);
 
                 var room = this.communicator.ResolveRoom(killer.Location);
+                Item? corpse = null;
 
                 if (room != null)
                 {
                     this.logger.Info($"{killer.FirstName.FirstCharToUpper()} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
 
                     // Generate the corpse.
-                    this.GenerateCorpse(killer.Location, actor);
+                    corpse = this.GenerateCorpse(killer.Location, actor);
                 }
 
                 // Remove all equipment, currency, and inventory.
@@ -728,6 +735,19 @@ namespace Legendary.Engine
                     actor.Con.Max -= 1;
                     actor.Con.Current = Math.Min(actor.Con.Current, actor.Con.Max);
                     await this.communicator.SendToPlayer(actor, "You feel less healthy.", cancellationToken);
+                }
+
+                if (killer.CharacterFlags.Contains(CharacterFlags.Autoloot))
+                {
+                    await this.actionProcessor.ItemsFromContainer(killer, corpse, cancellationToken);
+                }
+
+                if (killer.CharacterFlags.Contains(CharacterFlags.Autosac))
+                {
+                    if (corpse != null && corpse.IsPlayerCorpse)
+                    {
+                        await this.communicator.SendToPlayer(killer, $"You can't sacrifice {corpse.Name} to {killer.Deity}.", cancellationToken);
+                    }
                 }
 
                 // Set health to 1.
@@ -1127,7 +1147,7 @@ namespace Legendary.Engine
                     LongDescription = $"The corpse of {victim.FirstName} is decomposing here.",
                     WearLocation = new List<WearLocation>() { WearLocation.None },
                     Weight = 200,
-                    RotTimer = 2,
+                    RotTimer = 12,
                     Contains = new List<IItem>(),
                     IsPlayerCorpse = !victim.IsNPC,
                     IsNPCCorpse = victim.IsNPC,

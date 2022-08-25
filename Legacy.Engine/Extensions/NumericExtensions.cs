@@ -650,7 +650,7 @@ namespace Legendary.Engine.Extensions
                     Value = gold,
                     WearLocation = new List<WearLocation>() { WearLocation.None },
                     Name = $"{gold} gold coins",
-                    ShortDescription = $"{gold} gold coins",
+                    ShortDescription = $"{gold} gold coins are lying here.",
                     LongDescription = $"{gold} gold coins are lying here.",
                     Level = 0,
                 };
@@ -666,7 +666,7 @@ namespace Legendary.Engine.Extensions
                     Value = (decimal)silver / 10m,
                     WearLocation = new List<WearLocation>() { WearLocation.None },
                     Name = $"{silver} silver coins",
-                    ShortDescription = $"{silver} silver coins",
+                    ShortDescription = $"{silver} silver coins are lying here.",
                     LongDescription = $"{silver} silver coins are lying here.",
                     Level = 0,
                 };
@@ -682,7 +682,7 @@ namespace Legendary.Engine.Extensions
                     Value = (decimal)copper / 100m,
                     WearLocation = new List<WearLocation>() { WearLocation.None },
                     Name = $"{copper} copper coins",
-                    ShortDescription = $"{copper} copper coins",
+                    ShortDescription = $"{copper} copper coins are lying here.",
                     LongDescription = $"{copper} copper coins are lying here.",
                     Level = 0,
                 };

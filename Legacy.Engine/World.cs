@@ -417,57 +417,64 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task ProcessWorldChanges(CancellationToken cancellationToken = default)
         {
-            foreach (var area in this.Areas)
+            try
             {
-                foreach (var room in area.Rooms)
+                foreach (var area in this.Areas)
                 {
-                    // Decompose items.
-                    var items = room.Items?.Where(i => i.RotTimer == 0);
-
-                    var location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
-
-                    if (items != null)
+                    foreach (var room in area.Rooms)
                     {
-                        foreach (var item in items)
-                        {
-                            if (item.ItemId == Constants.ITEM_SPRING)
-                            {
-                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} dries up.", cancellationToken);
-                            }
-                            else if (item.ItemId == Constants.ITEM_LIGHT)
-                            {
-                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
-                            }
-                            else if (item.ItemId == Constants.ITEM_FOOD)
-                            {
-                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} rots away.", cancellationToken);
-                            }
-                            else if (item.ItemId == Constants.ITEM_CORPSE)
-                            {
-                                if (!item.IsNPCCorpse)
-                                {
-                                    // TODO: Move PC inventory to a pit
-                                }
+                        // Decompose items.
+                        var items = room.Items?.Where(i => i.RotTimer == 0);
 
-                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} decomposes into dust.", cancellationToken);
-                            }
-                            else
+                        var location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                        if (items != null)
+                        {
+                            foreach (var item in items)
                             {
-                                await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                                if (item.ItemId == Constants.ITEM_SPRING)
+                                {
+                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} dries up.", cancellationToken);
+                                }
+                                else if (item.ItemId == Constants.ITEM_LIGHT)
+                                {
+                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                                }
+                                else if (item.ItemId == Constants.ITEM_FOOD)
+                                {
+                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} rots away.", cancellationToken);
+                                }
+                                else if (item.ItemId == Constants.ITEM_CORPSE)
+                                {
+                                    if (!item.IsNPCCorpse)
+                                    {
+                                        // TODO: Move PC inventory to a pit
+                                    }
+
+                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} decomposes into dust.", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                                }
                             }
                         }
+
+                        // Apply affects to mobiles.
+                        await this.ProcessMobileAffects(room);
+
+                        // Move mobiles who wander.
+                        await this.ProcessMobileWander(room, cancellationToken);
                     }
-
-                    // Apply affects to mobiles.
-                    await this.ProcessMobileAffects(room);
-
-                    // Move mobiles who wander.
-                    await this.ProcessMobileWander(room, cancellationToken);
                 }
-            }
 
-            // Tidy everything up after movement, decomposition, etc.
-            await this.CleanupWorld(cancellationToken);
+                // Tidy everything up after movement, decomposition, etc.
+                await this.CleanupWorld(cancellationToken);
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error("An error occurred while processing world changes.", exc, this.communicator);
+            }
        }
 
         /// <inheritdoc/>
@@ -680,83 +687,86 @@ namespace Legendary.Engine
 
         private async Task ProcessMobileWander(Room room, CancellationToken cancellationToken)
         {
-            Dictionary<Room, List<Mobile>> removeMobiles = new Dictionary<Room, List<Mobile>>();
-
-            // Process effects on mobiles, and (maybe) move them if they are wandering.
-            foreach (var mobile in room.Mobiles)
+            try
             {
-                if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
+                Dictionary<Room, List<Mobile>> removeMobiles = new Dictionary<Room, List<Mobile>>();
+
+                // Process effects on mobiles, and (maybe) move them if they are wandering.
+                foreach (var mobile in room.Mobiles)
                 {
-                    if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed))
+                    if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
                     {
-                        // Mobiles have a 50% chance each tick to move around.
-                        var move = this.random.Next(0, 100);
-
-                        if (move <= 50)
+                        if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed))
                         {
-                            var randomExitNumber = this.random.Next(0, room.Exits.Count);
+                            // Mobiles have a 50% chance each tick to move around.
+                            var move = this.random.Next(0, 100);
 
-                            var exit = room.Exits[randomExitNumber];
-
-                            var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
-                            var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
-
-                            bool isGhost = mobile.CharacterFlags.Contains(CharacterFlags.Ghost) || mobile.IsAffectedBy(nameof(PassDoor));
-                            bool isFlying = mobile.Race == Race.Avian || mobile.IsAffectedBy(nameof(Fly));
-
-                            if (newArea != null && newRoom != null && newRoom.Flags != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
+                            if (move <= 50)
                             {
-                                if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost)
-                                {
-                                    return;
-                                }
-                                else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
-                                {
-                                    return;
-                                }
-                                else if (mobile.Location.Key != newArea.AreaId)
-                                {
-                                    // Don't let mobs leave their home area.
-                                    continue;
-                                }
-                                else
-                                {
-                                    string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                                var randomExitNumber = this.random.Next(0, room.Exits.Count);
 
-                                    if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
+                                var exit = room.Exits[randomExitNumber];
+
+                                var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
+                                var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
+
+                                bool isGhost = mobile.CharacterFlags.Contains(CharacterFlags.Ghost) || mobile.IsAffectedBy(nameof(PassDoor));
+                                bool isFlying = mobile.Race == Race.Avian || mobile.IsAffectedBy(nameof(Fly));
+
+                                if (newArea != null && newRoom != null && newRoom.Flags != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
+                                {
+                                    if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost)
                                     {
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
-                                        exit.IsClosed = false;
+                                        return;
+                                    }
+                                    else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
+                                    {
+                                        return;
+                                    }
+                                    else if (mobile.Location.Key != newArea.AreaId)
+                                    {
+                                        // Don't let mobs leave their home area.
+                                        continue;
                                     }
                                     else
                                     {
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+                                        string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
 
-                                        // Remove the mobile from the prior location.
-                                        var lastRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                        if (lastRoom != null)
+                                        if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                                         {
-                                            if (removeMobiles.ContainsKey(lastRoom))
-                                            {
-                                                removeMobiles[lastRoom].Add(mobile);
-                                            }
-                                            else
-                                            {
-                                                removeMobiles.Add(lastRoom, new List<Mobile>() { mobile });
-                                            }
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
+                                            exit.IsClosed = false;
                                         }
-
-                                        // Set the mobile's new location.
-                                        mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
-                                        // Add the mobile to the new location.
-                                        var nextRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                        if (nextRoom != null)
+                                        else
                                         {
-                                            nextRoom.Mobiles.Add(mobile);
-                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+
+                                            // Remove the mobile from the prior location.
+                                            var lastRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                            if (lastRoom != null)
+                                            {
+                                                if (removeMobiles.ContainsKey(lastRoom))
+                                                {
+                                                    removeMobiles[lastRoom].Add(mobile);
+                                                }
+                                                else
+                                                {
+                                                    removeMobiles.Add(lastRoom, new List<Mobile>() { mobile });
+                                                }
+                                            }
+
+                                            // Set the mobile's new location.
+                                            mobile.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                                            // Add the mobile to the new location.
+                                            var nextRoom = this.communicator.ResolveRoom(mobile.Location);
+
+                                            if (nextRoom != null)
+                                            {
+                                                nextRoom.Mobiles.Add(mobile);
+                                                await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                            }
                                         }
                                     }
                                 }
@@ -764,12 +774,16 @@ namespace Legendary.Engine
                         }
                     }
                 }
-            }
 
-            // Remove all moves from the designated rooms when we're done.
-            foreach (var kvp in removeMobiles)
+                // Remove all moves from the designated rooms when we're done.
+                foreach (var kvp in removeMobiles)
+                {
+                    kvp.Key.Mobiles.RemoveAll(m => kvp.Value.Contains(m));
+                }
+            }
+            catch (Exception exc)
             {
-                kvp.Key.Mobiles.RemoveAll(m => kvp.Value.Contains(m));
+                this.logger.Error("An error occurred while processing mobile wander.", exc, this.communicator);
             }
         }
     }
