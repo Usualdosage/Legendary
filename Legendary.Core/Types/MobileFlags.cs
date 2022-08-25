@@ -57,7 +57,7 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Will assist other mobs if attacked.
         /// </summary>
-        Assist = 8,
+        Assist = 8, // TODO
 
         /// <summary>
         /// Picks up items it finds laying around.
@@ -67,6 +67,6 @@ namespace Legendary.Core.Types
         /// <summary>
         /// Flees after being attacked.
         /// </summary>
-        Wimpy = 10,
+        Wimpy = 10, // TODO
     }
 }

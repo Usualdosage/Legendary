@@ -690,6 +690,7 @@ namespace Legendary.Engine
             try
             {
                 Dictionary<Room, List<Mobile>> removeMobiles = new Dictionary<Room, List<Mobile>>();
+                List<Item> itemsToRemove = new List<Item>();
 
                 // Process effects on mobiles, and (maybe) move them if they are wandering.
                 foreach (var mobile in room.Mobiles)
@@ -773,12 +774,32 @@ namespace Legendary.Engine
                             }
                         }
                     }
+
+                    if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Scavenger))
+                    {
+                        var items = room.Items;
+
+                        if (items.Count > 0)
+                        {
+                            var random = this.random.Next(0, items.Count - 1);
+                            var itemToGet = items[random];
+                            mobile.Inventory.Add(itemToGet.DeepCopy());
+                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {itemToGet.Name}.", cancellationToken);
+                            itemsToRemove.Add(itemToGet);
+                        }
+                    }
                 }
 
                 // Remove all moves from the designated rooms when we're done.
                 foreach (var kvp in removeMobiles)
                 {
                     kvp.Key.Mobiles.RemoveAll(m => kvp.Value.Contains(m));
+                }
+
+                // Remove any items the mobs picked up.
+                foreach (var item in itemsToRemove)
+                {
+                    room.Items.Remove(item);
                 }
             }
             catch (Exception exc)

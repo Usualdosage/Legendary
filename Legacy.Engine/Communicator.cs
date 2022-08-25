@@ -731,6 +731,23 @@ namespace Legendary.Engine
                 {
                     await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"https://legendary.file.core.windows.net/audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
                 }
+
+                // Check aggro
+                foreach (var mob in room.Mobiles)
+                {
+                    if (mob.MobileFlags != null && mob.MobileFlags.Contains(MobileFlags.Aggressive))
+                    {
+                        if (mob.Level >= actor.Level)
+                        {
+                            await this.SendToPlayer(actor, $"{mob.FirstName.FirstCharToUpper()} screams and attacks you!", cancellationToken);
+                            await this.combat.StartFighting(mob, actor, cancellationToken);
+                        }
+                        else
+                        {
+                            await this.SendToPlayer(actor, $"{mob.FirstName.FirstCharToUpper()} glowers at you angrily, but holds their attack.", cancellationToken);
+                        }
+                    }
+                }
             }
         }
 
