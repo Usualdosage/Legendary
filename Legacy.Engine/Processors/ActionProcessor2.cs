@@ -1268,6 +1268,29 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Sets your wimpy to a percentage of your health. If you fall below that percentage, you will flee automatically.</p>")]
+        private async Task DoWimpy(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (string.IsNullOrEmpty(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Your wimpy value should be a number that represents a percentage of your hit points.", cancellationToken);
+            }
+            else
+            {
+                if (int.TryParse(args.Method, out int wimpy))
+                {
+                    var hp = ((double)wimpy / 100d) * (double)actor.Character.Health.Max;
+                    await this.communicator.SendToPlayer(actor.Connection, $"Wimpy set to {wimpy}% of your hit points ({(int)hp}hp).", cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"Your wimpy value should be a number that represents a percentage of your hit points.", cancellationToken);
+                }
+            }
+        }
+
         [SightRequired]
         [HelpText("<p>Shows your current worth in gold, silver, and copper.</p>")]
         private async Task DoWorth(UserData actor, CommandArgs args, CancellationToken cancellationToken)

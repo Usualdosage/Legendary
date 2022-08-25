@@ -18,6 +18,7 @@ namespace Legendary.Engine
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
 
@@ -276,19 +277,19 @@ namespace Legendary.Engine
                     {
                         if (item.ItemId == Constants.ITEM_SPRING)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} dries up.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
                         }
                         else if (item.ItemId == Constants.ITEM_LIGHT)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
                         }
                         else if (item.ItemId == Constants.ITEM_FOOD)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} rots away.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
                         }
                         else
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                         }
                     }
                 }
@@ -310,19 +311,19 @@ namespace Legendary.Engine
                     {
                         if (item.ItemId == Constants.ITEM_SPRING)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} dries up.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
                         }
                         else if (item.ItemId == Constants.ITEM_LIGHT)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
                         }
                         else if (item.ItemId == Constants.ITEM_FOOD)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} rots away.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
                         }
                         else
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                         }
                     }
                 }

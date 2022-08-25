@@ -107,30 +107,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Applies the damage to the target. If damage brings them to below 0, return true.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="damage">The damage.</param>
-        /// <returns>True if the target is killed.</returns>
-        public static bool ApplyDamage(Character? target, int damage)
-        {
-            if (target == null)
-            {
-                return false;
-            }
-
-            target.Health.Current -= damage;
-
-            // If below zero, character is dead.
-            if (target.Health.Current < 0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Calculates the damage verb messages based on the raw damage.
         /// </summary>
         /// <param name="damage">The damage as a total.</param>
@@ -157,6 +133,41 @@ namespace Legendary.Engine
             };
 
             return message;
+        }
+
+        /// <summary>
+        /// Applies the damage to the target. If damage brings them to below 0, return true.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="damage">The damage.</param>
+        /// <returns>True if the target is killed.</returns>
+        public bool ApplyDamage(Character? target, int damage)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+
+            target.Health.Current -= damage;
+
+            // If below zero, character is dead.
+            if (target.Health.Current < 0)
+            {
+                return true;
+            }
+
+            // If they fall below wimpy, haul ass.
+            if (target.Health.Current <= target.Wimpy)
+            {
+                if (Communicator.Users != null)
+                {
+                    var userData = Communicator.Users.FirstOrDefault(u => u.Value.Character.CharacterId == target.CharacterId);
+                    var commandArgs = new Models.CommandArgs("flee", null, null, 0);
+                    this.actionProcessor.DoAction(userData.Value, commandArgs).Wait();
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -312,7 +323,7 @@ namespace Legendary.Engine
                 await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
                 await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
 
-                bool isDead = ApplyDamage(target, damage);
+                bool isDead = this.ApplyDamage(target, damage);
 
                 if (isDead)
                 {

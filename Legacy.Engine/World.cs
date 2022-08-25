@@ -434,15 +434,15 @@ namespace Legendary.Engine
                             {
                                 if (item.ItemId == Constants.ITEM_SPRING)
                                 {
-                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} dries up.", cancellationToken);
+                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
                                 }
                                 else if (item.ItemId == Constants.ITEM_LIGHT)
                                 {
-                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} flickers and fades into darkness.", cancellationToken);
+                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
                                 }
                                 else if (item.ItemId == Constants.ITEM_FOOD)
                                 {
-                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} rots away.", cancellationToken);
+                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
                                 }
                                 else if (item.ItemId == Constants.ITEM_CORPSE)
                                 {
@@ -451,11 +451,11 @@ namespace Legendary.Engine
                                         // TODO: Move PC inventory to a pit
                                     }
 
-                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} decomposes into dust.", cancellationToken);
+                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} decomposes into dust.", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToRoom(location, $"{item.ShortDescription} disintegrates.", cancellationToken);
+                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                                 }
                             }
                         }
@@ -689,7 +689,7 @@ namespace Legendary.Engine
         {
             try
             {
-                Dictionary<Room, List<Mobile>> removeMobiles = new Dictionary<Room, List<Mobile>>();
+                List<Mobile> removeMobiles = new List<Mobile>();
                 List<Item> itemsToRemove = new List<Item>();
 
                 // Process effects on mobiles, and (maybe) move them if they are wandering.
@@ -720,6 +720,10 @@ namespace Legendary.Engine
                                     {
                                         return;
                                     }
+                                    else if (newRoom.Flags.Contains(RoomFlags.NoMobs))
+                                    {
+                                        return;
+                                    }
                                     else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
                                     {
                                         return;
@@ -747,13 +751,9 @@ namespace Legendary.Engine
 
                                             if (lastRoom != null)
                                             {
-                                                if (removeMobiles.ContainsKey(lastRoom))
+                                                if (!removeMobiles.Contains(mobile))
                                                 {
-                                                    removeMobiles[lastRoom].Add(mobile);
-                                                }
-                                                else
-                                                {
-                                                    removeMobiles.Add(lastRoom, new List<Mobile>() { mobile });
+                                                    removeMobiles.Add(mobile);
                                                 }
                                             }
 
@@ -790,17 +790,11 @@ namespace Legendary.Engine
                     }
                 }
 
-                // Remove all moves from the designated rooms when we're done.
-                foreach (var kvp in removeMobiles)
-                {
-                    kvp.Key.Mobiles.RemoveAll(m => kvp.Value.Contains(m));
-                }
+                // Remove any mobiles from the room that moved.
+                room.Mobiles.RemoveAll(r => removeMobiles.Any(m => m.CharacterId == r.CharacterId));
 
                 // Remove any items the mobs picked up.
-                foreach (var item in itemsToRemove)
-                {
-                    room.Items.Remove(item);
-                }
+                room.Items.RemoveAll(r => itemsToRemove.Any(i => i.ItemId == r.ItemId));
             }
             catch (Exception exc)
             {

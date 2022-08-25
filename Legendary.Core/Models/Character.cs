@@ -532,6 +532,11 @@ namespace Legendary.Core.Models
         public List<Award> Awards { get; set; } = new List<Award>();
 
         /// <summary>
+        /// Gets or sets the player's wimpy setting.
+        /// </summary>
+        public int Wimpy { get; set; }
+
+        /// <summary>
         /// Indicates whether the player has a given skill.
         /// </summary>
         /// <param name="name">The name of the skill.</param>

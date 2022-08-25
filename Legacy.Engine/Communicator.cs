@@ -1198,7 +1198,7 @@ namespace Legendary.Engine
             {
                 return Users.Where(u => u.Value.Character.Location.Key == location.Key
                     && u.Value.Character.Location.Value == location.Value
-                    && u.Value.Character.FirstName != actor.FirstName).Select(u => u.Value.Character).ToList();
+                    && u.Value.Character.CharacterId != actor.CharacterId).Select(u => u.Value.Character).ToList();
             }
             else
             {
@@ -1689,6 +1689,7 @@ namespace Legendary.Engine
                 // Simple emote with no target. "Bob nods." "You nod."
                 await this.SendToPlayer(actor.Connection, emote.ToSelf, cancellationToken);
 
+                // Get all players that are not the actor.
                 var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
 
                 if (players != null)
@@ -1697,7 +1698,7 @@ namespace Legendary.Engine
                     {
                         if (this.CanPlayerSee(player))
                         {
-                            await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
+                            await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
                         }
                     }
                 }
@@ -1707,25 +1708,26 @@ namespace Legendary.Engine
                 // Is target a player or mob?
                 var targetChar = this.ResolveCharacter(args.Method);
 
+                // Get all players that are not the actor.
                 var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
 
                 if (targetChar != null)
                 {
+                    await this.SendToPlayer(actor.Character, emote.SelfToTarget.Replace("{1}", targetChar.Character.FirstName.FirstCharToUpper()), cancellationToken);
+
                     if (players != null)
                     {
-                        await this.SendToPlayer(actor.Connection, emote.SelfToTarget.Replace("{1}", targetChar.Character.FirstName.FirstCharToUpper()), cancellationToken);
-
                         foreach (var player in players)
                         {
                             if (this.CanPlayerSee(player))
                             {
                                 if (player.CharacterId == targetChar.Character.CharacterId)
                                 {
-                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", "you"), cancellationToken);
+                                    await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", "you"), cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", targetChar.Character.FirstName.FirstCharToUpper()), cancellationToken);
+                                    await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", targetChar.Character.FirstName), cancellationToken);
                                 }
                             }
                         }
@@ -1737,15 +1739,15 @@ namespace Legendary.Engine
 
                     if (mobile != null)
                     {
+                        await this.SendToPlayer(actor.Character, emote.SelfToTarget.Replace("{1}", mobile.FirstName), cancellationToken);
+
                         if (players != null)
                         {
-                            await this.SendToPlayer(actor.Connection, emote.SelfToTarget.Replace("{1}", mobile.FirstName), cancellationToken);
-
                             foreach (var player in players)
                             {
                                 if (this.CanPlayerSee(player))
                                 {
-                                    await this.SendToPlayer(actor.Character, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", targetChar?.Character.FirstName.FirstCharToUpper()), cancellationToken);
+                                    await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", mobile?.FirstName.FirstCharToUpper()), cancellationToken);
                                 }
                             }
                         }

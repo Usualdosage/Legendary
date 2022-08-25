@@ -78,7 +78,7 @@ namespace Legendary.Engine.Processors
         /// <param name="args">The input args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoAction(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        public async Task DoAction(UserData actor, CommandArgs args, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -403,6 +403,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("wield", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWield)));
             this.actions.Add("wake", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(6, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWake)));
             this.actions.Add("watch", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(7, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWatch)));
+            this.actions.Add("wimpy", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(7, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWimpy)));
             this.actions.Add("worth", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWorth)));
             this.actions.Add("yell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(0, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoYell)));
         }
@@ -1966,7 +1967,7 @@ namespace Legendary.Engine.Processors
 
             foreach (var tree in skillTrees)
             {
-                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.world, this.logger, this.combat);
 
                 // If there are no skills in this instance, don't render it.
                 if (treeInstance != null && treeInstance is IActionTree instance)
@@ -2087,7 +2088,7 @@ namespace Legendary.Engine.Processors
 
             foreach (var tree in spellTrees)
             {
-                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.combat);
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.world, this.logger, this.combat);
 
                 // If there are no spells in this instance, don't render it.
                 if (treeInstance != null && treeInstance is IActionTree instance)

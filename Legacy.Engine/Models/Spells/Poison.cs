@@ -102,7 +102,7 @@ namespace Legendary.Engine.Models.Spells
                     await this.Communicator.SendToPlayer(effect.Effector, $"Your {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, effect.Effector, $"{effect.Effector.FirstName.FirstCharToUpper()}'s {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
 
-                    if (Combat.ApplyDamage(actor, damage))
+                    if (this.Combat.ApplyDamage(actor, damage))
                     {
                         if (actor.IsNPC)
                         {
