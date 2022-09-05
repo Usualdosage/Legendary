@@ -131,6 +131,10 @@ namespace Legendary.Engine.Models
                 message.StartsWith("sa ") ||
                 message.StartsWith("tell ") ||
                 message.StartsWith("yell ") ||
+                message.StartsWith("gt ") ||
+                message.StartsWith("gte ") ||
+                message.StartsWith("gtel ") ||
+                message.StartsWith("gtell ") ||
                 message.StartsWith("pray ") ||
                 message.StartsWith("newbie "))
             {

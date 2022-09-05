@@ -10,6 +10,8 @@
 namespace Legendary.Web.Models
 {
     using System;
+    using System.Collections.Generic;
+    using Legendary.Core.Types;
 
     /// <summary>
     /// Model for generating character stats.
@@ -46,5 +48,10 @@ namespace Legendary.Web.Models
         /// Gets or sets the model message.
         /// </summary>
         public string? Message { get; set; }
+
+        /// <summary>
+        /// Gets or sets the player races.
+        /// </summary>
+        public List<Race> PlayerRaces { get; set; } = new List<Race>();
     }
 }

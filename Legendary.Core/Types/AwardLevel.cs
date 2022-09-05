@@ -35,28 +35,33 @@ namespace Legendary.Core.Types
         Platinum = 3,
 
         /// <summary>
+        /// Topaz.
+        /// </summary>
+        Topaz = 4,
+
+        /// <summary>
         /// Amethyst.
         /// </summary>
-        Amethyst = 4,
+        Amethyst = 5,
 
         /// <summary>
         /// Emerald.
         /// </summary>
-        Emerald = 5,
+        Emerald = 6,
 
         /// <summary>
         /// Sapphire.
         /// </summary>
-        Sapphire = 6,
+        Sapphire = 7,
 
         /// <summary>
         /// Ruby.
         /// </summary>
-        Ruby = 7,
+        Ruby = 8,
 
         /// <summary>
         /// Diamond.
         /// </summary>
-        Diamond = 8,
+        Diamond = 9,
     }
 }

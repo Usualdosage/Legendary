@@ -129,24 +129,21 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="gameTicks">The game ticks.</param>
         /// <param name="gameHour">The game hour.</param>
-        public void ProcessEnvironmentChanges(int gameTicks, int gameHour)
+        /// <returns>Task.</returns>
+        public async Task ProcessEnvironmentChanges(int gameTicks, int gameHour)
         {
             if (Communicator.Users != null)
             {
-                List<Task> tasks = new List<Task>();
-
                 foreach (var user in Communicator.Users)
                 {
-                    tasks.Add(this.ProcessRecovery(user.Value));
-                    tasks.Add(this.ProcessItemRot(user.Value));
-                    tasks.Add(this.ProcessAffects(user.Value));
+                    await this.ProcessRecovery(user.Value);
+                    await this.ProcessItemRot(user.Value);
+                    await this.ProcessAffects(user.Value);
                 }
 
-                tasks.Add(this.ProcessTime(gameHour));
-                tasks.Add(this.ProcessMobiles());
-                tasks.Add(this.ProcessWeather());
-
-                Task.WaitAll(tasks.ToArray());
+                await this.ProcessTime(gameHour);
+                await this.ProcessMobiles();
+                await this.ProcessWeather();
             }
         }
 

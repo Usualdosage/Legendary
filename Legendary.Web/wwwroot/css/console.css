@@ -29,6 +29,52 @@ h4 {
     color: maroon;
 }
 
+/* Group Info */
+.group-info {
+    display: block;
+    padding: 5px;
+}
+
+.group-name {
+    font-family: 'Balgruf';
+    font-size: 1.1em;
+    color: maroon;
+    display: block;
+    width: 100%;
+    border-bottom: solid 1px #ccc;
+}
+
+.group-member {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    border-bottom: solid 1px #333;
+}
+
+.group-member-level {
+    width: 100px;
+    text-align: left;
+    display: inline-block;
+}
+
+.group-member-name {
+    width: 200px;
+    text-align: left;
+    display: inline-block;
+}
+
+.group-progress {
+    display: inline-block;
+    width: 200px;
+    height: 1rem;
+    overflow: hidden;
+    font-size: .75rem;
+    background-color: #e9ecef;
+    border-radius: 0.25rem;
+    margin-right: 10px;
+    margin-top: 7px;
+}
+
 /* Spell/Skill Effects */
 
 .translucent {
@@ -627,6 +673,11 @@ video {
     font-weight: bold;
 }
 
+.gtell {
+    color: #b521b0;
+    font-weight: bold;
+}
+
 .pray {
     color: lightblue;
     font-weight: bold;
@@ -743,6 +794,10 @@ video {
 }
 
 .player-health {
+    font-style: italic;
+    font-weight: bold;
+    text-indent: 15px;
+    color: #ff5c64;
 }
 
 .currency-gold {
@@ -1109,6 +1164,21 @@ video {
     text-align: center;
 }
 
+#gem-topaz div {
+    width: 40px;
+    height: 67px;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(25deg, #a2a62e 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #a2a62e 37%), linear-gradient(-25deg, #c0c24e 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #c0c24e 37%), linear-gradient(135deg, transparent 42%, #7c8539 42%, #7c8539 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #dedb97 42%, #dedb97 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #b8b63d 42%, #b8b63d 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #c6c961 42%, #c6c961 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #d1d98b, #d1d98b);
+    background-size: 30% 50%, 30% 40%, 30% 50%, 30% 40%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 40% 50%, 40% 50%;
+    background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
+    text-align: center;
+    text-shadow: 1px 1px 1px #4e5318, 0 0 0 #4e5318, 1px 1px 1px #4e5318;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -8px;
+    top: 0px;
+}
+
 #gem-amethyst div {
     width: 40px;
     height: 67px;
@@ -1148,6 +1218,36 @@ video {
     background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
     text-align: center;
     text-shadow: 1px 1px 1px #1e1853, 0 0 0 #1e1853, 1px 1px 1px #1e1853;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -8px;
+    top: 0px;
+}
+
+#gem-ruby div {
+    width: 40px;
+    height: 67px;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(25deg, #a8332f 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #a8332f 37%), linear-gradient(-25deg, #bd4f4b 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #bd4f4b 37%), linear-gradient(135deg, transparent 42%, #87433a 42%, #87433a 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #de9f97 42%, #de9f97 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #b8493d 42%, #b8493d 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #c96565 42%, #c96565 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #d98f8f, #d98f8f);
+    background-size: 30% 50%, 30% 40%, 30% 50%, 30% 40%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 40% 50%, 40% 50%;
+    background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
+    text-align: center;
+    text-shadow: 1px 1px 1px #521b17, 0 0 0 #521b17, 1px 1px 1px #521b17;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: -8px;
+    top: 0px;
+}
+
+#gem-diamond div {
+    width: 40px;
+    height: 67px;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(25deg, #329aa8 37%, transparent 37%), linear-gradient(-25deg, transparent 37%, #329aa8 37%), linear-gradient(-25deg, #4bb7bf 37%, transparent 37%), linear-gradient(25deg, transparent 37%, #4bb7bf 37%), linear-gradient(135deg, transparent 42%, #3a8582 42%, #3a8582 70%, transparent 70%), linear-gradient(-135deg, transparent 42%, #9bdee0 42%, #9bdee0 70%, transparent 70%), linear-gradient(45deg, transparent 42%, #3cb8ba 42%, #3cb8ba 70%, transparent 70%), linear-gradient(-45deg, transparent 42%, #69dbd9 42%, #69dbd9 70%, transparent 70%), linear-gradient(-45deg, transparent 35%, rgba(255, 255, 255, 0.5) 35%, rgba(255, 255, 255, 0.5) 40%, transparent 40%, transparent 44%, rgba(255, 255, 255, 0.5) 44%, rgba(255, 255, 255, 0.5) 55%, transparent 55%), linear-gradient(90deg, #9ce6e6, #9ce6e6);
+    background-size: 30% 50%, 30% 40%, 30% 50%, 30% 40%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 40% 50%, 40% 50%;
+    background-position: 0 3%, 0 67.5%, 100% 3%, 100% 67.5%, 0 0, 100% 0, 0 100%, 100% 100%, 50% 50%, 50% 50%;
+    text-align: center;
+    text-shadow: 1px 1px 1px #185332, 0 0 0 #185332, 1px 1px 1px #185332;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: -8px;

@@ -64,12 +64,15 @@ namespace Legendary.Engine.Processors
             {
                 if (playerAward.Metadata != null && !playerAward.Metadata.Contains(metaData))
                 {
-                    // See if we are leveling up this award. If we don't have a metadata entry that matches, this is a level up.
-                    playerAward.Metadata?.Add(metaData);
-                    playerAward.AwardLevel += 1;
-                    await this.communicator.SendToPlayer(actor, $"<span class='award-message'>Congratulations, you have {metaData} and earned an award upgrade! Use \"awards\" to see your collection.</span>", cancellationToken);
-                    await this.communicator.SendToPlayer(actor, $"You gain {playerAward.ExperiencePerLevel * (playerAward.AwardLevel + 1)} experience!", cancellationToken);
-                    actor.Experience += playerAward.ExperiencePerLevel * playerAward.AwardLevel;
+                    if (playerAward.AwardLevel < 9)
+                    {
+                        // See if we are leveling up this award. If we don't have a metadata entry that matches, this is a level up.
+                        playerAward.Metadata?.Add(metaData);
+                        playerAward.AwardLevel += 1;
+                        await this.communicator.SendToPlayer(actor, $"<span class='award-message'>Congratulations, you have {metaData} and earned an award upgrade! Use \"awards\" to see your collection.</span>", cancellationToken);
+                        await this.communicator.SendToPlayer(actor, $"You gain {playerAward.ExperiencePerLevel * (playerAward.AwardLevel + 1)} experience!", cancellationToken);
+                        actor.Experience += playerAward.ExperiencePerLevel * playerAward.AwardLevel;
+                    }
                 }
                 else
                 {

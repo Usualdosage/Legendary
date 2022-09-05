@@ -21,6 +21,7 @@ namespace Legendary.Engine
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Processors;
     using MongoDB.Driver;
@@ -53,23 +54,6 @@ namespace Legendary.Engine
 
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
             this.actionProcessor = new ActionProcessor(communicator, world, logger, random, this);
-        }
-
-        /// <summary>
-        /// Stops combat between two characters.
-        /// </summary>
-        /// <param name="actor">The first character.</param>
-        /// <param name="target">The second character.</param>
-        public static void StopFighting(Character actor, Character? target)
-        {
-            actor.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
-            actor.Fighting = null;
-
-            if (target != null)
-            {
-                target.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
-                target.Fighting = null;
-            }
         }
 
         /// <summary>
@@ -136,6 +120,76 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Stops combat between two characters.
+        /// </summary>
+        /// <param name="victim">The victim.</param>
+        /// <param name="killer">The killer.</param>
+        public void StopFighting(Character victim, Character? killer)
+        {
+            victim.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+            victim.Fighting = null;
+
+            if (killer != null)
+            {
+                killer.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+                killer.Fighting = null;
+
+                // See if the dead victim had a group. If so, the opposing group will be fighting the killer still.
+                if (GroupHelper.IsInGroup(victim.CharacterId))
+                {
+                    var groupMembers = GroupHelper.GetAllGroupMembers(victim.CharacterId);
+
+                    if (groupMembers != null)
+                    {
+                        var remainingMembers = groupMembers.Where(g => g != victim.CharacterId).ToList();
+
+                        if (remainingMembers.Count > 0)
+                        {
+                            var nextOnDeck = this.random.Next(0, remainingMembers.Count - 1);
+
+                            // Retarget the attacks of the killer and their group.
+                            var killerGroup = GroupHelper.GetAllGroupMembers(killer.CharacterId);
+
+                            if (killerGroup != null)
+                            {
+                                foreach (var attacker in killerGroup)
+                                {
+                                    var charInGroup = this.communicator.ResolveCharacter(attacker);
+
+                                    if (charInGroup != null)
+                                    {
+                                        // Retarget the attacks.
+                                        charInGroup.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
+                                        charInGroup.Character.Fighting = remainingMembers[nextOnDeck];
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Everyone is dead. End all fighting.
+                            var killerGroup = GroupHelper.GetAllGroupMembers(killer.CharacterId);
+
+                            if (killerGroup != null)
+                            {
+                                foreach (var attacker in killerGroup)
+                                {
+                                    var charInGroup = this.communicator.ResolveCharacter(attacker);
+
+                                    if (charInGroup != null)
+                                    {
+                                        charInGroup.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
+                                        charInGroup.Character.Fighting = null;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Applies the damage to the target. If damage brings them to below 0, return true.
         /// </summary>
         /// <param name="target">The target.</param>
@@ -191,12 +245,72 @@ namespace Legendary.Engine
             }
             else
             {
-                await this.communicator.SendToPlayer(target, $"[NOTIFICATION]|../img/notifications/attack.png|{actor.FirstName} has attacked you!", cancellationToken);
+                if (!target.IsNPC)
+                {
+                    await this.communicator.SendToPlayer(target, $"[NOTIFICATION]|../img/notifications/attack.png|{actor.FirstName} has attacked you!", cancellationToken);
+                }
 
+                // Start the fight between the two characters.
                 actor.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
                 actor.Fighting = target.CharacterId;
                 target.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
                 target.Fighting = actor.CharacterId;
+
+                // If the attacker is in a group, engage all other group members.
+                if (GroupHelper.IsInGroup(actor.CharacterId))
+                {
+                    var groupMembers = GroupHelper.GetAllGroupMembers(actor.CharacterId);
+
+                    if (groupMembers != null)
+                    {
+                        // Get everyone except the one who is already fighting.
+                        var otherMembers = groupMembers.Where(m => m != actor.CharacterId);
+
+                        foreach (var other in otherMembers)
+                        {
+                            var member = this.communicator.ResolveCharacter(other);
+
+                            if (member != null)
+                            {
+                                if (member.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                                {
+                                    member.Character.CharacterFlags.Remove(CharacterFlags.Ghost);
+                                }
+
+                                member.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
+                                member.Character.Fighting = target.CharacterId;
+                            }
+                        }
+                    }
+                }
+
+                // If the target is a PC, and they are in a group, engage those members.
+                if (!target.IsNPC && GroupHelper.IsInGroup(target.CharacterId))
+                {
+                    var groupMembers = GroupHelper.GetAllGroupMembers(target.CharacterId);
+
+                    if (groupMembers != null)
+                    {
+                        // Get everyone except the one who is already fighting.
+                        var otherMembers = groupMembers.Where(m => m != target.CharacterId);
+
+                        foreach (var other in otherMembers)
+                        {
+                            var member = this.communicator.ResolveCharacter(other);
+
+                            if (member != null)
+                            {
+                                if (member.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                                {
+                                    member.Character.CharacterFlags.Remove(CharacterFlags.Ghost);
+                                }
+
+                                member.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
+                                member.Character.Fighting = actor.CharacterId;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -328,7 +442,7 @@ namespace Legendary.Engine
                 if (isDead)
                 {
                     // Target is dead.
-                    StopFighting(actor, target);
+                    this.StopFighting(target, actor);
 
                     if (actor.IsNPC && target.IsNPC)
                     {
@@ -348,11 +462,22 @@ namespace Legendary.Engine
 
                     // Add the experience to the player.
                     var experience = this.CalculateExperience(actor, target);
-                    await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
-                    actor.Experience += experience;
 
-                    // See if the player advanced a level.
-                    var advance = this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                    if (GroupHelper.IsInGroup(actor.CharacterId))
+                    {
+                        await this.ApplyExperienceToGroup(actor, experience, cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                        actor.Experience += experience;
+
+                        // See if the player advanced a level.
+                        if (experience > 0)
+                        {
+                            await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                        }
+                    }
 
                     return true;
                 }
@@ -451,7 +576,20 @@ namespace Legendary.Engine
                         // If the target is an NPC, do damage from it to the player (unless it's dead). Otherwise, for PvP, the loop will just pick up the next fighter.
                         if (target.CharacterFlags.Contains(CharacterFlags.Fighting) && target.IsNPC)
                         {
-                            await this.ExecuteAttacks(target, character, cancellationToken);
+                            // NPC should only engage the player who is fighting it (e.g. the tank, not the entire group).
+                            if (target.Fighting != null && target.Fighting == character.CharacterId)
+                            {
+                                await this.ExecuteAttacks(target, character, cancellationToken);
+                            }
+                            else if (target.Fighting == null)
+                            {
+                                // Need to pick a target, because a target is currently kicking the NPC's ass.
+                                target.Fighting = character.CharacterId;
+                            }
+                            else
+                            {
+                                continue;
+                            }
                         }
 
                         // Show the opponent's condition.
@@ -577,7 +715,7 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         public async Task KillMobile(Character target, Character killer, CancellationToken cancellationToken = default)
         {
-            StopFighting(target, killer);
+            this.StopFighting(target, killer);
 
             await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
             await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
@@ -664,7 +802,7 @@ namespace Legendary.Engine
         {
             if (actor != null)
             {
-                StopFighting(actor, killer);
+                this.StopFighting(actor, killer);
 
                 await this.communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
                 await this.communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
@@ -686,7 +824,13 @@ namespace Legendary.Engine
                     case 1:
                         await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
+                    case 5:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
                     case 10:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 25:
                         await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 50:
@@ -702,6 +846,12 @@ namespace Legendary.Engine
                         await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 1000:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 2000:
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        break;
+                    case 5000:
                         await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                 }
@@ -1041,6 +1191,85 @@ namespace Legendary.Engine
                     return Sounds.BLUNT;
                 case "pierce":
                     return Sounds.PIERCE;
+            }
+        }
+
+        /// <summary>
+        /// If the actor is in a group, break out the experience to the rest of the group. Optimal group is 2-3 players. More than that will
+        /// cause the experience value to diminish.
+        /// </summary>
+        /// <param name="actor">The killer.</param>
+        /// <param name="experience">The total experience based on the killer.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task ApplyExperienceToGroup(Character actor, int experience, CancellationToken cancellationToken)
+        {
+            var group = GroupHelper.GetAllGroupMembers(actor.CharacterId);
+
+            if (group != null)
+            {
+                double adjusted = 0d;
+                double expPerPlayer = 0d;
+
+                if (group.Count == 1)
+                {
+                    // Group has only 1 (shouldn't work, but anyway), so apply only to player.
+                    await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                    actor.Experience += experience;
+
+                    // See if the player advanced a level.
+                    if (experience > 0)
+                    {
+                        await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                    }
+
+                    return;
+                }
+                else if (group.Count == 2)
+                {
+                    adjusted = experience * 1.75d;
+                    expPerPlayer = adjusted / 2d;
+                }
+                else if (group.Count == 3)
+                {
+                    adjusted = experience * 3.5d;
+                    expPerPlayer = adjusted / 3d;
+                }
+                else
+                {
+                    adjusted = experience * (4 / group.Count);
+                    expPerPlayer = adjusted / group.Count;
+                }
+
+                foreach (var member in group)
+                {
+                    var player = this.communicator.ResolveCharacter(member);
+
+                    if (player != null)
+                    {
+                        // Group was null or empty, so apply only to player.
+                        await this.communicator.SendToPlayer(player.Character, $"You gain {expPerPlayer} experience points.", cancellationToken);
+                        actor.Experience += (int)expPerPlayer;
+
+                        // See if the player advanced a level.
+                        if (expPerPlayer > 0)
+                        {
+                            await this.communicator.CheckLevelAdvance(player.Character, cancellationToken);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Group was null or empty, so apply only to player.
+                await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                actor.Experience += experience;
+
+                // See if the player advanced a level.
+                if (experience > 0)
+                {
+                    await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                }
             }
         }
 

@@ -17,11 +17,9 @@ namespace Legendary.Engine
     using System.Net.WebSockets;
     using System.Numerics;
     using System.Reflection;
-    using System.Reflection.Emit;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Web;
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Extensions;
@@ -35,7 +33,6 @@ namespace Legendary.Engine
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Output;
     using Legendary.Engine.Models.Spells;
-    using Legendary.Engine.Output;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
@@ -217,6 +214,10 @@ namespace Legendary.Engine
                 userData.Character.Followers = new List<long>();
                 userData.Character.Following = null;
 
+                // Clear any groups the members was in. This is usually done on quit, but do it again in case they didn't quit normally.
+                GroupHelper.RemoveFromAllGroups(userData.Character.CharacterId);
+                userData.Character.GroupId = null;
+
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip?.ToString());
 
@@ -328,6 +329,21 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public async Task<CommResult> SendToPlayer(long characterId, string message, CancellationToken cancellationToken = default)
+        {
+            var userData = this.ResolveCharacter(characterId);
+
+            if (userData != null)
+            {
+                return await this.SendToPlayer(userData.Connection, message, cancellationToken);
+            }
+            else
+            {
+                return CommResult.NotConnected;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<CommResult> SendToPlayer(Character character, string message, CancellationToken cancellationToken = default)
         {
             if (character.IsNPC)
@@ -350,32 +366,39 @@ namespace Legendary.Engine
         public async Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default)
         {
             var user = Users?.FirstOrDefault(u => u.Value.Username == player);
+
             if (user != null)
             {
                 if (user.Value.Value.Character.CharacterFlags.Contains(CharacterFlags.Fighting))
                 {
                     await this.SendToPlayer(socket, "You can't quit, you're FIGHTING!", cancellationToken);
-                    return;
                 }
                 else
                 {
-                    // Remove any followers or followings.
-                    user.Value.Value.Character.Followers = new List<long>();
-                    user.Value.Value.Character.Following = null;
+                    // Remove from and/or disband group and followers/following.
+                    await this.UpdateGroupAndFollowers(user.Value.Value, cancellationToken);
 
-                    // Remove from any groups.
-                    Communicator.Groups.TryRemove(user.Value.Value.Character.CharacterId, out List<long>? dummy);
+                    // Perform a final save.
+                    await this.SaveCharacter(user.Value.Value);
 
+                    // Remove from the users list.
                     Users?.TryRemove(user.Value);
+
+                    await this.SendToPlayer(user.Value.Value.Connection, $"You have disconnected.", cancellationToken);
+                    await this.SendToRoom(user.Value.Value.Character.Location, $"{user.Value.Value.Character.FirstName} has left the realms.", cancellationToken);
+
+                    string message = $"{DateTime.UtcNow}: {player} has quit.";
+                    this.logger.Info(message, this);
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
                 }
-
-                await this.SendToPlayer(user.Value.Value.Connection, $"You have disconnected.", cancellationToken);
-                await this.SendToRoom(user.Value.Value.Character.Location, $"{user.Value.Value.Character.FirstName} has left the realms.", cancellationToken);
             }
-
-            string message = $"{DateTime.UtcNow}: {player} has quit.";
-            this.logger.Info(message, this);
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{player} has quit.", cancellationToken);
+            else
+            {
+                // Should not get here if user was null. But if we do, just close the socket.
+                string message = $"{DateTime.UtcNow}: {player} was not found, but issued QUIT command. Closing socket.";
+                this.logger.Warn(message, this);
+                await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
+            }
         }
 
         /// <inheritdoc/>
@@ -1363,8 +1386,19 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public long GetExperienceToLevel(Character character)
         {
+            // Level 4 * 1500 = 6000
+            // 6000 * 1
+            // 6000 * 2 = 12000
+
+            // Level 10 * 1500 = 15000
+            // 15000 * 1
+            // 15000 * 3 = 45000
+
+            // Level 20 * 1500 = 30000
+            // 30000 * 2 = 60000
+            // 60000 * 4 = 240000
             var level = character.Level;
-            var amountNeededToLevel = (character.Level * 1500 * Math.Max(1, level / 10)) * Math.Sqrt(level);
+            var amountNeededToLevel = (character.Level * 1500 * Math.Min(1, level / 10)) * Math.Min(1, Math.Sqrt(level));
             return (long)amountNeededToLevel;
         }
 
@@ -1387,6 +1421,88 @@ namespace Legendary.Engine
             else
             {
                 return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task ShowGroupToPlayer(UserData actor, CancellationToken cancellationToken)
+        {
+            if (actor.Character.GroupId.HasValue)
+            {
+                var group = GroupHelper.GetGroup(actor.Character.GroupId.Value);
+
+                if (group != null && group.Value.Value.Count > 0)
+                {
+                    var owner = this.ResolveCharacter(actor.Character.GroupId.Value);
+
+                    if (owner != null)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<span class='group-info'>");
+                        sb.Append($"<span class='group-name'>{owner.Character.FirstName}'s Group:</span>");
+
+                        // Display the owner of the group first.
+                        sb.Append($"<span class='group-member'><span class='group-member-level'>[ {owner.Character.Level} {owner.Character.RaceAbbrev} ]</span><span class='group-member-name'>{owner.Character.FirstName}</span>");
+                        sb.Append($"<div class=\"group-progress\"><div class=\"progress-bar progress-bar-striped bg-danger\" role=\"progressbar\" style=\"width:{owner.Character.Health.GetPercentage()}%;\" aria-valuenow=\"{owner.Character.Health.GetPercentage()}\" aria-valuemin=\"0\" aria-valuemax=\"100\">{owner.Character.Health.GetPercentage()}%</div></div>");
+                        sb.Append($"<div class=\"group-progress\"><div class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width:{owner.Character.Mana.GetPercentage()}%;\" aria-valuenow=\"{owner.Character.Mana.GetPercentage()}\" aria-valuemin=\"0\" aria-valuemax=\"100\">{owner.Character.Mana.GetPercentage()}%</div></div>");
+                        sb.Append($"<div class=\"group-progress\"><div class=\"progress-bar progress-bar-striped bg-success\" role=\"progressbar\" style=\"width:{owner.Character.Movement.GetPercentage()}%;\" aria-valuenow=\"{owner.Character.Movement.GetPercentage()}\" aria-valuemin=\"0\" aria-valuemax=\"100\">{owner.Character.Movement.GetPercentage()}%</div></div>");
+                        sb.Append($"</span>");
+
+                        foreach (var characterId in group.Value.Value)
+                        {
+                            var player = this.ResolveCharacter(characterId);
+
+                            if (player != null && player.Character.CharacterId != owner.Character.CharacterId)
+                            {
+                                sb.Append($"<span class='group-member'><span class='group-member-level'>[ {player.Character.Level} {player.Character.RaceAbbrev} ]</span><span class='group-member-name'>{player.Character.FirstName}</span>");
+                                sb.Append($"<div class=\"group-progress\"><div class=\"progress-bar progress-bar-striped bg-danger\" role=\"progressbar\" style=\"width:{player.Character.Health.GetPercentage()}%;\" aria-valuenow=\"{player.Character.Health.GetPercentage()}\" aria-valuemin=\"0\" aria-valuemax=\"100\">{player.Character.Health.GetPercentage()}%</div></div>");
+                                sb.Append($"<div class=\"group-progress\"><div class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width:{player.Character.Mana.GetPercentage()}%;\" aria-valuenow=\"{player.Character.Mana.GetPercentage()}\" aria-valuemin=\"0\" aria-valuemax=\"100\">{player.Character.Mana.GetPercentage()}%</div></div>");
+                                sb.Append($"<div class=\"group-progress\"><div class=\"progress-bar progress-bar-striped bg-success\" role=\"progressbar\" style=\"width:{player.Character.Movement.GetPercentage()}%;\" aria-valuenow=\"{player.Character.Movement.GetPercentage()}\" aria-valuemin=\"0\" aria-valuemax=\"100\">{player.Character.Movement.GetPercentage()}%</div></div>");
+                                sb.Append($"</span>");
+                            }
+                        }
+
+                        sb.Append("</span>");
+
+                        await this.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                    }
+                    else
+                    {
+                        // Owner could not be resolved.
+                        this.logger.Error("Found a group with no connected owner! Removing from group list.", this);
+                        bool removed = Groups.TryRemove(actor.Character.GroupId.Value, out List<long>? dummy);
+                        if (removed)
+                        {
+                            this.logger.Info($"Removed group {actor.Character.GroupId.Value}.", this);
+                        }
+                        else
+                        {
+                            this.logger.Error($"Unable to remove group {actor.Character.GroupId.Value}!", this);
+                        }
+
+                        await this.SendToPlayer(actor.Connection, "You are not in a group.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    // Zero members in group.
+                    this.logger.Error("Found a group with no members! Removing from group list.", this);
+                    bool removed = Groups.TryRemove(actor.Character.GroupId.Value, out List<long>? dummy);
+                    if (removed)
+                    {
+                        this.logger.Info($"Removed group {actor.Character.GroupId.Value}.", this);
+                    }
+                    else
+                    {
+                        this.logger.Error($"Unable to remove group {actor.Character.GroupId.Value}!", this);
+                    }
+
+                    await this.SendToPlayer(actor.Connection, "You are not in a group.", cancellationToken);
+                }
+            }
+            else
+            {
+                await this.SendToPlayer(actor.Connection, "You are not in a group.", cancellationToken);
             }
         }
 
@@ -1418,6 +1534,108 @@ namespace Legendary.Engine
                 "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
                 _ => false
             };
+        }
+
+        /// <summary>
+        /// Removes the player from groups prior to quitting. Removes followers.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task UpdateGroupAndFollowers(UserData user, CancellationToken cancellationToken)
+        {
+            // Stop following a character.
+            if (user.Character.Following.HasValue)
+            {
+                var following = this.ResolveCharacter(user.Character.Following.Value);
+
+                if (following != null)
+                {
+                    // Remove the follower.
+                    following.Character.Followers.Remove(user.Character.CharacterId);
+
+                    await this.SendToPlayer(following.Character, $"{user.Character.FirstName} stops following you.", cancellationToken);
+                    await this.SendToPlayer(user.Character, $"You stop following {following.Character.FirstName}.", cancellationToken);
+                }
+
+                user.Character.Following = null;
+            }
+
+            // Remove any followers.
+            if (user.Character.Followers != null && user.Character.Followers.Count > 0)
+            {
+                foreach (var follower in user.Character.Followers)
+                {
+                    var followerChar = this.ResolveCharacter(follower);
+
+                    if (followerChar != null)
+                    {
+                        await this.SendToPlayer(user.Character, $"{followerChar.Character.FirstName} stops following you.", cancellationToken);
+                        await this.SendToPlayer(followerChar.Character, $"You stop following {user.Character.FirstName}.", cancellationToken);
+                    }
+                }
+
+                user.Character.Followers = new List<long>();
+            }
+
+            // If they are in a group, remove or disband.
+            if (user.Character.GroupId.HasValue)
+            {
+                // Dismantle any groups the player is leading.
+                if (GroupHelper.IsGroupOwner(user.Character.CharacterId))
+                {
+                    Communicator.Groups.TryRemove(user.Character.CharacterId, out List<long>? players);
+
+                    // Update the players who were removed from the group to have no group.
+                    if (players != null)
+                    {
+                        foreach (var characterId in players)
+                        {
+                            var character = this.ResolveCharacter(characterId);
+
+                            if (character != null)
+                            {
+                                await this.SendToPlayer(character.Character, $"{user.Character.FirstName} has disbanded the group.", cancellationToken);
+                                character.Character.GroupId = null;
+                                await this.SaveCharacter(character);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Not the owner, so just remove player from the group.
+                    GroupHelper.RemoveFromGroup(user.Character.GroupId.Value, user.Character.CharacterId);
+
+                    var owner = this.ResolveCharacter(user.Character.GroupId.Value);
+
+                    if (owner != null)
+                    {
+                        await this.SendToPlayer(user.Character, $"You leave {owner.Character.FirstName}'s group.", cancellationToken);
+
+                        var group = GroupHelper.GetAllGroupMembers(user.Character.GroupId.Value);
+
+                        if (group != null)
+                        {
+                            foreach (var groupMember in group)
+                            {
+                                var member = this.ResolveCharacter(groupMember);
+
+                                if (member != null)
+                                {
+                                    await this.SendToPlayer(member.Character, $"{user.Character.FirstName} has left the group.", cancellationToken);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Ensure the player has been removed from any groups.
+                GroupHelper.RemoveFromAllGroups(user.Character.CharacterId);
+
+                // Remove from any groups they may be in.
+                user.Character.GroupId = null;
+            }
         }
 
         /// <summary>
@@ -1892,6 +2110,13 @@ namespace Legendary.Engine
 
                 if (Users != null)
                 {
+                    // Cleanup any empty groups.
+                    this.CleanupGroups();
+
+                    // See what's going on around the players.
+                    this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+
+                    // Perform tasks on individual players.
                     foreach (var user in Users)
                     {
                         if (user.Value != null)
@@ -1906,9 +2131,6 @@ namespace Legendary.Engine
                             // Update the player info
                             this.SendGameUpdate(user.Value.Character, null, null).Wait();
 
-                            // See what's going on around the players.
-                            this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
-
                             // Autosave the user each tick.
                             this.SaveCharacter(user.Value).Wait();
                         }
@@ -1921,6 +2143,58 @@ namespace Legendary.Engine
             catch (Exception exc)
             {
                 this.logger.Warn($"Error processing Tick: {exc}", this);
+            }
+        }
+
+        /// <summary>
+        /// Removes all groups from the communicator that are either empty, or their owner has disconnected. Updates the characters
+        /// in the removed group to set their group ID to null.
+        /// </summary>
+        private void CleanupGroups()
+        {
+            List<long> groupsToRemove = new List<long>();
+
+            foreach (var group in Groups)
+            {
+                // No members in the group.
+                if (group.Value == null || group.Value.Count == 0)
+                {
+                    groupsToRemove.Add(group.Key);
+                }
+
+                if (Users != null)
+                {
+                    var user = Users.Where(u => u.Value.Character.CharacterId == group.Key);
+
+                    // Owner is no longer connected.
+                    if (user == null)
+                    {
+                        groupsToRemove.Add(group.Key);
+                    }
+                }
+            }
+
+            if (groupsToRemove.Count > 0)
+            {
+                this.logger.Warn($"Found {groupsToRemove.Count} orphaned groups. Removing them.", this);
+
+                foreach (var groupId in groupsToRemove)
+                {
+                    Groups.TryRemove(groupId, out List<long>? groupMembers);
+
+                    if (groupMembers != null)
+                    {
+                        foreach (var characterId in groupMembers)
+                        {
+                            var character = this.ResolveCharacter(characterId);
+
+                            if (character != null)
+                            {
+                                character.Character.GroupId = null;
+                            }
+                        }
+                    }
+                }
             }
         }
 

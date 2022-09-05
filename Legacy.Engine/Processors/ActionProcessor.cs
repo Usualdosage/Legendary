@@ -927,7 +927,8 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                if (args.Method.ToLower() == "self")
+                // Myself, yourself, self, etc.
+                if (args.Method.ToLower().Trim().EndsWith("self"))
                 {
                     if (actor.Character.Following != null)
                     {
@@ -942,7 +943,25 @@ namespace Legendary.Engine.Processors
                     }
 
                     actor.Character.Following = null;
-                    await this.communicator.SendToPlayer(actor.Connection, $"You now follow yourself, and yourself alone.", cancellationToken);
+
+                    // If the player had followers, remove them.
+                    if (actor.Character.Followers != null && actor.Character.Followers.Count > 0)
+                    {
+                        foreach (var follower in actor.Character.Followers)
+                        {
+                            var target = this.communicator.ResolveCharacter(follower);
+
+                            if (target != null)
+                            {
+                                target.Character.Following = null;
+                                await this.communicator.SendToPlayer(target.Connection, $"You stop following {actor.Character.FirstName}.", cancellationToken);
+                            }
+                        }
+
+                        actor.Character.Followers = new List<long>();
+                    }
+
+                    await this.communicator.SendToPlayer(actor.Connection, $"You now follow yourself, and yourself alone, and nobody but you follows...yourself.", cancellationToken);
                 }
                 else
                 {
@@ -953,11 +972,18 @@ namespace Legendary.Engine.Processors
                         // You can follow a person, but they have to be in the same room.
                         if (target.Character.Location.Value == actor.Character.Location.Value)
                         {
-                            target.Character.Followers.Add(actor.Character.CharacterId);
-                            actor.Character.Following = target.Character.CharacterId;
-                            await this.communicator.SendToPlayer(actor.Connection, $"You begin following {target.Character.FirstName}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, target.Character, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
-                            await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} now follows you.", cancellationToken);
+                            if (!target.Character.Followers.Contains(actor.Character.CharacterId))
+                            {
+                                target.Character.Followers.Add(actor.Character.CharacterId);
+                                actor.Character.Following = target.Character.CharacterId;
+                                await this.communicator.SendToPlayer(actor.Connection, $"You begin following {target.Character.FirstName}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, target.Character, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
+                                await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} now follows you.", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You are already following {target.Character.FirstName}.", cancellationToken);
+                            }
                         }
                         else
                         {
@@ -2731,6 +2757,13 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        /// <summary>
+        /// Sacrifices a sacrificable item for some divine favor.
+        /// </summary>
+        /// <param name="user">The actor.</param>
+        /// <param name="target">The item to sacrifice.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
         private async Task SacrificeItem(UserData user, string target, CancellationToken cancellationToken = default)
         {
             var room = this.communicator.ResolveRoom(user.Character.Location);

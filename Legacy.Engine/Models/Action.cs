@@ -137,6 +137,7 @@ namespace Legendary.Engine.Models
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
                             actor.Experience += this.Random.Next(1000, 2000);
+                            await this.AwardProcessor.GrantAward(8, actor, $"mastered {this.Name}", cancellationToken);
                         }
                         else
                         {
@@ -171,6 +172,7 @@ namespace Legendary.Engine.Models
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
                             actor.Experience += this.Random.Next(1000, 2000);
+                            await this.AwardProcessor.GrantAward(9, actor, $"mastered {this.Name}", cancellationToken);
                         }
                         else
                         {

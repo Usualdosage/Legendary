@@ -352,19 +352,19 @@ namespace Legendary.Core.Models
                 switch (this.Gender)
                 {
                     default:
-                    {
-                        return "their";
-                    }
+                        {
+                            return "their";
+                        }
 
                     case Legendary.Core.Types.Gender.Female:
-                    {
-                        return "her";
-                    }
+                        {
+                            return "her";
+                        }
 
                     case Legendary.Core.Types.Gender.Male:
-                    {
-                        return "his";
-                    }
+                        {
+                            return "his";
+                        }
                 }
             }
         }
@@ -532,9 +532,22 @@ namespace Legendary.Core.Models
         public List<Award> Awards { get; set; } = new List<Award>();
 
         /// <summary>
+        /// Gets or sets the player's group.
+        /// </summary>
+        public long? GroupId { get; set; }
+
+        /// <summary>
         /// Gets or sets the player's wimpy setting.
         /// </summary>
         public int Wimpy { get; set; }
+
+        /// <summary>
+        /// Gets the race abbreviation.
+        /// </summary>
+        public string RaceAbbrev
+        {
+            get => this.Race.ToString()[..3];
+        }
 
         /// <summary>
         /// Indicates whether the player has a given skill.

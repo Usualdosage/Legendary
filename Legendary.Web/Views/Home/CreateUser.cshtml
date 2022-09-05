@@ -22,7 +22,7 @@
                         <h4 class="card-title">Create a Character</h4>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row" style="color: #000">
                             <div class="col-md">
                                 Your vital stats:
                             </div>
@@ -72,7 +72,7 @@
                             <div class="col-md">
                                 <select name="Race" required
                                         class="form-control"
-                                        asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Race>()">
+                                        asp-items="Html.GetEnumSelectList<Legendary.Web.Types.PlayerRace>()">
                                     <option value="">Select Race</option>
                                 </select>
                             </div>
@@ -98,6 +98,12 @@
                                 <textarea name="LongDescription" class="descinput" placeholder="Enter Description" required></textarea>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md">
+                                <input type="button" value="Create Avatar" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#avatarModal"/>
+                                <input type="text" id="AvatarUrl" placeholder="Avatar URL" />                                
+                            </div>
+                        </div>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Login")">Back</a></li>
                             <li class="list-group-item"><p class="alert">@Model.Message</p></li>
@@ -109,6 +115,86 @@
                 </div>
             </form>
         </div>
-        
     </div>
 </div>
+
+<div class="modal" id="avatarModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" style="width:1340px;max-width: 100%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="color: #000; font-weight: bold">Build Your Avatar</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12" style="text-align: center;">
+                            <iframe id="frame" width="1280" height="800" class="frame" allow="camera *; microphone *; clipboard-write"></iframe>
+                        </div>
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const frame = document.getElementById('frame');
+
+    frame.src = 'https://legendary.readyplayer.me/avatar?clearCache&bodyType=halfBody';
+
+    window.addEventListener('message', subscribe);
+    document.addEventListener('message', subscribe);
+
+    function subscribe(event)
+    {
+        const json = parse(event);
+
+        if (json.source !== 'readyplayerme')
+        {
+            return;
+        }
+
+        if (json.eventName === 'v1.frame.ready')
+        {
+            frame.contentWindow.postMessage(
+                JSON.stringify({
+                    target: 'readyplayerme',
+                    type: 'subscribe',
+                    eventName: 'v1.**'
+                }),
+                '*'
+            );
+        }
+
+        // Get avatar GLB URL
+        if (json.eventName === 'v1.avatar.exported')
+        {
+            console.log(`Avatar URL: ${json.data.url}`);
+            document.getElementById('AvatarUrl').value = `${json.data.url}`;
+            document.getElementById('frame').hidden = true;
+        }
+
+        // Get user id
+        if (json.eventName === 'v1.user.set')
+        {
+            console.log(`User with id ${json.data.id} set: ${JSON.stringify(json)}`);
+        }
+    }
+
+    function parse(event)
+    {
+        try
+        {
+            return JSON.parse(event.data);
+        }
+        catch (error)
+        {
+            return null;
+        }
+    }
+</script>

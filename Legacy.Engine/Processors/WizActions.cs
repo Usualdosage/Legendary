@@ -12,7 +12,6 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Extensions;
@@ -21,8 +20,6 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Attributes;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Models;
-    using Legendary.Engine.Output;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Contains methods that are specific to wizard (immortal) actions.
@@ -460,6 +457,8 @@ namespace Legendary.Engine.Processors
                     }
 
                     await this.awardProcessor.CheckVoyagerAward(user.Character.Location.Key, user.Character, cancellationToken);
+
+                    return;
                 }
             }
 

@@ -257,6 +257,15 @@ namespace Legendary.Core.Contracts
         Task<CommResult> SendToPlayer(string? sender, string target, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Sends a message to the specified character, identified by their character ID.
+        /// </summary>
+        /// <param name="characterId">The target.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task with result.</returns>
+        Task<CommResult> SendToPlayer(long characterId, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sends a message to everyone in the room, EXCEPT the actor and target.
         /// </summary>
         /// <param name="location">The location.</param>
@@ -423,5 +432,13 @@ namespace Legendary.Core.Contracts
         /// <param name="actor">The character.</param>
         /// <returns>True if player can see.</returns>
         bool CanPlayerSee(Character actor);
+
+        /// <summary>
+        /// Shows the members of the actor's group to the actor.
+        /// </summary>
+        /// <param name="actor">The actor in the group.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task ShowGroupToPlayer(UserData actor, CancellationToken cancellationToken);
     }
 }

@@ -1,0 +1,34 @@
+﻿matthewmartin@Matthews-MBP Legendary % git clone --depth 1 https://github.com/Usualdosage/Legendary.git
+Cloning into 'Legendary'...
+remote: Enumerating objects: 319, done.
+remote: Counting objects: 100% (319/319), done.
+remote: Compressing objects: 100% (281/281), done.
+remote: Total 319 (delta 146), reused 119 (delta 28), pack-reused 0
+Receiving objects: 100% (319/319), 10.01 MiB | 24.64 MiB/s, done.
+Resolving deltas: 100% (146/146), done.
+matthewmartin@Matthews-MBP Legendary % cloc Legendary
+     248 text files.
+     229 unique files.                                          
+      34 files ignored.
+
+github.com/AlDanial/cloc v 1.94  T=0.27 s (836.1 files/s, 249656.8 lines/s)
+------------------------------------------------------------------------------------
+Language                          files          blank        comment           code
+------------------------------------------------------------------------------------
+JavaScript                           14           4554           4267          16954
+C#                                  170           3082           6760          15645
+CSS                                   7           1656             64          13573
+Razor                                13             35              3            818
+JSON                                 10              1              0            301
+MSBuild script                        6             14              0            280
+XML                                   2              0              0             92
+HTML                                  1              1              0             67
+Visual Studio Solution                1              1              1             60
+YAML                                  1             11              2             44
+Text                                  2             11              0             37
+Markdown                              2             11              0             30
+------------------------------------------------------------------------------------
+SUM:                                229           9377          11097          47901
+------------------------------------------------------------------------------------
+matthewmartin@Matthews-MBP Legendary % rm -rf Legendary
+

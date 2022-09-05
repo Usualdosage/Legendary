@@ -40,11 +40,6 @@ namespace Legendary.Core.Types
         Sleeping = 4,
 
         /// <summary>
-        /// Character is dead.
-        /// </summary>
-        Dead = 5,
-
-        /// <summary>
         /// Character is a ghost.
         /// </summary>
         Ghost = 6,

@@ -144,24 +144,28 @@ namespace Legendary.Engine.Processors
                             level = "IV";
                             break;
                         case 4:
-                            color = "amethyst";
+                            color = "topaz";
                             level = "V";
                             break;
                         case 5:
-                            color = "emerald";
+                            color = "amethyst";
                             level = "VI";
                             break;
                         case 6:
-                            color = "sapphire";
+                            color = "emerald";
                             level = "VII";
                             break;
                         case 7:
-                            color = "ruby";
+                            color = "sapphire";
                             level = "VIII";
                             break;
                         case 8:
-                            color = "diamond";
+                            color = "ruby";
                             level = "IX";
+                            break;
+                        case 9:
+                            color = "diamond";
+                            level = "X";
                             break;
                     }
 
@@ -469,37 +473,7 @@ namespace Legendary.Engine.Processors
         {
             if (string.IsNullOrWhiteSpace(args.Method))
             {
-                // TODO How to get the group for everyone?
-                // Show players in group
-                if (Communicator.Groups.ContainsKey(actor.Character.CharacterId))
-                {
-                    var group = Communicator.Groups[actor.Character.CharacterId];
-
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("<span class='group-info'>");
-
-                    foreach (var characterId in group)
-                    {
-                        var player = this.communicator.ResolveCharacter(characterId);
-
-                        if (player != null)
-                        {
-                            sb.Append($"<span class='group-member'>{player.Character.FirstName}");
-                            sb.Append($"<progress class='group-health' max='100' value='{player.Character.Health.GetPercentage()}'></progress>");
-                            sb.Append($"<progress class='group-mana' max='100' value='{player.Character.Mana.GetPercentage()}'></progress>");
-                            sb.Append($"<progress class='group-movement' max='100' value='{player.Character.Movement.GetPercentage()}'></progress>");
-                            sb.Append($"</span>");
-                        }
-                    }
-
-                    sb.Append("</span>");
-
-                    await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
-                }
-                else
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"There is nobody in your group.", cancellationToken);
-                }
+                await this.communicator.ShowGroupToPlayer(actor, cancellationToken);
             }
             else
             {
@@ -507,22 +481,64 @@ namespace Legendary.Engine.Processors
 
                 if (targetPlayer != null)
                 {
-                    if (targetPlayer.Character.Following != actor.Character.CharacterId)
+                    // The target needs to be in the same room.
+                    if (targetPlayer.Character.Location.Value != actor.Character.Location.Value)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                    else if (targetPlayer.Character.Following != actor.Character.CharacterId)
                     {
                         await this.communicator.SendToPlayer(actor.Connection, $"{targetPlayer.Character.FirstName} isn't following you.", cancellationToken);
                     }
                     else
                     {
-                        if (Communicator.Groups.ContainsKey(actor.Character.CharacterId))
+                        // Ensure target player isn't already in a group.
+                        var isTargetInGroup = GroupHelper.IsInGroup(targetPlayer.Character.CharacterId);
+
+                        if (isTargetInGroup)
                         {
-                            Communicator.Groups[actor.Character.CharacterId].Add(targetPlayer.Character.CharacterId);
+                            await this.communicator.SendToPlayer(actor.Connection, $"{targetPlayer.Character.FirstName} is already in a group.", cancellationToken);
                         }
                         else
                         {
-                            Communicator.Groups.TryAdd(actor.Character.CharacterId, new List<long>() { targetPlayer.Character.CharacterId });
-                        }
+                            // Is the actor currently in a group?
+                            var isActorInGroup = GroupHelper.IsInGroup(actor.Character.CharacterId);
 
-                        await this.communicator.SendToPlayer(actor.Connection, $"You add {targetPlayer.Character.FirstName} to your group.", cancellationToken);
+                            if (isActorInGroup && actor.Character.GroupId.HasValue)
+                            {
+                                // Actor is in a group, see if they own the group.
+                                if (GroupHelper.IsGroupOwner(actor.Character.CharacterId))
+                                {
+                                    GroupHelper.AddToGroup(actor.Character.CharacterId, targetPlayer.Character.CharacterId);
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You add {targetPlayer.Character.FirstName} to your group.", cancellationToken);
+                                    await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName} adds you to {actor.Character.Pronoun} group.", cancellationToken);
+                                    targetPlayer.Character.GroupId = actor.Character.CharacterId;
+                                    await this.communicator.SaveCharacter(targetPlayer);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You can't add {targetPlayer.Character.FirstName} to your group, because you're not the group leader.", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                // Actor is not in a group, so create one.
+                                if (GroupHelper.AddToGroup(actor.Character.CharacterId, targetPlayer.Character.CharacterId))
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You add {targetPlayer.Character.FirstName} to your group.", cancellationToken);
+                                    await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName} adds you to {actor.Character.Pronoun} group.", cancellationToken);
+                                    actor.Character.GroupId = actor.Character.CharacterId;
+                                    targetPlayer.Character.GroupId = actor.Character.CharacterId;
+                                    await this.communicator.SaveCharacter(actor);
+                                    await this.communicator.SaveCharacter(targetPlayer);
+                                }
+                                else
+                                {
+                                    // This would be caused by a bug.
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You were unable to add {targetPlayer.Character.FirstName} to your group.", cancellationToken);
+                                }
+                            }
+                        }
                     }
                 }
                 else
@@ -538,7 +554,41 @@ namespace Legendary.Engine.Processors
             var sentence = args.Method;
             if (!string.IsNullOrWhiteSpace(sentence))
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Not yet implemented.", cancellationToken);
+                if (GroupHelper.IsInGroup(actor.Character.CharacterId) && actor.Character.GroupId != null)
+                {
+                    var group = GroupHelper.GetGroup(actor.Character.GroupId.Value);
+
+                    if (group != null && group.Value.Value.Count > 0)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You tell the group \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+
+                        // If the player isn't the group owner, send a message to the actual owner.
+                        if (!GroupHelper.IsGroupOwner(actor.Character.CharacterId))
+                        {
+                            await this.communicator.SendToPlayer(group.Value.Key, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                        }
+
+                        // Now send a message to everyone else in the group.
+                        foreach (var target in group.Value.Value)
+                        {
+                            if (target != actor.Character.CharacterId)
+                            {
+                                await this.communicator.SendToPlayer(target, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Shouldn't happen, but if there are no group members, just remove the group.
+                        GroupHelper.RemoveGroup(actor.Character.GroupId.Value);
+                        actor.Character.GroupId = null;
+                        await this.communicator.SendToPlayer(actor.Connection, $"You aren't in a group.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You aren't in a group.", cancellationToken);
+                }
             }
             else
             {
@@ -1166,20 +1216,150 @@ namespace Legendary.Engine.Processors
         }
 
         [SightRequired]
-        [HelpText("<p>Removes a member from your group. Groups can communicate privately with GTELL See HELP GTELL.<p><ul><li>group <em>player</em></li></ul>")]
+        [HelpText("<p>Remove yourself or a member from the group. Groups can communicate privately with GTELL See HELP GTELL.<p><ul><li>group <em>player</em></li></ul>")]
         private async Task DoUngroup(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))
             {
-                await this.communicator.SendToPlayer(actor.Connection, $"Who do you want to remove from your group?", cancellationToken);
+                // Remove actor from any group they are in, or, if it's their group, disband it.
+                if (actor.Character.GroupId.HasValue)
+                {
+                    var group = GroupHelper.GetGroup(actor.Character.GroupId.Value);
+
+                    if (group != null)
+                    {
+                        // If the group belongs to the player, disband the whole group.
+                        if (GroupHelper.IsGroupOwner(actor.Character.CharacterId))
+                        {
+                            List<long> playersToRemove = new List<long>();
+
+                            // Send a disbanding message to each member of the group, then remove them and save.
+                            foreach (var characterId in group.Value.Value)
+                            {
+                                if (characterId != actor.Character.CharacterId)
+                                {
+                                    var member = this.communicator.ResolveCharacter(characterId);
+                                    if (member != null)
+                                    {
+                                        await this.communicator.SendToPlayer(member.Connection, $"{actor.Character.FirstName} has disbanded the group.", cancellationToken);
+                                        playersToRemove.Add(member.Character.CharacterId);
+                                        member.Character.GroupId = null;
+                                        await this.communicator.SaveCharacter(member);
+                                    }
+                                }
+                            }
+
+                            GroupHelper.RemoveFromGroup(group.Value.Key, playersToRemove);
+
+                            // All members removed, remove the group entirely.
+                            GroupHelper.RemoveGroup(group.Value.Key);
+
+                            await this.communicator.SendToPlayer(actor.Connection, "You have disbanded the group.", cancellationToken);
+                        }
+                        else
+                        {
+                            // Leaving a group owned by another player.
+                            var owner = this.communicator.ResolveCharacter(group.Value.Key);
+                            if (owner != null)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You have left {owner.Character.FirstName}'s group.", cancellationToken);
+                                await this.communicator.SendToPlayer(owner.Connection, $"{actor.Character.FirstName} has left your group.", cancellationToken);
+                            }
+
+                            // If there are zero members left, remove the group.
+                            if (group.Value.Value.Count == 0)
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "Your group has disbanded.", cancellationToken);
+                                GroupHelper.RemoveGroup(group.Value.Key);
+                            }
+                            else
+                            {
+                                // Send a departure message to the rest of the group.
+                                foreach (var characterId in group.Value.Value)
+                                {
+                                    if (characterId != actor.Character.CharacterId)
+                                    {
+                                        var member = this.communicator.ResolveCharacter(characterId);
+                                        if (member != null)
+                                        {
+                                            await this.communicator.SendToPlayer(member.Connection, $"{actor.Character.FirstName} has left the group.", cancellationToken);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Regardless of any messaging, remove the player from any groups.
+                    GroupHelper.RemoveFromAllGroups(actor.Character.CharacterId);
+                    actor.Character.GroupId = null;
+
+                    // Save.
+                    await this.communicator.SaveCharacter(actor);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You aren't in a group.", cancellationToken);
+                }
             }
             else
             {
+                // Ungroup a specific player. This can be done from anywhere in the world.
                 var targetPlayer = this.communicator.ResolveCharacter(args.Method);
 
                 if (targetPlayer != null)
                 {
-                    // TODO!
+                    if (actor.Character.GroupId.HasValue)
+                    {
+                        var group = GroupHelper.GetGroup(actor.Character.GroupId.Value);
+
+                        if (group != null)
+                        {
+                            // If the group belongs to the player, they can remove this player.
+                            if (GroupHelper.IsGroupOwner(actor.Character.CharacterId))
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You remove {targetPlayer.Character.FirstName} from your group.", cancellationToken);
+
+                                // Send a departure message to the rest of the group.
+                                foreach (var characterId in group.Value.Value)
+                                {
+                                    if (characterId != actor.Character.CharacterId && characterId != targetPlayer.Character.CharacterId)
+                                    {
+                                        var member = this.communicator.ResolveCharacter(characterId);
+                                        if (member != null)
+                                        {
+                                            await this.communicator.SendToPlayer(member.Connection, $"{actor.Character.FirstName} has removed {targetPlayer.Character.FirstName} from the group.", cancellationToken);
+                                        }
+                                    }
+                                }
+
+                                // Remove the target player from any groups.
+                                await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName} has removed you from the group.", cancellationToken);
+                                GroupHelper.RemoveFromAllGroups(targetPlayer.Character.CharacterId);
+                                targetPlayer.Character.GroupId = null;
+                                await this.communicator.SaveCharacter(targetPlayer);
+
+                                // If there are zero members left, remove the group.
+                                if (group.Value.Value.Count == 0)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, "Your group has disbanded.", cancellationToken);
+                                    GroupHelper.RemoveGroup(group.Value.Key);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You can't make that decision. It's not your group.", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You couldn't find the group.", cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You aren't in a group.", cancellationToken);
+                    }
                 }
                 else
                 {

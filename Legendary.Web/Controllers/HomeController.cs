@@ -85,16 +85,6 @@ namespace Legendary.Web.Controllers
         }
 
         /// <summary>
-        /// Displays the create room page.
-        /// </summary>
-        /// <returns>IActionResult.</returns>
-        [HttpGet]
-        public IActionResult CreateRoom()
-        {
-            return this.View();
-        }
-
-        /// <summary>
         /// Displays the create user page.
         /// </summary>
         /// <returns>IActionResult.</returns>
@@ -203,6 +193,14 @@ namespace Legendary.Web.Controllers
                         character.Password = pwHash;
 
                         character.CharacterId = Math.Abs(character.GetHashCode());
+
+                        var avatarUrl = form["AvatarUrl"];
+
+                        if (!string.IsNullOrWhiteSpace(avatarUrl))
+                        {
+                            // Save the avatar to the player. TODO: Upload this file to our server instead.
+                            character.Image = avatarUrl;
+                        }
 
                         await this.dataService.CreateCharacter(character);
 

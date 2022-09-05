@@ -45,29 +45,5 @@ namespace Legendary.Web.Controllers
             var content = await this.RenderViewAsync<string>("Welcome", playerName, true);
             return content;
         }
-
-        /// <summary>
-        /// Displays the welcome message.
-        /// </summary>
-        /// <param name="roomId">The room number.</param>
-        /// <returns>HTML string.</returns>
-        [HttpGet]
-        [Route("room")]
-        public async Task<string> Room(string roomId)
-        {
-            string imagePath = $"{this.webHostEnvironment.WebRootPath}/img/rooms/{roomId}.png";
-
-            if (System.IO.File.Exists(imagePath))
-            {
-                byte[] imageArray = await System.IO.File.ReadAllBytesAsync(imagePath);
-                return Convert.ToBase64String(imageArray);
-            }
-            else
-            {
-                string noImage = $"{this.webHostEnvironment.WebRootPath}/img/rooms/none.png";
-                byte[] imageArray = await System.IO.File.ReadAllBytesAsync(noImage);
-                return Convert.ToBase64String(imageArray);
-            }
-        }
     }
 }
