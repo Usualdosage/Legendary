@@ -29,6 +29,20 @@ h4 {
     color: maroon;
 }
 
+h5 {
+    font-family: 'Balgruf';
+    font-size: 1.2em;
+    color: mediumseagreen;
+    margin-top: 5px;
+}
+
+h6 {
+    font-family: 'Balgruf';
+    font-size: 1em;
+    color: mediumseagreen;
+    margin-top: 5px;
+}
+
 /* Group Info */
 .group-info {
     display: block;

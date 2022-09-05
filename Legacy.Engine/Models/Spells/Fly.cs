@@ -50,7 +50,7 @@ namespace Legendary.Engine.Models.Spells
 
             if (target == null)
             {
-                if (actor.IsAffectedBy(this) || actor.Race == Core.Types.Race.Avian)
+                if (actor.IsAffectedBy(this) || actor.Race == Core.Types.Race.Avian || actor.Race == Core.Types.Race.Faerie)
                 {
                     await this.Communicator.SendToPlayer(actor, $"You are already flying.", cancellationToken);
                 }
@@ -64,7 +64,7 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                if (target.IsAffectedBy(this) || target.Race == Core.Types.Race.Avian)
+                if (target.IsAffectedBy(this) || target.Race == Core.Types.Race.Avian || target.Race == Core.Types.Race.Faerie)
                 {
                     await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is already flying.", cancellationToken);
                 }

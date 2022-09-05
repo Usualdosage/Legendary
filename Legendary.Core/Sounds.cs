@@ -27,6 +27,11 @@ namespace Legendary.Core
         public const string ARMOR = "https://legendary.file.core.windows.net/audio/soundfx/armor.mp3" + SAS_TOKEN;
 
         /// <summary>
+        /// Acid Blast MP3.
+        /// </summary>
+        public const string ACIDBLAST = "https://legendary.file.core.windows.net/audio/soundfx/acidblast.mp3" + SAS_TOKEN;
+
+        /// <summary>
         /// Fireball MP3.
         /// </summary>
         public const string FIREBALL = "https://legendary.file.core.windows.net/audio/soundfx/fireball.mp3" + SAS_TOKEN;

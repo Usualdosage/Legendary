@@ -939,6 +939,14 @@ namespace Legendary.Engine
             SkillProficiency? parry = target.GetSkillProficiency("parry");
             SkillProficiency? evasive = target.GetSkillProficiency("evasive");
 
+            // If blinded, severely reduce the effectiveness of defensive skills.
+            if (target.IsAffectedBy(EffectName.BLINDNESS))
+            {
+                dodge.Proficiency = this.random.Next(2, 10);
+                parry.Proficiency = this.random.Next(2, 10);
+                evasive.Proficiency = this.random.Next(2, 10);
+            }
+
             switch (action.DamageType)
             {
                 default:

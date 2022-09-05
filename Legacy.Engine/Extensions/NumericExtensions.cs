@@ -21,6 +21,51 @@ namespace Legendary.Engine.Extensions
     public static class NumericExtensions
     {
         /// <summary>
+        /// Returns a roman numeral for an integer between 1 and 10.
+        /// </summary>
+        /// <param name="number">The number.</param>
+        /// <returns>string.</returns>
+        public static string ToRomanNumeral(this int number)
+        {
+            return number switch
+            {
+                2 => "II",
+                3 => "III",
+                4 => "IV",
+                5 => "V",
+                6 => "VI",
+                7 => "VII",
+                8 => "VIII",
+                9 => "IX",
+                10 => "X",
+                _ => "I",
+            };
+        }
+
+        /// <summary>
+        /// Returns an integer for a roman numeral between I and X.
+        /// </summary>
+        /// <param name="numeral">The numeral.</param>
+        /// <returns>string.</returns>
+        public static int FromRomanNumeral(this string numeral)
+        {
+            return numeral.ToUpper() switch
+            {
+                "I" => 1,
+                "II" => 2,
+                "III" => 3,
+                "IV" => 4,
+                "V" => 5,
+                "VI" => 6,
+                "VII" => 7,
+                "VIII" => 8,
+                "IX" => 9,
+                "X" => 10,
+                _ => 0,
+            };
+        }
+
+        /// <summary>
         /// Converts a player's currency to a string description.
         /// </summary>
         /// <param name="currency">The player's currency.</param>

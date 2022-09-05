@@ -12,8 +12,10 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -463,6 +465,77 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(user.Connection, $"You were unable to teleport there.", cancellationToken);
+        }
+
+        /// <summary>
+        /// Applies all skills and spells to a character. This is just for testing.
+        /// </summary>
+        /// <param name="userData">The user.</param>
+        private void ApplySkillsAndSpells(UserData userData)
+        {
+            var engine = Assembly.Load("Legendary.Engine");
+
+            var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
+
+            foreach (var tree in spellTrees)
+            {
+                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
+
+                var groupProps = tree.GetProperties();
+
+                for (var x = 1; x <= 5; x++)
+                {
+                    var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                    if (spellGroup != null)
+                    {
+                        var obj = spellGroup.GetValue(treeInstance);
+                        if (obj != null)
+                        {
+                            var group = (List<IAction>)obj;
+
+                            foreach (var kvp in group)
+                            {
+                                if (!userData.Character.HasSpell(kvp.Name.ToLower()))
+                                {
+                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Name, 75));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
+
+            foreach (var tree in skillTrees)
+            {
+                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
+
+                var groupProps = tree.GetProperties();
+
+                for (var x = 1; x <= 5; x++)
+                {
+                    var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
+
+                    if (spellGroup != null)
+                    {
+                        var obj = spellGroup.GetValue(treeInstance);
+                        if (obj != null)
+                        {
+                            var group = (List<IAction>)obj;
+
+                            foreach (var kvp in group)
+                            {
+                                if (!userData.Character.HasSkill(kvp.Name.ToLower()))
+                                {
+                                    userData.Character.Skills.Add(new SkillProficiency(kvp.Name, 75));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

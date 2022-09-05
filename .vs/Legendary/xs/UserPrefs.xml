@@ -1,27 +1,37 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="77" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="98" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="1191" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="271" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2354" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2415" column="1" />
+    <BreakpointStore>
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="80" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="101" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="129" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="123" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2458" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1469" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1486" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Helpers/GroupHelper.cs" relfile="Legacy.Engine/Helpers/GroupHelper.cs" line="321" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Combat.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Helpers/SpellHelper.cs">
     <Files>
-      <File FileName="Legendary.Core/Types/ItemKind.cs" Line="42" Column="2" />
-      <File FileName="Legacy.Engine/Engine.cs" Line="121" Column="66" />
-      <File FileName="Legacy.Engine/World.cs" Line="143" Column="30" />
-      <File FileName="Legacy.Engine/Output/ScoreMessage.cs" Line="241" Column="20" />
-      <File FileName="Legacy.Engine/Combat.cs" Line="220" Column="1" />
-      <File FileName="Legendary.Core/Models/Character.cs" Line="318" Column="14" />
-      <File FileName="Legacy.Engine/Models/Action.cs" Line="127" Column="55" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="436" Column="14" />
-      <File FileName="Legacy.Engine/Environment.cs" Line="195" Column="52" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="484" Column="44" />
-      <File FileName="Legendary.Core/Models/Mobile.cs" Line="17" Column="42" />
+      <File FileName="Legacy.Engine/Combat.cs" Line="949" Column="1" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="1047" Column="41" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="707" Column="14" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="237" Column="37" />
+      <File FileName="Legacy.Engine/Models/SpellTrees/NegativeGroup.cs" Line="48" Column="26" />
+      <File FileName="Legacy.Engine/Models/SpellTrees/ConjuringGroup.cs" Line="19" Column="43" />
+      <File FileName="Legacy.Engine/Models/Spells/AcidBlast.cs" Line="63" Column="87" />
+      <File FileName="Legacy.Engine/Models/Spells/LightningBolt.cs" Line="18" Column="1" />
+      <File FileName="Legendary.Core/Sounds.cs" Line="34" Column="22" />
+      <File FileName="Legendary.Core/Contracts/IItem.cs" Line="105" Column="46" />
+      <File FileName="Legendary.Core/Types/ItemType.cs" Line="15" Column="17" />
+      <File FileName="Legendary.Core/Models/Character.cs" Line="348" Column="23" />
+      <File FileName="Legendary.Core/Models/Item.cs" Line="224" Column="47" />
+      <File FileName="Legacy.Engine/Helpers/SpellHelper.cs" Line="21" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -29,39 +39,32 @@
           <Node name="Legendary" expanded="True">
             <Node name="Legendary.Core" expanded="True">
               <Node name="Contracts" expanded="True" />
+              <Node name="Extensions" expanded="True" />
               <Node name="Models" expanded="True" />
               <Node name="Types" expanded="True" />
             </Node>
-            <Node name="Legendary.Data" expanded="True">
-              <Node name="Contracts" expanded="True" />
-            </Node>
             <Node name="Legendary.Engine" expanded="True">
+              <Node name="Extensions" expanded="True" />
               <Node name="Helpers" expanded="True" />
               <Node name="Models" expanded="True">
-                <Node name="Skills" expanded="True" />
+                <Node name="SkillTrees" expanded="True" />
                 <Node name="Spells" expanded="True" />
                 <Node name="SpellTrees" expanded="True" />
               </Node>
               <Node name="Output" expanded="True" />
               <Node name="Processors" expanded="True" />
             </Node>
-            <Node name="Legendary.Networking" expanded="True">
-              <Node name="Models" expanded="True" />
-            </Node>
             <Node name="Legendary.Web" expanded="True">
+              <Node name="Models" expanded="True" />
               <Node name="Views" expanded="True">
                 <Node name="Home" expanded="True" />
               </Node>
               <Node name="wwwroot" expanded="True">
                 <Node name="css" expanded="True" />
-                <Node name="js" expanded="True" />
               </Node>
             </Node>
           </Node>
         </State>
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State />
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>

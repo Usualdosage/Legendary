@@ -56,6 +56,54 @@ namespace Legendary.Engine.Helpers
         }
 
         /// <summary>
+        /// Gets a value indicating if the actor and the character are in the same group.
+        /// </summary>
+        /// <param name="character1">The first character.</param>
+        /// <param name="character2">The second character.</param>
+        /// <returns>True if the character IDs are in the same group.</returns>
+        public static bool IsGroupedWith(long character1, long character2)
+        {
+            var result = Communicator.Groups.Any(g => g.Value.Contains(character1) && g.Value.Contains(character2));
+
+            if (!result)
+            {
+                // One of them could be the owner.
+                if (IsGroupOwner(character1))
+                {
+                    var group = GetGroup(character1);
+                    if (group != null)
+                    {
+                        return group.Value.Value.Any(g => g == character2);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (IsGroupOwner(character2))
+                {
+                    var group = GetGroup(character2);
+                    if (group != null)
+                    {
+                        return group.Value.Value.Any(g => g == character1);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating if the character is the owner of a group.
         /// </summary>
         /// <param name="characterId">The character id.</param>

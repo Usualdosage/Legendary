@@ -17,6 +17,7 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.
@@ -94,11 +95,13 @@ namespace Legendary.Engine.Models
             {
                 foreach (var user in Legendary.Engine.Communicator.Users)
                 {
-                    // TODO: Do damage to everything in the room that isn't the player, or in the player's group.
                     if (user.Value.Character.Location.InSamePlace(actor.Location) && user.Value.Character.FirstName != actor.FirstName)
                     {
-                        await this.Combat.StartFighting(actor, user.Value.Character, cancellationToken);
-                        await this.Combat.DoDamage(actor, user.Value.Character, this, cancellationToken);
+                        if (!GroupHelper.IsGroupedWith(actor.CharacterId, user.Value.Character.CharacterId))
+                        {
+                            await this.Combat.StartFighting(actor, user.Value.Character, cancellationToken);
+                            await this.Combat.DoDamage(actor, user.Value.Character, this, cancellationToken);
+                        }
                     }
                 }
             }

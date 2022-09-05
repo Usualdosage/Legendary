@@ -360,35 +360,69 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    var engine = Assembly.Load("Legendary.Engine");
-
-                    var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
-                    var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
-
-                    foreach (var tree in skillTrees)
+                    if (string.IsNullOrWhiteSpace(args.Method) && string.IsNullOrWhiteSpace(args.Target))
                     {
-                        var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
-
-                        if (treeInstance != null && treeInstance is IActionTree instance)
+                        await this.ShowAvailableTrees(actor, teacher, cancellationToken);
+                    }
+                    else
+                    {
+                        if (actor.Character.Learns <= 0)
                         {
-                            var groupProps = tree.GetProperties();
+                            await this.communicator.SendToPlayer(actor.Connection, $"You don't have any learning sessions available.", cancellationToken);
+                        }
+                        else
+                        {
+                            // [learn] [martial] group [II]
+                            var action = args.Action;
+                            var groupName = args.Method ?? string.Empty;
+                            var groupNum = args.Target ?? string.Empty;
+
+                            // Check if this is a) available to learn and b) has been learned already.
+                            if (!TreeHelper.CanLearnGroup(actor, groupName, groupNum, teacher, this.communicator, this.random, this.world, this.logger, this.combat))
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You are not able to learn that group at this time and place.", cancellationToken);
+                            }
+                            else
+                            {
+                                // Add the skill or spell group abilities to the player's proficiencies, all starting at 1%
+                                var skillsToAdd = TreeHelper.GetSkills(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
+                                var spellsToAdd = TreeHelper.GetSpells(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
+
+                                StringBuilder sb = new StringBuilder();
+
+                                // We will teach skills or spells, but not both.
+                                if (skillsToAdd != null && skillsToAdd.Count > 0)
+                                {
+                                    // Deduct a learning session
+                                    actor.Character.Learns -= 1;
+
+                                    foreach (var skill in skillsToAdd)
+                                    {
+                                        sb.Append($"{teacher.FirstName.FirstCharToUpper()} instructs you on the various methods of '{skill.Name}'.<br/>");
+                                        actor.Character.Skills.Add(new SkillProficiency(skill.Name, 1));
+                                    }
+                                }
+                                else if (spellsToAdd != null && spellsToAdd.Count > 0)
+                                {
+                                    // Deduct a learning session
+                                    actor.Character.Learns -= 1;
+
+                                    foreach (var spell in spellsToAdd)
+                                    {
+                                        sb.Append($"{teacher.FirstName.FirstCharToUpper()} instructs you on the uses of the spell '{spell.Name}'.<br/>");
+                                        actor.Character.Spells.Add(new SpellProficiency(spell.Name, 1));
+                                    }
+                                }
+                                else
+                                {
+                                    sb.Append($"There was nothing to learn in that group.<br/>");
+                                }
+
+                                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                                await this.communicator.SaveCharacter(actor);
+                            }
                         }
                     }
-
-                    switch (teacher.SchoolType)
-                    {
-                        default:
-                        case Core.Types.SchoolType.General:
-                            break;
-                        case Core.Types.SchoolType.War:
-                            break;
-                        case Core.Types.SchoolType.Magic:
-                            break;
-                        case Core.Types.SchoolType.Divinity:
-                            break;
-                    }
-
-                    await this.communicator.SendToPlayer(actor.Character, $"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName.FirstCharToUpper()}, I'm afraid I'm not able to teach you anything right now.</span>\"", cancellationToken);
                 }
             }
             else
@@ -649,6 +683,13 @@ namespace Legendary.Engine.Processors
                     itemsToEquip.Add(ItemHelper.CreatePracticeWeapon(this.random));
                 }
 
+                var light = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Light));
+
+                if (light == null)
+                {
+                    itemsToEquip.Add(ItemHelper.CreateLight(this.random));
+                }
+
                 if (itemsToEquip.Count > 0)
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"The Gods have taken pity on you, and you have been re-equipped by them. You have lost some divine favor.", cancellationToken);
@@ -697,7 +738,7 @@ namespace Legendary.Engine.Processors
 
                             foreach (var tree in skillTrees)
                             {
-                                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
+                                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.world, this.logger, this.combat);
 
                                 if (treeInstance != null && treeInstance is IActionTree instance)
                                 {
@@ -750,7 +791,7 @@ namespace Legendary.Engine.Processors
 
                             foreach (var tree in spellTrees)
                             {
-                                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
+                                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.world, this.logger, this.combat);
 
                                 if (treeInstance != null && treeInstance is IActionTree instance)
                                 {
@@ -978,6 +1019,135 @@ namespace Legendary.Engine.Processors
                     await this.communicator.SendToPlayer(actor.Connection, $"You don't see that here.", cancellationToken);
                 }
             }
+        }
+
+        [SightRequired]
+        [HelpText("<p>Quaffs an item of type potion.</p><ul><li>quaff <em>potion</em></li></ul>")]
+        private async Task DoQuaff(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            // See if they have a potion in their inventory.
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Quaff what?", cancellationToken);
+            }
+            else
+            {
+                // See if it's an item they are carrying.
+                var item = actor.Character.Inventory.ParseTargetName(args.Method);
+
+                if (item != null)
+                {
+                    if (item.ItemType == ItemType.Potion)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You toss your head back and quaff {item.Name}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} throws {actor.Character.Pronoun} head back and quaffs {item.Name}.", cancellationToken);
+
+                        if (!string.IsNullOrWhiteSpace(item.SpellName))
+                        {
+                            var spell = SpellHelper.ResolveSpell(item.SpellName, this.communicator, this.random, this.world, this.logger, this.combat);
+
+                            if (spell != null)
+                            {
+                                // Cache the actor's level.
+                                var level = actor.Character.Level;
+
+                                // Set the actor's level to the cast level, temporarily.
+                                actor.Character.Level = item.CastLevel ?? actor.Character.Level;
+
+                                // Cast the spell as the actor, with a null target (targets self).
+                                await spell.Act(actor.Character, null, cancellationToken);
+
+                                // Restore the actor's actual level.
+                                actor.Character.Level = level;
+                            }
+                        }
+
+                        actor.Character.Inventory.Remove(item);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"That's not a potion.", cancellationToken);
+                }
+            }
+        }
+
+        [HelpText("<p>Reports your current health, mana, and movement levels out loud.</p>")]
+        private async Task DoReport(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            var healthPct = actor.Character.Health.GetPercentage();
+
+            if (healthPct >= 95)
+            {
+                sb.Append("I'm in excellent health, ");
+            }
+            else if (healthPct >= 75)
+            {
+                sb.Append("I'm a little banged up, but ok, ");
+            }
+            else if (healthPct >= 50)
+            {
+                sb.Append("I'm over half dead, ");
+            }
+            else if (healthPct >= 25)
+            {
+                sb.Append("I'm extremely beat up, ");
+            }
+            else
+            {
+                sb.Append("I'm practically on my death bed, ");
+            }
+
+            var manaPct = actor.Character.Mana.GetPercentage();
+
+            if (manaPct >= 95)
+            {
+                sb.Append("my mind is crystal clear, ");
+            }
+            else if (manaPct >= 75)
+            {
+                sb.Append("my head is just a little cloud, ");
+            }
+            else if (manaPct >= 50)
+            {
+                sb.Append("I'm having a hard time focusing, ");
+            }
+            else if (manaPct >= 25)
+            {
+                sb.Append("I can hardly focus, ");
+            }
+            else
+            {
+                sb.Append("I'm absolutely mentally drained, ");
+            }
+
+            var movePct = actor.Character.Movement.GetPercentage();
+
+            if (movePct >= 95)
+            {
+                sb.Append("and I'm fully refreshed.");
+            }
+            else if (movePct >= 75)
+            {
+                sb.Append("but my legs are only a little bit sore.");
+            }
+            else if (movePct >= 50)
+            {
+                sb.Append("and I'm a pretty tired from moving around.");
+            }
+            else if (movePct >= 25)
+            {
+                sb.Append("and I should probably rest my legs soon.");
+            }
+            else
+            {
+                sb.Append("and I can hardly stand up.");
+            }
+
+            await this.communicator.SendToPlayer(actor.Connection, $"You report, \"<span class='say'>{sb.ToString()}</span>\".", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} reports, \"<span class='say'>{sb.ToString()}</span>\".", cancellationToken);
         }
 
         [SightRequired]
@@ -1482,6 +1652,59 @@ namespace Legendary.Engine.Processors
             sb.Append($"<span class='worth'>You currently have <span class='gold'>{currency.Item1}</span> gold, <span class='silver'>{currency.Item2}</span> silver, and <span class='copper'>{currency.Item3}</span> copper.</span>");
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        /// <summary>
+        /// Display the available learning trees (if applicable) to the character, that the teacher can teach them.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="teacher">The teacher.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        private async Task ShowAvailableTrees(UserData actor, Mobile teacher, CancellationToken cancellationToken)
+        {
+            // Get all available skill and spell trees.
+            List<ActionTree> skillTrees = TreeHelper.GetSkillTrees(this.communicator, this.random, this.world, this.logger, this.combat);
+            List<ActionTree> spellTrees = TreeHelper.GetSpellTrees(this.communicator, this.random, this.world, this.logger, this.combat);
+
+            // Filter the trees down depending on the type of teacher.
+            if (teacher.SchoolType != SchoolType.General)
+            {
+                skillTrees = skillTrees.Where(sk => sk.SchoolType == teacher.SchoolType).ToList();
+                spellTrees = spellTrees.Where(sp => sp.SchoolType == teacher.SchoolType).ToList();
+            }
+
+            bool canLearnSkills = false;
+            bool canLearnSpells = false;
+            string availableSkills = TreeHelper.GetLearnableSkillTrees(actor, skillTrees, out canLearnSkills);
+            string availableSpells = TreeHelper.GetLearnableSpellTrees(actor, spellTrees, out canLearnSpells);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"You have {actor.Character.Learns} learning sessions available.<br/>");
+
+            if (canLearnSkills)
+            {
+                sb.Append(availableSkills);
+            }
+
+            if (canLearnSpells)
+            {
+                sb.Append(availableSpells);
+            }
+
+            if (!canLearnSpells && !canLearnSkills)
+            {
+                sb.Append($"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>I'm sorry, {actor.Character.FirstName}, but there isn't anything I can teach you here.</span>\"");
+            }
+            else
+            {
+                sb.Append($"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>To learn a skill or spell group, just enter 'learn skill/spell [group name]'.</span>\"<br/>");
+                sb.Append($"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>For example 'learn <em>martial group II</em>'.</span>\"<br/>");
+                sb.Append($"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>To see what skills or spells are available in a group, enter 'skills/spells [group name]'.</span>\"<br/>");
+                sb.Append($"{teacher.FirstName.FirstCharToUpper()} says \"<span class='say'>For example 'spells <em>conjuring group III</em>'.</span>\"<br/>");
+            }
+
+            await this.communicator.SendToPlayer(actor.Character, sb.ToString(), cancellationToken);
         }
     }
 }

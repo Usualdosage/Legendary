@@ -217,5 +217,20 @@ namespace Legendary.Core.Models
         /// Gets or sets a value indicating whether or not this is a player corpse.
         /// </summary>
         public bool IsPlayerCorpse { get; set; }
+
+        /// <summary>
+        /// Gets or sets what the item casts when used.
+        /// </summary>
+        public string? SpellName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the level the spell is cast at.
+        /// </summary>
+        public int? CastLevel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the frequency with which the action is cast.
+        /// </summary>
+        public int? CastFrequency { get; set; }
     }
 }

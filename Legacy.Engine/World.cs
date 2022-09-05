@@ -733,7 +733,7 @@ namespace Legendary.Engine
                                     var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
 
                                     bool isGhost = mobile.CharacterFlags.Contains(CharacterFlags.Ghost) || mobile.IsAffectedBy(nameof(PassDoor));
-                                    bool isFlying = mobile.Race == Race.Avian || mobile.IsAffectedBy(nameof(Fly));
+                                    bool isFlying = mobile.Race == Race.Avian || mobile.Race == Race.Faerie || mobile.IsAffectedBy(nameof(Fly));
 
                                     if (newArea != null && newRoom != null && newRoom.Flags != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
                                     {

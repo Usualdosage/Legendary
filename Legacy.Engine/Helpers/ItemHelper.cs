@@ -217,5 +217,55 @@ namespace Legendary.Engine.Helpers
 
             return item;
         }
+
+        /// <summary>
+        /// Creates a generic light for the newbie.
+        /// </summary>
+        /// <param name="random">The randomizer.</param>
+        /// <returns>Item.</returns>
+        public static Item CreateLight(IRandom random)
+        {
+            List<string> lampAdjectives = new List<string>()
+            {
+                "copper",
+                "brass",
+                "wooden",
+                "magical",
+                "glowing",
+                "tarnished",
+                "steel",
+            };
+
+            var adj = lampAdjectives[random.Next(0, lampAdjectives.Count - 1)];
+
+            List<string> lampNouns = new List<string>()
+            {
+                $"a {adj} lamp",
+                $"a {adj} lantern",
+                $"a {adj} light",
+                $"a {adj} torch",
+            };
+
+            var lamp = lampNouns[random.Next(0, lampNouns.Count - 1)];
+
+            string title = $"{lamp}";
+            string shortDesc = $"You see {lamp} lying here.";
+
+            var item = new Item()
+            {
+                ItemType = ItemType.Light,
+                WearLocation = new List<WearLocation>() { WearLocation.Light },
+                Name = title,
+                ShortDescription = shortDesc,
+                LongDescription = shortDesc,
+                Weight = random.Next(.5m, 2m),
+                Value = random.Next(0m, .1m),
+                Durability = new MaxCurrent(1, 1),
+                ItemKind = ItemKind.Practice,
+                Level = random.Next(1, 9),
+            };
+
+            return item;
+        }
     }
 }

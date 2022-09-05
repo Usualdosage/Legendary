@@ -221,17 +221,14 @@ namespace Legendary.Engine
                 // Update the user metrics
                 await this.UpdateMetrics(userData, ip?.ToString());
 
-                // TODO: Just add all skills and spells for now.
-                this.ApplySkillsAndSpells(userData);
-
                 // Display the welcome content.
                 await this.ShowWelcomeScreen(userData);
 
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
-                // See if this is a new character, if so, add the proper hometown.
-                this.CheckNewCharacter(userData.Character);
+                // See if this is a new character, if so, add the proper hometown, stats, etc.
+                await this.CheckNewCharacter(userData.Character);
 
                 // Make sure the character is in an existing room.
                 var room = this.ResolveRoom(userData.Character.Location);
@@ -1398,7 +1395,7 @@ namespace Legendary.Engine
             // 30000 * 2 = 60000
             // 60000 * 4 = 240000
             var level = character.Level;
-            var amountNeededToLevel = (character.Level * 1500 * Math.Min(1, level / 10)) * Math.Min(1, Math.Sqrt(level));
+            var amountNeededToLevel = (character.Level * 1500 * Math.Max(1, level / 10)) * Math.Min(1, Math.Sqrt(level));
             return (long)amountNeededToLevel;
         }
 
@@ -1664,9 +1661,9 @@ namespace Legendary.Engine
         /// Ensures a new character's location, home, and starting stats are all set.
         /// </summary>
         /// <param name="character">The character.</param>
-        private void CheckNewCharacter(Character character)
+        private async Task CheckNewCharacter(Character character)
         {
-            if (character.Level == 1 && character.Experience == 0 && character.Metrics.FirstLogin.Day == DateTime.Now.Day && character.Metrics.FirstLogin.Hour == DateTime.Now.Hour && character.Metrics.FirstLogin.Minute == DateTime.Now.Minute)
+            if (character.Level == 1 && character.Experience == 0)
             {
                 // New player starting point.
                 character.Location = new KeyValuePair<long, long>(31866, 32075);
@@ -1702,6 +1699,9 @@ namespace Legendary.Engine
                 character.Trains += (int)trains;
                 character.Practices += (int)pracs;
                 character.Learns = 3;
+                character.Experience = 1;
+
+                await this.SaveCharacter(character);
             }
         }
 
@@ -1973,77 +1973,6 @@ namespace Legendary.Engine
                     else
                     {
                         await this.SendToPlayer(actor.Character, "They aren't here.", cancellationToken);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Applies all skills and spells to a character. This is just for testing.
-        /// </summary>
-        /// <param name="userData">The user.</param>
-        private void ApplySkillsAndSpells(UserData userData)
-        {
-            var engine = Assembly.Load("Legendary.Engine");
-
-            var spellTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
-
-            foreach (var tree in spellTrees)
-            {
-                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
-
-                var groupProps = tree.GetProperties();
-
-                for (var x = 1; x <= 5; x++)
-                {
-                    var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
-
-                    if (spellGroup != null)
-                    {
-                        var obj = spellGroup.GetValue(treeInstance);
-                        if (obj != null)
-                        {
-                            var group = (List<IAction>)obj;
-
-                            foreach (var kvp in group)
-                            {
-                                if (!userData.Character.HasSpell(kvp.Name.ToLower()))
-                                {
-                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Name, 75));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            var skillTrees = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
-
-            foreach (var tree in skillTrees)
-            {
-                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
-
-                var groupProps = tree.GetProperties();
-
-                for (var x = 1; x <= 5; x++)
-                {
-                    var spellGroup = groupProps.FirstOrDefault(g => g.Name == $"Group{x}");
-
-                    if (spellGroup != null)
-                    {
-                        var obj = spellGroup.GetValue(treeInstance);
-                        if (obj != null)
-                        {
-                            var group = (List<IAction>)obj;
-
-                            foreach (var kvp in group)
-                            {
-                                if (!userData.Character.HasSkill(kvp.Name.ToLower()))
-                                {
-                                    userData.Character.Skills.Add(new SkillProficiency(kvp.Name, 75));
-                                }
-                            }
-                        }
                     }
                 }
             }
