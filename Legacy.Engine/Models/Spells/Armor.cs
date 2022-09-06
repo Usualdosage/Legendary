@@ -71,19 +71,26 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                if (target.IsAffectedBy(this))
+                if (target.Location.Value != actor.Location.Value)
                 {
-                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is already armored.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
                 }
                 else
                 {
-                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
-                    await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
-                    await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
+                    if (target.IsAffectedBy(this))
+                    {
+                        await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is already armored.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                        await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
+                        await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
 
-                    target?.AffectedBy.Add(effect);
-                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is protected by your magical armor.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} is protected by {actor.FirstName}'s armor.", cancellationToken);
+                        target?.AffectedBy.Add(effect);
+                        await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is protected by your magical armor.", cancellationToken);
+                        await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} is protected by {actor.FirstName}'s armor.", cancellationToken);
+                    }
                 }
             }
         }

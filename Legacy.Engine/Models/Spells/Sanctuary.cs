@@ -67,19 +67,26 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                if (target.IsAffectedBy(this))
+                if (target.Location.Value != actor.Location.Value)
                 {
-                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is already in sanctuary.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
                 }
                 else
                 {
-                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
-                    await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
-                    await this.Communicator.PlaySoundToRoom(actor, target, Sounds.SANCTUARY, cancellationToken);
+                    if (target.IsAffectedBy(this))
+                    {
+                        await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is already in sanctuary.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
+                        await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
+                        await this.Communicator.PlaySoundToRoom(actor, target, Sounds.SANCTUARY, cancellationToken);
 
-                    target?.AffectedBy.Add(effect);
-                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
+                        target?.AffectedBy.Add(effect);
+                        await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
+                        await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
+                    }
                 }
             }
         }

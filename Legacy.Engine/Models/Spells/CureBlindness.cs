@@ -61,14 +61,21 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                if (!target.AffectedBy.Any(a => a.Name?.ToLower() == EffectName.BLINDNESS))
+                if (target.Location.Value != actor.Location.Value)
                 {
-                    await this.Communicator.SendToPlayer(actor, "They are not blinded.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
                 }
                 else
                 {
-                    actor.AffectedBy.RemoveAll(r => r.Name == EffectName.BLINDNESS);
-                    await this.Communicator.SendToPlayer(target, "You can see again!", cancellationToken);
+                    if (!target.AffectedBy.Any(a => a.Name?.ToLower() == EffectName.BLINDNESS))
+                    {
+                        await this.Communicator.SendToPlayer(actor, "They are not blinded.", cancellationToken);
+                    }
+                    else
+                    {
+                        actor.AffectedBy.RemoveAll(r => r.Name == EffectName.BLINDNESS);
+                        await this.Communicator.SendToPlayer(target, "You can see again!", cancellationToken);
+                    }
                 }
             }
         }

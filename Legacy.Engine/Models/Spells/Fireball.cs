@@ -55,9 +55,15 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.FIREBALL, cancellationToken);
-
-                await this.DamageToTarget(actor, target, cancellationToken);
+                if (target.Location.Value != actor.Location.Value)
+                {
+                    await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
+                }
+                else
+                {
+                    await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.FIREBALL, cancellationToken);
+                    await this.DamageToTarget(actor, target, cancellationToken);
+                }
             }
 
             await this.Communicator.PlaySoundToRoom(actor, target, Sounds.FIREBALL, cancellationToken);

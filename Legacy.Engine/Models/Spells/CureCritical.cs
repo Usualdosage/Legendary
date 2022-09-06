@@ -43,12 +43,12 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
         {
-            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-
             var result = this.Random.Next(3, 24) + (actor.Level / 10);
 
             if (target == null)
             {
+                await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+
                 if (actor.Health.Current >= actor.Health.Max)
                 {
                     await this.Communicator.SendToPlayer(actor, "You are already completely healthy.", cancellationToken);
@@ -62,16 +62,23 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
-                if (target.Health.Current >= target.Health.Max)
+                if (target.Location.Value != actor.Location.Value)
                 {
-                    await this.Communicator.SendToPlayer(actor, "They are already completely healthy.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
                 }
                 else
                 {
-                    await this.Communicator.SendToPlayer(target, "You feel a LOT better!", cancellationToken);
-                    await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                    var diff = target.Health.Max - target.Health.Current;
-                    target.Health.Current += Math.Min(result, diff);
+                    if (target.Health.Current >= target.Health.Max)
+                    {
+                        await this.Communicator.SendToPlayer(actor, "They are already completely healthy.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.Communicator.SendToPlayer(target, "You feel a LOT better!", cancellationToken);
+                        await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                        var diff = target.Health.Max - target.Health.Current;
+                        target.Health.Current += Math.Min(result, diff);
+                    }
                 }
             }
         }

@@ -59,7 +59,7 @@ namespace Legendary.Engine.Processors
 
             if (proficiency != null && proficiency.Proficiency > 1)
             {
-                var skill = this.actionHelper.CreateActionInstance<Skill>("Legendary.Engine.Models.Skills", args.Action.FirstCharToUpper());
+                var skill = this.actionHelper.CreateActionInstance<Skill>("Legendary.Engine.Models.Skills", proficiency.SkillName.Replace(" ", string.Empty));
 
                 if (skill != null && skill.CanInvoke)
                 {

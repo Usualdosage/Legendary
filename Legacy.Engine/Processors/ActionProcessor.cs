@@ -72,6 +72,51 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Parses a direction enum from a string value.
+        /// </summary>
+        /// <param name="direction">The direction.</param>
+        /// <returns>Direction.</returns>
+        public static Direction ParseDirection(string direction)
+        {
+            return direction switch
+            {
+                "s" or "south" => Direction.South,
+                "e" or "east" => Direction.East,
+                "w" or "west" => Direction.West,
+                "u" or "up" => Direction.Up,
+                "d" or "down" => Direction.Down,
+                "ne" or "northeast" => Direction.NorthEast,
+                "nw" or "northwest" => Direction.NorthWest,
+                "se" or "southeast" => Direction.SouthEast,
+                "sw" or "southwest" => Direction.SouthWest,
+                _ => Direction.North,
+            };
+        }
+
+        /// <summary>
+        /// Used for opening and closing doors.
+        /// </summary>
+        /// <param name="direction">The direction.</param>
+        /// <returns>User friendly string.</returns>
+        public static string ParseFriendlyDirection(Direction direction)
+        {
+            return direction switch
+            {
+                Direction.South => "to the south of",
+                Direction.North => "to the north of",
+                Direction.East => "to the south of",
+                Direction.West => "to the north of",
+                Direction.SouthEast => "to the southeast of",
+                Direction.SouthWest => "to the southwest of",
+                Direction.NorthEast => "to the northeast of",
+                Direction.NorthWest => "to the northwest of",
+                Direction.Up => "above",
+                Direction.Down => "below",
+                _ => "to the front of",
+            };
+        }
+
+        /// <summary>
         /// Executes the action provided by the command.
         /// </summary>
         /// <param name="actor">The actor.</param>
@@ -251,51 +296,6 @@ namespace Legendary.Engine.Processors
                     corpse.Contains.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
                 }
             }
-        }
-
-        /// <summary>
-        /// Parses a direction enum from a string value.
-        /// </summary>
-        /// <param name="direction">The direction.</param>
-        /// <returns>Direction.</returns>
-        private static Direction ParseDirection(string direction)
-        {
-            return direction switch
-            {
-                "s" or "south" => Direction.South,
-                "e" or "east" => Direction.East,
-                "w" or "west" => Direction.West,
-                "u" or "up" => Direction.Up,
-                "d" or "down" => Direction.Down,
-                "ne" or "northeast" => Direction.NorthEast,
-                "nw" or "northwest" => Direction.NorthWest,
-                "se" or "southeast" => Direction.SouthEast,
-                "sw" or "southwest" => Direction.SouthWest,
-                _ => Direction.North,
-            };
-        }
-
-        /// <summary>
-        /// Used for opening and closing doors.
-        /// </summary>
-        /// <param name="direction">The direction.</param>
-        /// <returns>User friendly string.</returns>
-        private static string ParseFriendlyDirection(Direction direction)
-        {
-            return direction switch
-            {
-                Direction.South => "to the south of",
-                Direction.North => "to the north of",
-                Direction.East => "to the south of",
-                Direction.West => "to the north of",
-                Direction.SouthEast => "to the southeast of",
-                Direction.SouthWest => "to the southwest of",
-                Direction.NorthEast => "to the northeast of",
-                Direction.NorthWest => "to the northwest of",
-                Direction.Up => "above",
-                Direction.Down => "below",
-                _ => "to the front of",
-            };
         }
 
         private static int GetTerrainMovementPenalty(Room room)
@@ -1780,8 +1780,8 @@ namespace Legendary.Engine.Processors
                             }
 
                             exit.IsClosed = false;
-                            await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} opens the {exit.DoorName} {friendlyDirection} you.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You open the {exit.DoorName ?? "door"} {friendlyDirection} you.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} opens the {exit.DoorName ?? "door"} {friendlyDirection} you.", cancellationToken);
 
                             await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX2, Sounds.OPENDOOR, cancellationToken);
                             await this.communicator.PlaySoundToRoom(actor.Character, null, Sounds.OPENDOOR, cancellationToken);

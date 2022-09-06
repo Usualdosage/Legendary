@@ -1,4 +1,4 @@
-﻿// <copyright file="RogueGroup.cs" company="Legendary™">
+﻿// <copyright file="ClericalGroup.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -16,35 +16,35 @@ namespace Legendary.Engine.Models.SkillTrees
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
-    /// Spells available in the rogue group.
+    /// Spells available in the clerical group.
     /// </summary>
-    public class RogueGroup : ActionTree
+    public class ClericalGroup : ActionTree
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RogueGroup"/> class.
+        /// Initializes a new instance of the <see cref="ClericalGroup"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public RogueGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public ClericalGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
             : base(communicator, random, world, logger, combat)
         {
         }
 
         /// <inheritdoc/>
-        public override string Name => "Rogue Group";
+        public override string Name => "Clerical Group";
 
         /// <inheritdoc/>
-        public override SchoolType SchoolType => SchoolType.Rogues;
+        public override SchoolType SchoolType => SchoolType.Divinity;
 
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
             get => new List<IAction>()
             {
-                { new Peek(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Trance(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -53,7 +53,6 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new PickLock(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

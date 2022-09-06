@@ -21,6 +21,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Skills;
 
     /// <summary>
     /// Represents the user environment.
@@ -159,9 +160,9 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessRecovery(UserData user)
         {
-            var standardHPRecover = user.Character.Health.Max / 48;
-            var standardManaRecover = user.Character.Mana.Max / 48;
-            var standardMoveRecover = user.Character.Movement.Max / 48;
+            var standardHPRecover = user.Character.Health.Max / 36;
+            var standardManaRecover = user.Character.Mana.Max / 36;
+            var standardMoveRecover = user.Character.Movement.Max / 36;
 
             if (user.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
             {
@@ -174,6 +175,16 @@ namespace Legendary.Engine
                 standardHPRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
                 standardManaRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
                 standardMoveRecover *= Constants.SLEEP_RECOVERY_MULTIPLIER;
+            }
+
+            if (user.Character.HasSkill(nameof(FastHealing)))
+            {
+                standardHPRecover += this.random.Next(5, user.Character.Level);
+            }
+
+            if (user.Character.HasSpell(nameof(Trance)))
+            {
+                standardManaRecover += this.random.Next(5, user.Character.Level);
             }
 
             var moveRestore = Math.Min(user.Character.Movement.Max - user.Character.Movement.Current, standardMoveRecover);
