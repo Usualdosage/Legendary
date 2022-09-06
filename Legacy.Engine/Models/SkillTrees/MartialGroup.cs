@@ -16,7 +16,7 @@ namespace Legendary.Engine.Models.SkillTrees
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
-    /// Spells available in the air group.
+    /// Spells available in the martial group.
     /// </summary>
     public class MartialGroup : ActionTree
     {
@@ -56,6 +56,7 @@ namespace Legendary.Engine.Models.SkillTrees
             get => new List<IAction>()
             {
                 { new Parry(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new FastHealing(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

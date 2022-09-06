@@ -1,4 +1,4 @@
-﻿// <copyright file="WeaponGroup.cs" company="Legendary™">
+﻿// <copyright file="RogueGroup.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -16,37 +16,35 @@ namespace Legendary.Engine.Models.SkillTrees
     using Legendary.Engine.Models.Skills;
 
     /// <summary>
-    /// Spells available in the weapon group.
+    /// Spells available in the rogue group.
     /// </summary>
-    public class WeaponGroup : ActionTree
+    public class RogueGroup : ActionTree
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WeaponGroup"/> class.
+        /// Initializes a new instance of the <see cref="RogueGroup"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public WeaponGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public RogueGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
             : base(communicator, random, world, logger, combat)
         {
         }
 
         /// <inheritdoc/>
-        public override string Name => "Weapon Group";
+        public override string Name => "Rogue Group";
 
         /// <inheritdoc/>
-        public override SchoolType SchoolType => SchoolType.War;
+        public override SchoolType SchoolType => SchoolType.Rogues;
 
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
             get => new List<IAction>()
             {
-                { new EdgedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new BluntWeapons(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new PiercingWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Peek(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -55,10 +53,6 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new Polearms(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Flails(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Whips(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Staffs(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -67,15 +61,23 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
-                { new TwoHandedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Disarm(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group4 { get => new List<IAction>(); }
+        public override List<IAction> Group4
+        {
+            get => new List<IAction>()
+            {
+            };
+        }
 
         /// <inheritdoc/>
-        public override List<IAction> Group5 { get => new List<IAction>(); }
+        public override List<IAction> Group5
+        {
+            get => new List<IAction>()
+            {
+            };
+        }
     }
 }

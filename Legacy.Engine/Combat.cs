@@ -460,15 +460,21 @@ namespace Legendary.Engine
                         await this.KillPlayer(target, actor, cancellationToken);
                     }
 
-                    // Add the experience to the player.
-                    var experience = this.CalculateExperience(actor, target);
-
                     if (GroupHelper.IsInGroup(actor.CharacterId))
                     {
+                        var average = GroupHelper.GetAverageLevelOfGroup(actor.CharacterId);
+
+                        // Calculate the experience.
+                        var experience = this.CalculateExperience(actor, target, average);
+
+                        // Apply experience across the group.
                         await this.ApplyExperienceToGroup(actor, experience, cancellationToken);
                     }
                     else
                     {
+                        // Add the experience to the player.
+                        var experience = this.CalculateExperience(actor, target, null);
+
                         await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
                         actor.Experience += experience;
 
@@ -669,39 +675,66 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="target">The target.</param>
+        /// <param name="averageLevel">If provided, used to calculate group experience.</param>
         /// <returns>Int.</returns>
-        public int CalculateExperience(Character actor, Character target)
+        public int CalculateExperience(Character actor, Character target, int? averageLevel)
         {
-            int baseExperience = (target.Level * 6) + this.random.Next(1, 199);
-
-            if (actor.Level <= target.Level)
+            if (!averageLevel.HasValue)
             {
-                double levelDiff = target.Level - actor.Level;
+                int baseExperience = (target.Level * 5) + this.random.Next(1, 199);
 
-                double experienceResult = (double)baseExperience * Math.Max(1, levelDiff - 2);
-
-                var modified = experienceResult * this.GetModifier(actor, target);
-
-                return (int)modified;
-            }
-            else
-            {
-                double levelDiff = actor.Level - target.Level;
-
-                // If more than ten levels higher than target, no experience.
-                if (levelDiff > 10)
+                if (actor.Level <= target.Level)
                 {
-                    return 0;
+                    double levelDiff = target.Level - actor.Level;
+                    double experienceResult = (double)baseExperience * Math.Max(1, levelDiff - 2);
+                    var modified = experienceResult * this.GetModifier(actor, target);
+                    return (int)modified;
                 }
                 else
                 {
-                    double levelModifier = 1d / (double)(actor.Level - target.Level);
+                    double levelDiff = actor.Level - target.Level;
 
-                    double experienceResult = (double)baseExperience * levelModifier;
+                    // If more than ten levels higher than target, no experience.
+                    if (levelDiff > 10)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        double levelModifier = 1d / (double)(actor.Level - target.Level);
+                        double experienceResult = (double)baseExperience * levelModifier;
+                        var modified = experienceResult * this.GetModifier(actor, target);
+                        return (int)modified;
+                    }
+                }
+            }
+            else
+            {
+                int baseExperience = (target.Level * 5) + this.random.Next(1, 199);
 
+                if (averageLevel.Value <= target.Level)
+                {
+                    double levelDiff = target.Level - averageLevel.Value;
+                    double experienceResult = (double)baseExperience * Math.Max(1, levelDiff - 2);
                     var modified = experienceResult * this.GetModifier(actor, target);
-
                     return (int)modified;
+                }
+                else
+                {
+                    double levelDiff = actor.Level - target.Level;
+
+                    // If more than ten levels higher than target, no experience.
+                    if (levelDiff > 10)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        double levelModifier = 1d / (double)(averageLevel.Value - target.Level);
+                        double experienceResult = (double)baseExperience * levelModifier;
+                        var modified = experienceResult * this.GetModifier(actor, target);
+                        return (int)modified;
+                    }
                 }
             }
         }
@@ -1235,7 +1268,7 @@ namespace Legendary.Engine
                 }
                 else if (group.Count == 2)
                 {
-                    adjusted = experience * 1.75d;
+                    adjusted = experience * 2.2d;
                     expPerPlayer = adjusted / 2d;
                 }
                 else if (group.Count == 3)

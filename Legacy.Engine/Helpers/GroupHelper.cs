@@ -279,6 +279,33 @@ namespace Legendary.Engine.Helpers
         }
 
         /// <summary>
+        /// Calculates the average level of the group.
+        /// </summary>
+        /// <param name="characterId">The group member.</param>
+        /// <returns>int.</returns>
+        public static int? GetAverageLevelOfGroup(long characterId)
+        {
+            var members = GetAllGroupMembers(characterId);
+
+            if (members != null)
+            {
+                if (Communicator.Users != null)
+                {
+                    int sum = 0;
+                    foreach (var member in members)
+                    {
+                        var user = Communicator.Users.FirstOrDefault(c => c.Value.Character.CharacterId == member);
+                        sum += user.Value.Character.Level;
+                    }
+
+                    return sum / members.Count;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets all group members, including the owner/leader, for a given group.
         /// </summary>
         /// <param name="characterId">The character ID.</param>

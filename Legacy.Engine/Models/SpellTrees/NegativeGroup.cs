@@ -53,7 +53,7 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
-                { new Summon(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new AcidBlast(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 

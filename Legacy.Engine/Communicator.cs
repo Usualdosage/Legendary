@@ -32,6 +32,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Output;
+    using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
@@ -524,6 +525,45 @@ namespace Legendary.Engine
                             await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {mobile.FirstName}.", cancellationToken);
                             await this.SendToPlayer(actor, this.GetPlayerInfo(mobile), cancellationToken);
 
+                            if (actor.HasSkill(nameof(Peek)))
+                            {
+                                var peek = actor.GetSkillProficiency(nameof(Peek));
+
+                                if (peek != null && peek.Proficiency > 1)
+                                {
+                                    var peekResult = this.random.Next(1, 99);
+                                    if (peekResult < peek.Proficiency)
+                                    {
+                                        await this.SendToPlayer(actor, $"You peek at {mobile.FirstName}'s inventory!<br/>", cancellationToken);
+
+                                        var sb = new StringBuilder();
+
+                                        sb.AppendLine($"<span class='inventory'>{mobile.FirstName.FirstCharToUpper()} is carrying:</span>");
+
+                                        var itemGroups = mobile.Inventory.GroupBy(g => g.Name);
+
+                                        foreach (var itemGroup in itemGroups)
+                                        {
+                                            var item = itemGroup.First();
+
+                                            if (itemGroup.Count() == 1)
+                                            {
+                                                sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
+                                            }
+                                            else
+                                            {
+                                                sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                                            }
+                                        }
+
+                                        await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
+
+                                        Peek skill = new Peek(this, this.random, this.world, this.logger, this.combat);
+                                        await skill.CheckImprove(actor, cancellationToken);
+                                    }
+                                }
+                            }
+
                             // Update player stats
                             await this.SendGameUpdate(actor, mobile.FirstName, mobile.Image, cancellationToken);
                         }
@@ -540,6 +580,46 @@ namespace Legendary.Engine
                         await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName.FirstCharToUpper()} looks at you.", cancellationToken);
                         await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
                         await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
+
+                        if (actor.HasSkill(nameof(Peek)))
+                        {
+                            var peek = actor.GetSkillProficiency(nameof(Peek));
+                            var character = target.Value.Value.Character;
+
+                            if (peek != null && peek.Proficiency > 1)
+                            {
+                                var peekResult = this.random.Next(1, 99);
+                                if (peekResult < peek.Proficiency)
+                                {
+                                    await this.SendToPlayer(actor, $"You peek at {character.FirstName}'s inventory!<br/>", cancellationToken);
+
+                                    var sb = new StringBuilder();
+
+                                    sb.AppendLine($"<span class='inventory'>{character.FirstName} is carrying:</span>");
+
+                                    var itemGroups = character.Inventory.GroupBy(g => g.Name);
+
+                                    foreach (var itemGroup in itemGroups)
+                                    {
+                                        var item = itemGroup.First();
+
+                                        if (itemGroup.Count() == 1)
+                                        {
+                                            sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
+                                        }
+                                        else
+                                        {
+                                            sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                                        }
+                                    }
+
+                                    await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
+
+                                    Peek skill = new Peek(this, this.random, this.world, this.logger, this.combat);
+                                    await skill.CheckImprove(actor, cancellationToken);
+                                }
+                            }
+                        }
 
                         // Update player stats
                         await this.SendGameUpdate(actor, target.Value.Value.Character.FirstName, target.Value.Value.Character.Image, cancellationToken);

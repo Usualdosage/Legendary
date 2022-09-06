@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
@@ -55,7 +56,8 @@ namespace Legendary.Engine.Models.Spells
                 else
                 {
                     await this.Communicator.SendToPlayer(actor, "You feel a little better.", cancellationToken);
-                    actor.Health.Current += result;
+                    var diff = actor.Health.Max - actor.Health.Current;
+                    actor.Health.Current += Math.Min(result, diff);
                 }
             }
             else

@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
@@ -55,7 +56,8 @@ namespace Legendary.Engine.Models.Spells
                 else
                 {
                     await this.Communicator.SendToPlayer(actor, "You feel much better!", cancellationToken);
-                    actor.Health.Current += result;
+                    var diff = actor.Health.Max - actor.Health.Current;
+                    actor.Health.Current += Math.Min(result, diff);
                 }
             }
             else
@@ -68,7 +70,8 @@ namespace Legendary.Engine.Models.Spells
                 {
                     await this.Communicator.SendToPlayer(target, "You feel much better!", cancellationToken);
                     await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                    actor.Health.Current += result;
+                    var diff = target.Health.Max - target.Health.Current;
+                    target.Health.Current += Math.Min(result, diff);
                 }
             }
         }

@@ -803,7 +803,7 @@ namespace Legendary.Engine
 
                     try
                     {
-                        if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Scavenger))
+                        if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Scavenger) && mobile.Race != Race.Animal)
                         {
                             // Scavenging mobiles have a 50% chance each tick to pick something up.
                             var scavenge = this.random.Next(0, 100);

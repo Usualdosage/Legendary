@@ -21,6 +21,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Types;
     using Legendary.Engine.Attributes;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
 
     /// <summary>
@@ -34,6 +35,7 @@ namespace Legendary.Engine.Processors
         private void ConfigureWizActions()
         {
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
+            this.wizActions.Add("grant", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGrant)));
             this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
             this.wizActions.Add("reload", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReload)));
             this.wizActions.Add("repop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRepop)));
@@ -50,49 +52,105 @@ namespace Legendary.Engine.Processors
         [MinimumLevel(90)]
         private async Task DoGoTo(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Level < 100)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"Goto where?", cancellationToken);
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(args.Method))
+                if (long.TryParse(args.Method, out long result))
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"Goto where?", cancellationToken);
+                    await this.GotoRoom(actor, result, cancellationToken);
                 }
                 else
                 {
-                    if (long.TryParse(args.Method, out long result))
+                    var player = this.communicator.ResolveCharacter(args.Method);
+
+                    if (player != null)
                     {
-                        await this.GotoRoom(actor, result, cancellationToken);
+                        var room = this.communicator.ResolveRoom(player.Character.Location);
+
+                        if (room != null)
+                        {
+                            await this.GotoRoom(actor, player.Character.Location.Value, cancellationToken);
+                        }
                     }
                     else
                     {
-                        var player = this.communicator.ResolveCharacter(args.Method);
+                        var location = this.communicator.ResolveMobileLocation(args.Method);
 
-                        if (player != null)
+                        if (location != null)
                         {
-                            var room = this.communicator.ResolveRoom(player.Character.Location);
-
-                            if (room != null)
-                            {
-                                await this.GotoRoom(actor, player.Character.Location.Value, cancellationToken);
-                            }
+                            await this.GotoRoom(actor, location.Value.Value, cancellationToken);
                         }
                         else
                         {
-                            var location = this.communicator.ResolveMobileLocation(args.Method);
-
-                            if (location != null)
-                            {
-                                await this.GotoRoom(actor, location.Value.Value, cancellationToken);
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(actor.Connection, $"There's nobody here by that name.", cancellationToken);
-                            }
+                            await this.communicator.SendToPlayer(actor.Connection, $"There's nobody here by that name.", cancellationToken);
                         }
                     }
+                }
+            }
+        }
+
+        [MinimumLevel(95)]
+        private async Task DoGrant(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            // grant peek player
+
+            if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Grant what to whom?", cancellationToken);
+            }
+            else
+            {
+                var player = this.communicator.ResolveCharacter(args.Target);
+                var spell = SpellHelper.ResolveSpell(args.Method, this.communicator, this.random, this.world, this.logger, this.combat);
+                var skill = SkillHelper.ResolveSkill(args.Method, this.communicator, this.random, this.world, this.logger, this.combat);
+
+                if (player != null)
+                {
+                    if (args.Method.ToLower() == "all")
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You grant every skill and spell available to {player.Character.FirstName}.", cancellationToken);
+                        await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName} has granted you every skill and spell available.", cancellationToken);
+                        this.ApplySkillsAndSpells(player);
+                    }
+                    else if (skill == null && spell == null)
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"There aren't any skills or spells by that name.", cancellationToken);
+                    }
+                    else if (spell != null)
+                    {
+                        if (player.Character.HasSpell(spell.Name))
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"{player.Character.FirstName} already has that spell.", cancellationToken);
+                        }
+                        else
+                        {
+                            player.Character.Spells.Add(new SpellProficiency(spell.Name, 75));
+                            await this.communicator.SendToPlayer(actor.Connection, $"You grant the {spell.Name} spell to {player.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName} has granted you the {spell.Name} spell.", cancellationToken);
+                            await this.communicator.SaveCharacter(player);
+                        }
+                    }
+                    else if (skill != null)
+                    {
+                        if (player.Character.HasSkill(skill.Name))
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"{player.Character.FirstName} already has that skill.", cancellationToken);
+                        }
+                        else
+                        {
+                            player.Character.Skills.Add(new SkillProficiency(skill.Name, 75));
+                            await this.communicator.SendToPlayer(actor.Connection, $"You grant the {skill.Name} skill to {player.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName} has granted you the {skill.Name} skill.", cancellationToken);
+                            await this.communicator.SaveCharacter(player);
+                        }
+                    }
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"That person isn't here.", cancellationToken);
                 }
             }
         }
@@ -100,120 +158,92 @@ namespace Legendary.Engine.Processors
         [MinimumLevel(90)]
         private async Task DoPeace(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Level < 100)
+            if (Communicator.Users != null)
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
-            }
-            else
-            {
-                if (Communicator.Users != null)
+                var users = Communicator.Users.Where(u => u.Value.Character.Location.InSamePlace(actor.Character.Location));
+
+                // Stop all the users from fighting
+                foreach (var user in users)
                 {
-                    var users = Communicator.Users.Where(u => u.Value.Character.Location.InSamePlace(actor.Character.Location));
-
-                    // Stop all the users from fighting
-                    foreach (var user in users)
-                    {
-                        user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                        user.Value.Character.Fighting = null;
-                    }
-
-                    // Stop all the mobiles from fighting
-                    var mobiles = this.communicator.GetMobilesInRoom(actor.Character.Location);
-                    if (mobiles != null)
-                    {
-                        foreach (var mob in mobiles)
-                        {
-                            mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
-                            mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
-                            mob.Fighting = null;
-                        }
-                    }
+                    user.Value.Character.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                    user.Value.Character.Fighting = null;
                 }
 
-                await this.communicator.SendToPlayer(actor.Connection, "You stop all fighting in the room.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
+                // Stop all the mobiles from fighting
+                var mobiles = this.communicator.GetMobilesInRoom(actor.Character.Location);
+                if (mobiles != null)
+                {
+                    foreach (var mob in mobiles)
+                    {
+                        mob.CharacterFlags?.RemoveIfExists(CharacterFlags.Fighting);
+                        mob.MobileFlags?.RemoveIfExists(MobileFlags.Aggressive);
+                        mob.Fighting = null;
+                    }
+                }
             }
+
+            await this.communicator.SendToPlayer(actor.Connection, "You stop all fighting in the room.", cancellationToken);
+            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} stops all fighting in the room.", cancellationToken);
         }
 
         [MinimumLevel(100)]
         private async Task DoReload(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Level < 100)
-            {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
-                await this.world.LoadWorld();
-                await this.world.CleanupWorld();
-                this.world.Populate();
-                this.communicator.RestartGameLoop();
-                await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
-                this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);
-            }
+            await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
+            await this.world.LoadWorld();
+            await this.world.CleanupWorld();
+            this.world.Populate();
+            this.communicator.RestartGameLoop();
+            await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
+            this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);
         }
 
         [MinimumLevel(90)]
         private async Task DoRepop(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Level < 100)
+            var area = this.communicator.ResolveArea(actor.Character.Location);
+
+            if (area != null)
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, "Repopulating this area with mobiles and items...", cancellationToken);
+                this.world.RepopulateMobiles(area);
+                this.world.RepopulateItems(area);
+                await this.communicator.SendToPlayer(actor.Connection, "You have repopulated this area.", cancellationToken);
+                this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has repopulated {area.Name}.", this.communicator);
             }
             else
             {
-                var area = this.communicator.ResolveArea(actor.Character.Location);
-
-                if (area != null)
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, "Repopulating this area with mobiles and items...", cancellationToken);
-                    this.world.RepopulateMobiles(area);
-                    this.world.RepopulateItems(area);
-                    await this.communicator.SendToPlayer(actor.Connection, "You have repopulated this area.", cancellationToken);
-                    this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has repopulated {area.Name}.", this.communicator);
-                }
-                else
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, "This area cannot be repopulated.", cancellationToken);
-                }
+                await this.communicator.SendToPlayer(actor.Connection, "This area cannot be repopulated.", cancellationToken);
             }
         }
 
         [MinimumLevel(100)]
         private async Task DoRestore(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.Level < 100)
+            if (string.IsNullOrWhiteSpace(args.Method))
             {
-                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                actor.Character.Mana.Current = actor.Character.Mana.Max;
+                actor.Character.Movement.Current = actor.Character.Movement.Max;
+                actor.Character.Health.Current = actor.Character.Health.Max;
+                await this.communicator.SendToPlayer(actor.Connection, "You have restored yourself.", cancellationToken);
             }
             else
             {
-                if (string.IsNullOrWhiteSpace(args.Method))
+                var target = args.Method;
+
+                var player = this.communicator.ResolveCharacter(target);
+
+                if (player != null)
                 {
-                    actor.Character.Mana.Current = actor.Character.Mana.Max;
-                    actor.Character.Movement.Current = actor.Character.Movement.Max;
-                    actor.Character.Health.Current = actor.Character.Health.Max;
-                    await this.communicator.SendToPlayer(actor.Connection, "You have restored yourself.", cancellationToken);
+                    player.Character.Mana.Current = player.Character.Mana.Max;
+                    player.Character.Movement.Current = player.Character.Movement.Max;
+                    player.Character.Health.Current = player.Character.Health.Max;
+                    await this.communicator.SendToPlayer(actor.Connection, $"You have restored {player.Character.FirstName.FirstCharToUpper()}.", cancellationToken);
+                    await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} has restored you.", cancellationToken);
                 }
                 else
                 {
-                    var target = args.Method;
-
-                    var player = this.communicator.ResolveCharacter(target);
-
-                    if (player != null)
-                    {
-                        player.Character.Mana.Current = player.Character.Mana.Max;
-                        player.Character.Movement.Current = player.Character.Movement.Max;
-                        player.Character.Health.Current = player.Character.Health.Max;
-                        await this.communicator.SendToPlayer(actor.Connection, $"You have restored {player.Character.FirstName.FirstCharToUpper()}.", cancellationToken);
-                        await this.communicator.SendToPlayer(player.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} has restored you.", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, "The aren't here.", cancellationToken);
-                    }
+                    await this.communicator.SendToPlayer(actor.Connection, "The aren't here.", cancellationToken);
                 }
             }
         }

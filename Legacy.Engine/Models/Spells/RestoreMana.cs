@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
@@ -55,7 +56,8 @@ namespace Legendary.Engine.Models.Spells
                 else
                 {
                     await this.Communicator.SendToPlayer(actor, "You feel energy course through you!", cancellationToken);
-                    actor.Mana.Current += result;
+                    var diff = actor.Mana.Max - actor.Mana.Current;
+                    actor.Mana.Current += Math.Min(result, diff);
                 }
             }
             else
@@ -68,7 +70,8 @@ namespace Legendary.Engine.Models.Spells
                 {
                     await this.Communicator.SendToPlayer(target, "You feel energy course through you!", cancellationToken);
                     await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-                    actor.Mana.Current += result;
+                    var diff = target.Mana.Max - target.Mana.Current;
+                    target.Mana.Current += Math.Min(result, diff);
                 }
             }
         }
