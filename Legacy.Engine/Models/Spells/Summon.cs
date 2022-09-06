@@ -108,7 +108,7 @@ namespace Legendary.Engine.Models.Spells
 
                     if (mobile != null)
                     {
-                        if (mobile.Level > actor.Level + 6)
+                        if (mobile.Level > actor.Level + 6 || (mobile.MobileFlags != null && mobile.MobileFlags.Contains(Core.Types.MobileFlags.Nosummon)))
                         {
                             await this.Communicator.SendToPlayer(actor, $"You failed to summon {target.FirstName}.", cancellationToken);
                         }

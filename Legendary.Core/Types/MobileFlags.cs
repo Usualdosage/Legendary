@@ -68,5 +68,10 @@ namespace Legendary.Core.Types
         /// Flees after being attacked.
         /// </summary>
         Wimpy = 10, // TODO
+
+        /// <summary>
+        /// Disallow summoning of this mob.
+        /// </summary>
+        Nosummon = 11,
     }
 }

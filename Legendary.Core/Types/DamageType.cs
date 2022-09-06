@@ -78,5 +78,10 @@ namespace Legendary.Core.Types
         /// Maledictive.
         /// </summary>
         Maledictive = 12,
+
+        /// <summary>
+        /// Exotic.
+        /// </summary>
+        Exotic = 13,
     }
 }

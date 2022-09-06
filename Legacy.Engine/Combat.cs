@@ -326,26 +326,59 @@ namespace Legendary.Engine
 
             if (wielded != null)
             {
-                switch (wielded.DamageType)
+                switch (wielded.WeaponType)
                 {
                     default:
                         {
                             return new HandToHand(this.communicator, this.random, this.world, this.logger, this);
                         }
 
-                    case DamageType.Slash:
+                    case WeaponType.Axe:
+                    case WeaponType.Sword:
                         {
                             return new EdgedWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
-                    case DamageType.Blunt:
+                    case WeaponType.Spear:
+                    case WeaponType.Dagger:
+                        {
+                            return new PiercingWeapons(this.communicator, this.random, this.world, this.logger, this);
+                        }
+
+                    case WeaponType.Mace:
+                    case WeaponType.Club:
                         {
                             return new BluntWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
-                    case DamageType.Pierce:
+                    case WeaponType.Flail:
                         {
-                            return new PiercingWeapons(this.communicator, this.random, this.world, this.logger, this);
+                            return new Flails(this.communicator, this.random, this.world, this.logger, this);
+                        }
+
+                    case WeaponType.Whip:
+                        {
+                            return new Whips(this.communicator, this.random, this.world, this.logger, this);
+                        }
+
+                    case WeaponType.Polearm:
+                        {
+                            return new Polearms(this.communicator, this.random, this.world, this.logger, this);
+                        }
+
+                    case WeaponType.Staff:
+                        {
+                            return new Staffs(this.communicator, this.random, this.world, this.logger, this);
+                        }
+
+                    case WeaponType.Exotic:
+                        {
+                            return new Exotics(this.communicator, this.random, this.world, this.logger, this);
+                        }
+
+                    case WeaponType.TwoHanded:
+                        {
+                            return new TwoHandedWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
                 }
             }
