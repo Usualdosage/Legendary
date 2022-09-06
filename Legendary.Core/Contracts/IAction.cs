@@ -87,9 +87,10 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="actor">The one who performs the skill.</param>
         /// <param name="target">The target of the skill.</param>
+        /// <param name="targetItem">The item target.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        abstract Task Act(Character actor, Character? target, CancellationToken cancellationToken = default);
+        abstract Task Act(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Each time the action is used, checks the improvement of the action.
@@ -104,18 +105,20 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="actor">The one who performs the skill.</param>
         /// <param name="target">The target of the skill.</param>
+        /// <param name="targetItem">The item target.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default);
+        Task PreAction(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets or sets the action to execute after the main action effect.
         /// </summary>
         /// <param name="actor">The one who performs the skill.</param>
         /// <param name="target">The target of the skill.</param>
+        /// <param name="targetItem">The item target.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default);
+        Task PostAction(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Processes an effect each tick.

@@ -45,7 +45,7 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             if (actor.Fighting.HasValue)
             {
@@ -134,12 +134,6 @@ namespace Legendary.Engine.Models.Skills
             {
                 await this.Communicator.SendToPlayer(actor, $"You're not fighting anyone.", cancellationToken);
             }
-        }
-
-        /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            await this.CheckImprove(actor, cancellationToken);
         }
     }
 }

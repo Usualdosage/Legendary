@@ -41,7 +41,7 @@ namespace Legendary.Engine.Models
         public override ActionType ActionType => ActionType.Spell;
 
         /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public override async Task PreAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
         {
             var spellWords = this.LanguageGenerator.BuildSentence(this.Name);
 
@@ -58,7 +58,7 @@ namespace Legendary.Engine.Models
         }
 
         /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public override async Task PostAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
         {
             actor.Mana.Current -= this.ManaCost;
 

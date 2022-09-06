@@ -1,4 +1,4 @@
-﻿// <copyright file="ConjuringGroup.cs" company="Legendary™">
+﻿// <copyright file="NegativeGroup.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -21,7 +21,7 @@ namespace Legendary.Engine.Models.SpellTrees
     public class NegativeGroup : ActionTree
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConjuringGroup"/> class.
+        /// Initializes a new instance of the <see cref="NegativeGroup"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random generator.</param>

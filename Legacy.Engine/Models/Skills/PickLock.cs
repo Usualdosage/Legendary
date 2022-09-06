@@ -46,7 +46,7 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             // First, see if it's a door.
             var room = this.Communicator.ResolveRoom(actor.Location);
@@ -74,12 +74,6 @@ namespace Legendary.Engine.Models.Skills
                     await this.Communicator.SendToRoom(actor, actor.Location, $"{actor.FirstName} picks the lock on {lockedItem.Name}.", cancellationToken);
                 }
             }
-        }
-
-        /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            await this.CheckImprove(actor, cancellationToken);
         }
     }
 }

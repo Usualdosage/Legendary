@@ -50,7 +50,13 @@ namespace Legendary.Engine.Models.SpellTrees
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group2 { get => new List<IAction>(); }
+        public override List<IAction> Group2
+        {
+            get => new List<IAction>()
+            {
+                { new Identify(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
         public override List<IAction> Group3

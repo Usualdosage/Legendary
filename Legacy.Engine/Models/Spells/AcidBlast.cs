@@ -1,4 +1,4 @@
-﻿// <copyright file="LightningBolt.cs" company="Legendary™">
+﻿// <copyright file="AcidBlast.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -22,7 +22,7 @@ namespace Legendary.Engine.Models.Spells
     public class AcidBlast : Spell
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LightningBolt"/> class.
+        /// Initializes a new instance of the <see cref="AcidBlast"/> class.
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
@@ -45,7 +45,7 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             if (target == null)
             {

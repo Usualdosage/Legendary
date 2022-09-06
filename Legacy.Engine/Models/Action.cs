@@ -187,19 +187,19 @@ namespace Legendary.Engine.Models
         }
 
         /// <inheritdoc/>
-        public virtual Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public virtual Task PreAction(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public virtual Task Act(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public virtual Task Act(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public virtual async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public virtual async Task PostAction(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default)
         {
             await this.Communicator.SendGameUpdate(actor, null, null, cancellationToken);
         }

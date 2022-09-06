@@ -1055,7 +1055,7 @@ namespace Legendary.Engine.Processors
                                 actor.Character.Level = item.CastLevel ?? actor.Character.Level;
 
                                 // Cast the spell as the actor, with a null target (targets self).
-                                await spell.Act(actor.Character, null, cancellationToken);
+                                await spell.Act(actor.Character, null, null, cancellationToken);
 
                                 // Restore the actor's actual level.
                                 actor.Character.Level = level;

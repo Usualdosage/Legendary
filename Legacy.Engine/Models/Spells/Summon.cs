@@ -42,15 +42,7 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
-        {
-            var spellWords = this.LanguageGenerator.BuildSentence(this.Name);
-            await this.Communicator.SendToPlayer(actor, $"You close your eyes utter the word, '{spellWords}'.", cancellationToken);
-            await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} closes {actor.Pronoun} eyes and utters the word, '{spellWords}'.", cancellationToken);
-        }
-
-        /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             if (target == null)
             {

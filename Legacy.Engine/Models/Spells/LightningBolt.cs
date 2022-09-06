@@ -45,7 +45,7 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             if (target == null)
             {

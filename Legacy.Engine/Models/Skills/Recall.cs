@@ -42,21 +42,21 @@ namespace Legendary.Engine.Models.Skills
         }
 
         /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public override async Task PreAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
         {
             await this.Communicator.SendToPlayer(actor, "You close your eyes and recall to your hometown.", cancellationToken);
             await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} disappears in a puff of smoke.", cancellationToken);
         }
 
         /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.RECALL, cancellationToken);
             actor.Location = actor.Home;
         }
 
         /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public override async Task PostAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
         {
             await this.Communicator.ShowRoomToPlayer(actor, cancellationToken);
             await this.CheckImprove(actor, cancellationToken);

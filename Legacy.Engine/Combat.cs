@@ -391,8 +391,8 @@ namespace Legendary.Engine
 
                         await this.communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
                         await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
-                        await combatAction.PreAction(actor, target, cancellationToken);
-                        await combatAction.Act(actor, target, cancellationToken);
+                        await combatAction.PreAction(actor, target, null, cancellationToken);
+                        await combatAction.Act(actor, target, null, cancellationToken);
                     }
                     else
                     {
@@ -403,7 +403,7 @@ namespace Legendary.Engine
                     }
 
                     // Run post action to check if the skill improved.
-                    await combatAction.PostAction(actor, target, cancellationToken);
+                    await combatAction.PostAction(actor, target, null, cancellationToken);
                 }
                 else
                 {

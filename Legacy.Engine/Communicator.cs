@@ -1193,6 +1193,39 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public Item? ResolveItem(UserData actor, string name)
+        {
+            var item = this.world.Items.FirstOrDefault(i => i.Name.ToLower().Contains(name.ToLower()));
+
+            if (item != null)
+            {
+                // For it to be valid, must be in the player's inventory, or in the same room.
+                var inventoryItem = actor.Character.Inventory.FirstOrDefault(i => i.ItemId == item.ItemId);
+
+                if (inventoryItem != null)
+                {
+                    return inventoryItem;
+                }
+                else
+                {
+                    var room = this.ResolveRoom(actor.Character.Location);
+
+                    if (room != null)
+                    {
+                        var roomItem = room.Items.FirstOrDefault(i => i.ItemId == item.ItemId);
+
+                        if (roomItem != null)
+                        {
+                            return roomItem;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc/>
         public Room? ResolveRoom(KeyValuePair<long, long> location)
         {
             return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key)?.Rooms.SingleOrDefault(r => r.RoomId == location.Value);

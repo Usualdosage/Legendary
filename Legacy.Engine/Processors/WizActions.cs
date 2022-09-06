@@ -95,8 +95,6 @@ namespace Legendary.Engine.Processors
         [MinimumLevel(95)]
         private async Task DoGrant(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            // grant peek player
-
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Grant what to whom?", cancellationToken);

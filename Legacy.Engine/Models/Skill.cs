@@ -38,7 +38,7 @@ namespace Legendary.Engine.Models
         public override ActionType ActionType => ActionType.Skill;
 
         /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, CancellationToken cancellationToken = default)
+        public override async Task PostAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
         {
             await this.CheckImprove(actor, cancellationToken);
         }

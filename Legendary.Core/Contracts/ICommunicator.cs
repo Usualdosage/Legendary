@@ -100,6 +100,14 @@ namespace Legendary.Core.Contracts
         Item ResolveItem(long itemId);
 
         /// <summary>
+        /// Gets the item by item name.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="name">Item name.</param>
+        /// <returns>Item.</returns>
+        Item? ResolveItem(UserData actor, string name);
+
+        /// <summary>
         /// Gets the first mobile matching the name.
         /// </summary>
         /// <param name="name">The name.</param>

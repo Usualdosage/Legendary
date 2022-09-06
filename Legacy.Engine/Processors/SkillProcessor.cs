@@ -76,6 +76,7 @@ namespace Legendary.Engine.Processors
                     }
 
                     Character? character = null;
+                    Item? item = null;
 
                     if (!string.IsNullOrWhiteSpace(args.Target))
                     {
@@ -96,15 +97,18 @@ namespace Legendary.Engine.Processors
                         {
                             character = target?.Character;
                         }
+
+                        // Target could be an item.
+                        item = this.communicator.ResolveItem(actor, args.Target);
                     }
 
                     if (await skill.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
                         try
                         {
-                            await skill.PreAction(actor.Character, character, cancellationToken);
-                            await skill.Act(actor.Character, character, cancellationToken);
-                            await skill.PostAction(actor.Character, character, cancellationToken);
+                            await skill.PreAction(actor.Character, character, item, cancellationToken);
+                            await skill.Act(actor.Character, character, item, cancellationToken);
+                            await skill.PostAction(actor.Character, character, item, cancellationToken);
                         }
                         catch
                         {

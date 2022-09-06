@@ -41,7 +41,7 @@ namespace Legendary.Engine.Models.Spells
         }
 
         /// <inheritdoc/>
-        public override async Task Act(Character actor, Character? target, CancellationToken cancellationToken)
+        public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
             var result = this.Random.Next(3, 24) + (actor.Level / 10);
 
