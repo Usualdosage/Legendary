@@ -1895,13 +1895,13 @@ namespace Legendary.Engine
             character.Level += 1;
 
             // HP is based on con
-            var hp = this.random.Next(6 + this.random.Next(1, 4), Math.Max((int)character.Con.Current, 12));
+            var hp = this.random.Next(10 + this.random.Next(2, 8), Math.Max((int)character.Con.Current + 7, 19));
 
             // Movement is based on dex
-            var move = this.random.Next(6 + this.random.Next(1, 4), Math.Max((int)character.Dex.Current, 12));
+            var move = this.random.Next(10 + this.random.Next(2, 8), Math.Max((int)character.Dex.Current + 7, 19));
 
             // Mana is based on wis
-            var mana = this.random.Next(6 + this.random.Next(1, 4), Math.Max((int)character.Wis.Current, 12));
+            var mana = this.random.Next(10 + this.random.Next(2, 8), Math.Max((int)character.Wis.Current + 7, 19));
 
             character.Health.Max += hp;
             character.Mana.Max += mana;

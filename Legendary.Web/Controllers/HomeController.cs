@@ -95,11 +95,11 @@ namespace Legendary.Web.Controllers
 
             var statModel = new StatModel();
 
-            statModel.Str = random.Next(12, 18);
-            statModel.Int = random.Next(12, 18);
-            statModel.Dex = random.Next(12, 18);
-            statModel.Wis = random.Next(12, 18);
-            statModel.Con = random.Next(12, 18);
+            statModel.Str = random.Next(12, 19);
+            statModel.Int = random.Next(12, 19);
+            statModel.Dex = random.Next(12, 19);
+            statModel.Wis = random.Next(12, 19);
+            statModel.Con = random.Next(12, 19);
 
             if (this.TempData.ContainsKey("StatModel"))
             {
