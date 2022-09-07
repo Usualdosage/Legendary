@@ -108,11 +108,12 @@ namespace Legendary.Core.Contracts
         Item? ResolveItem(UserData actor, string name);
 
         /// <summary>
-        /// Gets the first mobile matching the name.
+        /// Gets a mobile matching the name, with preference for the one in the same room as the player.
         /// </summary>
         /// <param name="name">The name.</param>
+        /// <param name="actor">The actor.</param>
         /// <returns>Mobile.</returns>
-        Mobile? ResolveMobile(string? name);
+        Mobile? ResolveMobile(string? name, Character actor);
 
         /// <summary>
         /// Restarts the main game engine loop.

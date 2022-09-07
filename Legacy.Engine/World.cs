@@ -718,7 +718,7 @@ namespace Legendary.Engine
                     {
                         if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
                         {
-                            if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed))
+                            if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed) && !mobile.CharacterFlags.Contains(CharacterFlags.Sleeping))
                             {
                                 // Mobiles have a 50% chance each tick to move around.
                                 var move = this.random.Next(0, 100);
@@ -805,39 +805,42 @@ namespace Legendary.Engine
                     {
                         if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Scavenger) && mobile.Race != Race.Animal)
                         {
-                            // Scavenging mobiles have a 50% chance each tick to pick something up.
-                            var scavenge = this.random.Next(0, 100);
-
-                            if (scavenge <= 50)
+                            if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed) && !mobile.CharacterFlags.Contains(CharacterFlags.Sleeping))
                             {
-                                var items = room.Items;
+                                // Scavenging mobiles have a 50% chance each tick to pick something up.
+                                var scavenge = this.random.Next(0, 100);
 
-                                if (items.Count > 0)
+                                if (scavenge <= 50)
                                 {
-                                    var random = this.random.Next(0, items.Count - 1);
-                                    var itemToGet = items[random];
+                                    var items = room.Items;
 
-                                    var clonedItem = itemToGet.DeepCopy();
-
-                                    await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {clonedItem.Name}.", cancellationToken);
-
-                                    // Add to inventory.
-                                    mobile.Inventory.Add(clonedItem);
-
-                                    var targetWearLocation = clonedItem.WearLocation.FirstOrDefault(w => w != WearLocation.None);
-
-                                    var equipped = mobile.Equipment.FirstOrDefault(i => i.WearLocation.Contains(targetWearLocation));
-
-                                    // If they don't have anything equipped there, equip it.
-                                    if (equipped == null && !clonedItem.WearLocation.Contains(WearLocation.InventoryOnly))
+                                    if (items.Count > 0)
                                     {
-                                        var verb = clonedItem.ItemType == ItemType.Weapon ? "wields" : "wears";
-                                        mobile.Equipment.Add(clonedItem);
-                                        mobile.Inventory.Remove(clonedItem);
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} {verb} {clonedItem.Name}.", cancellationToken);
-                                    }
+                                        var random = this.random.Next(0, items.Count - 1);
+                                        var itemToGet = items[random];
 
-                                    itemsToRemove.Add(itemToGet);
+                                        var clonedItem = itemToGet.DeepCopy();
+
+                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {clonedItem.Name}.", cancellationToken);
+
+                                        // Add to inventory.
+                                        mobile.Inventory.Add(clonedItem);
+
+                                        var targetWearLocation = clonedItem.WearLocation.FirstOrDefault(w => w != WearLocation.None);
+
+                                        var equipped = mobile.Equipment.FirstOrDefault(i => i.WearLocation.Contains(targetWearLocation));
+
+                                        // If they don't have anything equipped there, equip it.
+                                        if (equipped == null && !clonedItem.WearLocation.Contains(WearLocation.InventoryOnly))
+                                        {
+                                            var verb = clonedItem.ItemType == ItemType.Weapon ? "wields" : "wears";
+                                            mobile.Equipment.Add(clonedItem);
+                                            mobile.Inventory.Remove(clonedItem);
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} {verb} {clonedItem.Name}.", cancellationToken);
+                                        }
+
+                                        itemsToRemove.Add(itemToGet);
+                                    }
                                 }
                             }
                         }

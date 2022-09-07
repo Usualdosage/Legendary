@@ -268,7 +268,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    var mobile = this.communicator.ResolveMobile(target);
+                    var mobile = this.communicator.ResolveMobile(target, actor.Character);
 
                     if (mobile != null)
                     {
@@ -311,7 +311,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    var mobile = this.communicator.ResolveMobile(target);
+                    var mobile = this.communicator.ResolveMobile(target, actor.Character);
 
                     if (mobile != null)
                     {
@@ -407,7 +407,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    var mobile = this.communicator.ResolveMobile(target);
+                    var mobile = this.communicator.ResolveMobile(target, actor.Character);
 
                     if (mobile != null)
                     {

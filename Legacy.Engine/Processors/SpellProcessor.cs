@@ -84,7 +84,7 @@ namespace Legendary.Engine.Processors
                         // It's not a character, so maybe a mob.
                         if (target == null)
                         {
-                            var mob = this.communicator.ResolveMobile(args.Target);
+                            var mob = this.communicator.ResolveMobile(args.Target, actor.Character);
 
                             if (mob != null)
                             {

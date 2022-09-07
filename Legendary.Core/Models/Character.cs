@@ -99,6 +99,11 @@ namespace Legendary.Core.Models
         public int DivineFavor { get; set; }
 
         /// <summary>
+        /// Gets or sets the most recent image the player observed.
+        /// </summary>
+        public string? LastImage { get; set; }
+
+        /// <summary>
         /// Gets or sets the password (hash).
         /// </summary>
         public string? Password { get; set; }

@@ -46,7 +46,13 @@ namespace Legendary.Engine.Models.SpellTrees
         public override List<IAction> Group2 { get => new List<IAction>(); }
 
         /// <inheritdoc/>
-        public override List<IAction> Group3 { get => new List<IAction>(); }
+        public override List<IAction> Group3
+        {
+            get => new List<IAction>()
+            {
+                { new Sleep(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
         public override List<IAction> Group4

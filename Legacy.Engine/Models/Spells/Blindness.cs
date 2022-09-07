@@ -65,6 +65,11 @@ namespace Legendary.Engine.Models.Spells
                     {
                         await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s eyes cloud for a moment, but it passes.", cancellationToken);
                         await this.Communicator.SendToPlayer(target, $"You feel your eyes cloud for a moment, but it passes.", cancellationToken);
+
+                        if (target != null)
+                        {
+                            await this.Combat.StartFighting(actor, target, cancellationToken);
+                        }
                     }
                     else
                     {

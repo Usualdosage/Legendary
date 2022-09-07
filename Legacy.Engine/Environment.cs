@@ -22,6 +22,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Models.Spells;
 
     /// <summary>
     /// Represents the user environment.
@@ -150,7 +151,33 @@ namespace Legendary.Engine
 
         private async Task ProcessMobiles()
         {
-            // TODO
+            var areas = this.world.Areas;
+
+            foreach (var area in areas)
+            {
+                foreach (var room in area.Rooms)
+                {
+                    foreach (var mobile in room.Mobiles)
+                    {
+                        foreach (var effect in mobile.AffectedBy)
+                        {
+                            if (effect != null)
+                            {
+                                effect.Duration -= 1;
+
+                                if (effect.Duration < 0)
+                                {
+                                    if (mobile.IsAffectedBy(nameof(Sleep)))
+                                    {
+                                        mobile.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
+                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wakes and stands up.");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -244,10 +271,18 @@ namespace Legendary.Engine
                         if (effect.Name?.ToLower() == "ghost")
                         {
                             await this.communicator.SendToPlayer(user.Connection, $"You are no longer a ghost.");
+                            user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Ghost);
                         }
                         else
                         {
                             await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+
+                            if (user.Character.IsAffectedBy(nameof(Sleep)))
+                            {
+                                user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
+                                await this.communicator.SendToPlayer(user.Connection, $"You wake and stand up.");
+                                await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} wakes and stands up.");
+                            }
                         }
                     }
                     else

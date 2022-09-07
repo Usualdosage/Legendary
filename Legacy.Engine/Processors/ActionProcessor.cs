@@ -1059,7 +1059,7 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        var targetMob = this.communicator.ResolveMobile(args.Target);
+                        var targetMob = this.communicator.ResolveMobile(args.Target, actor.Character);
 
                         if (targetMob != null)
                         {
@@ -2602,7 +2602,11 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Wake from resting or sleeping. See also: HELP SLEEP, HELP REST.</p><ul><li>who</li></ul>")]
         private async Task DoWake(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting) || actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+            if (actor.Character.IsAffectedBy(nameof(Sleep)))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You can't wake up!", cancellationToken);
+            }
+            else if (actor.Character.CharacterFlags.Contains(CharacterFlags.Resting) || actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"You wake and and stand up.", cancellationToken);
                 await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} wakes and stands up.", cancellationToken);
@@ -3566,7 +3570,7 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        var targetMob = this.communicator.ResolveMobile(args.Target);
+                        var targetMob = this.communicator.ResolveMobile(args.Target, actor.Character);
 
                         if (targetMob != null)
                         {

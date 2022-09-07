@@ -34,6 +34,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Models.Output;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
+    using Legendary.Engine.Output;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
@@ -703,6 +704,7 @@ namespace Legendary.Engine
             if (!this.CanPlayerSee(actor))
             {
                 sb.Append("You can't see anything, it's pitch black.");
+                actor.LastImage = null;
                 await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
                 return;
             }
@@ -774,11 +776,46 @@ namespace Legendary.Engine
 
                     if (mobGroup.Count() == 1)
                     {
-                        sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                        if (mob.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        {
+                            sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                        }
+                        else
+                        {
+                            sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                        }
                     }
                     else
                     {
-                        sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
+                        var sleepingMobs = mobGroup.Any(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+
+                        if (sleepingMobs)
+                        {
+                            var sleeping = mobGroup.Where(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+                            var notSleeping = mobGroup.Where(m => !m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+
+                            if (sleeping.Count() == 1)
+                            {
+                                sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                            }
+                            else
+                            {
+                                sb.Append($"<span class='mobile'>({sleeping.Count()}){effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                            }
+
+                            if (notSleeping.Count() == 1)
+                            {
+                                sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                            }
+                            else
+                            {
+                                sb.Append($"<span class='mobile'>({notSleeping.Count()}) {effects}{mob.ShortDescription}</span>");
+                            }
+                        }
+                        else
+                        {
+                            sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
+                        }
                     }
                 }
             }
@@ -816,7 +853,23 @@ namespace Legendary.Engine
             await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
 
             // Update player stats
-            await this.SendGameUpdate(actor, null, null, cancellationToken);
+            if (room != null)
+            {
+                var area = this.ResolveArea(room.AreaId);
+
+                if (area != null)
+                {
+                    await this.SendGameUpdate(actor, area.Description, room.Image, cancellationToken);
+                }
+                else
+                {
+                    await this.SendGameUpdate(actor, null, room.Image, cancellationToken);
+                }
+            }
+            else
+            {
+                await this.SendGameUpdate(actor, null, null, cancellationToken);
+            }
 
             // Play the music according to the terrain.
             if (room != null)
@@ -854,6 +907,11 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task SendGameUpdate(Character actor, string? caption, string? image, CancellationToken cancellationToken = default)
         {
+            if (!string.IsNullOrWhiteSpace(image))
+            {
+                actor.LastImage = image;
+            }
+
             var area = this.ResolveArea(actor.Location);
             var room = this.ResolveRoom(actor.Location);
             var metrics = this.world.GameMetrics;
@@ -892,7 +950,7 @@ namespace Legendary.Engine
                     ImageInfo = new ImageInfo()
                     {
                         Caption = caption ?? area?.Description,
-                        Image = image ?? room?.Image,
+                        Image = image ?? actor.LastImage,
                     },
                     Weather = new Models.Output.Weather()
                     {
@@ -1101,21 +1159,29 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public Mobile? ResolveMobile(string? name)
+        public Mobile? ResolveMobile(string? name, Character actor)
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
+                List<Mobile> matching = new List<Mobile>();
                 foreach (var area in this.world.Areas)
                 {
                     foreach (var room in area.Rooms)
                     {
-                        var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().Contains(name.ToLower()));
-
-                        if (mob != null)
-                        {
-                            return mob;
-                        }
+                        var mobs = room.Mobiles.Where(m => m.FirstName.ToLower().Contains(name.ToLower())).ToList();
+                        matching.AddRange(mobs);
                     }
+                }
+
+                var mobInRoom = matching.FirstOrDefault(m => m.Location.Value == actor.Location.Value);
+
+                if (mobInRoom != null)
+                {
+                    return mobInRoom;
+                }
+                else
+                {
+                    return matching.FirstOrDefault();
                 }
             }
 
@@ -2066,7 +2132,7 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    var mobile = this.ResolveMobile(args.Method);
+                    var mobile = this.ResolveMobile(args.Method, actor.Character);
 
                     if (mobile != null)
                     {
