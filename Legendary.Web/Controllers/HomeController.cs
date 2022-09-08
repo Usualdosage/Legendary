@@ -12,6 +12,7 @@ namespace Legendary.Web.Controllers
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Legendary.Core;
@@ -87,19 +88,13 @@ namespace Legendary.Web.Controllers
         /// <summary>
         /// Displays the create user page.
         /// </summary>
+        /// <param name="race">The the selected race.</param>
+        /// <param name="infoMessage">The information message if applicable.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
-        public IActionResult CreateUser()
+        public IActionResult CreateUser(string? race, string? infoMessage)
         {
-            var random = new Legendary.Engine.Random();
-
-            var statModel = new StatModel();
-
-            statModel.Str = random.Next(12, 19);
-            statModel.Int = random.Next(12, 19);
-            statModel.Dex = random.Next(12, 19);
-            statModel.Wis = random.Next(12, 19);
-            statModel.Con = random.Next(12, 19);
+            var statModel = this.GetStatModel(race);
 
             if (this.TempData.ContainsKey("StatModel"))
             {
@@ -110,7 +105,34 @@ namespace Legendary.Web.Controllers
                 this.TempData.Add("StatModel", JsonConvert.SerializeObject(statModel));
             }
 
+            if (!string.IsNullOrWhiteSpace(infoMessage))
+            {
+                this.ViewData.Add("message", infoMessage);
+            }
+
             return this.View(statModel);
+        }
+
+        /// <summary>
+        /// Updates the stat model with the user's selection.
+        /// </summary>
+        /// <param name="race">The selected race.</param>
+        /// <returns>Json stat model.</returns>
+        [HttpGet]
+        public JsonResult UpdateUser(string? race)
+        {
+            var statModel = this.GetStatModel(race);
+
+            if (this.TempData.ContainsKey("StatModel"))
+            {
+                this.TempData["StatModel"] = JsonConvert.SerializeObject(statModel);
+            }
+            else
+            {
+                this.TempData.Add("StatModel", JsonConvert.SerializeObject(statModel));
+            }
+
+            return this.Json(statModel);
         }
 
         /// <summary>
@@ -133,7 +155,7 @@ namespace Legendary.Web.Controllers
                     // This field would only be submitted by a bot.
                     if (form["submittalfield"] != string.Empty)
                     {
-                        return this.CreateUser();
+                        return this.CreateUser(null, "Nice try, bot.");
                     }
 
                     // Make sure the character doesn't exist yet.
@@ -144,26 +166,33 @@ namespace Legendary.Web.Controllers
 
                     if (existingCharacter == null && existingMobile == null)
                     {
-                        var character = new Character()
+                        var character = new Character();
+
+                        character.FirstName = form["FirstName"].ToString();
+                        character.LastName = form["LastName"].ToString();
+                        character.ShortDescription = form["FirstName"].ToString();
+                        character.LongDescription = form["LongDescription"].ToString();
+                        character.Health = new MaxCurrent(30, 30);
+                        character.Movement = new MaxCurrent(30, 30);
+                        character.Mana = new MaxCurrent(30, 30);
+                        character.Str = new MaxCurrent(stats.Str, stats.Str);
+                        character.Int = new MaxCurrent(stats.Int, stats.Int);
+                        character.Wis = new MaxCurrent(stats.Wis, stats.Wis);
+                        character.Dex = new MaxCurrent(stats.Dex, stats.Dex);
+                        character.Con = new MaxCurrent(stats.Con, stats.Con);
+                        character.Gender = Enum.Parse<Gender>(form["Gender"].ToString());
+                        character.Race = Enum.Parse<Race>(form["SelectedRace"].ToString());
+                        character.Ethos = Enum.Parse<Ethos>(form["Ethos"].ToString());
+                        character.Alignment = Enum.Parse<Alignment>(form["SelectedAlignment"].ToString());
+                        character.Title = "the Adventurer";
+
+                        // Make sure the alignment is correct
+                        var raceData = Races.RaceData.First(r => r.Key == character.Race);
+
+                        if (raceData.Value.Alignments != null && !raceData.Value.Alignments.Contains(character.Alignment))
                         {
-                            FirstName = form["FirstName"],
-                            LastName = form["LastName"],
-                            ShortDescription = form["FirstName"],
-                            LongDescription = form["LongDescription"],
-                            Health = new MaxCurrent(30, 30),
-                            Movement = new MaxCurrent(30, 30),
-                            Mana = new MaxCurrent(30, 30),
-                            Str = new MaxCurrent(stats.Str, stats.Str),
-                            Int = new MaxCurrent(stats.Int, stats.Int),
-                            Wis = new MaxCurrent(stats.Wis, stats.Wis),
-                            Dex = new MaxCurrent(stats.Dex, stats.Dex),
-                            Con = new MaxCurrent(stats.Con, stats.Con),
-                            Gender = Enum.Parse<Gender>(form["Gender"]),
-                            Race = Enum.Parse<Race>(form["Race"]),
-                            Ethos = Enum.Parse<Ethos>(form["Ethos"]),
-                            Alignment = Enum.Parse<Alignment>(form["Alignment"]),
-                            Title = "the Adventurer",
-                        };
+                            return this.View("CreateUser", new StatModel() { Message = "That's not a valid alignment selection for this race. Please try again." });
+                        }
 
                         switch (character.Alignment)
                         {
@@ -213,12 +242,12 @@ namespace Legendary.Web.Controllers
                 }
                 else
                 {
-                    return this.View("Login", new LoginModel("Stat model has been modified. Try again.", this.buildSettings));
+                    return this.View("CreateUser", new StatModel() { Message = "Stat model has been modified. Try again." });
                 }
             }
             else
             {
-                return this.View("Login", new LoginModel("Stat model has been modified. Try again.", this.buildSettings));
+                return this.View("CreateUser", new StatModel() { Message = "Stat model has been modified. Try again." });
             }
         }
 
@@ -284,6 +313,47 @@ namespace Legendary.Web.Controllers
         public IActionResult Error()
         {
             return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
+        }
+
+        /// <summary>
+        /// Gets the stat model for creating a character.
+        /// </summary>
+        /// <param name="race">The race of the character.</param>
+        /// <returns>StatModel.</returns>
+        private StatModel GetStatModel(string? race)
+        {
+            var random = new Legendary.Engine.Random();
+
+            StatModel statModel = new StatModel();
+
+            if (!string.IsNullOrWhiteSpace(race))
+            {
+                Race selectedRace = Enum.Parse<Race>(race);
+                statModel = new StatModel() { SelectedRace = selectedRace, SelectedAlignment = Alignment.Neutral };
+            }
+            else
+            {
+                statModel = new StatModel() { SelectedRace = Race.Human, SelectedAlignment = Alignment.Neutral };
+            }
+
+            var raceStats = Races.RaceData.First(r => r.Key == statModel.SelectedRace);
+
+            statModel.Str = random.Next(12, raceStats.Value.StrMax + 1);
+            statModel.Int = random.Next(12, raceStats.Value.IntMax + 1);
+            statModel.Dex = random.Next(12, raceStats.Value.DexMax + 1);
+            statModel.Wis = random.Next(12, raceStats.Value.WisMax + 1);
+            statModel.Con = random.Next(12, raceStats.Value.ConMax + 1);
+
+            if (raceStats.Value.Alignments != null)
+            {
+                statModel.Alignments = new List<Alignment>();
+                foreach (var align in raceStats.Value.Alignments)
+                {
+                    statModel.Alignments?.Add(align);
+                }
+            }
+
+            return statModel;
         }
     }
 }

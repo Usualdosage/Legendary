@@ -43,8 +43,6 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
-            await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-
             var result = this.Random.Next(3, 24) + (actor.Level / 10);
 
             if (target == null)
@@ -55,6 +53,8 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                    await base.Act(actor, target, itemTarget, cancellationToken);
                     actor.AffectedBy.RemoveAll(r => r.Name == EffectName.BLINDNESS);
                     await this.Communicator.SendToPlayer(actor, "You can see again!", cancellationToken);
                 }
@@ -73,6 +73,8 @@ namespace Legendary.Engine.Models.Spells
                     }
                     else
                     {
+                        await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                        await base.Act(actor, target, itemTarget, cancellationToken);
                         actor.AffectedBy.RemoveAll(r => r.Name == EffectName.BLINDNESS);
                         await this.Communicator.SendToPlayer(target, "You can see again!", cancellationToken);
                     }

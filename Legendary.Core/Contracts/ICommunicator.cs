@@ -35,6 +35,11 @@ namespace Legendary.Core.Contracts
         ILanguageProcessor LanguageProcessor { get; }
 
         /// <summary>
+        /// Gets the language generator.
+        /// </summary>
+        ILanguageGenerator LanguageGenerator { get; }
+
+        /// <summary>
         /// When invoked, handles adding/removing sockets.
         /// </summary>
         /// <param name="context">The HttpContext.</param>
@@ -389,6 +394,14 @@ namespace Legendary.Core.Contracts
         /// <param name="location">The location.</param>
         /// <returns>List of players.</returns>
         List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location);
+
+        /// <summary>
+        /// Gets all players in a given area.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="location">The location.</param>
+        /// <returns>List of players.</returns>
+        List<Character>? GetPlayersInArea(Character actor, KeyValuePair<long, long> location);
 
         /// <summary>
         /// Gets all players in a given location.

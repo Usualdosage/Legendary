@@ -12,6 +12,7 @@ namespace Legendary.Engine.Processors
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
     using System.Text;
     using System.Threading;
@@ -27,6 +28,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Output;
     using Microsoft.AspNetCore.Hosting;
@@ -389,7 +391,8 @@ namespace Legendary.Engine.Processors
             this.actions.Add("se", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("sw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("spells", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSpells)));
-            this.actions.Add("subscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(9, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSubscribe)));
+            this.actions.Add("speak", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(9, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSpeak)));
+            this.actions.Add("subscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(10, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSubscribe)));
             this.actions.Add("tell", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(0, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTell)));
             this.actions.Add("time", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTime)));
             this.actions.Add("train", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTrain)));
@@ -1635,18 +1638,21 @@ namespace Legendary.Engine.Processors
                                 await this.awardProcessor.CheckVoyagerAward(exit.ToArea, actor.Character, cancellationToken);
                             }
 
-                            if (isGhost)
+                            if (!actor.Character.IsAffectedBy(nameof(Sneak)))
                             {
-                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} floats in.", cancellationToken);
-                            }
-                            else if (isFlying)
-                            {
-                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} flies in.", cancellationToken);
-                            }
-                            else
-                            {
-                                actor.Character.Movement.Current -= moves;
-                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                if (isGhost)
+                                {
+                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} floats in.", cancellationToken);
+                                }
+                                else if (isFlying)
+                                {
+                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} flies in.", cancellationToken);
+                                }
+                                else
+                                {
+                                    actor.Character.Movement.Current -= moves;
+                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                }
                             }
 
                             await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
@@ -1914,21 +1920,48 @@ namespace Legendary.Engine.Processors
         private async Task DoSay(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
-            await this.communicator.SendToPlayer(actor.Connection, $"You say \"<span class='say'>{sentence}</span>\"", cancellationToken);
 
-            var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
-
-            if (players != null)
+            if (string.IsNullOrWhiteSpace(sentence))
             {
-                foreach (var player in players)
+                await this.communicator.SendToPlayer(actor.Connection, $"What do you want to say?", cancellationToken);
+            }
+            else
+            {
+                var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
+
+                await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+
+                var garbled = this.communicator.LanguageGenerator.BuildSentence(sentence);
+                var skillRoll = this.random.Next(0, 99);
+
+                var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+                if (players != null)
                 {
-                    if (this.communicator.CanPlayerSee(player))
+                    foreach (var player in players)
                     {
-                        await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says \"<span class='say'>{sentence}</span>\"", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(player, $"Someone says \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                        if (this.communicator.CanPlayerSee(player))
+                        {
+                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                            {
+                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                            {
+                                await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                            }
+                        }
                     }
                 }
             }
@@ -2714,12 +2747,46 @@ namespace Legendary.Engine.Processors
         private async Task DoYell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
+            var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
 
             if (!string.IsNullOrWhiteSpace(sentence))
             {
                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                await this.communicator.SendToPlayer(actor.Connection, $"You yell \"<span class='yell'>{sentence}</b>\"", cancellationToken);
-                await this.communicator.SendToArea(actor.Character.Location, actor.ConnectionId, $"{actor.Character.FirstName.FirstCharToUpper()} yells \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"You yell (in {speaking}) \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
+
+                var garbled = this.communicator.LanguageGenerator.BuildSentence(sentence);
+                var skillRoll = this.random.Next(0, 99);
+
+                var players = this.communicator.GetPlayersInArea(actor.Character, actor.Character.Location);
+
+                if (players != null)
+                {
+                    foreach (var player in players)
+                    {
+                        if (this.communicator.CanPlayerSee(player))
+                        {
+                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                            {
+                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                            {
+                                await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                            }
+                        }
+                    }
+                }
             }
             else
             {
@@ -3341,61 +3408,83 @@ namespace Legendary.Engine.Processors
 
             string senderName = user.Character.FirstName.FirstCharToUpper();
 
+            var speaking = user.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
+            var garbled = this.communicator.LanguageGenerator.BuildSentence(message);
+            var skillRoll = this.random.Next(0, 99);
+
             if (targetUser != null && !this.communicator.CanPlayerSee(targetUser.Value.Value.Character))
             {
                 senderName = "Someone";
             }
 
-            var commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{senderName} tells you \"<span class='tell'>{message}</span>\"", cancellationToken);
-
-            switch (commResult)
+            if (targetUser != null)
             {
-                default:
-                case CommResult.NotAvailable:
-                    {
-                        await this.communicator.SendToPlayer(user.Connection, $"{target} can't hear you.", cancellationToken);
-                        break;
-                    }
+                var player = targetUser.Value.Value;
 
-                case CommResult.NotConnected:
-                    {
-                        await this.communicator.SendToPlayer(user.Connection, $"{target} is not here.", cancellationToken);
-                        break;
-                    }
+                CommResult commResult;
 
-                case CommResult.Ignored:
-                    {
-                        await this.communicator.SendToPlayer(user.Connection, $"{target} is ignoring you.", cancellationToken);
-                        break;
-                    }
+                if (player.Character.HasSkill(speaking) && player.Character.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                {
+                    commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{senderName} tells you (in {speaking}) \"<span class='tell'>{message}</span>\"", cancellationToken);
+                }
+                else
+                {
+                    commResult = await this.communicator.SendToPlayer(user.Character.FirstName, target, $"{senderName} tells you (in {speaking}) \"<span class='tell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                }
 
-                case CommResult.Ok:
-                    {
-                        await this.communicator.SendToPlayer(user.Character.FirstName, target, $"[NOTIFICATION]|../img/notifications/message.png|{user.Character.FirstName} has sent you a message.", cancellationToken);
-
-                        await this.communicator.SendToPlayer(user.Connection, $"You tell {target} \"<span class='tell'>{message}</span>\"", cancellationToken);
-
-                        // Create the link between the two who are engaged in conversation.
-                        if (Communicator.Tells.ContainsKey(user.Character.FirstName))
+                switch (commResult)
+                {
+                    default:
+                    case CommResult.NotAvailable:
                         {
-                            Communicator.Tells[user.Character.FirstName] = target;
-                        }
-                        else
-                        {
-                            Communicator.Tells.TryAdd(user.Character.FirstName, target);
+                            await this.communicator.SendToPlayer(user.Connection, $"{target} can't hear you.", cancellationToken);
+                            break;
                         }
 
-                        if (Communicator.Tells.ContainsKey(target))
+                    case CommResult.NotConnected:
                         {
-                            Communicator.Tells[target] = user.Character.FirstName;
-                        }
-                        else
-                        {
-                            Communicator.Tells.TryAdd(target, user.Character.FirstName);
+                            await this.communicator.SendToPlayer(user.Connection, $"{target} is not here.", cancellationToken);
+                            break;
                         }
 
-                        break;
-                    }
+                    case CommResult.Ignored:
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"{target} is ignoring you.", cancellationToken);
+                            break;
+                        }
+
+                    case CommResult.Ok:
+                        {
+                            await this.communicator.SendToPlayer(user.Character.FirstName, target, $"[NOTIFICATION]|../img/notifications/message.png|{user.Character.FirstName} has sent you a message.", cancellationToken);
+
+                            await this.communicator.SendToPlayer(user.Connection, $"You tell {target} (in {speaking}) \"<span class='tell'>{message}</span>\"", cancellationToken);
+
+                            // Create the link between the two who are engaged in conversation.
+                            if (Communicator.Tells.ContainsKey(user.Character.FirstName))
+                            {
+                                Communicator.Tells[user.Character.FirstName] = target;
+                            }
+                            else
+                            {
+                                Communicator.Tells.TryAdd(user.Character.FirstName, target);
+                            }
+
+                            if (Communicator.Tells.ContainsKey(target))
+                            {
+                                Communicator.Tells[target] = user.Character.FirstName;
+                            }
+                            else
+                            {
+                                Communicator.Tells.TryAdd(target, user.Character.FirstName);
+                            }
+
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(user.Connection, $"Nobody around by that name.", cancellationToken);
             }
         }
 

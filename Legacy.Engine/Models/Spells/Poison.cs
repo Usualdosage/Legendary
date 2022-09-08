@@ -67,6 +67,7 @@ namespace Legendary.Engine.Models.Spells
 
                     if (this.Combat.DidSave(target, this))
                     {
+                        await base.Act(actor, target, itemTarget, cancellationToken);
                         await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} looks queasy for a moment, but it passes.", cancellationToken);
                         await this.Communicator.SendToPlayer(target, $"You feel queasy for a moment, but it passes.", cancellationToken);
                     }
@@ -80,6 +81,7 @@ namespace Legendary.Engine.Models.Spells
                             Duration = actor.Level / 10,
                         };
 
+                        await base.Act(actor, target, itemTarget, cancellationToken);
                         await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} suddenly looks very ill.", cancellationToken);
                         await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} has poisoned you!", cancellationToken);
                         await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} has been poisoned by {actor.FirstName}!", cancellationToken);

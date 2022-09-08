@@ -10,6 +10,61 @@
     src: url('../fonts/Balgruf.otf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Elf';
+    src: url('../fonts/Elf.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Drow';
+    src: url('../fonts/Drow.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Dwarf';
+    src: url('../fonts/Taibaijan.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'FireGiant';
+    src: url('../fonts/Kingfire.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'StoneGiant';
+    src: url('../fonts/bravemountains.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'StormGiant';
+    src: url('../fonts/iefuthrk.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'HalfOrc';
+    src: url('../fonts/F-Rotten_Font.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Avian';
+    src: url('../fonts/Ghastly Panic.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Gnome';
+    src: url('../fonts/MCF Glowins.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Faerie';
+    src: url('../fonts/Night of the Fireflies.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Halfling';
+    src: url('../fonts/TableShank.ttf') format('truetype');
+}
+
 html, body {
     height: 100%;
 }
@@ -100,8 +155,74 @@ h6 {
     font-weight: bold;
 }
 
-/* Skill and Spell Trees */
+/* Languages */
 
+.Elf {
+    font-family: 'Elf';
+    font-size: 1em;
+}
+
+.Dwarf {
+    font-family: 'Dwarf';
+    font-size: 1em;
+}
+
+.HalfElf {
+    font-family: 'Elf';
+    font-size: 1em;
+}
+
+.HalfOrc {
+    font-family: 'HalfOrc';
+    font-size: 1em;
+}
+
+.Gnome {
+    font-family: 'Gnome';
+    font-size: 1em;
+}
+
+.Avian {
+    font-family: 'Avian';
+    font-size: 1em;
+}
+
+.StoneGiant {
+    font-family: 'StoneGiant';
+    font-size: 1.2em;
+}
+
+.StormGiant {
+    font-family: 'StormGiant';
+    font-size: 1em;
+}
+
+.FireGiant {
+    font-family: 'FireGiant';
+    font-size: 1.1em;
+}
+
+.Drow {
+    font-family: 'Drow';
+    font-size: 1em;
+}
+
+.Duergar {
+    font-family: 'Dwarf';
+    font-size: 1em;
+}
+
+.Halfling {
+    font-family: 'Halfling';
+    font-size: 1em;
+}
+
+.Faerie {
+    font-family: 'Faerie';
+    font-size: 1em;
+}
+
+/* Skill and Spell Trees */
 .tree-table {
     width: 100%;
 }

@@ -59,6 +59,7 @@ namespace Legendary.Engine.Models.Spells
                     {
                         if (player.Character.Level > actor.Level + 6)
                         {
+                            await base.Act(actor, target, itemTarget, cancellationToken);
                             await this.Communicator.SendToPlayer(actor, $"You failed to summon {target.FirstName}.", cancellationToken);
                         }
                         else if (!this.Combat.DidSave(target, this))
@@ -83,6 +84,8 @@ namespace Legendary.Engine.Models.Spells
                                 await this.AwardProcessor.CheckVoyagerAward(actor.Location.Key, actor, cancellationToken);
                             }
 
+                            await base.Act(actor, target, itemTarget, cancellationToken);
+
                             await this.Communicator.SendToPlayer(actor, $"You have summoned {player.Character.FirstName} here!", cancellationToken);
                             await this.Communicator.SendToRoom(actor.Location, actor, player.Character, $"{player.Character.FirstName.FirstCharToUpper()} arrives in a puff of smoke.", cancellationToken);
                             await this.Communicator.SendToPlayer(player.Connection, $"{actor.FirstName.FirstCharToUpper()} has summoned you!", cancellationToken);
@@ -94,6 +97,7 @@ namespace Legendary.Engine.Models.Spells
                         }
                         else
                         {
+                            await base.Act(actor, target, itemTarget, cancellationToken);
                             await this.Communicator.SendToPlayer(actor, $"You failed to summon {player.Character.FirstName}.", cancellationToken);
                         }
                     }

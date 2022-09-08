@@ -41,9 +41,9 @@ namespace Legendary.Engine.Models
         public override ActionType ActionType => ActionType.Spell;
 
         /// <inheritdoc/>
-        public override async Task PreAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
+        public override async Task Act(Character actor, Character? target, Item? targetItem, CancellationToken cancellationToken = default)
         {
-            var spellWords = this.LanguageGenerator.BuildSentence(this.Name);
+            var spellWords = $"<span class='spellWords'>{this.LanguageGenerator.BuildSentence(this.Name)}</span>";
 
             if (target == null)
             {
@@ -55,13 +55,8 @@ namespace Legendary.Engine.Models
                 await this.Communicator.SendToPlayer(actor, $"You extend your hand and utter the word, '{spellWords}' at {target?.FirstName}.", cancellationToken);
                 await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} extends {actor.Pronoun} hand toward {target?.FirstName} and utters the word, '{spellWords}'", cancellationToken);
             }
-        }
 
-        /// <inheritdoc/>
-        public override async Task PostAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
-        {
             actor.Mana.Current -= this.ManaCost;
-
             await this.CheckImprove(actor, cancellationToken);
         }
 

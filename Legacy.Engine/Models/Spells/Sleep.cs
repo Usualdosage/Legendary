@@ -69,12 +69,14 @@ namespace Legendary.Engine.Models.Spells
                     {
                         if (this.Combat.DidSave(target, this))
                         {
+                            await base.Act(actor, target, itemTarget, cancellationToken);
                             await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} stays awake!", cancellationToken);
                             await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} tried to put you to sleep!", cancellationToken);
                             await this.Combat.StartFighting(actor, target, cancellationToken);
                         }
                         else
                         {
+                            await base.Act(actor, target, itemTarget, cancellationToken);
                             await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} goes to sleep.", cancellationToken);
                             target.CharacterFlags.Add(Core.Types.CharacterFlags.Sleeping);
                             await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} puts you to sleep!", cancellationToken);

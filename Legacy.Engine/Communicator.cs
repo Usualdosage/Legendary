@@ -48,7 +48,6 @@ namespace Legendary.Engine
     public class Communicator : ICommunicator, IDisposable
     {
         private readonly RequestDelegate requestDelegate;
-        private readonly LanguageGenerator languageGenerator;
         private readonly TitleGenerator titleGenerator;
         private readonly Combat combat;
         private readonly ILogger logger;
@@ -109,10 +108,10 @@ namespace Legendary.Engine
             this.combat = new Combat(this, this.world, this.random, this.logger);
 
             // Create the language generator.
-            this.languageGenerator = new LanguageGenerator(this.random);
+            this.LanguageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.languageGenerator, this, this.random);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random);
 
             // Create the action helper.
             this.actionHelper = new ActionHelper(this, this.random, this.world, this.logger, this.combat);
@@ -153,6 +152,11 @@ namespace Legendary.Engine
         /// Gets the language processor.
         /// </summary>
         public ILanguageProcessor LanguageProcessor { get; private set; }
+
+        /// <summary>
+        /// Gets the language generator.
+        /// </summary>
+        public ILanguageGenerator LanguageGenerator { get; private set; }
 
         /// <summary>
         /// Gets the communication channels.
@@ -229,8 +233,29 @@ namespace Legendary.Engine
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
-                // See if this is a new character, if so, add the proper hometown, stats, etc.
+                // See if this is a new character, if so, add the proper hometown, stats, skills, spells, etc.
                 await this.CheckNewCharacter(userData.Character);
+
+                // All players speak common fluently.
+                var common = SkillHelper.ResolveSkill("Common", this, this.random, this.world, this.logger, this.combat);
+
+                if (common != null && !character.Skills.Contains(new SkillProficiency(common.Name, 100)))
+                {
+                    character.Skills.Add(new SkillProficiency(common.Name, 100));
+                    character.Speaking = common.Name;
+                }
+
+                // All players get recall at max.
+                if (!character.Skills.Contains(new SkillProficiency(nameof(Recall), 100)))
+                {
+                    character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
+                }
+
+                // All players get their racial language at max.
+                if (!character.Skills.Contains(new SkillProficiency(character.Race.ToString(), 100)))
+                {
+                    character.Skills.Add(new SkillProficiency(character.Race.ToString(), 100));
+                }
 
                 // Make sure the character is in an existing room.
                 var room = this.ResolveRoom(userData.Character.Location);
@@ -1390,9 +1415,22 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public List<Character>? GetPlayersInArea(Character actor, KeyValuePair<long, long> location)
+        {
+            if (Users != null)
+            {
+                return Users.Where(u => u.Value.Character.Location.Key == location.Key
+                    && u.Value.Character.CharacterId != actor.CharacterId).Select(u => u.Value.Character).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location)
         {
-            var room = this.ResolveRoom(location);
             if (Users != null)
             {
                 return Users.Where(u => u.Value.Character.Location.Key == location.Key
@@ -1408,7 +1446,6 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public List<Character>? GetPlayersInRoom(KeyValuePair<long, long> location)
         {
-            var room = this.ResolveRoom(location);
             if (Users != null)
             {
                 return Users.Where(u => u.Value.Character.Location.Key == location.Key
@@ -1575,7 +1612,10 @@ namespace Legendary.Engine
             // 60000 * 4 = 240000
             var level = character.Level;
             var amountNeededToLevel = (character.Level * 1500 * Math.Max(1, level / 10)) * Math.Min(1, Math.Sqrt(level));
-            return (long)amountNeededToLevel;
+
+            var penalty = Races.RaceData.First(r => r.Key == character.Race).Value.ExperiencePenalty;
+
+            return (long)amountNeededToLevel + penalty;
         }
 
         /// <inheritdoc/>
@@ -1880,6 +1920,51 @@ namespace Legendary.Engine
                 character.Learns = 3;
                 character.Experience = 1;
 
+                var raceStats = Races.RaceData.First(r => r.Key == character.Race);
+
+                if (raceStats.Value.Abilities != null)
+                {
+                    foreach (var ability in raceStats.Value.Abilities)
+                    {
+                        var skill = SkillHelper.ResolveSkill(ability, this, this.random, this.world, this.logger, this.combat);
+
+                        if (skill != null)
+                        {
+                            character.Skills.Add(new SkillProficiency(skill.Name, 100));
+                        }
+                        else
+                        {
+                            var spell = SpellHelper.ResolveSpell(ability, this, this.random, this.world, this.logger, this.combat);
+
+                            if (spell != null)
+                            {
+                                character.Spells.Add(new SpellProficiency(spell.Name, 100));
+                            }
+                        }
+                    }
+                }
+
+                // All players speak common fluently.
+                var common = SkillHelper.ResolveSkill("Common", this, this.random, this.world, this.logger, this.combat);
+
+                if (common != null && !character.Skills.Contains(new SkillProficiency(common.Name, 100)))
+                {
+                    character.Skills.Add(new SkillProficiency(common.Name, 100));
+                    character.Speaking = common.Name;
+                }
+
+                // All players get recall at max.
+                if (!character.Skills.Contains(new SkillProficiency(nameof(Recall), 100)))
+                {
+                    character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
+                }
+
+                // All players get their racial language at max.
+                if (!character.Skills.Contains(new SkillProficiency(character.Race.ToString(), 100)))
+                {
+                    character.Skills.Add(new SkillProficiency(character.Race.ToString(), 100));
+                }
+
                 await this.SaveCharacter(character);
             }
         }
@@ -1908,8 +1993,8 @@ namespace Legendary.Engine
             character.Movement.Max += move;
 
             // Calculate the advance trains and practices.
-            var trains = character.Int.Max / 4;
-            var pracs = character.Wis.Max / 4;
+            var trains = character.Int.Max / 3.5;
+            var pracs = character.Wis.Max / 3.5;
 
             // Every 5 levels, character gets a learning session.
             if (character.Level % 5 == 0)

@@ -50,6 +50,8 @@ namespace Legendary.Engine.Models.Spells
             }
             else
             {
+                await base.Act(actor, target, targetItem, cancellationToken);
+
                 await this.Communicator.SendToPlayer(actor, $"You glean all of the information you can from {targetItem.Name}.", cancellationToken);
                 await this.Communicator.SendToRoom(actor, actor.Location, $"{actor.FirstName} peers intently at {targetItem.Name}.", cancellationToken);
 

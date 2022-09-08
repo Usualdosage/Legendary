@@ -45,6 +45,8 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
+            await base.Act(actor, target, itemTarget, cancellationToken);
+
             var item = this.CreateSpringItem();
 
             await this.Communicator.SendToPlayer(actor, $"You close your eyes and a bubbling spring suddenly appears.", cancellationToken);

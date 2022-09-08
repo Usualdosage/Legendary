@@ -51,6 +51,7 @@ namespace Legendary.Engine.Models.Spells
 
             if (target == null)
             {
+                await base.Act(actor, target, itemTarget, cancellationToken);
                 await this.DamageToRoom(actor, cancellationToken);
             }
             else
@@ -61,6 +62,7 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await base.Act(actor, target, itemTarget, cancellationToken);
                     await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.FIREBALL, cancellationToken);
                     await this.DamageToTarget(actor, target, cancellationToken);
                 }

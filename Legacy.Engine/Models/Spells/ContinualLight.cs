@@ -45,6 +45,8 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
+            await base.Act(actor, target, itemTarget, cancellationToken);
+
             var item = this.CreateFoodItem();
 
             await this.Communicator.SendToPlayer(actor, $"You twiddle your thumbs and {item.Name} suddenly appears.", cancellationToken);

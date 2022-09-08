@@ -1,14 +1,14 @@
 ﻿@model StatModel
 
-<script type="text/javascript">
-    function check(input) {
+<script type="text/javascript">function check(input) {
         if (input.value != document.getElementById('password').value) {
             input.setCustomValidity('Passwords must match.');
         } else {
             input.setCustomValidity('');
         }
-    }
-</script>
+    }</script>
+
+<script src="~/js/create.js" asp-append-version="true"></script>
 
 @Html.AntiForgeryToken()
 
@@ -27,22 +27,22 @@
                                 Your vital stats:
                             </div>
                             <div class="col-md">
-                                STR: @Model.Str
+                                STR: <span id="str">@Model.Str</span>
                             </div>
                             <div class="col-md">
-                                INT: @Model.Int
+                                INT: <span id="int">@Model.Int</span>
                             </div>
                             <div class="col-md">
-                                WIS: @Model.Wis
+                                WIS: <span id="wis">@Model.Wis</span>
                             </div>
                             <div class="col-md">
-                                DEX: @Model.Dex
+                                DEX: <span id="dex">@Model.Dex</span>
                             </div>
                             <div class="col-md">
-                                CON: @Model.Con
+                                CON: <span id="str">@Model.Con</span>
                             </div>
                             <div class="col-md">
-                                <input type="button" class="btn btn-primary" onClick="window.location.reload();" value="Reroll" />
+                                <input type="button" class="btn btn-primary" onClick="reroll()" value="Reroll" />
                             </div>
                         </div>
                         <div class="row">
@@ -70,20 +70,12 @@
                                 </select>
                             </div>
                             <div class="col-md">
-                                <select name="Race" required
-                                        class="form-control"
-                                        asp-items="Html.GetEnumSelectList<Legendary.Web.Types.PlayerRace>()">
-                                    <option value="">Select Race</option>
-                                </select>
+                                <select id="ddlRace" class="form-control" asp-for="SelectedRace" asp-items="@(new SelectList(Model.PlayerRaces))"></select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <select name="Alignment" required
-                                        class="form-control"
-                                        asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Alignment>()">
-                                    <option value="">Select Alignment</option>
-                                </select>
+                                <select id="ddlAlign" class="form-control" asp-for="SelectedAlignment" asp-items="@(new SelectList(Model.Alignments))"></select>
                             </div>
                             <div class="col-md">
                                 <select name="Ethos" required
@@ -100,8 +92,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md">
-                                <input type="button" value="Create Avatar" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#avatarModal"/>
-                                <input type="text" id="AvatarUrl" placeholder="Avatar URL" />                                
+                                <input type="button" value="Create Avatar" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#avatarModal" />
+                                <input type="text" id="AvatarUrl" placeholder="Avatar URL" />
                             </div>
                         </div>
                         <ul class="list-group list-group-flush">
@@ -134,7 +126,7 @@
                             <iframe id="frame" width="1280" height="800" class="frame" allow="camera *; microphone *; clipboard-write"></iframe>
                         </div>
                     </div>
-                </div>    
+                </div>
             </div>
         </div>
     </div>
@@ -142,25 +134,21 @@
 
 
 
-<script>
-    const frame = document.getElementById('frame');
+<script>const frame = document.getElementById('frame');
 
     frame.src = 'https://legendary.readyplayer.me/avatar?clearCache&bodyType=halfBody';
 
     window.addEventListener('message', subscribe);
     document.addEventListener('message', subscribe);
 
-    function subscribe(event)
-    {
+    function subscribe(event) {
         const json = parse(event);
 
-        if (json.source !== 'readyplayerme')
-        {
+        if (json.source !== 'readyplayerme') {
             return;
         }
 
-        if (json.eventName === 'v1.frame.ready')
-        {
+        if (json.eventName === 'v1.frame.ready') {
             frame.contentWindow.postMessage(
                 JSON.stringify({
                     target: 'readyplayerme',
@@ -172,29 +160,23 @@
         }
 
         // Get avatar GLB URL
-        if (json.eventName === 'v1.avatar.exported')
-        {
+        if (json.eventName === 'v1.avatar.exported') {
             console.log(`Avatar URL: ${json.data.url}`);
             document.getElementById('AvatarUrl').value = `${json.data.url}`;
             document.getElementById('frame').hidden = true;
         }
 
         // Get user id
-        if (json.eventName === 'v1.user.set')
-        {
+        if (json.eventName === 'v1.user.set') {
             console.log(`User with id ${json.data.id} set: ${JSON.stringify(json)}`);
         }
     }
 
-    function parse(event)
-    {
-        try
-        {
+    function parse(event) {
+        try {
             return JSON.parse(event.data);
         }
-        catch (error)
-        {
+        catch (error) {
             return null;
         }
-    }
-</script>
+    }</script>

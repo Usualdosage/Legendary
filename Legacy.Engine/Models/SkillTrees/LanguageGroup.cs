@@ -44,6 +44,10 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
+                { new Common(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new StoneGiant(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new FireGiant(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new StormGiant(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -53,6 +57,8 @@ namespace Legendary.Engine.Models.SkillTrees
             get => new List<IAction>()
             {
                 { new HalfElf(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Dwarf(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Duergar(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -61,6 +67,7 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
+                { new HalfOrc(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
                 { new Elf(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
                 { new Drow(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
@@ -72,6 +79,7 @@ namespace Legendary.Engine.Models.SkillTrees
             get => new List<IAction>()
             {
                 { new Avian(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Halfling(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
 
@@ -80,6 +88,8 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
+                { new Gnome(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Faerie(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
     }

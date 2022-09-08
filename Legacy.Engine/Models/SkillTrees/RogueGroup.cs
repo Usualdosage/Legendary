@@ -45,6 +45,7 @@ namespace Legendary.Engine.Models.SkillTrees
             get => new List<IAction>()
             {
                 { new Peek(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Sneak(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

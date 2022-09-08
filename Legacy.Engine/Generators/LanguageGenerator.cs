@@ -18,7 +18,7 @@ namespace Legendary.Engine.Generators
     /// <summary>
     /// Generates unique words from training data.
     /// </summary>
-    public sealed class LanguageGenerator
+    public sealed class LanguageGenerator : ILanguageGenerator
     {
         private readonly IEnumerable<string> words = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum".Split(' ');
         private readonly IRandom random;
@@ -88,8 +88,14 @@ namespace Legendary.Engine.Generators
             // Uppercase the first letter.
             result = char.ToUpper(result[0]) + result[1..];
 
-            // Add some emphasis.
-            return $"<span class='spellWords'>{result}</span>";
+            // Add the punctuation back.
+            var endChar = sentence[sentence.Length - 1];
+            if (char.IsPunctuation(endChar))
+            {
+                result += endChar;
+            }
+
+            return result;
         }
 
         private string BuildPseudoWord(int length)

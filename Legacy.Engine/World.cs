@@ -22,6 +22,7 @@ namespace Legendary.Engine
     using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
     using MongoDB.Driver;
 
@@ -786,8 +787,11 @@ namespace Legendary.Engine
 
                                                 if (nextRoom != null)
                                                 {
-                                                    nextRoom.Mobiles.Add(mobile.DeepCopy());
-                                                    await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                                    if (!mobile.IsAffectedBy(nameof(Sneak)))
+                                                    {
+                                                        nextRoom.Mobiles.Add(mobile.DeepCopy());
+                                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                                    }
                                                 }
                                             }
                                         }

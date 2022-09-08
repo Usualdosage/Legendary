@@ -57,6 +57,8 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await base.Act(actor, target, itemTarget, cancellationToken);
+
                     await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
                     await this.Communicator.PlaySoundToRoom(actor, target, Sounds.SANCTUARY, cancellationToken);
 
@@ -79,6 +81,8 @@ namespace Legendary.Engine.Models.Spells
                     }
                     else
                     {
+                        await base.Act(actor, target, itemTarget, cancellationToken);
+
                         await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
                         await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
                         await this.Communicator.PlaySoundToRoom(actor, target, Sounds.SANCTUARY, cancellationToken);

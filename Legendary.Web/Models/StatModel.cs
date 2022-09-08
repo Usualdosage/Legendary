@@ -50,8 +50,44 @@ namespace Legendary.Web.Models
         public string? Message { get; set; }
 
         /// <summary>
-        /// Gets or sets the player races.
+        /// Gets the player races.
         /// </summary>
-        public List<Race> PlayerRaces { get; set; } = new List<Race>();
+        public List<Race> PlayerRaces { get; } = new List<Race>()
+        {
+            Race.Avian,
+            Race.Human,
+            Race.Elf,
+            Race.Dwarf,
+            Race.HalfElf,
+            Race.HalfOrc,
+            Race.Gnome,
+            Race.StoneGiant,
+            Race.StormGiant,
+            Race.FireGiant,
+            Race.Drow,
+            Race.Duergar,
+            Race.Halfling,
+            Race.Faerie,
+        };
+
+        /// <summary>
+        /// Gets or sets the allowed alignments for this race.
+        /// </summary>
+        public List<Alignment>? Alignments { get; set; } = new List<Alignment>()
+        {
+            Alignment.Good,
+            Alignment.Neutral,
+            Alignment.Evil,
+        };
+
+        /// <summary>
+        /// Gets or sets the selected alignment.
+        /// </summary>
+        public Alignment SelectedAlignment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected race.
+        /// </summary>
+        public Race SelectedRace { get; set; }
     }
 }

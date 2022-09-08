@@ -24,6 +24,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Attributes;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Generators;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
 
@@ -594,12 +595,28 @@ namespace Legendary.Engine.Processors
 
                     if (group != null && group.Value.Value.Count > 0)
                     {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You tell the group \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                        var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
+                        var garbled = this.communicator.LanguageGenerator.BuildSentence(sentence);
+                        var skillRoll = this.random.Next(0, 99);
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"You tell the group (in {speaking}) \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
 
                         // If the player isn't the group owner, send a message to the actual owner.
                         if (!GroupHelper.IsGroupOwner(actor.Character.CharacterId))
                         {
-                            await this.communicator.SendToPlayer(group.Value.Key, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                            var player = this.communicator.ResolveCharacter(group.Value.Key);
+
+                            if (player != null)
+                            {
+                                if (player.Character.HasSkill(speaking) && player.Character.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                {
+                                    await this.communicator.SendToPlayer(player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group (in {speaking}) \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group (in {speaking}) \"<span class='gtell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                }
+                            }
                         }
 
                         // Now send a message to everyone else in the group.
@@ -607,7 +624,19 @@ namespace Legendary.Engine.Processors
                         {
                             if (target != actor.Character.CharacterId)
                             {
-                                await this.communicator.SendToPlayer(target, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                                var player = this.communicator.ResolveCharacter(target);
+
+                                if (player != null)
+                                {
+                                    if (player.Character.HasSkill(speaking) && player.Character.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                    {
+                                        await this.communicator.SendToPlayer(player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group (in {speaking}) \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group (in {speaking}) \"<span class='gtell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1218,6 +1247,30 @@ namespace Legendary.Engine.Processors
         }
 
         [SightRequired]
+        [HelpText("<p>Speak in a particular language that you know. Not everyone will be able to understand you.<ul><li>speak <em>language</em></li></ul></p>")]
+        private async Task DoSpeak(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Speak what language?", cancellationToken);
+            }
+            else
+            {
+                var skill = SkillHelper.ResolveSkill(args.Method, this.communicator, this.random, this.world, this.logger, this.combat);
+
+                if (skill != null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You begin speaking {skill.Name}.", cancellationToken);
+                    actor.Character.Speaking = skill.Name;
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"You don't know how to speak that.", cancellationToken);
+                }
+            }
+        }
+
+        [SightRequired]
         [HelpText("<p>When accompanied by a trainer, use this command to train up your vital attributes. See also: HELP PRACTICE, HELP LEARN<ul><li>train str</li><li>train hp</li></ul></p>")]
         private async Task DoTrain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -1241,27 +1294,29 @@ namespace Legendary.Engine.Processors
 
                             sb.Append($"You have {actor.Character.Trains} training sessions, and you can train the following:<br/>");
 
-                            if (actor.Character.Str.Max < 18)
+                            var raceData = Races.RaceData.First(r => r.Key == actor.Character.Race);
+
+                            if (actor.Character.Str.Max < raceData.Value.StrMax)
                             {
                                 sb.Append("Strength (STR), ");
                             }
 
-                            if (actor.Character.Int.Max < 18)
+                            if (actor.Character.Int.Max < raceData.Value.IntMax)
                             {
                                 sb.Append("Intelligence (INT), ");
                             }
 
-                            if (actor.Character.Wis.Max < 18)
+                            if (actor.Character.Wis.Max < raceData.Value.WisMax)
                             {
                                 sb.Append("Wisdom (WIS), ");
                             }
 
-                            if (actor.Character.Dex.Max < 18)
+                            if (actor.Character.Dex.Max < raceData.Value.DexMax)
                             {
                                 sb.Append("Dexterity (DEX), ");
                             }
 
-                            if (actor.Character.Con.Max < 18)
+                            if (actor.Character.Con.Max < raceData.Value.ConMax)
                             {
                                 sb.Append("Constitution (CON), ");
                             }

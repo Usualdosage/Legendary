@@ -58,6 +58,8 @@ namespace Legendary.Engine.Models.Spells
 
                         if (mobile != null)
                         {
+                            await base.Act(actor, target, itemTarget, cancellationToken);
+
                             await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
                             await this.Communicator.PlaySoundToRoom(actor, target, Sounds.HARM, cancellationToken);
 
@@ -70,6 +72,8 @@ namespace Legendary.Engine.Models.Spells
                     }
                     else
                     {
+                        await base.Act(actor, target, itemTarget, cancellationToken);
+
                         await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
                         await this.Communicator.PlaySound(player.Character, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
                         await this.Communicator.PlaySoundToRoom(actor, target, Sounds.HARM, cancellationToken);
@@ -90,6 +94,8 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await base.Act(actor, target, itemTarget, cancellationToken);
+
                     await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
                     await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.HARM, cancellationToken);
                     await this.Communicator.PlaySoundToRoom(actor, target, Sounds.HARM, cancellationToken);

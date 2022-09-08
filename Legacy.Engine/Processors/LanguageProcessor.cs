@@ -36,7 +36,7 @@ namespace Legendary.Engine.Processors
         private readonly IRandom random;
         private readonly ICommunicator communicator;
         private readonly IServerSettings serverSettings;
-        private readonly LanguageGenerator generator;
+        private readonly ILanguageGenerator generator;
         private List<string>? excludeWords;
         private Dictionary<string, string>? replaceWords;
 
@@ -48,7 +48,7 @@ namespace Legendary.Engine.Processors
         /// <param name="generator">The language generator.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, LanguageGenerator generator, ICommunicator communicator, IRandom random)
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;

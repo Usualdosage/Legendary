@@ -507,7 +507,7 @@ namespace Legendary.Engine.Processors
 
             foreach (var tree in spellTrees)
             {
-                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.world, this.logger, this.combat);
 
                 var groupProps = tree.GetProperties();
 
@@ -538,7 +538,7 @@ namespace Legendary.Engine.Processors
 
             foreach (var tree in skillTrees)
             {
-                var treeInstance = Activator.CreateInstance(tree, this, this.random, this.world, this.logger, this.combat);
+                var treeInstance = Activator.CreateInstance(tree, this.communicator, this.random, this.world, this.logger, this.combat);
 
                 var groupProps = tree.GetProperties();
 

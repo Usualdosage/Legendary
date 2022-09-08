@@ -55,9 +55,13 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await base.Act(actor, target, itemTarget, cancellationToken);
                     await this.Communicator.SendToPlayer(actor, "You feel energy course through you!", cancellationToken);
                     var diff = actor.Mana.Max - actor.Mana.Current;
                     actor.Mana.Current += Math.Min(result, diff);
+
+                    var diff2 = actor.Health.Max - actor.Health.Current;
+                    actor.Health.Current -= Math.Min(10, diff2);
                 }
             }
             else
@@ -68,16 +72,20 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
-                    if (target.Health.Current >= target.Health.Max)
+                    if (target.Mana.Current >= target.Mana.Max)
                     {
                         await this.Communicator.SendToPlayer(actor, "They are already completely mentally energized.", cancellationToken);
                     }
                     else
                     {
+                        await base.Act(actor, target, itemTarget, cancellationToken);
                         await this.Communicator.SendToPlayer(target, "You feel energy course through you!", cancellationToken);
                         await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
                         var diff = target.Mana.Max - target.Mana.Current;
                         target.Mana.Current += Math.Min(result, diff);
+
+                        var diff2 = actor.Health.Max - actor.Health.Current;
+                        actor.Health.Current -= Math.Min(10, diff2);
                     }
                 }
             }

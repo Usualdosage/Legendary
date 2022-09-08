@@ -63,6 +63,8 @@ namespace Legendary.Engine.Models.Spells
 
                     if (this.Combat.DidSave(target, this))
                     {
+                        await base.Act(actor, target, itemTarget, cancellationToken);
+
                         await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s eyes cloud for a moment, but it passes.", cancellationToken);
                         await this.Communicator.SendToPlayer(target, $"You feel your eyes cloud for a moment, but it passes.", cancellationToken);
 
@@ -80,6 +82,8 @@ namespace Legendary.Engine.Models.Spells
                             Name = this.Name,
                             Duration = actor.Level / 10,
                         };
+
+                        await base.Act(actor, target, itemTarget, cancellationToken);
 
                         await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s eyes glaze over.", cancellationToken);
                         await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} has blinded you!", cancellationToken);

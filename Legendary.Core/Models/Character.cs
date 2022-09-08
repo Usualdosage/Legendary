@@ -119,6 +119,11 @@ namespace Legendary.Core.Models
         public string? LongDescription { get; set; }
 
         /// <summary>
+        /// Gets or sets the language the character is currently speaking.
+        /// </summary>
+        public string Speaking { get; set; } = "Common";
+
+        /// <summary>
         /// Gets or sets the location.
         /// </summary>
         public KeyValuePair<long, long> Location { get; set; } = new KeyValuePair<long, long>(1, 1);

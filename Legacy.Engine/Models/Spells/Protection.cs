@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
@@ -47,7 +48,7 @@ namespace Legendary.Engine.Models.Spells
             {
                 Name = this.Name,
                 Duration = actor.Level / 10,
-                Spell = 20,
+                Spell = Math.Max(1, actor.Level / 20),
             };
 
             if (target == null)
@@ -58,6 +59,8 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
+                    await base.Act(actor, target, itemTarget, cancellationToken);
+
                     await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
                     await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
 

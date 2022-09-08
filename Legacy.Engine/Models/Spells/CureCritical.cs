@@ -47,14 +47,14 @@ namespace Legendary.Engine.Models.Spells
 
             if (target == null)
             {
-                await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
-
                 if (actor.Health.Current >= actor.Health.Max)
                 {
                     await this.Communicator.SendToPlayer(actor, "You are already completely healthy.", cancellationToken);
                 }
                 else
                 {
+                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
+                    await base.Act(actor, target, itemTarget, cancellationToken);
                     await this.Communicator.SendToPlayer(actor, "You feel a LOT better!", cancellationToken);
                     var diff = actor.Health.Max - actor.Health.Current;
                     actor.Health.Current += Math.Min(result, diff);
@@ -74,6 +74,7 @@ namespace Legendary.Engine.Models.Spells
                     }
                     else
                     {
+                        await base.Act(actor, target, itemTarget, cancellationToken);
                         await this.Communicator.SendToPlayer(target, "You feel a LOT better!", cancellationToken);
                         await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.CURELIGHT, cancellationToken);
                         var diff = target.Health.Max - target.Health.Current;
