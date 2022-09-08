@@ -232,5 +232,30 @@ namespace Legendary.Core.Models
         /// Gets or sets the frequency with which the action is cast.
         /// </summary>
         public int? CastFrequency { get; set; }
+
+        /// <summary>
+        /// Gets or sets the save maledictive modifier.
+        /// </summary>
+        public int? SaveMaledictive { get; set; }
+
+        /// <summary>
+        /// Gets or sets the save spell modifier.
+        /// </summary>
+        public int? SaveSpell { get; set; }
+
+        /// <summary>
+        /// Gets or sets the save negative modifier.
+        /// </summary>
+        public int? SaveNegative { get; set; }
+
+        /// <summary>
+        /// Gets or sets the save death modifier.
+        /// </summary>
+        public int? SaveDeath { get; set; }
+
+        /// <summary>
+        /// Gets or sets the save afflictive modifier.
+        /// </summary>
+        public int? SaveAfflictive { get; set; }
     }
 }

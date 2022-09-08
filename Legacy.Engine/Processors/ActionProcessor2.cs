@@ -1101,6 +1101,107 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Repairs an item that you are wearing, for a price.</p><ul><li>repair <em>item</em></li></ul>")]
+        private async Task DoRepair(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+            if (mobs != null)
+            {
+                var sk = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
+
+                if (sk == null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a shopkeeper here available to repair your items.", cancellationToken);
+                }
+                else
+                {
+                    List<Item> items = actor.Character.Equipment;
+
+                    if (string.IsNullOrWhiteSpace(args.Method))
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>It will cost you the following to get your items repaired:</span>\"<br/><ul>");
+                        var total = 0m;
+
+                        // List all damaged items, and the price of repair
+                        foreach (var item in items)
+                        {
+                            if (item.Durability.Current < item.Durability.Max)
+                            {
+                                var cost = .2m * (item.Level % 5);
+                                total += cost;
+                                sb.Append($"<li><span class='repair-item'>{item.Name}</span> ${cost} gold</li>");
+                            }
+                        }
+
+                        sb.Append("</ul>");
+
+                        sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>The total to repair everything will be {total} gold.</span>\"<br/>");
+
+                        await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                    }
+                    else
+                    {
+                        if (args.Method.ToLower() == "all")
+                        {
+                            var total = 0m;
+
+                            // Repair all
+                            foreach (var item in items)
+                            {
+                                var cost = .2m * (item.Level % 5);
+                                total += cost;
+                            }
+
+                            if (actor.Character.Currency >= total)
+                            {
+                                foreach (var item in items)
+                                {
+                                    item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
+                                }
+
+                                actor.Character.Currency -= total;
+
+                                await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Ok, {actor.Character.FirstName}, all of your items have been repaired. The total was {total} gold.</span>\"<br/>", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>You don't have enough coin to get everything repaired, {actor.Character.FirstName}.</span>\"<br/>");
+                            }
+                        }
+                        else
+                        {
+                            var item = items.ParseTargetName(args.Method);
+
+                            if (item != null)
+                            {
+                                var cost = .2m * (item.Level % 5);
+
+                                if (actor.Character.Currency >= cost)
+                                {
+                                    item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
+                                    actor.Character.Currency -= cost;
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Ok, {actor.Character.FirstName}, I have repaired {item.Name}. The total was {cost} gold.</span>\"<br/>", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>You don't have enough coin to get that repaired, {actor.Character.FirstName}.</span>\"<br/>");
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>There's no way I can repair that, {actor.Character.FirstName}.</span>\"<br/>");
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a shopkeeper here available to repair your items.", cancellationToken);
+            }
+        }
+
         [HelpText("<p>Reports your current health, mana, and movement levels out loud.</p>")]
         private async Task DoReport(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {

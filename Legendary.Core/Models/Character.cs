@@ -453,7 +453,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveSpell + this.AffectedBy.Sum(a => a.Spell ?? 0);
+                return this.saveSpell + this.AffectedBy.Sum(a => a.Spell ?? 0) + this.Equipment.Sum(s => s.SaveSpell ?? 0);
             }
 
             set
@@ -469,7 +469,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveNegative + this.AffectedBy.Sum(a => a.Negative ?? 0);
+                return this.saveNegative + this.AffectedBy.Sum(a => a.Negative ?? 0) + this.Equipment.Sum(s => s.SaveNegative ?? 0);
             }
 
             set
@@ -485,7 +485,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveMaledictive + this.AffectedBy.Sum(a => a.Maledictive ?? 0);
+                return this.saveMaledictive + this.AffectedBy.Sum(a => a.Maledictive ?? 0) + this.Equipment.Sum(s => s.SaveMaledictive ?? 0);
             }
 
             set
@@ -501,7 +501,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveAfflictive + this.AffectedBy.Sum(a => a.Afflictive ?? 0);
+                return this.saveAfflictive + this.AffectedBy.Sum(a => a.Afflictive ?? 0) + this.Equipment.Sum(s => s.SaveAfflictive ?? 0);
             }
 
             set
@@ -517,7 +517,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveDeath + this.AffectedBy.Sum(a => a.Death ?? 0);
+                return this.saveDeath + this.AffectedBy.Sum(a => a.Death ?? 0) + this.Equipment.Sum(s => s.SaveDeath ?? 0);
             }
 
             set

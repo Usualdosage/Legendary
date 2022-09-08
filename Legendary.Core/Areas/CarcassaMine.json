@@ -1,0 +1,6576 @@
+﻿{
+  "_id": {
+    "$numberLong": "23085"
+  },
+  "AreaId": {
+    "$numberLong": "23085"
+  },
+  "Name": "Carcassa Mine",
+  "Author": "Crypticant",
+  "Description": "Carcassa Mine is the ruins of an old dwarven mine in the mountains.",
+  "Rooms": [
+    {
+      "RoomId": {
+        "$numberLong": "23111"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Roughly Hewn Stone",
+      "Description": "There are roughly hewn stone walls on either side of you as You walk through the caves of chaos. You can see small stalactites and stalagmites protruding from the ceiling and floor of the cave. The air is damp and musty, and there is a small streare of water running through the middle of the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23111.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23112"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23130"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23112"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Deeper Into the Crystal Cavern",
+      "Description": "You see a large, dark cavern with a deep pool of water in the center. There are numerous stalagmites and stalactites around the perimeter of the pool, and you can see a few bats roosting in the cave. The air is cool and damp, and there is a faint smell of sulfur in the air.",
+      "Image": "https://legendary.file.core.windows.net/images/23112.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23111"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23133"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23130"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Wide Passageway",
+      "Description": "You see a wide passageway with high ceilings and walls covered in cave art. The art is primarily of animals, but there are also some human figures. The colors are mostly earth tones, with some reds and blacks. The overall effect is very striking and impressive.",
+      "Image": "https://legendary.file.core.windows.net/images/23130.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23111"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23149"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23133"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Broad Crystal Cavern",
+      "Description": "You see a vast and breathtaking underground cavern, with a deep blue pool of water in the center. The walls and ceiling are covered in sparkling crystals, and the air is thick with a sweet, musky scent. You hear the sound of water dripping, and the occasional flutter of bats. As you walk deeper into the cave, the temperature drops and the crystals get larger. You are surrounded by an otherworldly beauty, and a sense of peace and stillness.",
+      "Image": "https://legendary.file.core.windows.net/images/23133.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23154"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23112"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23149"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Among Blasted Rocks",
+      "Description": "You see a dark, narrow path winding through a rocky landscape. The path is lit by occasional flickering lights, and you can hear the sound of dripping water in the distance. The air is cool and musty, and you can see small creatures scurrying around in the rocks.",
+      "Image": "https://legendary.file.core.windows.net/images/23149.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23130"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23168"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23154"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Small Cave Passageway",
+      "Description": "You see a small cave passageway that is dark and damp. There are small stalactites and stalagmites on the floor and walls. There is a small pool of water in the center of the passageway.",
+      "Image": "https://legendary.file.core.windows.net/images/23154.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23155"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23133"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23155"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Narrow Opening",
+      "Description": "You see a dark, narrow opening in the cave. There is a faint light coming from the other side. You can see some rocks and dirt on the ground. You can hear the sound of water dripping.",
+      "Image": "https://legendary.file.core.windows.net/images/23155.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23154"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "68"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23160"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Low Hanging Passageway",
+      "Description": "You see a low hanging passageway that is covered in ancient cave paintings. The paintings depict various animals and scenes from everyday life. The passageway is dark and damp, and there is a musty smell in the air. You can hear the sound of dripping water echoing through the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23160.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23161"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23179"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "69"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23161"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Entrance to Carcassa Mine",
+      "Description": "You stand at the entrance to the Carcassa Mine. The mine has been closed for decades, but was once originally dug out by the local dwarves. The passageway leads deeper into the darkness.",
+      "Image": "https://legendary.file.core.windows.net/images/23161.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23160"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "2935"
+          },
+          "ToRoom": {
+            "$numberLong": "3201"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23166"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Small Alcove in the Cave",
+      "Description": "You see a small alcove in the cave with a few rocks and a small streare of water running through it. There is a small opening in the alcove that leads to a larger cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23166.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23187"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23168"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Salt Cavern",
+      "Description": "You see a dark, narrow passage that slopes downward. You can hear the sound of dripping water and the crunching of your feet on the rocky ground. There are stalactites and stalagmites everywhere, some of them reaching the floor or ceiling. The air is damp and musty.",
+      "Image": "https://legendary.file.core.windows.net/images/23168.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23149"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23187"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "69"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23175"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Rubble and Debris",
+      "Description": "You see a small portion of a cave that has been caved in. There is rubble and debris everywhere. You see a few bones mixed in with the rubble, and a few rats scurrying around. It smells damp and musty in here.",
+      "Image": "https://legendary.file.core.windows.net/images/23175.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23155"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23195"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23196"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23194"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23154"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23179"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Rock Barrier",
+      "Description": "You see a rock barrier that is preventing you from going any further into the caves. ",
+      "Image": "https://legendary.file.core.windows.net/images/23179.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23160"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23198"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "rocks"
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23187"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Cavern Stalactites",
+      "Description": "You stand within a massive cavern that is covered in stalactites and stalagmites. The air here is damp and musty, with a thick earthen smell.",
+      "Image": "https://legendary.file.core.windows.net/images/23187.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23207"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23168"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23208"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23206"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23166"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23192"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Rail Track in the Caverns",
+      "Description": "You see a dark, damp cave with a rail track running through it. The track is lined with faint lights, and there is a faint smell of sulfur in the air. You can hear the sound of dripping water and the occasional scurrying of a small animal.",
+      "Image": "https://legendary.file.core.windows.net/images/23192.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23212"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23193"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        },
+        {
+          "$numberLong": "68"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23193"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Rail Track in the Caverns",
+      "Description": "You see a narrow, winding path ahead of you, lit by a faint light. The walls on either side are rough and jagged, and the ceiling is low in places. There are occasional pools of water on the floor, and the air is damp and musty.",
+      "Image": "https://legendary.file.core.windows.net/images/23193.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23194"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23192"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23212"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "68"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23194"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Rail Track in the Caverns",
+      "Description": "You see a dark, dank cave with a rail track running through it. The track is old and rusty, and there is a faint light coming from somewhere in the distance. The cave is damp and musty, and there are bats flying around.",
+      "Image": "https://legendary.file.core.windows.net/images/23194.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23195"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23193"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "68"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23195"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Minor Cave-In",
+      "Description": "The cave is dark and cool, with a slight breeze coming through. The walls are covered in stalactites and stalagmites, and there are several small pools of water. The floor is uneven in places, but overall it is an easy walk.",
+      "Image": "https://legendary.file.core.windows.net/images/23195.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23196"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23194"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23196"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Rail Track in the Caverns",
+      "Description": "You see a rail track that goes through the caverns in the caves. The track is made of metal and is very thin. It is covered in a layer of dust and looks like it has not been used in a long time. There are no lights in the caverns and the only light comes from the track itself.",
+      "Image": "https://legendary.file.core.windows.net/images/23196.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23197"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23195"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23197"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Rail Track in the Caverns",
+      "Description": "You see a dark, damp, and cramped space with a narrow path. The path is bordered by a railing on one side and a wall on the other. The wall is covered in slime mold and the ground is uneven. Every so often, there is a small puddle of water on the ground.",
+      "Image": "https://legendary.file.core.windows.net/images/23197.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23198"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23196"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23218"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23198"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Dead-End Rail Track",
+      "Description": "You see darkness and cold, damp rock. You hear the drip of water and the scurry of bats. You smell the dampness and the bats. There is very little light, and what there is comes from your headlamp. You are walking carefully, feeling your way along the track, which is sometimes slippery.",
+      "Image": "https://legendary.file.core.windows.net/images/23198.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23218"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23197"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23179"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "rocks"
+        }
+      ],
+      "Flags": [
+        1,
+        3
+      ],
+      "Terrain": 1,
+      "ItemResets": [
+        {
+          "$numberLong": "79"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23206"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Smooth Cavern Wall",
+      "Description": "A smooth cavern wall is one of the few safe places to walk in or along the caves. It is a long, straight path with a smooth surface that is easy to walk on. There are no obstacles or enemies in the way, so it is a safe place to travel.",
+      "Image": "https://legendary.file.core.windows.net/images/23206.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23226"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23207"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23187"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23207"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Small Cavern System",
+      "Description": "You are in a small cavern system with a variety of rock formations. The cavern is lit by a few small lights, and there is a small streare running through it. The cavern is cool and damp, and there is a musty smell. There are a few small animals scurrying around, and the sound of dripping water can be heard.",
+      "Image": "https://legendary.file.core.windows.net/images/23207.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23187"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23208"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23206"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23226"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23208"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Eastward Cave Branch",
+      "Description": "You see a dark, winding cave with a streare running through it. The walls are covered in stalactites and stalagmites, and there are thousands of stone images carved into the rock. It's a peaceful and serene place, and you can't help but feel a sense of calm when you're here.",
+      "Image": "https://legendary.file.core.windows.net/images/23208.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23207"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23229"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23187"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "70"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23212"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Open Cavern Area",
+      "Description": "The cavern is open and spacious, with a high ceiling. The floor is covered in a layer of sand, and there are many rocks and boulders around. There is a small streare of water flowing through the middle of the cavern, and the walls are covered in a variety of different minerals.",
+      "Image": "https://legendary.file.core.windows.net/images/23212.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23192"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23232"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23193"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23233"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23231"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23218"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a dark, dank cave with a railway running through it. The cave is full of bats and other creatures that make it their home. The railway is old and rusty, and it looks like it hasn't been used in years.",
+      "Image": "https://legendary.file.core.windows.net/images/23218.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23198"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23238"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23197"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23226"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Smooth Cavern Wall",
+      "Description": "You see a smooth, dark cavern wall with small, light-colored spots. The spots are arranged in patterns and seem to be moving. You can hear faint sounds coming from the wall.",
+      "Image": "https://legendary.file.core.windows.net/images/23226.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23206"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23246"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23207"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23229"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Into Humid Darkness",
+      "Description": "You see a dark, humid cave with a blue dragon inside. The dragon is asleep and doesn't seem to notice me. You walk around the cave, looking at the different rock formations and stalactites. You don't see anything else in the cave, so you start to walk back out.",
+      "Image": "https://legendary.file.core.windows.net/images/23229.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23250"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23208"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23231"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Weapons Room",
+      "Description": "You see a large room with a stone floor and walls. There are many weapons on the walls and on the floor. ",
+      "Image": "https://legendary.file.core.windows.net/images/23231.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23232"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23212"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23250"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [
+        {
+          "$numberLong": "76"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "72"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23232"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Among Cave Twists and Turns",
+      "Description": "You see a long, dark tunnel with a few twists and turns. Every now and then, You see a faint light in the distance. As You get closer, You see that the light is coming from a small opening in the cave wall. Through this opening, You can see a large chamber with hundreds of small statues of Buddha.",
+      "Image": "https://legendary.file.core.windows.net/images/23232.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23212"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23233"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23231"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "68"
+        },
+        {
+          "$numberLong": "70"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23233"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Eerie Darkness",
+      "Description": "You see darkness and you cannot even see your hand in front of your face.",
+      "Image": "https://legendary.file.core.windows.net/images/23233.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23232"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23254"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23212"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1,
+        0
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23235"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Collapsed Cavern",
+      "Description": "You see a large cavern that has collapsed, with rubble everywhere. There are pillars that are still standing, but they are covered in dust and debris. There is a small stream of water that is running through the cavern, and it is reflecting the light from the surface.",
+      "Image": "https://legendary.file.core.windows.net/images/23235.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23254"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23238"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You are in a series of connected caverns that run north to south. A North-South Cavern Railway runs through the center of the caverns, with tracks on either side. The railway is used to transport people and goods through the caverns.",
+      "Image": "https://legendary.file.core.windows.net/images/23238.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23218"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23258"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "68"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23241"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Brilliant Quartz Crystals",
+      "Description": "You see a large number of small, shiny quartz crystals in the cavern. They are all different sizes, but most are relatively small. They are all clear and have a variety of different shapes. Some are pointy, some are round, and some are flat. They are all very sparkly and reflective.",
+      "Image": "https://legendary.file.core.windows.net/images/23241.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23262"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23260"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "67"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23246"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Smooth Cavern Wall",
+      "Description": "The wall is covered in a thin layer of water, making it appear smooth. There are small stalactites and stalagmites dotting the wall, and the air is cool and musty.",
+      "Image": "https://legendary.file.core.windows.net/images/23246.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23226"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23266"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23250"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Reinforced Position",
+      "Description": "You see a small, dark space that has been reinforced with rocks and dirt. There is a small opening at the top of the space that allows light to enter. You see some small animals scurrying around in the space.",
+      "Image": "https://legendary.file.core.windows.net/images/23250.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23231"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23269"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23229"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "72"
+        },
+        {
+          "$numberLong": "72"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23254"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Underground Spring",
+      "Description": "You see a dark, underground spring with waterfalls flowing down the cave walls. The water is crystal clear and the air is cool and refreshing. There are stalactites and stalagmites all around, and the cave is illuminated by a soft light.",
+      "Image": "https://legendary.file.core.windows.net/images/23254.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23235"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23275"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23273"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23233"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [
+        {
+          "$numberLong": "74"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23258"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a dark, damp cave with a railway running through it. The cave is lit by dim lights, and you can see the tracks and the cave walls as you walk. The air is cool and damp, and you can hear the sound of the railway tracks as you walk.",
+      "Image": "https://legendary.file.core.windows.net/images/23258.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23238"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23278"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23279"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23260"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Winding Cavern Passage",
+      "Description": "You see a winding cavern passage that is dark and dreary. There is a small stream of water running through the center of the passage. The walls are covered in moss and slime. You see some rats scurrying around in the shadows.",
+      "Image": "https://legendary.file.core.windows.net/images/23260.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23241"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23279"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "67"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23262"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Room of Amethyst Crystals",
+      "Description": "You see a room filled with amethyst crystals. The crystals are of various sizes, and some are glowing. The room is dark, but the crystals are casting a purple light. You feel peaceful and calm in the room, and the air is thick with the color of amethyst.",
+      "Image": "https://legendary.file.core.windows.net/images/23262.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23282"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23241"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "67"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23266"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Wide, Bored Out Passageway",
+      "Description": "You see a wide, dark passageway that is slightly curved. There are faint markings on the walls that are barely visible in the dim light. The floor is uneven and there are small rocks and debris scattered around. The passageway leads deeper into the caves.",
+      "Image": "https://legendary.file.core.windows.net/images/23266.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23246"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23286"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "69"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23269"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Small Ridge in the Caverns",
+      "Description": "You see a small, sandy ridge that winds its way through a dark, cavernous cave. The cave is filled with all sorts of interesting rock formations, and the ridge provides a nice view of them. As You walk along the ridge, You can hear the sound of water dripping somewhere in the distance.",
+      "Image": "https://legendary.file.core.windows.net/images/23269.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23250"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23288"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "69"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23273"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Damp Cavern Passage",
+      "Description": "The passage is damp and dark, with water dripping from the ceiling. There are small pools of water on the floor, and the walls are covered in moss. The passage is narrow and winding, and there are small creatures scurrying around in the darkness.",
+      "Image": "https://legendary.file.core.windows.net/images/23273.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23254"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23292"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23275"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Rivulets of Underground Water",
+      "Description": "These caves are known for their large, open chambers and for the many rivulets of underground water that flow through them. The caves are dimly lit, and the air is cool and damp. The floors are uneven and covered in a layer of mud. The walls are covered in a variety of minerals, including stalactites and stalagmites.",
+      "Image": "https://legendary.file.core.windows.net/images/23275.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23296"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23254"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "70"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23278"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Broken Cave Rail Tracks",
+      "Description": "You see a long, dark cave with a rail running through the middle of it. There are stalactites and stalagmites throughout the cave, and the floor is covered in a layer of dust and debris. There is a faint light coming from the entrance of the cave, and you can hear the sound of water dripping somewhere in the distance.",
+      "Image": "https://legendary.file.core.windows.net/images/23278.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23258"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23298"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23279"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23279"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Into the Caverns",
+      "Description": "There is a narrow path that leads through the caves, and along the path are various creatures and challenges that must be overcome. In the end, is is said this path leads to a large cavern that contains a powerful creature that must be defeated in order to progress.",
+      "Image": "https://legendary.file.core.windows.net/images/23279.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23278"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23260"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23300"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23298"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23258"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23282"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Sound of Running Water",
+      "Description": "The cave itself is a series of tunnels and chambers that lead deep into the earth. The cave is dark and damp, and the air is thick with the sound of running water.",
+      "Image": "https://legendary.file.core.windows.net/images/23282.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23262"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23302"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "67"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23286"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Wide, Bored Out Passageway",
+      "Description": "You see a wide, bored out passageway that is lit up by torches. You see paintings on the walls that depict animals and hunting scenes. You see stalactites and stalagmites that have formed over time. You see a pool of water that is used to reflect the light from the torches.",
+      "Image": "https://legendary.file.core.windows.net/images/23286.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23266"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23306"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "70"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23288"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Sharp Cave Incline",
+      "Description": "You stand before a sharp incline inside the caverns. The path angles downward here into darkness.",
+      "Image": "https://legendary.file.core.windows.net/images/23288.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23308"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23269"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23292"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Cavernous Lake",
+      "Description": "You see a vast, dark space with a small body of water in the center. The water is still and reflect the cave walls and ceiling. There are no other people or animals in sight.",
+      "Image": "https://legendary.file.core.windows.net/images/23292.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23273"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23311"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23296"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Deep, Dark Caverns",
+      "Description": "You see a dark, cavernous space with stalagmites and stalactites. There is a small streame of water running through the cave. You see bats hanging from the ceiling and rats running around on the ground. You also see a few spiders and insects.",
+      "Image": "https://legendary.file.core.windows.net/images/23296.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23316"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23275"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23298"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a dark and dreary cavern, with a railway running through it. The railway is old and rusty, and the cavern is full of cobwebs and dust. You see bats and rats scurrying around, and You hear the sound of dripping water. The air is musty and damp, and you see a faint light shining in from the entrance.",
+      "Image": "https://legendary.file.core.windows.net/images/23298.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23278"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23318"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23279"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23300"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Broad Cavern Passage",
+      "Description": "The passage is roughly hewn out of the rock, and is wide enough for four people to walk abreast. The ceiling is about ten feet high, and there are niches cut into the walls at intervals. In the flickering torchlight, You can see that the niches contain bones and other debris. The floor of the passage is strewn with rubble, and there are puddles of water here and there.",
+      "Image": "https://legendary.file.core.windows.net/images/23300.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23321"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23279"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "67"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23302"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Shores of an Underground River",
+      "Description": "You see a vast underground river with crystal clear water. The river is surrounded by towering cliffs and stalactites. There are also numerous cave creatures including bats and spiders. The overall atmosphere is one of mystery and wonder.",
+      "Image": "https://legendary.file.core.windows.net/images/23302.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23282"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23321"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "67"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23306"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Wide, Bored Out Passageway",
+      "Description": "You see a wide, bored out passageway in the caves of Lascaux. The passageway is lined with cave paintings. The paintings depict animals and hunt scenes.",
+      "Image": "https://legendary.file.core.windows.net/images/23306.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23286"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23326"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23308"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Wood Braced Caves",
+      "Description": "You see a thousand small stone statues carved into the walls of the cave, each one with a different expression. There are also other carvings in the cave, including animals and flowers. The cave is dark, and the only light comes from the candles that are burning in front of the stone statues.",
+      "Image": "https://legendary.file.core.windows.net/images/23308.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23288"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23328"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23311"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Cavernous Lake",
+      "Description": "You see a large lake that is surrounded by caves. The lake is dark and deep, and the caves are dark and mysterious. There is a sense of foreboding in the air, and you feel like you are being watched.",
+      "Image": "https://legendary.file.core.windows.net/images/23311.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23292"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23332"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23330"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23316"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Sandy Cave-In",
+      "Description": "A sandy cave-in blocks the path ahead, and a strange noise can be heard coming from the cave-in itself. There doesn't seem to be any way around it, so you'll have to go through it.",
+      "Image": "https://legendary.file.core.windows.net/images/23316.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23296"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23335"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23318"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a dark, damp cave with a railway running through it. The cave is lit by occasional lights, and you can see the rails shining in the darkness. There are occasional drips of water from the ceiling, and the sound of the railway is echoing through the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23318.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23298"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23338"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23321"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Underground River",
+      "Description": "You see stalactites and stalagmites lining the cave walls and ceiling. You see a river flowing through the cave. You see bats roosting in the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23321.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23341"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23302"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23300"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23326"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Rock Tailings",
+      "Description": "You see a large, open area with piles of rocks and debris scattered around. The ground is uneven and there are no trees or other vegetation. You can see the entrance to a cave in the distance.",
+      "Image": "https://legendary.file.core.windows.net/images/23326.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23306"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23346"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23328"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Wood Braced Caves",
+      "Description": "Each cave here is supported by a series of wooden beams, which gives the caves their name. Inside the caves, there are a variety of stone statues and murals. The statues and murals depict various scenes from the life of the Gods, as well as scenes from mythology.",
+      "Image": "https://legendary.file.core.windows.net/images/23328.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23308"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23348"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "70"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23330"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Path Through Boulders",
+      "Description": "You see large boulders that have been carved out by years of water erosion. The path leads through the center of the boulders, and there is a small streare of water running through the path. The boulders are covered in moss and lichen, and there are small flowers growing in the cracks. The path is shady and cool, and the air smells damp and earthy.",
+      "Image": "https://legendary.file.core.windows.net/images/23330.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23350"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23311"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23332"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Shifting Stone Passage",
+      "Description": "You see a long, dark passage that is slightly sloped downwards. The floor is covered in a thin layer of water, and the walls are lined with jagged rocks. There is a faint light coming from somewhere ahead, and you can hear the sound of running water.",
+      "Image": "https://legendary.file.core.windows.net/images/23332.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23333"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23311"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23333"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Shifting Stone Passage",
+      "Description": "In the center of the cave is a large, shifting stone that moves around constantly. The stone is surrounded by a deep pool of water. There are also a few small, dark alcoves along the sides of the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23333.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23334"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23332"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "69"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23334"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Shifting Stone Passage",
+      "Description": "A long, dark, and narrow passage made of shifting stones. The stones are constantly moving and shifting, making it difficult to keep balance and avoid getting cut. There are deep gouges and scratches along the walls, likely from creatures that have gotten caught in the shifting stones.",
+      "Image": "https://legendary.file.core.windows.net/images/23334.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23335"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23333"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23335"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Shifting Stone Passage",
+      "Description": "A shifting stone passage is one of the many passages in caves, and it is full of large, sharp rocks. The passage is dark and dangerous, and it is full of deadly creatures.",
+      "Image": "https://legendary.file.core.windows.net/images/23335.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23334"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23316"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23338"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a dark, rocky path lit up by bright lights. The path is bordered by a deep chasm on one side and a sheer cliff on the other. You hear the sound of rushing water and the occasional drip of water from the ceiling. You see small animals scurrying around in the shadows and the occasional bat flying overhead. You feel a cool breeze blowing through the cave and the temperature is comfortable.",
+      "Image": "https://legendary.file.core.windows.net/images/23338.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23318"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23358"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23341"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Underground River",
+      "Description": "The underground river is a dark and mysterious place. The water is flowing swiftly and the walls are covered in rocks and moss. There is a faint light shining from above, but it is not enough to see clearly. The air is damp and musty, and there are strange noises coming from the darkness. You are feeling a little scared, but you keep moving forward.",
+      "Image": "https://legendary.file.core.windows.net/images/23341.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23321"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23361"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23346"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Narrow Exit",
+      "Description": "You see a narrow exit leading out of the caves. There is a small opening at the top of the exit that allows light to enter. You see some stalactites and stalagmites on the walls and floor. There is a small pool of water at the bottom of the exit.",
+      "Image": "https://legendary.file.core.windows.net/images/23346.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23326"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23366"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23367"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23348"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Wood Braced Caves",
+      "Description": "You see stalactites and stalagmites jutting from the floor and ceiling of the cave. There is a streare of water running through the cave, and the walls are covered in moss and algae. You see bats hanging from the ceiling, and there are small creatures scurrying around the cave floor.",
+      "Image": "https://legendary.file.core.windows.net/images/23348.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23328"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23369"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23367"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23350"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Pile of Rock Tailings",
+      "Description": "You see a lot of rocks that have been broken up into small pieces. There are also some larger rocks that have been broken into smaller pieces. The rocks are all different colors, but most of them are a light brown or tan color. There are some green plants growing in between the rocks.",
+      "Image": "https://legendary.file.core.windows.net/images/23350.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23330"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23369"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23358"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a dark, wet cave with a narrow path winding through it. The path is lit by dim lights, and you can hear the sound of water dripping. There are strange rock formations throughout the cave, and you occasionally catch a glimpse of bats or other animals.",
+      "Image": "https://legendary.file.core.windows.net/images/23358.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23338"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23378"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23361"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Underground River",
+      "Description": "You see stalactites and stalagmites reaching up from the ground and down from the ceiling, glittering in the light of your lamp. The river is dark and flowing swiftly. You see rocks and pebbles in the water. You see bats hanging from the ceiling.",
+      "Image": "https://legendary.file.core.windows.net/images/23361.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23341"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23381"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23366"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Turn in the Caverns",
+      "Description": "Dark, dank caverns that twist and turn in a seemingly random fashion. Within the caves are all manner of creatures, from rats and bats to goblins and ogres. The floors are slick with mud and the air is thick with the smell of rotting flesh. It is a dangerous place to be, and only the brave or the foolhardy would dare venture into its depths.",
+      "Image": "https://legendary.file.core.windows.net/images/23366.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23346"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23367"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23367"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Steep Downward Passage",
+      "Description": "You see a steep downward passage with walls covered in intricate cave paintings. The passage is dark and quiet, and the only sound is the sound of your own footsteps echoing in the small space.",
+      "Image": "https://legendary.file.core.windows.net/images/23367.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23366"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23348"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23346"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23369"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Hollowed Out Cave",
+      "Description": "You see a hollowed out cave with intricate paintings on the walls. The paintings depict animals and scenes of daily life. The cave is dark and cool, with a musty smell. There is a small pool of water in the center of the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23369.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23350"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23390"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23348"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23378"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A North-South Cavern Railway",
+      "Description": "You see a railway that goes through a cavern. The cavern is lit up with lights. There is a sign that says \"Carcassa.\"",
+      "Image": "https://legendary.file.core.windows.net/images/23378.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23358"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23398"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23397"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23381"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "An Underground River",
+      "Description": "You are within a network of underground rivers and caves. The caves are the remnants of an old mine that was dug here decades ago, but has long since been abandoned.",
+      "Image": "https://legendary.file.core.windows.net/images/23381.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23361"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23400"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23390"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "There are a lot of caves to see while walking the Southern Cave Track. You see many cave paintings and engravings on the walls. You also see a lot of stalactites and stalagmites.",
+      "Image": "https://legendary.file.core.windows.net/images/23390.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23391"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23369"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "70"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23391"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "You see a large, dark cave with a few small openings at the top. There is a stream running through the cave and small stalactites and stalagmites dot the cave floor. Walking along the cave track, you see bats hanging from the ceiling and hear the sound of running water.",
+      "Image": "https://legendary.file.core.windows.net/images/23391.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23392"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23390"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23412"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23392"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "You see a large, dark cave entrance. Walking in, you see a few small bats hanging from the ceiling. The cave is damp and cool, with a small stream running through it. There are some small fish in the stream. Walking along the cave, you see some stalactites and stalagmites.",
+      "Image": "https://legendary.file.core.windows.net/images/23392.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23412"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23393"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23391"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23393"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "The Southern Cave Track is a walking path that runs through the caves. The path is lined with cave formations, including stalactites and stalagmites. The caves are also home to a variety of animals, including bats and cave fish.",
+      "Image": "https://legendary.file.core.windows.net/images/23393.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23394"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23392"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23412"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23394"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "You see a cave with a hole in the ceiling. Sunlight is shining through the hole, casting a beam of light onto the ground. You see the reflections of the cave walls in the water pooled on the cave floor. You see stalactites and stalagmites reaching up from the floor and ceiling of the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23394.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23395"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23393"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23395"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "The Southern Cave Track in Caracssa is a narrow dirt path that winds through a dense forest. The path is flanked by towering cliffs and is dotted with small caves and rock formations. The air is cool and damp, and the sound of trickling water can be heard in the distance.",
+      "Image": "https://legendary.file.core.windows.net/images/23395.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23396"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23394"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23396"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "You see a dark, winding cave with rocky walls and a dirt floor. The cave is damp and cool, and there is a musty smell. There are small animals scurrying around, and you can hear water dripping.",
+      "Image": "https://legendary.file.core.windows.net/images/23396.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23397"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23395"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23417"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23397"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Southern Cave Track",
+      "Description": "The Southern Cave Track is a path that winds through Carasssa. The caves are full of statues and murals of stone deities, and the air is thick with the smell of incense.",
+      "Image": "https://legendary.file.core.windows.net/images/23397.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23417"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23398"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23396"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23378"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23398"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Westward Track Turn",
+      "Description": "The path ahead is dark and winding, lit only by the occasional torch on the wall. You can hear the drip of water somewhere in the distance, and the air is cool and damp. The walls of the cave are close on either side, and You have to watch your step to avoid tripping on the uneven ground.",
+      "Image": null,
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23378"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23397"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23417"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23400"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Shallows of an Underground River",
+      "Description": "You see large stalactites and stalagmites, as well as other rock formations. You also see a river flowing through the cave.",
+      "Image": "https://legendary.file.core.windows.net/images/23400.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23420"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23381"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23412"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Slippery Cave Passage",
+      "Description": "You see a slippery cave passage that is difficult to traverse. There is a faint light coming from ahead, and you can hear the sound of running water. The walls are covered in a slimy substance that makes it hard to grip, and you have to be careful not to slip and fall.",
+      "Image": "https://legendary.file.core.windows.net/images/23412.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23392"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23393"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23431"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23391"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23417"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Between Two Massive Rocks",
+      "Description": "You see two massive rocks that are very close together. Between them is a small space that You can walk through. The rocks are very tall and You have to duck your head to avoid hitting it on the way through. The space between the rocks is very dark and you can only see a few feet in front of you. There is a small stream of water that runs through the space between the rocks.",
+      "Image": "https://legendary.file.core.windows.net/images/23417.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23397"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23398"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23438"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23396"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23420"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Massive Stone Column",
+      "Description": "As you walk in or along a massive stone column in caves, you see a large, imposing column of stone that seems to go on forever. It is awe-inspiring and makes you feel very small in comparison. You can see other columns and stones around it, but this one is the largest and most impressive.",
+      "Image": "https://legendary.file.core.windows.net/images/23420.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23400"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23441"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23439"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23427"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Chimera Lair",
+      "Description": "You see a dark, dank cave with water dripping from the ceiling. There is a faint light coming from somewhere deep within the cave. You hear the sound of something scurrying around in the darkness. You see a few rats running around on the ground. As you walk deeper into the cave, you see a large, dragon-like creature sleeping in the darkness.",
+      "Image": "https://legendary.file.core.windows.net/images/23427.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23448"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "71"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23431"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "Thermal Springs",
+      "Description": "",
+      "Image": "https://legendary.file.core.windows.net/images/23431.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23412"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23450"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23438"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Hand-Dug Cave Passage",
+      "Description": "",
+      "Image": "https://legendary.file.core.windows.net/images/23438.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23439"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23417"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23439"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Massive Stone Column",
+      "Description": "You see a massive stone column in the caves of Lascaux. The column is so large that it takes up the entire cave. The column is decorated with images of animals and humans. The column is so old that the images are faded.",
+      "Image": "https://legendary.file.core.windows.net/images/23439.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23438"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23420"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23460"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23441"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Massive Stone Column",
+      "Description": "You see a massive stone column in the caves. The column is so big that it takes up the entire space of the cave. There is a faint light coming from the top of the column, and you can see some symbols carved into the stone. You can't read the symbols, but they are very intricate.",
+      "Image": "https://legendary.file.core.windows.net/images/23441.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23460"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23420"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "69"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23448"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Decrepit Passageway",
+      "Description": "You see a dark and narrow passageway that is covered in cobwebs and looks like it hasn't been used in a long time. There is a faint light coming from the end of the passageway, and you can hear the sound of dripping water.",
+      "Image": "https://legendary.file.core.windows.net/images/23448.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23449"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23427"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23449"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "The Smell of Death",
+      "Description": "You see a dark, dank cave with a foul smell emanating from it. You see bones and rotting flesh scattered about, and You see a small pool of water that is murky and gross. You see bats hanging from the ceiling and rats scurrying around. You see spiders and bugs crawling everywhere. Overall, it is a very unpleasant place.",
+      "Image": "https://legendary.file.core.windows.net/images/23449.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23450"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": true,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23448"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23450"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Hot Cavern",
+      "Description": "You see a hot cavern with steare coming from the ground. There are red, orange, and yellow rocks everywhere. There is a small pool of water in the center of the cavern.",
+      "Image": "https://legendary.file.core.windows.net/images/23450.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23449"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": true,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23431"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "73"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "23460"
+      },
+      "AreaId": {
+        "$numberLong": "23085"
+      },
+      "Name": "A Massive Stone Column",
+      "Description": "You see a massive stone column in the cave. The column is so large that it takes up the entire space of the cave. There is a light at the top of the column, which illuminates the column and the cave around it. The column is covered in intricate carvings and paintings. The column is surrounded by other columns, which are also covered in carvings and paintings.",
+      "Image": "https://legendary.file.core.windows.net/images/23460.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23441"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "23085"
+          },
+          "ToRoom": {
+            "$numberLong": "23439"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    }
+  ]
+}

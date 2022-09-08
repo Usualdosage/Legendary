@@ -1,0 +1,3233 @@
+﻿{
+  "_id": {
+    "$numberLong": "7144"
+  },
+  "AreaId": {
+    "$numberLong": "7144"
+  },
+  "Name": "The Elium Forest",
+  "Author": "Crypticant",
+  "Description": "The Elium Forest, south of Griffonshire, is a beautful wooded, and mountainous region.",
+  "Rooms": [
+    {
+      "RoomId": {
+        "$numberLong": "7213"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Top of the Plateau",
+      "Description": "You stand atop a great plateau. To your north, a large city rises up in the distance. Southward, descending down the mountain, you can see a dense forest.",
+      "Image": "https://legendary.file.core.windows.net/images/7213.jpg?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7233"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7233"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A High Plateau",
+      "Description": "You are midway up a great plateau on a treacherous trail. The rocks slide under your feet. Around you, the land rises up from the forest. You can see the top of the plateau to your north. South leads deeper into the forest.",
+      "Image": "https://legendary.file.core.windows.net/images/7233.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7253"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7213"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7253"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Into Elium",
+      "Description": "You are descending a great plateau into the forest of Elium. The trees rise up below you, the forest welcoming you in.",
+      "Image": "https://legendary.file.core.windows.net/images/7253.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7233"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7273"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7233"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7254"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7254"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Sewer Pipe Outlet",
+      "Description": "You see a large, dark pipe emerging from the ground. The pipe is covered in grime and dirt, and there is a foul smell emanating from it. You can see rats scurrying around inside the pipe, and there is a large amount of garbage and debris strewn around the area.",
+      "Image": "https://legendary.file.core.windows.net/images/7254.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7253"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "18443"
+          },
+          "ToRoom": {
+            "$numberLong": "18834"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "grate"
+        }
+      ],
+      "Flags": null,
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7269"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Copse of Trees",
+      "Description": "As you walk through the copse of trees, you see the light shining through the leaves and dappling the forest floor. The trees provide a canopy of protection from the sun, and the air is cooler and more moist than in the open. You see birds flitting from tree to tree, and small animals scurrying about in the underbrush. The forest is alive with the sounds of nature, and you feel at peace here.",
+      "Image": "https://legendary.file.core.windows.net/images/7269.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7289"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7270"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7270"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Narrow Pathway",
+      "Description": "You see a narrow pathway through the mountains. The pathway is winding and has many turns. You see rocks and trees along the pathway. You also see a few people walking along the pathway.",
+      "Image": "https://legendary.file.core.windows.net/images/7270.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7271"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7269"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7271"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Above the Forest",
+      "Description": "You see a dense forest, with trees that are very tall. There is a path that leads through the forest, and it is lined with small, white flowers. Above the forest, you see the mountains. They are huge and covered in snow.",
+      "Image": "https://legendary.file.core.windows.net/images/7271.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7291"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7270"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7273"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Forest Entrance",
+      "Description": "You stand before a small stone gate leading into Elium. To your north, the mountains rise up to a great plateau. To your south, the thick, verdant forest of Elium awaits.",
+      "Image": "https://legendary.file.core.windows.net/images/7273.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7253"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7293"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7289"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Mountain Ridge",
+      "Description": "You see a beautiful mountain ridge with snow-capped peaks. The sky is blue and the sun is shining. There is a stream flowing through the valley below. You see some trees and bushes growing on the ridge. You also see some birds flying in the sky.",
+      "Image": "https://legendary.file.core.windows.net/images/7289.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7269"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7309"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7291"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Rocky Path",
+      "Description": "The path is rocky and uneven, and there are roots and stones sticking up out of the ground. The trees are close together, and their branches hang down low over the path. There is moss growing on the rocks and tree trunks. The forest floor is covered in fallen leaves. The air is cool and damp.",
+      "Image": "https://legendary.file.core.windows.net/images/7291.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7271"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7311"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7293"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Forest Path",
+      "Description": "You are walking down a reasonably well traveled path in Elium forest that leads north and south.",
+      "Image": "https://legendary.file.core.windows.net/images/7293.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7273"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7313"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7298"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Temple of Merimor",
+      "Description": "You are standing before a great temple in the forest, to Merimor. It is a peaceful place, with the sounds of birds singing. There is a great sense of calm and spirituality here.",
+      "Image": "https://legendary.file.core.windows.net/images/7298.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7317"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [
+        {
+          "$numberLong": "12"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "10"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7309"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Rocky Path",
+      "Description": "You are on a rocky path ascending into the mountains west of Elium. To your south, you can see the path beginning to level out.",
+      "Image": "https://legendary.file.core.windows.net/images/7309.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7289"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7329"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7311"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Atop a Small Bluff",
+      "Description": "The scene is that of a small bluff in the mountains with a few trees and some shrubs. There is a path leading up to the bluff, and the view from atop the bluff is of the mountains and valleys below.",
+      "Image": "https://legendary.file.core.windows.net/images/7311.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7291"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7331"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7312"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7312"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Rocky Hill",
+      "Description": "You see a rocky hill with some trees on it. There is a path leading up the hill. The sky is blue and there are some clouds.",
+      "Image": "https://legendary.file.core.windows.net/images/7312.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7313"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7311"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7313"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Forest Glade",
+      "Description": "You are standing in the center of a beautiful forest glade. Light filters in lazily through the trees, giving the whole area a surreal, yet calm feeling.",
+      "Image": "https://legendary.file.core.windows.net/images/7313.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7293"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7333"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7312"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7315"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Northern Fork",
+      "Description": "You see a dense forest with a narrow path winding through it. The trees are tall and provide shade from the sun. The ground is covered in leaves and there are occasional roots and rocks sticking up. You hear the sound of birds and insects, and the occasional sound of a car in the distance. The air is fresh and cool.",
+      "Image": "https://legendary.file.core.windows.net/images/7315.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7335"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7316"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "48"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7316"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "In Deep Forest",
+      "Description": "You see a variety of trees including evergreens, deciduous trees, and conifers. The forest floor is covered in a thick layer of leaves, twigs, and other plant debris. You also see a variety of animals including squirrels, birds, and insects.",
+      "Image": "https://legendary.file.core.windows.net/images/7316.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7317"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7315"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7317"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Sounds of Civilization",
+      "Description": "You see people walking and talking, children playing and laughing, birds singing in the trees, and squirrels running around. The forest is a peaceful and calming place, and it's easy to forget the hustle and bustle of everyday life when you're surrounded by nature.",
+      "Image": "https://legendary.file.core.windows.net/images/7317.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7298"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7337"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7316"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7327"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "In Midair",
+      "Description": "You are in midair! The waterfall above you cascades downward into a crystal clear pool below.",
+      "Image": "https://legendary.file.core.windows.net/images/7327.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7328"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7347"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 6,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7328"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Shimmering Waterfall",
+      "Description": "You see a shimmering waterfall in the forest. The waterfall is surrounded by trees and plants. The water is clear and cool. The air is fresh and clean. You feel peaceful and calm.",
+      "Image": "https://legendary.file.core.windows.net/images/7328.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7329"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7327"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7329"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Near Roaring Water",
+      "Description": "You see a beautiful landscape with mountains in the distance. The sky is a deep blue, and the sun is shining. The air is crisp and clean. You see trees and bushes, and the ground is covered in green grass. You hear the sound of birds chirping and the wind blowing through the trees.",
+      "Image": "https://legendary.file.core.windows.net/images/7329.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7309"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7349"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7328"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7331"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Foothills",
+      "Description": "You see a lot of trees, some houses in the distance, and a river flowing through the middle of it all. The scenery is beautiful and calming, and You can hear the birds chirping in the trees. It's a perfect place to take a nature walk or just relax and enjoy the view.",
+      "Image": "https://legendary.file.core.windows.net/images/7331.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7311"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7351"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "13"
+        },
+        {
+          "$numberLong": "13"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7333"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Forest Path",
+      "Description": "You are walking down a reasonably well traveled path in Elium forest that leads north and south.",
+      "Image": "https://legendary.file.core.windows.net/images/7333.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7313"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7353"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "11"
+        },
+        {
+          "$numberLong": "11"
+        },
+        {
+          "$numberLong": "48"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7335"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Northern Fork",
+      "Description": "You see a variety of trees including maples, oaks, and pines. You also see a lot of underbrush including ferns, shrubs, and moss. The ground is uneven and there are roots and rocks poking out in places. The forested wetland is a peaceful place with the sound of birds chirping and the occasional squirrel running up a tree.",
+      "Image": "https://legendary.file.core.windows.net/images/7335.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7315"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7355"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7337"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Small Village",
+      "Description": "You see a small village in the city. There are houses and shops lining the streets. There are people walking and talking. The village seems peaceful and quaint.",
+      "Image": "https://legendary.file.core.windows.net/images/7337.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7317"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7357"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7347"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Deep Pool",
+      "Description": "You stand before a deep, crystal clear pool of water. Ribbons of waterfall descend from the mountain above, creating quite a din.",
+      "Image": "https://legendary.file.core.windows.net/images/7347.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7327"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 4,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "12"
+        },
+        {
+          "$numberLong": "12"
+        },
+        {
+          "$numberLong": "12"
+        }
+      ],
+      "Video": "https://legendary.file.core.windows.net/videos/7347.mp4?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "WatchKeyword": "waterfall"
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7349"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Rocky Path",
+      "Description": "You are on a rocky path ascending into the mountains west of Elium. To your north, you can see the path beginning to level out.",
+      "Image": "https://legendary.file.core.windows.net/images/7309.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7329"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7369"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "48"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7351"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "An Aspen Grove",
+      "Description": "While walking an aspen grove in the forest, you see tall trees with green leaves and branches. The ground is covered in brown leaves and twigs. You see a few animals darting around, including a squirrel and a bird. The air smells fresh and clean, and the sun is shining through the trees.",
+      "Image": "https://legendary.file.core.windows.net/images/7351.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7331"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7371"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "11"
+        },
+        {
+          "$numberLong": "11"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7353"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Turn in the Forest",
+      "Description": "You are at a turn in the forest. To the south of you, a large hollow tree looms. East, you see a narrow bridge.",
+      "Image": "https://legendary.file.core.windows.net/images/7353.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7333"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7373"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "tree"
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7354"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7354"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Narrow Bridge",
+      "Description": "You stand on a narrow bridge crossing a quickly moving creek. The bridge is in good repair, and appears well traveled.",
+      "Image": "https://legendary.file.core.windows.net/images/7354.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7355"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7353"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7355"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Fork in the Path",
+      "Description": "You stand at a fork in the middle of the forest. The pathways lead north and south.",
+      "Image": "https://legendary.file.core.windows.net/images/7355.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7335"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7375"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7354"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7357"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Village Well",
+      "Description": "You see people walking and running around the well, enjoying the sunny day. The well is surrounded by a few trees and benches, and there is a fountain in the center. The water in the fountain sparkles in the sunlight, and the birds are singing in the trees. The air is fresh and clean, and the sun is warm on your skin.",
+      "Image": "https://legendary.file.core.windows.net/images/7357.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7337"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7377"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7358"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7358"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "McGruff's Sundries",
+      "Description": "You stand inside a curiously well-lit shop. It is very tidy, and there are a number of shelves containing various sundries for purchase.",
+      "Image": "https://legendary.file.core.windows.net/images/7358.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7357"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "7"
+        },
+        {
+          "$numberLong": "8"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "9"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7369"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Scenic Overlook",
+      "Description": "While walking along a scenic overlook in the mountains, you can see a beautiful landscape with mountains in the distance. The sky is typically blue and there are often trees and other plants nearby. The scenery is peaceful and calming, making it a great place to take a break from everyday life.",
+      "Image": "https://legendary.file.core.windows.net/images/7369.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7349"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7370"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "48"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7370"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Sharp Incline",
+      "Description": "You see a winding path ahead of you, leading upwards into the mountains. The path is lined with trees and bushes, and there are rocks and boulders scattered around. The air is fresh and clean, and the sun is shining.",
+      "Image": "https://legendary.file.core.windows.net/images/7370.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7371"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7369"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7371"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Rising Hills",
+      "Description": "You see a green hill with a path winding up it. There are trees and grass along the path, and at the top of the hill is a small wooden building. You can see the roofs of houses in the distance, and the sky is blue.",
+      "Image": "https://legendary.file.core.windows.net/images/7371.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7351"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7391"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7370"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "13"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7373"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Inside a Hollow Tree",
+      "Description": "You are inside of a massive hollow tree in the center of the Elium forest. Light filters in through gaps in the tree above you.",
+      "Image": "https://legendary.file.core.windows.net/images/7373.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7353"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "tree"
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 9,
+      "ItemResets": [
+        {
+          "$numberLong": "9"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7375"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Southern Fork",
+      "Description": "You see a beautiful river flowing through a dense forest. The river is teeming with fish and the forest is full of wildlife. You see a beautiful waterfall and a majestic mountain in the distance. You are surrounded by peace and tranquility.",
+      "Image": "https://legendary.file.core.windows.net/images/7375.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7355"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7395"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7377"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Small Village",
+      "Description": "You see a small village in the city. You see people walking around, talking to each other, and going about their day. You see houses and buildings, and you see a few horses traveling by. You see trees and flowers, and you see the sun shining down on everything. It's a beautiful day.",
+      "Image": "https://legendary.file.core.windows.net/images/7377.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7357"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7397"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7391"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Southern Forest",
+      "Description": "The forest floor is covered in a thick layer of leaves and dead branches. The trees are tall and close together, their leaves rustling in the wind. The light is dim, and the air is cool and moist. You can hear the sound of birds and insects, and the occasional sound of a animal moving through the underbrush.",
+      "Image": "https://legendary.file.core.windows.net/images/7391.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7371"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7411"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "11"
+        },
+        {
+          "$numberLong": "11"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7395"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Southern Fork",
+      "Description": "You see a beautiful river flowing through a dense forest. The river is teeming with fish and the forest is full of wildlife. You see a beautiful waterfall and a majestic mountain in the distance. You are surrounded by peace and tranquility.",
+      "Image": "https://legendary.file.core.windows.net/images/7395.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7375"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7415"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7396"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7396"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Grassy Meadow",
+      "Description": "You see a sea of grass, waving in the wind. Above, a bright blue sky stretches out endlessly. In the distance, You see some hills, and beyond that, mountains. The grass is interspersed with wildflowers, adding pops of color to the sea of green. The air is fresh and clean, and the sun is shining.",
+      "Image": "https://legendary.file.core.windows.net/images/7396.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7397"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7395"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 3,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "48"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7397"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "A Farm Field",
+      "Description": "You see a farm field with grasses and other plants growing in it. The field is bordered by a fence. There is a barn in the distance. You see cows grazing in the field.",
+      "Image": "https://legendary.file.core.windows.net/images/7397.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7377"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7396"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 3,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7411"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Drier Ground",
+      "Description": "You see a lot of trees and greenery while walking in the forest. The ground is dry and there are a few fallen leaves and branches around. The air smells fresh and there is a slight breeze blowing. You can hear the birds chirping and the leaves rustling in the wind. Overall, it's a peaceful and calming experience.",
+      "Image": "https://legendary.file.core.windows.net/images/7411.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7391"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7431"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7415"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Southern Forest",
+      "Description": "You see trees of all different sizes and shapes. You see leaves of all different colors. You see branches reaching out in all different directions. You see the sunlight shining through the trees. You see the shadows of the trees on the ground. You see the forest Biome",
+      "Image": "https://legendary.file.core.windows.net/images/7415.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7395"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7435"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "11"
+        },
+        {
+          "$numberLong": "11"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7431"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Thicket",
+      "Description": "You see a variety of plant life including trees, bushes, and grasses. The ground is wet and there is a slight smell of rotting vegetation. You hear the sound of insects and birds. The air is warm and humid.",
+      "Image": "https://legendary.file.core.windows.net/images/7431.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7411"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7432"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7450"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 5,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7432"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Drier Ground",
+      "Description": "You see tall trees, green leaves, and a forest floor covered in a layer of soft, brown leaves. There is a path through the forest, and sunlight shining through the trees. You hear the sound of birds singing and the wind rustling through the leaves.",
+      "Image": "https://legendary.file.core.windows.net/images/7432.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7452"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7433"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7431"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7433"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Within the Scrub",
+      "Description": "You see trees, bushes, and leaves. You also see a path.",
+      "Image": "https://legendary.file.core.windows.net/images/7433.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7434"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7432"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7434"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Within the Scrub",
+      "Description": "You see trees, bushes, and leaves. The ground is covered in a layer of dead leaves and twigs. There is a path through the scrub, and the sun is shining through the trees.",
+      "Image": "https://legendary.file.core.windows.net/images/7434.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7435"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7433"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7435"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Within the Scrub",
+      "Description": "You see a lot of trees and bushes. There are also some rocks and logs. The ground is covered in leaves and there is a lot of greenery. You see some animals too, like squirrels and birds. The air smells fresh and there is a lot of sunlight.",
+      "Image": "https://legendary.file.core.windows.net/images/7435.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7415"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7455"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7434"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "13"
+        },
+        {
+          "$numberLong": "48"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7450"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Boggy Marsh",
+      "Description": "You are in a thick marsh. Ancient trees rise up from the murky waters around you, obscuring much of the light coming in from above. The smell of rot and decay surrounds you.",
+      "Image": "https://legendary.file.core.windows.net/images/7450.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7431"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 5,
+      "ItemResets": [
+        {
+          "$numberLong": "26"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7452"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Deeper Down the Forest",
+      "Description": "You see a dirt path winding through a dense forest. The trees are tall and close together, blocking out most of the sunlight. The ground is covered in leaves and there is the occasional small animal darting through the underbrush. The air is cool and fresh, and the forest is eerily quiet.",
+      "Image": "https://legendary.file.core.windows.net/images/7452.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7432"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7472"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "13"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7455"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "Deeper Down the Forest",
+      "Description": "You see trees of various sizes and types, including evergreens and deciduous trees. There is also a variety of undergrowth, including ferns, mosses, and shrubs. The forest floor is covered in a layer of leaves, twigs, and other organic matter. In the distance, You can hear the sound of birds and other animals.",
+      "Image": "https://legendary.file.core.windows.net/images/7455.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7435"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7475"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7472"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Lowlands",
+      "Description": "You see a broken down log cabin in the distance with a small fire pit in front of it. There is a small stream running through the area and you see a few animals including a deer and a rabbit. The area is mostly forest with some grassy areas.",
+      "Image": "https://legendary.file.core.windows.net/images/7472.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7452"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7473"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7473"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Lowlands",
+      "Description": "You see a vast array of trees, including evergreens, deciduous trees, and conifers. The forest floor is blanketed with a thick layer of fallen leaves, twigs, and other debris. You occasionally see a small animal darting through the underbrush. The air is cool and damp, and the light filtered through the trees creates a dappled effect.",
+      "Image": "https://legendary.file.core.windows.net/images/7473.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7474"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7472"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "13"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7474"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Lowlands",
+      "Description": "You see trees and bushes and leaves and branches and trunks and moss and earth. You see sunlight filtering through the leaves and shining on the ground. You see insects crawling on the ground and flying through the air. You see birds perching in the trees and singing. You see squirrels climbing the trees and chasing each other.",
+      "Image": "https://legendary.file.core.windows.net/images/7474.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7475"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7473"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7475"
+      },
+      "AreaId": {
+        "$numberLong": "7144"
+      },
+      "Name": "The Lowlands",
+      "Description": "The lowlands in the forest is a beautiful place to walk with tall trees, a flowing river, and green grass. The air is fresh and clean, and the scenery is peaceful and calming.",
+      "Image": "https://legendary.file.core.windows.net/images/7475.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7455"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7474"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "13"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    }
+  ]
+}

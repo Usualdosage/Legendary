@@ -1,0 +1,4385 @@
+﻿{
+  "_id": {
+    "$numberLong": "24609"
+  },
+  "AreaId": {
+    "$numberLong": "24609"
+  },
+  "Name": "Fionn Abbey",
+  "Author": "Crypticant",
+  "Description": "Fionn Abbey is an abandoned abbey that overlooks the coast just north of Griffonshire.",
+  "Rooms": [
+    {
+      "RoomId": {
+        "$numberLong": "24610"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Stone Landing",
+      "Description": "You see the stone landing and the beach. Hundreds of feet above you stands Fionn Abbey. Fanning out to your east and west is the beach along the coast of Craggy Bay.",
+      "Image": "https://legendary.file.core.windows.net/images/24610.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24630"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "59160"
+          },
+          "ToRoom": {
+            "$numberLong": "59371"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": null,
+      "Terrain": 7,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24630"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Stone Stairs to the Beach",
+      "Description": "You see a beautiful natural landscape with trees, bushes, and flowers. The ground is covered in rocks and dirt, and there is a small streare flowing through the area. You see some birds flying overhead and hear the sound of the waves crashing against the shore.",
+      "Image": "https://legendary.file.core.windows.net/images/24630.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24610"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24650"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": null,
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24650"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Stone Stairs to the Beach",
+      "Description": "You see a set of stone stairs leading down to a beach area on Craggy Bay. There are trees and bushes around the area, and the ocean is visible through the trees. There is a small dock below, and a few small boats are parked on the dock. The water is calm and there are some seagulls swimming near the shore.",
+      "Image": "https://legendary.file.core.windows.net/images/24650.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24630"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24671"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": null,
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24659"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Within a Circular Stone Staircase",
+      "Description": "You see a circular staircase made of stone. It leads into darkness below.",
+      "Image": "https://legendary.file.core.windows.net/images/24659.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24822"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24855"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1,
+        3
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24671"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Flight of Stone Stairs",
+      "Description": "You see a flight of stone stairs leading up a hill. The stairs are made of large, rough-hewn stones, and they are uneven and moss-covered. They wind their way up the hill, disappearing into the trees at the top. The forest surrounds the stairs, and the air is cool and damp. There is a feeling of age and mystery about the place.",
+      "Image": "https://legendary.file.core.windows.net/images/24671.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24692"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24650"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": null,
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24685"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Wine Cellar",
+      "Description": "You see walls lined with shelves of wine bottles, soyou with labels and soyou without. The shelves are made of wood, and the bottles are of different shapes and sizes. There is a ladder in the corner, and a small table with two chairs. The table has a candle on it, and there is a bottle of wine and two glasses on the table. The room is dimly lit, and there is a musty smell in the air.",
+      "Image": "https://legendary.file.core.windows.net/images/24685.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24705"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "63"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24692"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Beautiful Overlook",
+      "Description": "The overlook is situated on top of a hill, providing a stunning view of the surrounding area. There is a paved path leading up to the overlook, lined with benches and well-manicured landscaping. At the top of the hill, there is a large stone terrace with several benches and a railing, providing a perfect spot to take in the view. The scenery is beautiful, with rolling hills, valleys, and forests stretching out in every direction. The air is fresh and clean, and the sun is shining.",
+      "Image": "https://legendary.file.core.windows.net/images/24692.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24712"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24671"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": null,
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24699"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Within a Circular Stone Staircase",
+      "Description": "You see a large, circular staircase made of stone. It leads into darkness going both directions.",
+      "Image": "https://legendary.file.core.windows.net/images/24699.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24736"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24743"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1,
+        3
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24702"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Dusty Hallway",
+      "Description": "You see a long, dusty hallway with peeling wallpaper and chipped paint. The floor is covered in a thick layer of dust and there is a musty smell in the air. The hallway is dark and there are no windows. There are some old, battered chairs and a table at the end of the hallway.",
+      "Image": "https://legendary.file.core.windows.net/images/24702.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24722"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24703"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24703"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Dusty Hallway",
+      "Description": "You see a long and dusty hallway that seems to be abandoned. There is a layer of dust on the floor and the walls are covered in cobwebs. ",
+      "Image": "https://legendary.file.core.windows.net/images/24703.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24704"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24702"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24704"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Dusty Hallway",
+      "Description": "You see a long, narrow hallway that is coated in a thick layer of dust. The walls are lined with old, peeling wallpaper and the floor is covered in a thin layer of dirt. There are a few cobwebs in the corners.",
+      "Image": "https://legendary.file.core.windows.net/images/24704.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24705"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24703"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24705"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Dusty Hallway",
+      "Description": "You see a long, dusty hallway with peeling wallpaper. There are windows at the end of the hallway, but they are covered with grime. The floor is littered with trash and there is a strong smell of urine.",
+      "Image": "https://legendary.file.core.windows.net/images/24705.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24685"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24704"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1,
+        3
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "54"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24711"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "You see a long, narrow hallway with a smooth stone floor. The walls are made of rough stone, and there are no windows. torches provide the only light. at the end of the hallway, You see a set of stairs leading up to a door.",
+      "Image": "https://legendary.file.core.windows.net/images/24711.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24731"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24712"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24712"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "The Abbey is in ruins, with only a few walls still standing. There is overgrown vegetation everywhere, and the ground is covered in debris. You can see the remains of a fireplace, and what may have been a window. There is a small door in one of the walls.",
+      "Image": "https://legendary.file.core.windows.net/images/24712.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24732"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24713"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24711"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24692"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "61"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24713"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "The Fionn Abbey was once a large, beautiful building with many intricate details. The upper floor of the Abbey is well-lit and there are many stained glass windows. The floors are made of stone and there are many tapestries on the walls. The ceilings are very high and there are many statues and paintings.",
+      "Image": "https://legendary.file.core.windows.net/images/24713.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24733"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24712"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24715"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "The cellar of Fionn Abbey is a dark and musty place, with a low ceiling and walls lined with shelves of old books. It smells of dust and age, and the air is thick with the sense of history. Walking through the Abbey, one can almost feel the weight of the years pressing down.",
+      "Image": "https://legendary.file.core.windows.net/images/24715.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24735"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24716"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "62"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24716"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "The cellar of Fionn Abbey is a dark and musty place, with stone walls and a dirt floor. There are a few old barrels and crates scattered around, and a small window high up on one wall. It's not a very inviting place, but there's something strangely peaceful about it.",
+      "Image": "https://legendary.file.core.windows.net/images/24716.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24736"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "iron gate"
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24717"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24715"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24717"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "The cellar of Fionn Abbey is a small series of dark rooms. There is a small window located at the top of the room, which provides a limited amount of light. The room is filled with barrels and crates, and there is a small staircase leading down to a lower level.",
+      "Image": "https://legendary.file.core.windows.net/images/24717.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24737"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24716"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24722"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Turn in the Hallway",
+      "Description": "You see a long, narrow hallway with high ceilings. The walls are decorated with murals and the floor is lined with a red carpet. There are several doors along the hallway, and at the end of the hallway is a window.",
+      "Image": "https://legendary.file.core.windows.net/images/24722.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24702"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24742"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24731"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "You see a large room with a high ceiling. There is a fireplace on one side of the room and a window on the other. There are several chairs and a table in the middle of the room. There is a door on one side of the room that leads to a staircase.",
+      "Image": "https://legendary.file.core.windows.net/images/24731.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24711"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24751"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24732"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Circular Stone Stairwell",
+      "Description": "You see a large, circular stone staircase that winds its way up the side of a tall building. The stairs are well-worn and smooth, with a handrail on one side. ",
+      "Image": "https://legendary.file.core.windows.net/images/24732.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24712"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24739"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24733"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "The upper floor of Fionn Abbey is a beautiful, peaceful place. The stone walls and floors are cool and the air is fresh and clean. There are many windows which let in natural light, and the view from the top of the Abbey is stunning.",
+      "Image": "https://legendary.file.core.windows.net/images/24733.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24713"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24753"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24735"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "You see a dark and musty cellar with stone walls and a dirt floor. There are barrels and crates stacked up against the walls, and a few rats scurry around in the corners. A small window lets in a little bit of light, but it's not enough to see much.",
+      "Image": "https://legendary.file.core.windows.net/images/24735.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24715"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24755"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "53"
+        },
+        {
+          "$numberLong": "53"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24736"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Circular Stone Stairwell",
+      "Description": "You see a circular stone stairwell in the city. The stairwell is made of stone and is surrounded by a metal railing. There are stairs leading up and down the stairwell. The stairs are made of stone and are worn from use. There is a handrail on the side of the stairwell.",
+      "Image": "https://legendary.file.core.windows.net/images/24736.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24716"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "iron gate"
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24739"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24699"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24737"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "The cellar of Fionn Abbey is a small series of dark rooms. There is a small window located at the top of the room, which provides a limited amount of light. The room is filled with barrels and crates, and there is a small staircase leading down to a lower level.",
+      "Image": "https://legendary.file.core.windows.net/images/24737.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24717"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24757"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24739"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Within a Circular Stone Staircase",
+      "Description": "You see a circular staircase made of stone. The staircase is surrounded by a metal railing. It leads into darkness going both directions.",
+      "Image": "https://legendary.file.core.windows.net/images/24739.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24732"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24736"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1,
+        3
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24742"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Dark Hallway",
+      "Description": "You see a dark hallway with broken furniture against the walls. You are in the elbow of the hall, with another dark hall leading off to the east, and one leading south.",
+      "Image": "https://legendary.file.core.windows.net/images/24742.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24722"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24762"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24743"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "reinforced oak door"
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "53"
+        },
+        {
+          "$numberLong": "53"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24743"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Base of a Circular Stone Staircase",
+      "Description": "You see a large stone staircase that is circular in shape. The stairs are made of stone and are very steep. There is a large stone wall that surrounds the staircase. The wall is made of stone and is very tall. There are trees and bushes growing around the staircase. The staircase is located in the city of Machu Picchu.",
+      "Image": "https://legendary.file.core.windows.net/images/24743.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24742"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "reinforced oak door"
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24699"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24751"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "You see a beautiful, old cathedral with stained glass windows and high ceilings. The floor is made of stone and there is a large, wooden door at the entrance. The atmosphere is calm and serene.",
+      "Image": "https://legendary.file.core.windows.net/images/24751.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24731"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24752"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24752"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Atrium",
+      "Description": "You are standing within the Abbey Atrium inside Fionn Abbey. You see a beautiful, ornate building with many intricate details. Nearby is a busy road with people walking and horses passing by.",
+      "Image": "https://legendary.file.core.windows.net/images/24752.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24753"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24751"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24772"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "gateway"
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24753"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Upper Floor of Fionn Abbey",
+      "Description": "You see a large, open space with a high ceiling. There are several arches along the sides of the room, and a large window at the far end. The floor is made of stone, and there is a fireplace in one corner. There are several pieces of furniture in the room, including a large table and chairs. The walls are decorated with tapestries and paintings.",
+      "Image": "https://legendary.file.core.windows.net/images/24753.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24733"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24752"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24755"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "There is a musty smell in the air, and the only light comes from a small window near the ceiling. The floor is made of rock, and the walls are made of stone. There are no furnishings in the room, and the only thing that can be seen is a small door in the far corner.",
+      "Image": "https://legendary.file.core.windows.net/images/24755.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24735"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24756"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "53"
+        },
+        {
+          "$numberLong": "53"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24756"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Cellar of Fionn Abbey",
+      "Description": "The cellar of Fionn Abbey is a small series of dark rooms. There is a small window located at the top of the room, which provides a limited amount of light. The room is filled with barrels and crates, and there is a small staircase leading down to a lower level.",
+      "Image": "https://legendary.file.core.windows.net/images/24756.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24757"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24755"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24757"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Wall of Rubble",
+      "Description": "You see a wall of rubble that is about 10 feet high. It is made up of concrete and brick. There is a lot of debris around it.",
+      "Image": "https://legendary.file.core.windows.net/images/24757.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24737"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24756"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "8596"
+          },
+          "ToRoom": {
+            "$numberLong": "8613"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": true,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "rubble"
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24762"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Damp, Dark Passage",
+      "Description": "You see a dark, damp passage that is probably full of rats and other vermin. The passage is probably full of trash and debris, and there is probably standing water in soyou parts of it. The passage is probably also full of mold and mildew, and it smells bad.",
+      "Image": "https://legendary.file.core.windows.net/images/24762.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24742"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24782"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24772"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Entranceway",
+      "Description": "You see a busy street with horses and carriages driving by. There are people walking on the sidewalk and crossing the street. You see a tall building with a clock on it. You see a church with a big door and a small door. You see a sign that says \"The Abbey Entranceway.\"",
+      "Image": "https://legendary.file.core.windows.net/images/24772.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24752"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "gateway"
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "8596"
+          },
+          "ToRoom": {
+            "$numberLong": "8611"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24782"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Turn in the Hallway",
+      "Description": "You see a long, narrow hallway with a turn in the middle. The walls are covered in a variety of colorful tiles, and the floor is made of black and white checkerboard tiles. There are a few doors along the hallway, but they are all closed.",
+      "Image": "https://legendary.file.core.windows.net/images/24782.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24762"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24783"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24783"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Damp, Dark Passage",
+      "Description": "You see a dimly lit passage with wet, sliyour walls. There are occasional rats and cockroaches scurrying around, and the air is thick with the stench of garbage. The passage is narrow and cluttered with all sorts of trash, making it difficult to walk through.",
+      "Image": "https://legendary.file.core.windows.net/images/24783.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24784"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24782"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24784"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Damp, Dark Passage",
+      "Description": "You see a dark, wet, and narrow path ahead of you with tall buildings on either side. You can hear the sound of rats scurrying around in the darkness. As you walk forward, you can see puddles of water on the ground and trash strewn about. The air is thick and moist, and you can smell the stench of garbage and sewage.",
+      "Image": "https://legendary.file.core.windows.net/images/24784.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24785"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24783"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24785"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Before a Stone Archway",
+      "Description": "You see a tall stone archway. It is made of large stones that are fit together perfectly. There is a small opening at the top of the archway that you can see the the other side through.",
+      "Image": "https://legendary.file.core.windows.net/images/24785.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24805"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24784"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24805"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "An Ornate Passageway",
+      "Description": "You see a beautiful, ornate passageway that is decorated with colorful tiles and intricate designs. The passageway leads further into the darkness.",
+      "Image": "https://legendary.file.core.windows.net/images/24805.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24785"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24825"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "54"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24818"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Large Open Stone Room",
+      "Description": "The room is filled with large stones that have been cut and shaped into different forms. Some of the stones are arranged in patterns on the floor, while others are placed in random positions. Your light casts shadows on the stones that dance eerily.",
+      "Image": "https://legendary.file.core.windows.net/images/24818.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24838"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24819"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24839"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "14"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24819"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Large Open Stone Room",
+      "Description": "The room is filled with large stones that have been cut and shaped into different forms. Some of the stones are arranged in patterns on the floor, while others are placed in random positions. Your light casts shadows on the stones that dance eerily.",
+      "Image": "https://legendary.file.core.windows.net/images/24819.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24839"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24818"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24838"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24822"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Before a Dark Stone Staircase",
+      "Description": "You see a dark stone staircase leading down into the bowels of the Abbey. The stairs are worn and there is a feeling of age and history about them.",
+      "Image": "https://legendary.file.core.windows.net/images/24822.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24823"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24659"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24823"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Low Stone Hallway",
+      "Description": "You see a low stone hallway with a high ceiling. The hallway is long and narrow, and there are many doorways along it. The doors are all closed, and you cannot see what is behind them. The floor is made of stone, and the walls are made of stone. There is a faint light coming from somewhere, and you can hear a faint noise coming from somewhere.",
+      "Image": "https://legendary.file.core.windows.net/images/24823.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24824"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24822"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24824"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Low Stone Hallway",
+      "Description": "You see a low stone hallway that is slightly curved. There is a door at the end of the hallway, and both the walls and the floor are made of stone.",
+      "Image": "https://legendary.file.core.windows.net/images/24824.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24825"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24823"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24825"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Low Stone Hallway",
+      "Description": "You see a long, low stone hallway. The walls are made of stone, and the floor is made of stone. There are no windows, and the only light comes from a few small candles. The hallway is very quiet, and there is no one around.",
+      "Image": "https://legendary.file.core.windows.net/images/24825.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24805"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24824"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24835"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "An Embalming Room",
+      "Description": "You see a room with a table in the center, and a body on the table. There are tools around the room, and a sink in the corner. The body is covered in a white sheet, and there is a strange smell in the room.",
+      "Image": "https://legendary.file.core.windows.net/images/24835.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24855"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "iron door"
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "56"
+        },
+        {
+          "$numberLong": "56"
+        },
+        {
+          "$numberLong": "54"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24838"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Large Open Stone Room",
+      "Description": "The room is filled with large stones that have been cut and shaped into different forms. Some of the stones are arranged in patterns on the floor, while others are placed in random positions. Your light casts shadows on the stones that dance eerily.",
+      "Image": "https://legendary.file.core.windows.net/images/24838.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24818"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24839"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24819"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24857"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "55"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24839"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Large Open Stone Room",
+      "Description": "The room is filled with large stones that have been cut and shaped into different forms. Some of the stones are arranged in patterns on the floor, while others are placed in random positions. Your light casts shadows on the stones that dance eerily.",
+      "Image": "https://legendary.file.core.windows.net/images/24839.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24819"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24838"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24860"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24818"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "59"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24853"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Dusty Kitchen",
+      "Description": "You see a kitchen that is very dusty and dirty. The countertops are covered in crumbs and there is a layer of dust on everything. The floor is sticky and there are dirty dishes in the sink. The garbage is overflowing.",
+      "Image": "https://legendary.file.core.windows.net/images/24853.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24854"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "62"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "59"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24854"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Mortician's Quarters",
+      "Description": "You are standing within tidy but simple quarters. There is a small bed, couch, and some tables. The room looks to have been in recent use.",
+      "Image": "https://legendary.file.core.windows.net/images/24854.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24855"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "iron door"
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24853"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "58"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24855"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Base of a Dark Stone Staircase",
+      "Description": "You see a staircase leading up into the darkness. The stairs are made of a dark stone, and they are covered in a thin layer of dust. There is a small, flickering light at the top of the staircase, and you can hear the sound of footsteps coming from above.",
+      "Image": "https://legendary.file.core.windows.net/images/24855.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24835"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "iron door"
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24875"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24856"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24854"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "iron door"
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24659"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "22"
+        }
+      ],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24856"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Cramped Passageway",
+      "Description": "You see a narrow path with high walls on either side. The path is lit by dim candles, and there is a feeling of confinement. The walls are covered in graffiti, and there is trash on the ground. The path leads to a small opening at the end, where the light is brighter.",
+      "Image": "https://legendary.file.core.windows.net/images/24856.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24857"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24855"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "55"
+        },
+        {
+          "$numberLong": "55"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24857"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Cramped Passageway",
+      "Description": "You see a narrow path with high walls on either side. The path is lit by dim candles, and there is a feeling of confinement. The walls are covered in graffiti, and there is trash on the ground. The path leads to a small opening at the end, where the light is brighter.",
+      "Image": "https://legendary.file.core.windows.net/images/24857.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24856"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24838"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24878"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24860"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Winding Dark Hallway",
+      "Description": "You see a long, dark hallway with many twists and turns. There are occasional doors along the way, but they are all closed. The only light comes from a small lamp at the end of the hallway.",
+      "Image": "https://legendary.file.core.windows.net/images/24860.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24879"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24839"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24881"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "54"
+        },
+        {
+          "$numberLong": "54"
+        },
+        {
+          "$numberLong": "59"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24875"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Small Alcove",
+      "Description": "You see a small alcove with a few benches and a few trees. There is a sidewalk and a few people walking by. The alcove is in the city, so there are tall buildings around it.",
+      "Image": "https://legendary.file.core.windows.net/images/24875.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24855"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "55"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24878"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Room of Urns",
+      "Description": "You see an endless room of urns, each one different in size and shape. Some are cracked and broken, while others are whole and perfect. The room is lit by a soft light, and the air is thick with the scent of incense.",
+      "Image": "https://legendary.file.core.windows.net/images/24878.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24898"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24879"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24899"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24857"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "55"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24879"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Room of Urns",
+      "Description": "You see a room full of urns. Each urn has a different design, and soyou are more ornate than others. There are urns of all sizes, and they are all filled with ashes.",
+      "Image": "https://legendary.file.core.windows.net/images/24879.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24899"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24878"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24860"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24898"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24881"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Winding Dark Hallway",
+      "Description": "You see a winding dark hallway that is lit up by a street lamp. The walls are covered in graffiti and there is trash on the ground. You see a rat scurrying across the ground.",
+      "Image": "https://legendary.file.core.windows.net/images/24881.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24902"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24860"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24898"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Room of Urns",
+      "Description": "You see a room filled with urns, each one containing the ashes of a different person. The urns are arranged in neat rows, and there is a plaque on each one with the name of the person inside. The room is quiet and peaceful, and the urns give off a gentle light.",
+      "Image": "https://legendary.file.core.windows.net/images/24898.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24878"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24899"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24879"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "59"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24899"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Room of Urns",
+      "Description": "You see a room full of urns. Each urn has a different design, and soyou are more ornate than others. There are urns of all sizes, and they are all filled with ashes. The room is solemn and somber, and the urns are a reminder of the impermanence of life.",
+      "Image": "https://legendary.file.core.windows.net/images/24899.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24879"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24898"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24878"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "57"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24902"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Winding Dark Hallway",
+      "Description": "You see a long, dark hallway with many twists and turns. There are occasional doors along the way, but they are all closed. The only light comes from a small lamp at the end of the hallway.",
+      "Image": "https://legendary.file.core.windows.net/images/24902.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24922"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24881"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24921"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "Before a Crypt",
+      "Description": "You are in a large, open room. There is a massive stone wall to the south of you, with detailed engravings and etchings of what appears to be the afterlife. The room is quiet and dark; it's unsettling.",
+      "Image": "https://legendary.file.core.windows.net/images/24921.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24941"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "crypt"
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24922"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1,
+        3
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24922"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "A Winding Dark Hallway",
+      "Description": "You see a long, dark hallway with many twists and turns. There are occasional doors along the way, but they are all closed. The only light comes from a small lamp at the end of the hallway.",
+      "Image": "https://legendary.file.core.windows.net/images/24922.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24902"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24921"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24936"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Crypt",
+      "Description": "You see a large room with a high ceiling and a few pillars scattered around. The floor is made of stone and there is a small pool of water in the center of the room. It is dark and silent, and the atmosphere is calm and serene.",
+      "Image": "https://legendary.file.core.windows.net/images/24936.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "56"
+        },
+        {
+          "$numberLong": "56"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24937"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Crypt",
+      "Description": "You see a large, dark space with high ceilings and many columns. There are many tombs and memorials throughout the space, and it is lit only by a few small windows and candles. It is very quiet and peaceful.",
+      "Image": "https://legendary.file.core.windows.net/images/24937.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24938"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24936"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "56"
+        },
+        {
+          "$numberLong": "56"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24938"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Crypt",
+      "Description": "The Abbey Crypt is a dark and musty place, with a low ceiling and tiny candles in sconces. It is damp and cold, and there is a strange smell in the air. The only light comes from candles, which flicker in the drafts. The crypt is full of tombs and coffins, some of which are open and empty. There are skeletons everywhere, and the air is thick with dust.",
+      "Image": "https://legendary.file.core.windows.net/images/24938.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24939"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "56"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24939"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Crypt",
+      "Description": "The Abbey Crypt is a dark and musty place with a low ceiling. There are a few small candles high up on the walls, but not enough light to see much. You can make out a few old tombs and some stone stairs leading down into the darkness. It's not a place you would want to stay for long.",
+      "Image": "https://legendary.file.core.windows.net/images/24939.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24940"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24938"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24940"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Crypt",
+      "Description": "The Abbey Crypt is a dark and musty place with stone walls and a dirt floor. There are a few old wooden benches along the walls, and a few small candles high up near the ceiling that let in a little light. It's damp and cold down here, and there's a musty smell that makes it seem like nobody has been down here for a long time.",
+      "Image": "https://legendary.file.core.windows.net/images/24940.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24941"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24939"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "56"
+        },
+        {
+          "$numberLong": "56"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "24941"
+      },
+      "AreaId": {
+        "$numberLong": "24609"
+      },
+      "Name": "The Abbey Crypt",
+      "Description": "The Abbey Crypt is a dark and musty place. It is damp and cold, and the only light comes from a few small candles high up on the walls. The crypt is divided into a series of small rooms, each with a stone floor and walls. In the center of each room is a stone table, and around the table are a few chairs. There is a fireplace in each room, but it is not lit.",
+      "Image": "https://legendary.file.core.windows.net/images/24941.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24921"
+          },
+          "IsDoor": true,
+          "IsLocked": true,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "60"
+          },
+          "DoorName": "crypt"
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "24609"
+          },
+          "ToRoom": {
+            "$numberLong": "24940"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "56"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    }
+  ]
+}

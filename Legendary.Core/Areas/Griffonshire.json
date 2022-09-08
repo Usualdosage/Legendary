@@ -1,0 +1,5418 @@
+﻿{
+  "_id": {
+    "$numberLong": "6828"
+  },
+  "AreaId": {
+    "$numberLong": "6828"
+  },
+  "Name": "Griffonshire",
+  "Author": "Crypticant",
+  "Description": "Griffonshire and Castle Vaughan",
+  "Rooms": [
+    {
+      "RoomId": {
+        "$numberLong": "6872"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Watchtower",
+      "Description": "You see a stone watchtower in the city of Griffonshire. It is surrounded by a wall and has a door in the middle. There is a staircase leading up to the top of the tower. There is a window at the top of the tower.",
+      "Image": "https://legendary.file.core.windows.net/images/6872.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6893"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6880"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Watchtower",
+      "Description": "You see a stone watchtower in the city of Griffonshire. It is surrounded by a high stone wall. There is a door in the watchtower, and a staircase leading up to the top of the tower. From the top of the tower, You can see the city of Griffonshire spread out before you.",
+      "Image": "https://legendary.file.core.windows.net/images/6880.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6899"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6893"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Northwestern Rampart",
+      "Description": "The Northwestern Rampart is a wall that runs along the edge of the city. It is made of stone and is about 10 feet tall. There is a path that runs along the top of the wall, and there are stairs leading up to the path. The view from the top of the wall is of the western mountains.",
+      "Image": "https://legendary.file.core.windows.net/images/6893.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6914"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6872"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6897"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Great Northern Gate",
+      "Description": "You see a large, imposing gate made of stone. The gate is decorated with intricate carvings and has two large towers on either side. The gate is surrounded by a high wall, which is also made of stone. There is a large, open space in front of the gate, and you can see the city beyond it. The gate is guarded by two men in armor, who are standing at attention.",
+      "Image": "https://legendary.file.core.windows.net/images/6897.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6917"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6918"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6916"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "8596"
+          },
+          "ToRoom": {
+            "$numberLong": "8979"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6899"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Northeastern Rampart",
+      "Description": "You see a large, brick wall that is part of the Northeastern Rampart. The wall is old and has been well-maintained. There are trees and shrubs growing along the wall, and You can see the city skyline in the distance.",
+      "Image": "https://legendary.file.core.windows.net/images/6899.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6918"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6880"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6914"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "North Mare Road",
+      "Description": "You see a busy road with horses and carriages passing by. There are shops and houses on either side of the road. You see people walking and riding horses. The road is flat and there are trees lining the sidewalks.",
+      "Image": "https://legendary.file.core.windows.net/images/6914.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6934"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6893"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6916"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Rampart",
+      "Description": "You see a stone rampart that is part of the city of Jerusalem. The rampart is old and has been there for many years. It is made of stone and is very strong.",
+      "Image": "https://legendary.file.core.windows.net/images/6916.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6897"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6917"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Beneath the Ramparts",
+      "Description": "You see a large, open space with a few trees and a lot of grass. There is a path that goes through the middle of the space, and there are benches along the path. There are also some people walking around or sitting on the benches.",
+      "Image": "https://legendary.file.core.windows.net/images/6917.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6897"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6918"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Rampart",
+      "Description": "You see a stone rampart that is about six feet tall and is made of large stones that are fit together without mortar. The rampart is about 20 feet wide and has a walkway on top that is about three feet wide. There are crenellations along the top of the rampart for defenders to stand behind and shoot arrows or throw stones at attackers. There is a gate in the rampart that is made of two heavy wooden doors that are bolted shut.",
+      "Image": "https://legendary.file.core.windows.net/images/6918.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6897"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6933"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Above the Red Dragon Inn",
+      "Description": "You see a red-roofed inn with a sign of a red dragon above the door. The windows are shuttered and there is a stable to the side. The streets are cobbled and there are people milling about, some in armor and carrying weapons. There is a feeling of bustle and excitement in the air.",
+      "Image": "https://legendary.file.core.windows.net/images/6933.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6953"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6934"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "North Mare Road",
+      "Description": "You see a carriage road with a lot of traffic. There are a few shops and businesses along the road. You see people walking and riding. The road is straight and there are no trees or other vegetation.",
+      "Image": "https://legendary.file.core.windows.net/images/6934.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6914"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6954"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6955"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6937"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Tunnel",
+      "Description": "You see a long, dark tunnel. It is made of stone, and there is a small stream of water running through it. The air is damp and musty. There are rats scurrying around, and the occasional bat flies overhead. It is very dark, and You can barely see where you are going.",
+      "Image": "https://legendary.file.core.windows.net/images/6937.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6917"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6957"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6918"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6916"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6938"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6958"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6938"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Bazaar",
+      "Description": "You see a bustling marketplace with stalls selling everything from fresh produce to handmade crafts. There is a vibrant atmosphere as people haggle over prices and barter for goods. The smell of spices and cooking food fills the air, and the sound of people chatting and laughing echoes through the square. In the center of the market is a large tree where people have gathered to socialize and take a break from the heat of the day. You see a scene of vibrant colors, smells, and sounds, and You feel the energy of the market pulsing through the square.",
+      "Image": "https://legendary.file.core.windows.net/images/6938.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6918"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6958"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6957"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6917"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6953"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Red Dragon Inn",
+      "Description": "You see people walking along the street, some of them talking and laughing together. The street is lined with shops and restaurants, and there are people coming and going from them. The air is full of the sounds of traffic and people, and the smell of food. The sky is blue and the sun is shining.",
+      "Image": "https://legendary.file.core.windows.net/images/6953.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6954"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6933"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6954"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Red District",
+      "Description": "The Red District in Griffonshire is a vibrant and lively area with a lot of activity. There are many people walking around, and there are also a lot of shops and carriaginesses. The area is well-lit and there is a lot of color. There are also a lot of people on horses, and the streets are narrow.",
+      "Image": "https://legendary.file.core.windows.net/images/6954.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6934"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6974"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6955"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6953"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "18443"
+          },
+          "ToRoom": {
+            "$numberLong": "18572"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "manhole cover"
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6955"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Temple Vestibule",
+      "Description": "You see a large, open space with a high ceiling. There are several columns around the perimeter of the space, and in the center there is a large, ornate altar. There are several people milling around the space, and some are kneeling or lying on the ground in front of the altar. There is a sense of reverence and awe in the air.",
+      "Image": "https://legendary.file.core.windows.net/images/6955.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6954"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6976"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6974"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6934"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6956"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6956"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Temple of Atrina",
+      "Description": "The Temple of Atrina is a large, white marble temple with columns and a statue of a woman in the center. The woman is believed to be Atrina, the goddess of Light. The temple is surrounded by a small garden with trees and flowers.",
+      "Image": "https://legendary.file.core.windows.net/images/6956.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6976"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6957"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6955"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "21"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "17"
+        },
+        {
+          "$numberLong": "18"
+        },
+        {
+          "$numberLong": "23"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6957"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Northern Commons",
+      "Description": "You see a lot of people walking around, some with dogs and some with children. The ground is covered in a layer of leaves and there are trees everywhere. The sky is a cloudy gray and the air is cold.",
+      "Image": "https://legendary.file.core.windows.net/images/6957.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6958"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6938"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6978"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6976"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6958"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Bazaar",
+      "Description": "You see a large marketplace with a lot of people milling about. There are stalls selling all sorts of goods, from produce to handmade goods. The atmosphere is festive and there is a lot of bargaining going on. You also see a few musicians playing traditional music.",
+      "Image": "https://legendary.file.core.windows.net/images/6958.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6938"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6978"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6957"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6937"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "22"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6971"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "West Range Road",
+      "Description": "You see a few people walking along the road, some trees, and a few houses. The road is fairly straight and there are no major obstacles.",
+      "Image": "https://legendary.file.core.windows.net/images/6971.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6972"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6990"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6972"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "West Range Road",
+      "Description": "You see trees, green grass, and flowers. You also see people walking and running. The sky is blue and there are some clouds.",
+      "Image": "https://legendary.file.core.windows.net/images/6972.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6971"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6993"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6974"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Red District",
+      "Description": "You see people walking around in a hurry, looking for something or someone. The streets are dirty and there are a lot of people around. You also see a lot of red candles in the windows of the buildings.",
+      "Image": "https://legendary.file.core.windows.net/images/6974.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6954"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6994"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6955"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6995"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6993"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6976"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "North Griffon Road",
+      "Description": "You see a busy road with horses and carriages rolling by. There are trees and bushes along the sides of the road. You see houses and buildings on both sides of the road. You see people walking and talking on the sidewalks. You see a few horses tied up on the side of the road.",
+      "Image": "https://legendary.file.core.windows.net/images/6976.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6996"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6957"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6997"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6995"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6955"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "7158"
+          },
+          "ToRoom": {
+            "$numberLong": "6956"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6978"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Bazaar",
+      "Description": "The Bazaar is a large, open square in the City of Brass, lined with shops and stalls selling a variety of goods. In the center of the square is a large fountain, and around the edge of the square are a number of smaller fountains. The Bazaar is always crowded with people, and the air is filled with the sound of people bargaining for goods.",
+      "Image": "https://legendary.file.core.windows.net/images/6978.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6958"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6998"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6999"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6997"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6957"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6989"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Grassy Plateau",
+      "Description": "You see a beautiful landscape with mountains in the distance and a grassy plateau in the foreground. The grass is a beautiful green and the mountains are a majestic blue. The sun is shining and the sky is a beautiful blue. There is a slight breeze blowing and the grass is swaying in the wind.",
+      "Image": "https://legendary.file.core.windows.net/images/6989.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6990"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "7541"
+          },
+          "ToRoom": {
+            "$numberLong": "7714"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "98697"
+          },
+          "ToRoom": {
+            "$numberLong": "98810"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6990"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Ascent into the Coastal Range",
+      "Description": "You are walking up a path through a dense forest. The path is lined with tall trees, and there is a faint light shining through the canopy. You can hear the sound of birds and insects, and the occasional rustle of leaves. The air is fresh and clean, and You can smell the fragrance of the trees and the earth. The path leads up a hill, and as you walk, you can see the valley below you, with the sun shining on the river. You can also see the mountains in the distance, and the clouds floating in the sky. You are surrounded by beauty, and you feel at peace.",
+      "Image": "https://legendary.file.core.windows.net/images/6990.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6989"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6971"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6993"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Great Western Gate",
+      "Description": "The Great Western Gate is a large, imposing structure made of stone and metal. It is flanked by two towers and has a large, arched gateway in the center. The gate is decorated with intricate carvings and designs, and is surrounded by a wrought iron fence. There is a large, paved courtyard in front of the gate, and the street beyond is lined with tall buildings.",
+      "Image": "https://legendary.file.core.windows.net/images/6993.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6994"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6974"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7014"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6972"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6994"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Training Grounds",
+      "Description": "You see a large, flat expanse of grassland, with a few trees and shrubs scattered here and there. The grass is a light green color, and the ground is fairly level. There are a few small hills and depressions, but nothing too significant. You see a few animals grazing in the distance, and the occasional bird flying overhead. The sky is a bright blue, and the sun is shining.",
+      "Image": "https://legendary.file.core.windows.net/images/6994.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6974"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7014"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6995"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6993"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 3,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "15"
+        }
+      ],
+      "Video": "https://legendary.file.core.windows.net/videos/6994.mp4?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "WatchKeyword": "training"
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6995"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "West Capella Road",
+      "Description": "You see a busy street with horses and people walking around. There are shops and businesses along the street, as well as a few restaurants. The street is well-lit and there is a lot of foot traffic. You also see a few carriages.",
+      "Image": "https://legendary.file.core.windows.net/images/6995.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6996"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6994"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6976"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7016"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7014"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6974"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6996"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Central Market",
+      "Description": "You see people walking around looking at all the different stalls, smell the food from all the different vendors, and hear the sounds of people haggling over prices. You see a wide variety of goods for sale, from fresh produce to handmade crafts, and everything in between. You also see a lot of people just sitting and enjoying the atmosphere, people-watching and soaking up the sun.",
+      "Image": "https://legendary.file.core.windows.net/images/6996.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6976"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7016"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6997"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6995"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "18443"
+          },
+          "ToRoom": {
+            "$numberLong": "18633"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "grating"
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "17"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6997"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "East Capella Road",
+      "Description": "You see a busy street with horses driving by and people walking on the sidewalks. There are also some trees and bushes along the road.",
+      "Image": "https://legendary.file.core.windows.net/images/6997.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6998"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6996"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6978"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7018"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7016"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6976"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6998"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Tournament Grounds",
+      "Description": "You see a large open space with grassy areas and a few trees. There is a path that goes around the perimeter of the space. There are some benches and picnic tables. There is a playground area with swings and a slide.",
+      "Image": "https://legendary.file.core.windows.net/images/6998.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6978"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7018"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6999"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6997"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "16"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "16"
+        }
+      ],
+      "Video": "https://legendary.file.core.windows.net/videos/6998.mp4?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "WatchKeyword": "tournament"
+    },
+    {
+      "RoomId": {
+        "$numberLong": "6999"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Great Eastern Gate",
+      "Description": "You see the ancient city walls of Griffonshire, the Great Eastern Gate, and the temples beyond. You see people walking and talking, and the occasional horse or carriage passing through the gate. The air is full of the sounds of people and traffic, and the smell of horse manure.",
+      "Image": "https://legendary.file.core.windows.net/images/6999.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6998"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7018"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6978"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7020"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7013"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Hall of Power",
+      "Description": "As you walk along The Hall of Power, you see towering columns and statues of powerful gods and goddesses. The air is thick with the scent of incense and the sound of hymns being sung. You feel a sense of awe and reverence as you walk among these holy places.",
+      "Image": "https://legendary.file.core.windows.net/images/7013.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7014"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7014"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Warlord Way",
+      "Description": "You see a wide, well-kept road with a few people walking along it. The buildings are close together and seem to be in good repair. There are a few trees and some shrubs along the sides of the road. The sky is clear and blue.",
+      "Image": "https://legendary.file.core.windows.net/images/7014.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6994"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7034"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6995"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6993"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7013"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7016"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "South Griffon Road",
+      "Description": "You see a busy street with horses driving by and people walking on the sidewalks. There are buildings on either side of the street, and some trees and bushes. You also see a few people playing instruments.",
+      "Image": "https://legendary.file.core.windows.net/images/7016.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6996"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7036"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6997"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6995"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "18"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7017"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Temple of Khoda",
+      "Description": "You see a large, beautiful temple with intricate details on the exterior. The inside of the temple is just as beautiful, with a large central room and smaller chambers leading off of it. The chambers are decorated with paintings and sculptures, and the central room has a large statue of a god or goddess. There are also many people inside the temple, praying or meditating.",
+      "Image": "https://legendary.file.core.windows.net/images/7017.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "31866"
+          },
+          "ToRoom": {
+            "$numberLong": "31918"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "23"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "25"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7018"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "East Stone Road",
+      "Description": "You see a lot of abandoned buildings and trash on the ground. There are also a lot of people walking around.",
+      "Image": "https://legendary.file.core.windows.net/images/7018.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6998"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7038"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6999"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6997"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7020"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "New Fort Van Helm Road",
+      "Description": "You see a road that is made of dirt and rocks. There are trees on either side of the road, and the forest floor is covered in leaves and other vegetation. You hear the sound of birds and insects, and the occasional sound of a horse or carriage passing by. You see the sunlight shining through the trees, and the shadows of the leaves on the ground.",
+      "Image": "https://legendary.file.core.windows.net/images/7020.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7041"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "6999"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7031"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Thieves Guild",
+      "Description": "The Thieves Guild is a bustling marketplace where criminals can buy and sell stolen goods. There are booths selling everything from weapons to jewelry to rare books. The market is always busy, and the air is thick with the smell of sweat and blood.",
+      "Image": "https://legendary.file.core.windows.net/images/7031.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7052"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "19"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7034"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Warlord Way",
+      "Description": "You see a busy street with horses and carriages passing by. The sidewalk is full of people walking to and from their destinations. The buildings are tall and many are decorated with banners and flags. There is a lot of activity and noise on the street.",
+      "Image": "https://legendary.file.core.windows.net/images/7034.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7014"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7054"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7035"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Entrance to the Dark Temple",
+      "Description": "You see a large, dark temple made of stone and metal. There is a large door at the entrance, and two smaller doors on either side. There are no windows, and the only light comes from torches on the walls. The floor is made of stone, and there are stairs leading up to the main door. There are no people around, and the only sound is the sound of your own footsteps.",
+      "Image": "https://legendary.file.core.windows.net/images/7035.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7036"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7034"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7016"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7056"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7054"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7014"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7075"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7036"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Southern Commons",
+      "Description": "You see people walking around, looking at the different shops and restaurants. You see a large fountain in the center of the plaza. You see trees and benches lining the sidewalks. You see a few people sitting on the benches, talking on the phone or reading a book. You see the sun shining down on the plaza, and the sky is a beautiful blue.",
+      "Image": "https://legendary.file.core.windows.net/images/7036.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7016"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7056"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "17"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7037"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Before a Great Temple",
+      "Description": "There are many people walking around the temple and some are even kneeling down and praying. The temple is very tall and has many stairs leading up to it. There are also many statues and carvings on the temple.",
+      "Image": "https://legendary.file.core.windows.net/images/7037.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7038"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7036"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7018"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7058"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7056"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7016"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7017"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7038"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "East Stone Road",
+      "Description": "You see a busy street with horses and pedestrians. The sidewalk is lined with trees and there are buildings on either side of the street. You see people walking on the street and horses passing by.",
+      "Image": "https://legendary.file.core.windows.net/images/7038.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7018"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7058"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7039"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7039"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The King's Stables",
+      "Description": "You see a large stable with many horses inside. The horses are all different colors and sizes. Some of the horses are eating hay, while others are drinking from a large trough. There is a person in the stable who is cleaning up the stalls.",
+      "Image": "https://legendary.file.core.windows.net/images/7039.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7038"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7041"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "New Fort Van Helm Road",
+      "Description": "While walking along New Fort Van Helm Road in the Hillsdale community, You see a mix of trees, bushes, and grass. There is the occassional flower or weed. The road is made of cobblestone and is in good condition. There are houses on either side of the road, and most have driveways and yards. You also see horses and people walking on the road.",
+      "Image": "https://legendary.file.core.windows.net/images/7041.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7020"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "2935"
+          },
+          "ToRoom": {
+            "$numberLong": "3035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7052"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Dark Alleyway",
+      "Description": "You see a dark alleyway with trash strewn about. You see rats running around and trash cans overturned. You see a homeless person asleep on a bench. You see a group of teenagers loitering and smoking pipes. You see a man urinating in a corner.",
+      "Image": "https://legendary.file.core.windows.net/images/7052.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7071"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7031"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7158"
+          },
+          "ToRoom": {
+            "$numberLong": "7053"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7053"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Dark Alleyway",
+      "Description": "You am walking in a dark alleyway in the city. The walls are made of concrete and there is litter on the ground. You can hear the sound of rats scurrying around. You see a figure in the distance and You start to walk towards it. As You get closer, You see that the figure is a homeless man. He is sitting on the ground with his back against the wall. He has a blanket wrapped around him and he is holding a bottle of alcohol. He looks up at you and you can see the desperation in his eyes. You can also see the fear in his eyes.",
+      "Image": "https://legendary.file.core.windows.net/images/7053.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "7158"
+          },
+          "ToRoom": {
+            "$numberLong": "7054"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "7158"
+          },
+          "ToRoom": {
+            "$numberLong": "7052"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "7158"
+          },
+          "ToRoom": {
+            "$numberLong": "7034"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "7158"
+          },
+          "ToRoom": {
+            "$numberLong": "7074"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7054"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Path of Cauldrons",
+      "Description": "You see a path made of cauldrons, with each cauldron filled with a different color of liquid. You also see people walking along the path, some carrying cauldrons of their own.",
+      "Image": "https://legendary.file.core.windows.net/images/7054.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7034"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7074"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7075"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7055"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Temple of Saurath",
+      "Description": "You see the temple from a distance, and it is a beautiful sight. The temple is made of black marble, and it is surrounded by a garden. The garden is full of flowers and trees, and there is a fountain in the center. The temple is surrounded by a stone wall, and there is a gate that leads into the temple. The gate is guarded by two statues of serpents.",
+      "Image": "https://legendary.file.core.windows.net/images/7055.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [
+        {
+          "$numberLong": "22"
+        }
+      ],
+      "MobileResets": [
+        {
+          "$numberLong": "24"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7056"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "South Griffon Road",
+      "Description": "You see a busy street with horses and carriages driving by. You see people walking on the sidewalks and crossing the street. You see buildings and trees. You see a school and a church. You see a park with playground equipment.",
+      "Image": "https://legendary.file.core.windows.net/images/7056.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7036"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7076"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7077"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7075"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7035"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "18"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7058"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Path of Warriors",
+      "Description": "You see a path made of daggers leading through the City of Brass. The path is lined with tombstones and crypts, and there are skeletal figures lurking in the shadows. The air is thick with the smell of death, and you can hear the sound of screeching bats.",
+      "Image": "https://legendary.file.core.windows.net/images/7058.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7038"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7078"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7077"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7037"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7059"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7039"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7059"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Guild of War",
+      "Description": "You see a lot of people walking around in The Guild of War in the City of Griffonshire. There are a lot of people in the guild and it looks like they are all busy. There are a lot of weapons and armor around, and it looks like the people in the guild are preparing for war.",
+      "Image": "https://legendary.file.core.windows.net/images/7059.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7058"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": null,
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "21"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7071"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Coven",
+      "Description": "You see a group of people walking in the city, all wearing black cloaks. They seem to be in a hurry, and they all have a stern look on their faces. You can't hear what they're saying, but it sounds like they're chanting something.",
+      "Image": "https://legendary.file.core.windows.net/images/7071.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7052"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "20"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7074"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Path of Cauldrons",
+      "Description": "You see a path lined with cauldrons of different sizes. There are people walking along the path, some of them carrying cauldrons, and others just looking at them. There are also a few animals walking around, and the occasional plant. The cauldrons are all different colors, and they seem to be filled with different kinds of liquids.",
+      "Image": "https://legendary.file.core.windows.net/images/7074.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7054"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7075"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7093"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7075"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "West Aspen Way",
+      "Description": "You see a lot of trees and houses. There are some horses riding by, and a few people walking their dogs. The sidewalk is in good condition, and there are no obstacles in the way. The scenery is pleasant and calming.",
+      "Image": "https://legendary.file.core.windows.net/images/7075.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7076"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7074"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7056"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7096"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7054"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7076"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "Entrance to Castle Vaughan",
+      "Description": "You see a large, imposing castle gatehouse looming ahead of you, flanked by two massive towers. The castle walls stretch out to either side, curving around to enclose a large courtyard beyond. There is a moat surrounding the castle, and you can see the tops of trees peeking over the walls. The sky is clear and blue, and the sun is shining.",
+      "Image": "https://legendary.file.core.windows.net/images/7076.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7056"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7096"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7077"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7075"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "8292"
+          },
+          "ToRoom": {
+            "$numberLong": "8481"
+          },
+          "IsDoor": true,
+          "IsLocked": false,
+          "IsClosed": true,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": "iron gate"
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "17"
+        },
+        {
+          "$numberLong": "17"
+        },
+        {
+          "$numberLong": "18"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7077"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "East Aspen Way",
+      "Description": "You see a wide variety of people walking along East Aspen Way. Some are clearly out for a leisurely stroll, while others appear to be walking with a purpose. There are people of all ages, sizes, and shapes. You see couples holding hands, families with small children, and people walking their dogs. You also see a few people running. The scenery is fairly typical for a city street, with a mix of commercial and residential buildings.",
+      "Image": "https://legendary.file.core.windows.net/images/7077.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 3,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7078"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7076"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7058"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7096"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7056"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7078"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Path of Warriors",
+      "Description": "You see a long, winding path made of daggers sticking up out of the ground. The path is lit by a bright, golden light, and it leads to a large, imposing city made of brass. The city is surrounded by a tall, metal wall, and there are several large towers and spires reaching up into the sky. The path is lined with people of all different races and ages, all of whom seem to be in a hurry to get somewhere. There is a feeling of excitement and anticipation in the air, as if something important is about to happen.",
+      "Image": "https://legendary.file.core.windows.net/images/7078.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7058"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 2,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7077"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 6,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7099"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7093"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Southwestern Rampart",
+      "Description": "You see a wall that is made of stone and is very tall. The wall is not straight, but it has a lot of curves. There are many trees and plants growing on the wall. There are also some buildings on the wall.",
+      "Image": "https://legendary.file.core.windows.net/images/7093.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7074"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7112"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7096"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Great Southern Gate",
+      "Description": "You see a large, ornate gate that is guarded by two statues. Beyond the gate, You see a busy city street with people and horses.",
+      "Image": "https://legendary.file.core.windows.net/images/7096.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7076"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7116"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7077"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7075"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7099"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "The Southeastern Rampart",
+      "Description": "You see a large, brick wall that is part of a fortification. The wall is about 20 feet tall and has a crenellated top. There is a small, grassy area in front of the wall, and beyond that is a street.",
+      "Image": "https://legendary.file.core.windows.net/images/7099.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 5,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7078"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7120"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7112"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Watchtower",
+      "Description": "You see a stone watchtower in the city. It is tall and has a staircase leading up to the top. There is a door at the base of the tower. You see people walking around the tower and climbing the stairs.",
+      "Image": "https://legendary.file.core.windows.net/images/7112.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7093"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7116"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Wide Mountain Road",
+      "Description": "You see a wide, rocky road in the city. The road is filled with potholes and is in need of repair. The buildings on either side of the road are old and in disrepair. There are people walking along the road, and they all seem to be in a hurry. The air is filled with the smell of manure from the horses and carriages that are driving by.",
+      "Image": "https://legendary.file.core.windows.net/images/7116.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7096"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 7,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7135"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7120"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Stone Watchtower",
+      "Description": "You see a stone watchtower in the city of Griffonshire. It is a tall, cylindrical structure with a pointed top. There are stairs leading up to the top of the tower, and there is a door at the base of the tower. The tower is surrounded by a metal fence. There is a sign on the fence that says \"No Entry.\"",
+      "Image": "https://legendary.file.core.windows.net/images/7120.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7099"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [
+        1
+      ],
+      "Terrain": 0,
+      "ItemResets": [],
+      "MobileResets": [
+        {
+          "$numberLong": "4"
+        }
+      ],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7135"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Cobbled Pathway",
+      "Description": "You see a winding pathway made of cobblestones, leading up into the hills of Tuscany. The hills are green and lush, with trees and bushes dotting the landscape. The sky is a clear, bright blue. You can see the sun shining down on the pathway, making the cobblestones shine.",
+      "Image": "https://legendary.file.core.windows.net/images/7135.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7155"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 4,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7116"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 2,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7155"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Steep Incline",
+      "Description": "A steep incline in the mountains is a place where you can see a lot of beauty. The mountains are a great place to hike and the scenery is breathtaking.",
+      "Image": "https://legendary.file.core.windows.net/images/7155.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 0,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7135"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 9,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7175"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 1,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    },
+    {
+      "RoomId": {
+        "$numberLong": "7175"
+      },
+      "AreaId": {
+        "$numberLong": "6828"
+      },
+      "Name": "A Forest Path",
+      "Description": "You see trees and leaves and the forest floor. You see sunlight shining through the trees and dappling the ground. You see animals scurrying through the underbrush and birds flying in the trees. You see the beauty and peace of the forest around you.",
+      "Image": "https://legendary.file.core.windows.net/images/7175.png?sv=2021-06-08&ss=f&srt=sco&sp=r&se=2027-07-27T07:17:16Z&st=2022-07-26T23:17:16Z&spr=https&sig=H7cbZXl63g6mhIHYC00wri8cTRiob6XrWdf1F4D0F%2Bo%3D",
+      "Exits": [
+        {
+          "Direction": 8,
+          "ToArea": {
+            "$numberLong": "6828"
+          },
+          "ToRoom": {
+            "$numberLong": "7155"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        },
+        {
+          "Direction": 1,
+          "ToArea": {
+            "$numberLong": "7144"
+          },
+          "ToRoom": {
+            "$numberLong": "7213"
+          },
+          "IsDoor": false,
+          "IsLocked": false,
+          "IsClosed": false,
+          "IsHidden": false,
+          "KeyId": {
+            "$numberLong": "0"
+          },
+          "DoorName": null
+        }
+      ],
+      "Flags": [],
+      "Terrain": 9,
+      "ItemResets": [],
+      "MobileResets": [],
+      "Video": null,
+      "WatchKeyword": null
+    }
+  ]
+}
