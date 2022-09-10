@@ -97,7 +97,7 @@ namespace Legendary.Engine.Processors
                         }
 
                         // Target could be an item.
-                        item = this.communicator.ResolveItem(actor, args.Target);
+                        item = actor.Character.Inventory.FirstOrDefault(c => c.Name.ToLower().Contains(args.Target.ToLower()));
                     }
 
                     if (await spell.IsSuccess(proficiency.Proficiency, cancellationToken))

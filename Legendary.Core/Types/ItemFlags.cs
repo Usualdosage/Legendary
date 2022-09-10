@@ -98,5 +98,10 @@ namespace Legendary.Core.Types
         /// Invisible.
         /// </summary>
         Invisible = 16,
+
+        /// <summary>
+        /// Cursed.
+        /// </summary>
+        Cursed = 17,
     }
 }

@@ -72,7 +72,7 @@ namespace Legendary.Core.Types
         /// Right wrist.
         /// </summary>
         [WearDescription("Worn on right wrist")]
-        RWist = 9,
+        RWrist = 9,
 
         /// <summary>
         /// Feet.

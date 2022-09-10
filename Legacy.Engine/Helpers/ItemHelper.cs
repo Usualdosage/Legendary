@@ -11,6 +11,8 @@ namespace Legendary.Engine.Helpers
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection.PortableExecutable;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
@@ -66,6 +68,7 @@ namespace Legendary.Engine.Helpers
 
             var item = new Item()
             {
+                ItemId = Constants.ITEM_BASIC_WEAPON,
                 ItemType = ItemType.Weapon,
                 DamageType = weaponTuple.Item2,
                 WearLocation = new List<WearLocation>() { WearLocation.Wielded },
@@ -199,6 +202,7 @@ namespace Legendary.Engine.Helpers
 
             var item = new Item()
             {
+                ItemId = Constants.ITEM_BASIC_ARMOR,
                 ItemType = ItemType.Armor,
                 WearLocation = new List<WearLocation>() { wearLocation },
                 Name = title,
@@ -264,6 +268,638 @@ namespace Legendary.Engine.Helpers
                 ItemKind = ItemKind.Practice,
                 Level = random.Next(1, 9),
             };
+
+            return item;
+        }
+
+        /// <summary>
+        /// Random loot drop from killing a mob.
+        /// </summary>
+        /// <param name="mobLevel">The mob level</param>
+        /// <param name="characterLevel">The character level.</param>
+        /// <param name="random">The random generator.</param>
+        /// <returns>Item.</returns>
+        public static Item? CreateRandomArmor(int mobLevel, int characterLevel, IRandom random)
+        {
+            if (mobLevel > 75)
+            {
+                return null;
+            }
+
+            Array values = Enum.GetValues(typeof(WearLocation));
+            object? randomWearLoc = values.GetValue(random.Next(2, values.Length - 1));
+
+            WearLocation wearLocation = WearLocation.None;
+
+            if (randomWearLoc != null)
+            {
+                wearLocation = (WearLocation)randomWearLoc;
+            }
+            else
+            {
+                return null;
+            }
+
+            List<string> gearAdjectives = new List<string>()
+            {
+                "Leather",
+                "Padded",
+                "Steel",
+                "Iron",
+                "Deerhide",
+                "Buckskin",
+                "Velvet",
+                "Canvas",
+                "Felt",
+                "Fur-lined",
+                "Copper",
+                "Brass",
+                "Platinum",
+                "Golden",
+                "Silvery",
+                "Wooden",
+                "Bone",
+                "Ivory",
+                "Ebony",
+                "Bright Steel",
+                "Dark Steel",
+                "Blackened",
+                "Shining",
+            };
+
+            var adj = gearAdjectives[random.Next(0, gearAdjectives.Count - 1)];
+
+            List<string> gearNouns = new List<string>();
+
+            switch (wearLocation)
+            {
+                default:
+                    {
+                        return null;
+                    }
+
+                case WearLocation.Arms:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"some {adj} Sleeves",
+                            $"some {adj} Bracers",
+                            $"some {adj} Vambraces",
+                            $"some {adj} Arm guards",
+                            $"some {adj} Pauldrons",
+                        };
+                        break;
+                    }
+
+                case WearLocation.Head:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"a {adj} Hat",
+                            $"a {adj} Cap",
+                            $"a {adj} Hood",
+                            $"a {adj} Helm",
+                            $"a {adj} Helmet",
+                        };
+                        break;
+                    }
+
+                case WearLocation.Legs:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"some {adj} Pants",
+                            $"some {adj} Chaps",
+                            $"some {adj} Shorts",
+                            $"some {adj} Greaves",
+                            $"some {adj} Leggings",
+                        };
+                        break;
+                    }
+
+                case WearLocation.Torso:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"a {adj} Vest",
+                            $"a {adj} Jacket",
+                            $"a {adj} Doublet",
+                            $"a {adj} Shirt",
+                            $"a {adj} Tunic",
+                            $"a {adj} Cuirass",
+                        };
+                        break;
+                    }
+
+                case WearLocation.Feet:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"some {adj} Sandals",
+                            $"a Pair of {adj} Boots",
+                            $"some {adj} Shoes",
+                            $"some {adj} Sollerettes",
+                        };
+                        break;
+                    }
+
+                case WearLocation.Hands:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"some {adj} Gloves",
+                            $"a pair of {adj} Mittens",
+                            $"some {adj} Fingerless Gloves",
+                            $"some {adj} Hand Wraps",
+                            $"some {adj} Claws",
+                        };
+                        break;
+                    }
+
+                case WearLocation.RWrist:
+                case WearLocation.LWrist:
+                    {
+                        gearNouns = new List<string>()
+                        {
+                            $"a {adj} Bracelet",
+                            $"a {adj} Bracer",
+                            $"a {adj} Wrist Guard",
+                            $"a {adj} Gauntlet",
+                        };
+                        break;
+                    }
+            }
+
+            var gear = gearNouns[random.Next(0, gearNouns.Count - 1)];
+
+            string title = $"{gear}";
+            string shortDesc = $"You see {gear.ToLower()} lying here.";
+            var durability = Math.Min(1, random.Next(mobLevel / 10, mobLevel / 3));
+
+            var item = new Item()
+            {
+                ItemId = Constants.ITEM_LOOT_ARMOR,
+                ItemType = ItemType.Armor,
+                WearLocation = new List<WearLocation>() { wearLocation },
+                Name = title,
+                ShortDescription = shortDesc,
+                LongDescription = shortDesc,
+                Weight = random.Next(1m, 10m),
+                Value = random.Next(.5m, 2m * mobLevel),
+                Durability = new MaxCurrent(durability, durability),
+                ItemKind = ItemKind.Practice,
+                Level = random.Next(mobLevel - 5, mobLevel + 5),
+            };
+
+            switch (random.Next(0, 4))
+            {
+                default:
+                case 0:
+                    {
+                        item.Edged = random.Next(1, characterLevel / 5);
+                        break;
+                    }
+
+                case 1:
+                    {
+                        item.Pierce = random.Next(0, characterLevel / 5);
+                        item.Blunt = random.Next(0, characterLevel / 5);
+                        break;
+                    }
+
+                case 2:
+                    {
+                        item.Pierce = random.Next(0, characterLevel / 5);
+                        item.Blunt = random.Next(0, characterLevel / 5);
+                        item.Edged = random.Next(0, characterLevel / 5);
+                        break;
+                    }
+
+                case 3:
+                    {
+                        item.Pierce = random.Next(0, characterLevel / 5);
+                        item.Blunt = random.Next(0, characterLevel / 5);
+                        item.Edged = random.Next(0, characterLevel / 5);
+                        item.Magic = random.Next(0, characterLevel / 5);
+                        break;
+                    }
+            }
+
+            if (mobLevel > 20 && mobLevel < 40)
+            {
+                // 25% chance to have one effect
+                if (random.Next(0, 100) <= 25)
+                {
+                    Array flags = Enum.GetValues(typeof(ItemFlags));
+                    object? randomFlags = values.GetValue(random.Next(0, values.Length - 1));
+
+                    ItemFlags itemFlag = ItemFlags.None;
+
+                    if (itemFlag != ItemFlags.None)
+                    {
+                        item.ItemFlags.Add(itemFlag);
+
+                        switch (random.Next(0, 7))
+                        {
+                            case 0:
+                                {
+                                    item.SaveAfflictive = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+
+                            case 1:
+                                {
+                                    item.SaveDeath = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+
+                            case 2:
+                                {
+                                    item.SaveMaledictive = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+
+                            case 3:
+                                {
+                                    item.SaveNegative = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+
+                            case 4:
+                                {
+                                    item.SaveSpell = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+
+                            default:
+                            case 5:
+                                {
+                                    item.HitDice = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+
+                            case 6:
+                                {
+                                    item.DamageDice = random.Next(0, mobLevel / 10);
+                                    break;
+                                }
+                        }
+                    }
+                }
+            }
+            else if (mobLevel >= 40 && mobLevel <= 60)
+            {
+                // 25% chance to have one effect
+                if (random.Next(0, 100) <= 25)
+                {
+                    Array flags = Enum.GetValues(typeof(ItemFlags));
+                    object? randomFlags = values.GetValue(random.Next(0, values.Length - 1));
+
+                    ItemFlags itemFlag = ItemFlags.None;
+
+                    if (itemFlag != ItemFlags.None)
+                    {
+                        item.ItemFlags.Add(itemFlag);
+
+                        switch (random.Next(0, 7))
+                        {
+                            case 0:
+                                {
+                                    item.SaveAfflictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 1:
+                                {
+                                    item.SaveDeath = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 2:
+                                {
+                                    item.SaveMaledictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 3:
+                                {
+                                    item.SaveNegative = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 4:
+                                {
+                                    item.SaveSpell = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            default:
+                            case 5:
+                                {
+                                    item.HitDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 6:
+                                {
+                                    item.DamageDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+                        }
+                    }
+                }
+
+                // 25% chance to have second effect
+                if (random.Next(0, 100) <= 25)
+                {
+                    Array flags = Enum.GetValues(typeof(ItemFlags));
+                    object? randomFlags = values.GetValue(random.Next(0, values.Length - 1));
+
+                    ItemFlags itemFlag = ItemFlags.None;
+
+                    if (itemFlag != ItemFlags.None)
+                    {
+                        item.ItemFlags.Add(itemFlag);
+
+                        switch (random.Next(0, 7))
+                        {
+                            case 0:
+                                {
+                                    item.SaveAfflictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 1:
+                                {
+                                    item.SaveDeath = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 2:
+                                {
+                                    item.SaveMaledictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 3:
+                                {
+                                    item.SaveNegative = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 4:
+                                {
+                                    item.SaveSpell = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            default:
+                            case 5:
+                                {
+                                    item.HitDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 6:
+                                {
+                                    item.DamageDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+                        }
+                    }
+                }
+            }
+            else if (mobLevel >= 60 && mobLevel <= 75)
+            {
+                // 25% chance to have one effect
+                if (random.Next(0, 100) <= 25)
+                {
+                    Array flags = Enum.GetValues(typeof(ItemFlags));
+                    object? randomFlags = values.GetValue(random.Next(0, values.Length - 1));
+
+                    ItemFlags itemFlag = ItemFlags.None;
+
+                    if (itemFlag != ItemFlags.None)
+                    {
+                        item.ItemFlags.Add(itemFlag);
+
+                        switch (random.Next(0, 7))
+                        {
+                            case 0:
+                                {
+                                    item.SaveAfflictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 1:
+                                {
+                                    item.SaveDeath = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 2:
+                                {
+                                    item.SaveMaledictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 3:
+                                {
+                                    item.SaveNegative = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 4:
+                                {
+                                    item.SaveSpell = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            default:
+                            case 5:
+                                {
+                                    item.HitDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 6:
+                                {
+                                    item.DamageDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+                        }
+                    }
+                }
+
+                // 25% chance to have second effect
+                if (random.Next(0, 100) <= 25)
+                {
+                    Array flags = Enum.GetValues(typeof(ItemFlags));
+                    object? randomFlags = values.GetValue(random.Next(0, values.Length - 1));
+
+                    ItemFlags itemFlag = ItemFlags.None;
+
+                    if (itemFlag != ItemFlags.None)
+                    {
+                        item.ItemFlags.Add(itemFlag);
+
+                        switch (random.Next(0, 7))
+                        {
+                            case 0:
+                                {
+                                    item.SaveAfflictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 1:
+                                {
+                                    item.SaveDeath = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 2:
+                                {
+                                    item.SaveMaledictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 3:
+                                {
+                                    item.SaveNegative = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 4:
+                                {
+                                    item.SaveSpell = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            default:
+                            case 5:
+                                {
+                                    item.HitDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 6:
+                                {
+                                    item.DamageDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+                        }
+                    }
+                }
+
+                // 25% chance to have third effect
+                if (random.Next(0, 100) <= 25)
+                {
+                    Array flags = Enum.GetValues(typeof(ItemFlags));
+                    object? randomFlags = values.GetValue(random.Next(0, values.Length - 1));
+
+                    ItemFlags itemFlag = ItemFlags.None;
+
+                    if (itemFlag != ItemFlags.None)
+                    {
+                        item.ItemFlags.Add(itemFlag);
+
+                        switch (random.Next(0, 7))
+                        {
+                            case 0:
+                                {
+                                    item.SaveAfflictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 1:
+                                {
+                                    item.SaveDeath = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 2:
+                                {
+                                    item.SaveMaledictive = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 3:
+                                {
+                                    item.SaveNegative = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 4:
+                                {
+                                    item.SaveSpell = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            default:
+                            case 5:
+                                {
+                                    item.HitDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+
+                            case 6:
+                                {
+                                    item.DamageDice = random.Next(0, mobLevel / 6);
+                                    break;
+                                }
+                        }
+                    }
+                }
+            }
+
+            var suffix = string.Empty;
+
+            if (item.Pierce > 10)
+            {
+                suffix = " of the Boar";
+            }
+            else if (item.Blunt > 10)
+            {
+                suffix = " of the Badger";
+            }
+            else if (item.Edged > 10)
+            {
+                suffix = " of the Warlord";
+            }
+            else if (item.Magic > 10)
+            {
+                suffix = " of the Magi";
+            }
+            else if (item.DamageDice > 0)
+            {
+                suffix = " of the Lion";
+            }
+            else if (item.HitDice > 0)
+            {
+                suffix = " of the Mongoose";
+            }
+            else if (item.SaveAfflictive > 0)
+            {
+                suffix = " of the Hawk";
+            }
+            else if (item.SaveDeath > 0)
+            {
+                suffix = " of the Gods";
+            }
+            else if (item.SaveMaledictive > 0)
+            {
+                suffix = " of the Raven";
+            }
+            else if (item.SaveNegative > 0)
+            {
+                suffix = " of the Bear";
+            }
+            else if (item.SaveSpell > 0)
+            {
+                suffix = " of the Hobbit";
+            }
+
+            item.Name += suffix;
 
             return item;
         }

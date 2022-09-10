@@ -830,7 +830,7 @@ namespace Legendary.Engine
                         room.Mobiles.Remove(mobile);
                     }
 
-                    var corpse = this.GenerateCorpse(killer.Location, target);
+                    var corpse = this.GenerateCorpse(killer.Location, target, killer.Level);
 
                     if (killer.CharacterFlags.Contains(CharacterFlags.Autoloot))
                     {
@@ -935,7 +935,7 @@ namespace Legendary.Engine
                     this.logger.Info($"{killer.FirstName.FirstCharToUpper()} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
 
                     // Generate the corpse.
-                    corpse = this.GenerateCorpse(killer.Location, actor);
+                    corpse = this.GenerateCorpse(killer.Location, actor, killer.Level);
                 }
 
                 // Remove all equipment, currency, and inventory.
@@ -1322,7 +1322,7 @@ namespace Legendary.Engine
                     if (player != null)
                     {
                         // Group was null or empty, so apply only to player.
-                        await this.communicator.SendToPlayer(player.Character, $"You gain {expPerPlayer} experience points.", cancellationToken);
+                        await this.communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
                         actor.Experience += (int)expPerPlayer;
 
                         // See if the player advanced a level.
@@ -1446,7 +1446,8 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="location">The room to generate the corpse in.</param>
         /// <param name="victim">The victim to generate the corpse from.</param>
-        private Item? GenerateCorpse(KeyValuePair<long, long> location, Character victim)
+        /// <param name="actorLevel">The level of the actor (killer).</param>
+        private Item? GenerateCorpse(KeyValuePair<long, long> location, Character victim, int actorLevel)
         {
             try
             {
@@ -1488,6 +1489,17 @@ namespace Legendary.Engine
                 foreach (var inv in victim.Inventory)
                 {
                     corpse.Contains.Add(inv.Clone());
+                }
+
+                // Add any random loot drops
+                if (victim.IsNPC && this.random.Next(0, 100) < 50)
+                {
+                    var item = ItemHelper.CreateRandomArmor(victim.Level, actorLevel, this.random);
+
+                    if (item != null)
+                    {
+                        corpse.Contains.Add(item);
+                    }
                 }
 
                 // Add the corpse to the room.

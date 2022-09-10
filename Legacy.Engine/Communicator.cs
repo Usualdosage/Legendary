@@ -472,7 +472,7 @@ namespace Legendary.Engine
 
                             if ((int)mobile.Race <= 13 && room != null && room.Terrain == Terrain.City)
                             {
-                                await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                                await this.SendToArea(user.Character.Location, string.Empty, $"{mobile.FirstName.FirstCharToUpper()} yells (in Common) \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
                             }
 
                             // Start the fight.
@@ -499,6 +499,17 @@ namespace Legendary.Engine
                     }
                     else
                     {
+                        if (user.Character.GroupId.HasValue)
+                        {
+                            var groupMembers = GroupHelper.GetAllGroupMembers(user.Character.GroupId.Value);
+
+                            if (groupMembers != null && groupMembers.Contains(user.Character.CharacterId))
+                            {
+                                await this.SendToPlayer(user.Connection, $"You're in their group. Ungroup first, then attack.", cancellationToken);
+                                return;
+                            }
+                        }
+
                         this.logger.Info($"{user.Character.FirstName.FirstCharToUpper()} has attacked {targetChar.FirstName} in room {user.Character.Location.Value}.", this);
 
                         await this.SendToPlayer(user.Connection, $"You attack {targetChar.FirstName}!", cancellationToken);
@@ -508,7 +519,7 @@ namespace Legendary.Engine
 
                         if (room != null && room.Terrain == Terrain.City)
                         {
-                            await this.SendToArea(user.Character.Location, string.Empty, $"{targetChar.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                            await this.SendToArea(user.Character.Location, string.Empty, $"{targetChar.FirstName.FirstCharToUpper()} yells (in Common) \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
                         }
 
                         // Start the fight.

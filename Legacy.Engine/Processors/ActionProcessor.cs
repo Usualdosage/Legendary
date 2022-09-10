@@ -423,7 +423,10 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var effect in actor.Character.AffectedBy)
                 {
-                    sb.Append($"<span class='player-affect'><li>{effect.Name} for {effect.Duration} hours.</li></span>");
+                    if (effect.Name != nameof(Sneak))
+                    {
+                        sb.Append($"<span class='player-affect'><li>{effect.Name} for {effect.Duration} hours.</li></span>");
+                    }
                 }
             }
             else
@@ -1545,7 +1548,7 @@ namespace Legendary.Engine.Processors
             {
                 if (exit.IsDoor && exit.IsClosed && !isGhost)
                 {
-                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName} is closed.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor.Connection, $"The {exit.DoorName ?? "door"} is closed.", cancellationToken);
                 }
                 else
                 {
@@ -1647,6 +1650,7 @@ namespace Legendary.Engine.Processors
                                 }
                                 else if (isFlying)
                                 {
+                                    actor.Character.Movement.Current -= 1;
                                     await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} flies in.", cancellationToken);
                                 }
                                 else
@@ -1849,10 +1853,17 @@ namespace Legendary.Engine.Processors
                     foreach (var target in actor.Character.Equipment)
                     {
                         // Un-equip each item and put back in inventory.
-                        itemsToRemove.Add(target);
-                        actor.Character.Inventory.Add(target);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                        if (!target.ItemFlags.Contains(ItemFlags.Cursed))
+                        {
+                            itemsToRemove.Add(target);
+                            actor.Character.Inventory.Add(target);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {target.Name}.", cancellationToken);
+                        }
                     }
 
                     actor.Character.Equipment.RemoveAll(i => itemsToRemove.Contains(i));
@@ -1864,10 +1875,17 @@ namespace Legendary.Engine.Processors
                     if (target != null)
                     {
                         // Un-equip the item and put back in inventory.
-                        actor.Character.Inventory.Add(target);
-                        actor.Character.Equipment.Remove(target);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                        if (!target.ItemFlags.Contains(ItemFlags.Cursed))
+                        {
+                            actor.Character.Inventory.Add(target);
+                            actor.Character.Equipment.Remove(target);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {target.Name}.", cancellationToken);
+                        }
                     }
                     else
                     {
@@ -2680,7 +2698,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+                    var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.ToLower().Contains(itemName.ToLower()));
 
                     if (target != null)
                     {
@@ -2720,7 +2738,7 @@ namespace Legendary.Engine.Processors
             {
                 var itemName = args.Method.ToLower();
 
-                var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.Contains(itemName));
+                var target = actor.Character.Inventory.FirstOrDefault(i => i.Name.ToLower().Contains(itemName.ToLower()));
 
                 if (target != null)
                 {
@@ -3216,9 +3234,8 @@ namespace Legendary.Engine.Processors
                             await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
                             await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
 
-                            var itemClone = this.communicator.ResolveItem(item.ItemId).DeepCopy();
-                            actor.Character.Inventory.Add(itemClone);
-
+                            var itemClone = (Item)item;
+                            actor.Character.Inventory.Add(itemClone.DeepCopy());
                             container.Contains.Remove(item);
                         }
                         else
@@ -3229,10 +3246,9 @@ namespace Legendary.Engine.Processors
                             await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name} from {container.Name}.", cancellationToken);
                             await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name} from {container.Name}.", cancellationToken);
 
-                            var itemClone = this.communicator.ResolveItem(targetItem.ItemId).DeepCopy();
-                            actor.Character.Inventory.Add(itemClone);
-
-                            container.Contains.Remove(targetItem);
+                            var targetItemClone = (Item)targetItem;
+                            actor.Character.Inventory.Add(targetItemClone.DeepCopy());
+                            container.Contains.Remove(targetItemClone);
                         }
                     }
                     else
@@ -3359,10 +3375,17 @@ namespace Legendary.Engine.Processors
                     {
                         if (item != null)
                         {
-                            room.Items.Add(item.Clone());
-                            await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
-                            itemsToRemove.Add(item);
+                            if (!item.ItemFlags.Contains(ItemFlags.Cursed))
+                            {
+                                room.Items.Add(item.Clone());
+                                await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
+                                itemsToRemove.Add(item);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, $"You can't drop {item.Name}.", cancellationToken);
+                            }
                         }
                     }
 

@@ -67,6 +67,26 @@ namespace Legendary.Core
         public const long ITEM_LIGHT = 9000003;
 
         /// <summary>
+        /// Basic armor item (from outfit).
+        /// </summary>
+        public const long ITEM_BASIC_ARMOR = 9000004;
+
+        /// <summary>
+        /// Basic weapon item (from outfit).
+        /// </summary>
+        public const long ITEM_BASIC_WEAPON = 9000005;
+
+        /// <summary>
+        /// Loot armor item (from mob loot drop).
+        /// </summary>
+        public const long ITEM_LOOT_ARMOR = 9000006;
+
+        /// <summary>
+        /// Loot weapon item (from mob loot drop).
+        /// </summary>
+        public const long ITEM_LOOT_WEAPON = 9000007;
+
+        /// <summary>
         /// Amount of health restored each tick.
         /// </summary>
         public const int STANDARD_HP_RECOVERY = 50;

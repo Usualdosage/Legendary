@@ -187,9 +187,9 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessRecovery(UserData user)
         {
-            var standardHPRecover = user.Character.Health.Max / 36;
-            var standardManaRecover = user.Character.Mana.Max / 36;
-            var standardMoveRecover = user.Character.Movement.Max / 36;
+            var standardHPRecover = user.Character.Health.Max / 24;
+            var standardManaRecover = user.Character.Mana.Max / 24;
+            var standardMoveRecover = user.Character.Movement.Max / 12;
 
             if (user.Character.CharacterFlags.Contains(Core.Types.CharacterFlags.Resting))
             {

@@ -71,8 +71,8 @@ namespace Legendary.Engine.Models.Spells
                 {
                     sb.Append($"Blunt protection is {targetItem.Blunt}%.<br/>");
                     sb.Append($"Edged protection is {targetItem.Edged}%.<br/>");
-                    sb.Append($"Pierce protection is {targetItem.Pierce}.<br/>");
-                    sb.Append($"Magic protection is {targetItem.Magic}.<br/>");
+                    sb.Append($"Pierce protection is {targetItem.Pierce}%.<br/>");
+                    sb.Append($"Magic protection is {targetItem.Magic}%.<br/>");
                 }
 
                 if (targetItem.ItemType == Core.Types.ItemType.Container)

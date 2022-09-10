@@ -15,6 +15,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
 
@@ -109,16 +110,24 @@ namespace Legendary.Engine.Models.Skills
 
                         if (this.Random.Next(0, 100) > pctToRetain)
                         {
-                            await this.Communicator.SendToPlayer(actor, $"You disarm {character.FirstName}!", cancellationToken);
-                            await this.Communicator.SendToPlayer(character, $"{actor.FirstName} disarms you!", cancellationToken);
-                            await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} disarms {character.FirstName}!", cancellationToken);
-
-                            character.Equipment.Remove(targetWeapon);
-                            var room = this.Communicator.ResolveRoom(actor.Location);
-
-                            if (room != null)
+                            if (!targetWeapon.ItemFlags.Contains(ItemFlags.Cursed))
                             {
-                                room.Items.Add(targetWeapon.DeepCopy());
+                                await this.Communicator.SendToPlayer(actor, $"You disarm {character.FirstName}!", cancellationToken);
+                                await this.Communicator.SendToPlayer(character, $"{actor.FirstName} disarms you!", cancellationToken);
+                                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} disarms {character.FirstName}!", cancellationToken);
+
+                                character.Equipment.Remove(targetWeapon);
+                                var room = this.Communicator.ResolveRoom(actor.Location);
+
+                                if (room != null)
+                                {
+                                    room.Items.Add(targetWeapon.DeepCopy());
+                                }
+                            }
+                            else
+                            {
+                                await this.Communicator.SendToPlayer(actor, $"You can't disarm {character.FirstName}!", cancellationToken);
+                                await this.Communicator.SendToPlayer(character, $"{actor.FirstName} tries to disarm you, but fails.", cancellationToken);
                             }
                         }
                         else
