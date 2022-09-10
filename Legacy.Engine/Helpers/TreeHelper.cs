@@ -477,59 +477,44 @@ namespace Legendary.Engine.Helpers
         {
             int groupNumber = 0;
 
-            foreach (var skill in skillTree.Group1)
-            {
-                bool hasGroup = actor.Character.Skills.Any(s => s.SkillName.ToLower() == skill.Name.ToLower());
+            var intersectGroup1 = skillTree.Group1.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 1;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group one, move along.
+            if (intersectGroup1.Count() == 0)
+            {
+                groupNumber = 1;
             }
 
-            foreach (var skill in skillTree.Group2)
-            {
-                bool hasGroup = actor.Character.Skills.Any(s => s.SkillName.ToLower() == skill.Name.ToLower());
+            var intersectGroup2 = skillTree.Group2.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 2;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group two, move along.
+            if (intersectGroup2.Count() == 0)
+            {
+                groupNumber = 2;
             }
 
-            foreach (var skill in skillTree.Group3)
-            {
-                bool hasGroup = actor.Character.Skills.Any(s => s.SkillName.ToLower() == skill.Name.ToLower());
+            var intersectGroup3 = skillTree.Group3.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 3;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group three, move along.
+            if (intersectGroup3.Count() == 0)
+            {
+                groupNumber = 3;
             }
 
-            foreach (var skill in skillTree.Group4)
-            {
-                bool hasGroup = actor.Character.Skills.Any(s => s.SkillName.ToLower() == skill.Name.ToLower());
+            var intersectGroup4 = skillTree.Group4.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 4;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group four, move along.
+            if (intersectGroup4.Count() == 0)
+            {
+                groupNumber = 4;
             }
 
-            foreach (var skill in skillTree.Group5)
-            {
-                bool hasGroup = actor.Character.Skills.Any(s => s.SkillName.ToLower() == skill.Name.ToLower());
+            var intersectGroup5 = skillTree.Group5.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 5;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group five, move along.
+            if (intersectGroup5.Count() == 0)
+            {
+                groupNumber = 5;
             }
 
             return groupNumber;
@@ -545,59 +530,44 @@ namespace Legendary.Engine.Helpers
         {
             int groupNumber = 0;
 
-            foreach (var spell in spellTree.Group1)
-            {
-                bool hasGroup = actor.Character.Spells.Any(s => s.SpellName.ToLower() == spell.Name.ToLower());
+            var intersectGroup1 = spellTree.Group1.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 1;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group one, move along.
+            if (intersectGroup1.Count() == 0)
+            {
+                groupNumber = 1;
             }
 
-            foreach (var spell in spellTree.Group2)
-            {
-                bool hasGroup = actor.Character.Spells.Any(s => s.SpellName.ToLower() == spell.Name.ToLower());
+            var intersectGroup2 = spellTree.Group2.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 2;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group two, move along.
+            if (intersectGroup2.Count() == 0)
+            {
+                groupNumber = 2;
             }
 
-            foreach (var spell in spellTree.Group3)
-            {
-                bool hasGroup = actor.Character.Spells.Any(s => s.SpellName.ToLower() == spell.Name.ToLower());
+            var intersectGroup3 = spellTree.Group3.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 3;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group three, move along.
+            if (intersectGroup3.Count() == 0)
+            {
+                groupNumber = 3;
             }
 
-            foreach (var spell in spellTree.Group4)
-            {
-                bool hasGroup = actor.Character.Spells.Any(s => s.SpellName.ToLower() == spell.Name.ToLower());
+            var intersectGroup4 = spellTree.Group4.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 4;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group four, move along.
+            if (intersectGroup4.Count() == 0)
+            {
+                groupNumber = 4;
             }
 
-            foreach (var spell in spellTree.Group5)
-            {
-                bool hasGroup = actor.Character.Spells.Any(s => s.SpellName.ToLower() == spell.Name.ToLower());
+            var intersectGroup5 = spellTree.Group5.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
 
-                if (hasGroup)
-                {
-                    groupNumber = 5;
-                    break;
-                }
+            // If the intersection contains nothing, they have ALL of the skills in group five, move along.
+            if (intersectGroup5.Count() == 0)
+            {
+                groupNumber = 5;
             }
 
             return groupNumber;

@@ -214,6 +214,12 @@ namespace Legendary.Engine.Extensions
 
             var matchResult = bestMatch.OrderByDescending(b => b.Key).FirstOrDefault();
 
+            // If the matchcount is zero, nothing matched.
+            if (matchResult.Key == 0)
+            {
+                return null;
+            }
+
             return matchResult.Value;
         }
     }

@@ -57,6 +57,7 @@ namespace Legendary.Engine.Models.SkillTrees
             {
                 { new Parry(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
                 { new FastHealing(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new SmashDoor(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
             };
         }
 
