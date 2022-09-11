@@ -38,5 +38,22 @@ namespace Legendary.Engine.Extensions
 
             return items;
         }
+
+        /// <summary>
+        /// Adds an effect to a player if they are not already affected by it.
+        /// </summary>
+        /// <param name="input">The effects.</param>
+        /// <param name="effect">The effect.</param>
+        public static void AddIfNotAffected(this List<Effect> input, Effect effect)
+        {
+            if (input.Any(e => e.Name?.ToLower() == effect.Name?.ToLower()))
+            {
+                return;
+            }
+            else
+            {
+                input.Add(effect);
+            }
+        }
     }
 }

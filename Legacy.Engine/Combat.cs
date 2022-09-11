@@ -33,6 +33,7 @@ namespace Legendary.Engine
     {
         private readonly IRandom random;
         private readonly ICommunicator communicator;
+        private readonly IEnvironment environment;
         private readonly ILogger logger;
         private readonly IWorld world;
         private readonly AwardProcessor awardProcessor;
@@ -43,17 +44,19 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="world">The world.</param>
+        /// <param name="environment">The environment.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="logger">The logger.</param>
-        public Combat(ICommunicator communicator, IWorld world, IRandom random, ILogger logger)
+        public Combat(ICommunicator communicator, IWorld world, IEnvironment environment, IRandom random, ILogger logger)
         {
             this.random = random;
             this.communicator = communicator;
+            this.environment = environment;
             this.logger = logger;
             this.world = world;
 
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
-            this.actionProcessor = new ActionProcessor(communicator, world, logger, random, this);
+            this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this);
         }
 
         /// <summary>
@@ -1008,9 +1011,20 @@ namespace Legendary.Engine
             // If blinded, severely reduce the effectiveness of defensive skills.
             if (target.IsAffectedBy(EffectName.BLINDNESS))
             {
-                dodge.Proficiency = this.random.Next(2, 10);
-                parry.Proficiency = this.random.Next(2, 10);
-                evasive.Proficiency = this.random.Next(2, 10);
+                if (dodge != null)
+                {
+                    dodge.Proficiency = this.random.Next(2, 10);
+                }
+
+                if (parry != null)
+                {
+                    parry.Proficiency = this.random.Next(2, 10);
+                }
+
+                if (evasive != null)
+                {
+                    evasive.Proficiency = this.random.Next(2, 10);
+                }
             }
 
             switch (action.DamageType)

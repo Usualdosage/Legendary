@@ -1,37 +1,38 @@
-﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
+﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="80" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="101" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="129" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/SkillProcessor.cs" relfile="Legacy.Engine/Processors/SkillProcessor.cs" line="123" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2458" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="2537" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1469" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1486" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Helpers/GroupHelper.cs" relfile="Legacy.Engine/Helpers/GroupHelper.cs" line="321" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1692" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1709" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Combat.cs" relfile="Legacy.Engine/Combat.cs" line="1318" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3290" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="491" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Helpers/SpellHelper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processors/ActionProcessor2.cs">
     <Files>
-      <File FileName="Legacy.Engine/Combat.cs" Line="949" Column="1" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="1047" Column="41" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="707" Column="14" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="237" Column="37" />
-      <File FileName="Legacy.Engine/Models/SpellTrees/NegativeGroup.cs" Line="48" Column="26" />
-      <File FileName="Legacy.Engine/Models/SpellTrees/ConjuringGroup.cs" Line="19" Column="43" />
-      <File FileName="Legacy.Engine/Models/Spells/AcidBlast.cs" Line="63" Column="87" />
-      <File FileName="Legacy.Engine/Models/Spells/LightningBolt.cs" Line="18" Column="1" />
-      <File FileName="Legendary.Core/Sounds.cs" Line="34" Column="22" />
-      <File FileName="Legendary.Core/Contracts/IItem.cs" Line="105" Column="46" />
-      <File FileName="Legendary.Core/Types/ItemType.cs" Line="15" Column="17" />
-      <File FileName="Legendary.Core/Models/Character.cs" Line="348" Column="23" />
-      <File FileName="Legendary.Core/Models/Item.cs" Line="224" Column="47" />
-      <File FileName="Legacy.Engine/Helpers/SpellHelper.cs" Line="21" Column="1" />
+      <File FileName="Legendary.Core/Models/Character.cs" Line="669" Column="21" />
+      <File FileName="Legendary.Core/Models/Item.cs" Line="242" Column="40" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="3376" Column="1" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="374" Column="90" />
+      <File FileName="Legacy.Engine/Helpers/ContentHelper.cs" Line="19" Column="18" />
+      <File FileName="Legacy.Engine/Models/Spells/Invisibility.cs" Line="61" Column="54" />
+      <File FileName="Legacy.Engine/Models/Spells/Fly.cs" Line="77" Column="56" />
+      <File FileName="Legacy.Engine/Environment.cs" Line="231" Column="1" />
+      <File FileName="Legacy.Engine/Processors/WizActions.cs" Line="115" Column="22" />
+      <File FileName="Legacy.Engine/Models/Spell.cs" Line="59" Column="63" />
+      <File FileName="Legacy.Engine/Models/Skills/Hide.cs" Line="54" Column="18" />
+      <File FileName="Legacy.Engine/Models/SkillTrees/ClericalGroup.cs" Line="45" Column="39" />
+      <File FileName="Legacy.Engine/Extensions/StringExtensions.cs" Line="213" Column="18" />
+      <File FileName="Legacy.Engine/Models/SkillTrees/WeaponGroup.cs" Line="1" Column="1" />
+      <File FileName="Legacy.Engine/Models/SkillTrees/MartialGroup.cs" Line="38" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -39,28 +40,22 @@
           <Node name="Legendary" expanded="True">
             <Node name="Legendary.Core" expanded="True">
               <Node name="Contracts" expanded="True" />
-              <Node name="Extensions" expanded="True" />
               <Node name="Models" expanded="True" />
-              <Node name="Types" expanded="True" />
             </Node>
+            <Node name="Legendary.Data" expanded="True" />
             <Node name="Legendary.Engine" expanded="True">
               <Node name="Extensions" expanded="True" />
+              <Node name="Generators" expanded="True" />
               <Node name="Helpers" expanded="True" />
               <Node name="Models" expanded="True">
+                <Node name="Skills" expanded="True" />
                 <Node name="SkillTrees" expanded="True" />
                 <Node name="Spells" expanded="True" />
                 <Node name="SpellTrees" expanded="True" />
               </Node>
               <Node name="Output" expanded="True" />
-              <Node name="Processors" expanded="True" />
-            </Node>
-            <Node name="Legendary.Web" expanded="True">
-              <Node name="Models" expanded="True" />
-              <Node name="Views" expanded="True">
-                <Node name="Home" expanded="True" />
-              </Node>
-              <Node name="wwwroot" expanded="True">
-                <Node name="css" expanded="True" />
+              <Node name="Processors" expanded="True">
+                <Node name="ActionProcessor2.cs" selected="True" />
               </Node>
             </Node>
           </Node>
@@ -68,6 +63,4 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
 </Properties>

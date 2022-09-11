@@ -81,7 +81,7 @@ namespace Legendary.Engine.Models.Spells
                             target.CharacterFlags.Add(Core.Types.CharacterFlags.Sleeping);
                             await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} puts you to sleep!", cancellationToken);
                             await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} gets put to sleep by {actor.FirstName}.", cancellationToken);
-                            target.AffectedBy.Add(effect);
+                            target.AffectedBy.AddIfNotAffected(effect);
                         }
                     }
                 }

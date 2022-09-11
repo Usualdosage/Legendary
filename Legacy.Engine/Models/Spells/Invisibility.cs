@@ -1,4 +1,4 @@
-﻿// <copyright file="Protection.cs" company="Legendary™">
+﻿// <copyright file="Invisibility.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -9,33 +9,31 @@
 
 namespace Legendary.Engine.Models.Spells
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
 
     /// <summary>
-    /// Casts the armor spell.
+    /// Casts the invisibility spell.
     /// </summary>
-    public class Protection : Spell
+    public class Invisibility : Spell
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Protection"/> class.
+        /// Initializes a new instance of the <see cref="Invisibility"/> class.
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Protection(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Invisibility(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
             : base(communicator, random, world, logger, combat)
         {
-            this.Name = "Protection";
-            this.ManaCost = 40;
+            this.Name = "Invisibility";
+            this.ManaCost = 20;
             this.CanInvoke = true;
             this.IsAffect = true;
             this.AffectDuration = 0;
@@ -47,31 +45,40 @@ namespace Legendary.Engine.Models.Spells
             var effect = new Effect()
             {
                 Name = this.Name,
-                Duration = actor.Level / 10,
-                Spell = Math.Max(1, actor.Level / 20),
+                Duration = actor.Level / 3,
             };
 
             if (target == null)
             {
                 if (actor.IsAffectedBy(this))
                 {
-                    await this.Communicator.SendToPlayer(actor, $"You are already protected.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, $"You are already invisible.", cancellationToken);
                 }
                 else
                 {
                     await base.Act(actor, target, itemTarget, cancellationToken);
 
-                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
-                    await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
-
                     actor.AffectedBy.AddIfNotAffected(effect);
-                    await this.Communicator.SendToPlayer(actor, $"You feel protected by the Gods.", cancellationToken);
-                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} is surrounded by an aura of protection.", cancellationToken);
+
+                    await this.Communicator.SendToPlayer(actor, $"Your fade out of existence.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} fades out of existence.", cancellationToken);
                 }
             }
             else
             {
-                await this.Communicator.SendToPlayer(actor, $"You can't cast this on another person.", cancellationToken);
+                if (target.IsAffectedBy(this) || target.Race == Core.Types.Race.Avian || target.Race == Core.Types.Race.Faerie)
+                {
+                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is already invisible.", cancellationToken);
+                }
+                else
+                {
+                    await base.Act(actor, target, itemTarget, cancellationToken);
+
+                    target?.AffectedBy.AddIfNotAffected(effect);
+
+                    await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} fades out of existence.", cancellationToken);
+                    await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} fades out of existence.", cancellationToken);
+                }
             }
         }
     }

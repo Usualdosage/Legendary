@@ -38,6 +38,7 @@ namespace Legendary.Engine.Models
             this.Random = random;
             this.LanguageGenerator = new LanguageGenerator(random);
             this.Combat = combat;
+            this.World = world;
             this.AwardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
         }
 
@@ -93,6 +94,11 @@ namespace Legendary.Engine.Models
         /// Gets the random number generator.
         /// </summary>
         public IRandom Random { get; private set; }
+
+        /// <summary>
+        /// Gets the world.
+        /// </summary>
+        public IWorld World { get; private set; }
 
         /// <summary>
         /// Gets the language generator.

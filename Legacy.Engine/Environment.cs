@@ -226,24 +226,24 @@ namespace Legendary.Engine
             // TODO Cumulative effects, and add damage as these increase
             if (user.Character.Level < Constants.WIZLEVEL)
             {
-                if (user.Character.Hunger.Current < user.Character.Hunger.Max * 4)
+                if (user.Character.Hunger.Current < user.Character.Hunger.Max)
                 {
                     user.Character.Hunger.Current += 1;
                 }
                 else
                 {
                     // TODO Don't increment, and just apply damage
-                    user.Character.Hunger.Current = user.Character.Hunger.Max * 4;
+                    user.Character.Hunger.Current = user.Character.Hunger.Max;
                 }
 
-                if (user.Character.Thirst.Current < user.Character.Thirst.Max * 3)
+                if (user.Character.Thirst.Current < user.Character.Thirst.Max)
                 {
                     user.Character.Thirst.Current += 1;
                 }
                 else
                 {
                     // TODO Don't increment, and just apply damage
-                    user.Character.Thirst.Current = user.Character.Thirst.Max * 3;
+                    user.Character.Thirst.Current = user.Character.Thirst.Max;
                 }
 
                 if (user.Character.Hunger.Current >= user.Character.Hunger.Max)

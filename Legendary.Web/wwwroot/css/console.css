@@ -155,6 +155,16 @@ h6 {
     font-weight: bold;
 }
 
+.invisibility {
+    color: #666;
+    font-weight: bold;
+}
+
+.hide {
+    color: #666;
+    font-weight: bold;
+}
+
 /* Languages */
 
 .Elf {

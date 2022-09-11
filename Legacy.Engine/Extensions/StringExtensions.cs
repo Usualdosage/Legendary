@@ -180,35 +180,36 @@ namespace Legendary.Engine.Extensions
 
             foreach (var targetGroup in targetGroups)
             {
-                var target = targetGroup.First();
-
-                List<string> allTokens = new List<string>();
-                var nameTokens = target.Name?.ToLower().Split(' ').ToList();
-                var descriptionTokens = target.ShortDescription?.ToLower().Split(' ').ToList();
-
-                if (nameTokens != null)
+                foreach (var target in targetGroup)
                 {
-                    allTokens.AddRange(nameTokens);
-                }
+                    List<string> allTokens = new List<string>();
+                    var nameTokens = target.Name?.ToLower().Split(' ').ToList();
+                    var descriptionTokens = target.ShortDescription?.ToLower().Split(' ').ToList();
 
-                if (descriptionTokens != null)
-                {
-                    allTokens.AddRange(descriptionTokens);
-                }
-
-                int matchCount = 0;
-
-                foreach (var token in allTokens)
-                {
-                    if (Regex.IsMatch(token, input))
+                    if (nameTokens != null)
                     {
-                        matchCount += 1;
+                        allTokens.AddRange(nameTokens);
                     }
-                }
 
-                if (!bestMatch.ContainsKey(matchCount))
-                {
-                    bestMatch.Add(matchCount, target);
+                    if (descriptionTokens != null)
+                    {
+                        allTokens.AddRange(descriptionTokens);
+                    }
+
+                    int matchCount = 0;
+
+                    foreach (var token in allTokens)
+                    {
+                        if (Regex.IsMatch(token, input))
+                        {
+                            matchCount += 1;
+                        }
+                    }
+
+                    if (!bestMatch.ContainsKey(matchCount))
+                    {
+                        bestMatch.Add(matchCount, target);
+                    }
                 }
             }
 

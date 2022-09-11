@@ -89,7 +89,7 @@ namespace Legendary.Engine.Models.Spells
                         await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} has blinded you!", cancellationToken);
                         await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} has been blinded by {actor.FirstName}!", cancellationToken);
 
-                        target?.AffectedBy.Add(effect);
+                        target?.AffectedBy.AddIfNotAffected(effect);
 
                         if (target != null)
                         {

@@ -57,7 +57,7 @@ namespace Legendary.Engine.Models.Spells
                 else
                 {
                     await base.Act(actor, target, itemTarget, cancellationToken);
-                    actor.AffectedBy.Add(effect);
+                    actor.AffectedBy.AddIfNotAffected(effect);
                     await this.Communicator.SendToPlayer(actor, $"You become translucent.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} suddently becomes translucent.", cancellationToken);
                 }

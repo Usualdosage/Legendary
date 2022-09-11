@@ -105,7 +105,7 @@ namespace Legendary.Engine
             this.engine.VioTick += this.Engine_VioTick;
 
             // Create the combat processor.
-            this.combat = new Combat(this, this.world, this.random, this.logger);
+            this.combat = new Combat(this, this.world, this.environment, this.random, this.logger);
 
             // Create the language generator.
             this.LanguageGenerator = new LanguageGenerator(this.random);
@@ -125,7 +125,7 @@ namespace Legendary.Engine
             // Create instances of the action, skill, and spell processors.
             this.skillProcessor = new SkillProcessor(this, this.random, this.world, this.combat, this.logger);
             this.spellProcessor = new SpellProcessor(this, this.random, this.world, this.combat, this.logger);
-            this.actionProcessor = new ActionProcessor(this, this.world, this.logger, this.random, this.combat);
+            this.actionProcessor = new ActionProcessor(this, this.environment, this.world, this.logger, this.random, this.combat);
         }
 
         /// <summary>
@@ -459,6 +459,12 @@ namespace Legendary.Engine
 
                         if (mobile != null)
                         {
+                            if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this, user.Character, mobile))
+                            {
+                                await this.SendToPlayer(user.Connection, "They're not here.", cancellationToken);
+                                return;
+                            }
+
                             // If they're a ghost, remove the flag if they attack a mob.
                             if (user.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
                             {
@@ -487,6 +493,12 @@ namespace Legendary.Engine
                 else
                 {
                     var targetChar = target.Value.Value.Character;
+
+                    if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this, user.Character, targetChar))
+                    {
+                        await this.SendToPlayer(user.Connection, "They're not here.", cancellationToken);
+                        return;
+                    }
 
                     // If they're a ghost, remove the flag if they attack a mob.
                     if (user.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
@@ -694,37 +706,6 @@ namespace Legendary.Engine
             await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
         }
 
-        /// <inheritdoc/>
-        public bool CanPlayerSee(Character actor)
-        {
-            if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS))
-            {
-                return false;
-            }
-
-            var room = this.ResolveRoom(actor.Location);
-
-            if (room != null && room.Flags != null)
-            {
-                if (this.environment.IsNight || room.Flags.Contains(RoomFlags.Dark))
-                {
-                    var light = actor.Equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Light));
-                    if (light == null)
-                    {
-                        // See if there is a light in the room
-                        var lightInRoom = room.Items.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Light));
-
-                        if (lightInRoom == null)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
-
         /// <summary>
         /// Shows the information in a room to a single player.
         /// </summary>
@@ -737,7 +718,7 @@ namespace Legendary.Engine
 
             StringBuilder sb = new ();
 
-            if (!this.CanPlayerSee(actor))
+            if (!PlayerHelper.CanPlayerSee(this.environment, this, actor))
             {
                 sb.Append("You can't see anything, it's pitch black.");
                 actor.LastImage = null;
@@ -812,13 +793,16 @@ namespace Legendary.Engine
 
                     if (mobGroup.Count() == 1)
                     {
-                        if (mob.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
                         {
-                            sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
-                        }
-                        else
-                        {
-                            sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                            if (mob.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                            {
+                                sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                            }
+                            else
+                            {
+                                sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                            }
                         }
                     }
                     else
@@ -830,27 +814,33 @@ namespace Legendary.Engine
                             var sleeping = mobGroup.Where(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
                             var notSleeping = mobGroup.Where(m => !m.CharacterFlags.Contains(CharacterFlags.Sleeping));
 
-                            if (sleeping.Count() == 1)
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
                             {
-                                sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
-                            }
-                            else
-                            {
-                                sb.Append($"<span class='mobile'>({sleeping.Count()}){effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
-                            }
+                                if (sleeping.Count() == 1)
+                                {
+                                    sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                                }
+                                else
+                                {
+                                    sb.Append($"<span class='mobile'>({sleeping.Count()}){effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                                }
 
-                            if (notSleeping.Count() == 1)
-                            {
-                                sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
-                            }
-                            else
-                            {
-                                sb.Append($"<span class='mobile'>({notSleeping.Count()}) {effects}{mob.ShortDescription}</span>");
+                                if (notSleeping.Count() == 1)
+                                {
+                                    sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                                }
+                                else
+                                {
+                                    sb.Append($"<span class='mobile'>({notSleeping.Count()}) {effects}{mob.ShortDescription}</span>");
+                                }
                             }
                         }
                         else
                         {
-                            sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
+                            {
+                                sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
+                            }
                         }
                     }
                 }
@@ -866,22 +856,25 @@ namespace Legendary.Engine
                     string prefix = string.Empty;
                     string effects = this.GetEffects(other.Value.Character);
 
-                    if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, other.Value.Character))
                     {
-                        prefix = "The ghost of ";
-                    }
+                        if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
+                        {
+                            prefix = "The ghost of ";
+                        }
 
-                    if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Resting))
-                    {
-                        sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is resting here.</span>");
-                    }
-                    else if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
-                    {
-                        sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is sleeping here.</span>");
-                    }
-                    else
-                    {
-                        sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is here.</span>");
+                        if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Resting))
+                        {
+                            sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is resting here.</span>");
+                        }
+                        else if (other.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        {
+                            sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is sleeping here.</span>");
+                        }
+                        else
+                        {
+                            sb.Append($"<span class='player'>{effects}{prefix}{other.Value.Character.FirstName} is here.</span>");
+                        }
                     }
                 }
             }
@@ -1884,6 +1877,16 @@ namespace Legendary.Engine
                 sb.Append("(<span class='sanctuary'>White Aura</span>) ");
             }
 
+            if (actor.IsAffectedBy(nameof(Invisibility)))
+            {
+                sb.Append("(<span class='invisibility'>Invisible</span>) ");
+            }
+
+            if (actor.IsAffectedBy(nameof(Hide)))
+            {
+                sb.Append("(<span class='hide'>Hidden</span>) ");
+            }
+
             return sb.ToString();
         }
 
@@ -2189,7 +2192,7 @@ namespace Legendary.Engine
                 {
                     foreach (var player in players)
                     {
-                        if (this.CanPlayerSee(player))
+                        if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this, player, actor.Character))
                         {
                             await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
                         }
@@ -2212,7 +2215,7 @@ namespace Legendary.Engine
                     {
                         foreach (var player in players)
                         {
-                            if (this.CanPlayerSee(player))
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, player, actor.Character))
                             {
                                 if (player.CharacterId == targetChar.Character.CharacterId)
                                 {
@@ -2238,7 +2241,7 @@ namespace Legendary.Engine
                         {
                             foreach (var player in players)
                             {
-                                if (this.CanPlayerSee(player))
+                                if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, player, actor.Character))
                                 {
                                     await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", mobile?.FirstName.FirstCharToUpper()), cancellationToken);
                                 }

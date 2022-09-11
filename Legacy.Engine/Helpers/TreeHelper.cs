@@ -475,49 +475,43 @@ namespace Legendary.Engine.Helpers
         /// <returns>int.</returns>
         public static int GetHighestSkillGroup(UserData actor, ActionTree skillTree)
         {
-            int groupNumber = 0;
-
+            // In order to study the next group, a player must have learned ALL skills in a group. If the group has no skills to learn, move on.
             var intersectGroup1 = skillTree.Group1.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
-
-            // If the intersection contains the group count, they have ALL of the skills in group one, move along.
-            if (intersectGroup1.Count() == skillTree.Group1.Count)
+            var group1Count = intersectGroup1.Count();
+            if (group1Count != skillTree.Group1.Count && skillTree.Group1.Count > 0)
             {
-                groupNumber = 1;
+                return 0;
             }
 
             var intersectGroup2 = skillTree.Group2.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
-
-            // If the intersection contains the group count, they have ALL of the skills in group two, move along.
-            if (intersectGroup2.Count() == skillTree.Group2.Count)
+            var group2Count = intersectGroup2.Count();
+            if (group2Count != skillTree.Group2.Count && skillTree.Group2.Count > 0)
             {
-                groupNumber = 2;
+                return 1;
             }
 
             var intersectGroup3 = skillTree.Group3.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
-
-            // If the intersection contains the group count, they have ALL of the skills in group three, move along.
-            if (intersectGroup3.Count() == skillTree.Group3.Count)
+            var group3Count = intersectGroup3.Count();
+            if (group3Count != skillTree.Group3.Count && skillTree.Group3.Count > 0)
             {
-                groupNumber = 3;
+                return 2;
             }
 
             var intersectGroup4 = skillTree.Group4.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
-
-            // If the intersection contains the group count, they have ALL of the skills in group four, move along.
-            if (intersectGroup4.Count() == skillTree.Group4.Count)
+            var group4Count = intersectGroup4.Count();
+            if (group4Count != skillTree.Group4.Count && skillTree.Group4.Count > 0)
             {
-                groupNumber = 4;
+                return 3;
             }
 
             var intersectGroup5 = skillTree.Group5.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Skills.Select(sk => sk.SkillName.ToLower()).ToList());
-
-            // If the intersection contains the group count, they have ALL of the skills in group five, move along.
-            if (intersectGroup5.Count() == skillTree.Group5.Count)
+            var group5Count = intersectGroup5.Count();
+            if (group5Count != skillTree.Group5.Count && skillTree.Group5.Count > 0)
             {
-                groupNumber = 5;
+                return 4;
             }
 
-            return groupNumber;
+            return 5;
         }
 
         /// <summary>
@@ -528,49 +522,43 @@ namespace Legendary.Engine.Helpers
         /// <returns>int.</returns>
         public static int GetHighestSpellGroup(UserData actor, ActionTree spellTree)
         {
-            int groupNumber = 0;
-
+            // In order to study the next group, a player must have learned ALL spells in a group. If the group has no spells to learn, move on.
             var intersectGroup1 = spellTree.Group1.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
-
-            // If the intersection contains nothing, they have ALL of the skills in group one, move along.
-            if (intersectGroup1.Count() == spellTree.Group1.Count)
+            var group1Count = intersectGroup1.Count();
+            if (group1Count != spellTree.Group1.Count && spellTree.Group1.Count > 0)
             {
-                groupNumber = 1;
+                return 0;
             }
 
             var intersectGroup2 = spellTree.Group2.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
-
-            // If the intersection contains nothing, they have ALL of the skills in group two, move along.
-            if (intersectGroup2.Count() == spellTree.Group2.Count)
+            var group2Count = intersectGroup2.Count();
+            if (group2Count != spellTree.Group2.Count && spellTree.Group2.Count > 0)
             {
-                groupNumber = 2;
+                return 1;
             }
 
             var intersectGroup3 = spellTree.Group3.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
-
-            // If the intersection contains nothing, they have ALL of the skills in group three, move along.
-            if (intersectGroup3.Count() == spellTree.Group3.Count)
+            var group3Count = intersectGroup3.Count();
+            if (group3Count != spellTree.Group3.Count && spellTree.Group3.Count > 0)
             {
-                groupNumber = 3;
+                return 2;
             }
 
             var intersectGroup4 = spellTree.Group4.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
-
-            // If the intersection contains nothing, they have ALL of the skills in group four, move along.
-            if (intersectGroup4.Count() == spellTree.Group4.Count)
+            var group4Count = intersectGroup4.Count();
+            if (group4Count != spellTree.Group4.Count && spellTree.Group4.Count > 0)
             {
-                groupNumber = 4;
+                return 3;
             }
 
             var intersectGroup5 = spellTree.Group5.Select(g => g.Name.ToLower()).ToList().Intersect(actor.Character.Spells.Select(sk => sk.SpellName.ToLower()).ToList());
-
-            // If the intersection contains nothing, they have ALL of the skills in group five, move along.
-            if (intersectGroup5.Count() == spellTree.Group5.Count)
+            var group5Count = intersectGroup5.Count();
+            if (group5Count != spellTree.Group5.Count && spellTree.Group5.Count > 0)
             {
-                groupNumber = 5;
+                return 4;
             }
 
-            return groupNumber;
+            return 5;
         }
     }
 }

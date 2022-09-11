@@ -42,6 +42,7 @@ namespace Legendary.Engine.Processors
     public partial class ActionProcessor
     {
         private readonly ICommunicator communicator;
+        private readonly IEnvironment environment;
         private readonly IWorld world;
         private readonly ILogger logger;
         private readonly ActionHelper actionHelper;
@@ -55,14 +56,16 @@ namespace Legendary.Engine.Processors
         /// Initializes a new instance of the <see cref="ActionProcessor"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
+        /// <param name="environment">The environment.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="random">The Random Number generator.</param>
         /// <param name="combat">The combat class.</param>
-        public ActionProcessor(ICommunicator communicator, IWorld world, ILogger logger, IRandom random, Combat combat)
+        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, Combat combat)
         {
             this.communicator = communicator;
             this.world = world;
+            this.environment = environment;
             this.logger = logger;
             this.random = random;
             this.combat = combat;
@@ -156,7 +159,7 @@ namespace Legendary.Engine.Processors
 
                             if (sightRequiredAttrib != null)
                             {
-                                if (!this.communicator.CanPlayerSee(actor.Character))
+                                if (!PlayerHelper.CanPlayerSee(this.environment, this.communicator, actor.Character))
                                 {
                                     await this.communicator.SendToPlayer(actor.Connection, "You can't see anything, it's pitch black.", cancellationToken);
                                     return;
@@ -409,6 +412,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("unsubscribe", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoUnsubscribe)));
             this.actions.Add("up", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("value", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoValue)));
+            this.actions.Add("visible", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoVisible)));
             this.actions.Add("west", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("wear", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWear)));
             this.actions.Add("where", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWhere)));
@@ -430,7 +434,7 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var effect in actor.Character.AffectedBy)
                 {
-                    if (effect.Name != nameof(Sneak))
+                    if (effect.Name != nameof(Sneak) || effect.Name != nameof(Hide))
                     {
                         sb.Append($"<span class='player-affect'><li>{effect.Name} for {effect.Duration} hours.</li></span>");
                     }
@@ -770,7 +774,7 @@ namespace Legendary.Engine.Processors
                     {
                         foreach (var player in players)
                         {
-                            if (this.communicator.CanPlayerSee(player))
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
                             {
                                 await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
                             }
@@ -1627,6 +1631,13 @@ namespace Legendary.Engine.Processors
                                 }
                             }
 
+                            if (actor.Character.IsAffectedBy(nameof(Hide)))
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "You step out of the shadows.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} steps out of the shadows.", cancellationToken);
+                                actor.Character.AffectedBy.RemoveAll(a => a.Name == nameof(Hide));
+                            }
+
                             if (isGhost)
                             {
                                 await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} floats {dir}.", cancellationToken);
@@ -1974,7 +1985,7 @@ namespace Legendary.Engine.Processors
                 {
                     foreach (var player in players)
                     {
-                        if (this.communicator.CanPlayerSee(player))
+                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
                         {
                             if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
                             {
@@ -2585,24 +2596,27 @@ namespace Legendary.Engine.Processors
 
                 foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
                 {
-                    sb.Append($"<span class='who'>[{player?.Value.Character.Level}] {player?.Value.Character.FirstName}");
-
-                    if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
+                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, actor.Character, player?.Value.Character))
                     {
-                        sb.Append($" {player?.Value.Character.LastName}");
-                    }
+                        sb.Append($"<span class='who'>[{player?.Value.Character.Level}] {player?.Value.Character.FirstName}");
 
-                    if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
-                    {
-                        sb.Append($" {player?.Value.Character.Title}");
-                    }
+                        if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
+                        {
+                            sb.Append($" {player?.Value.Character.LastName}");
+                        }
 
-                    sb.Append("</span>");
+                        if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
+                        {
+                            sb.Append($" {player?.Value.Character.Title}");
+                        }
+
+                        sb.Append("</span>");
+                    }
                 }
 
                 await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
 
-                await this.communicator.SendToPlayer(actor.Connection, $"There are {Communicator.Users?.Count} players connected.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"There are {Communicator.Users?.Count} players in Mystra.", cancellationToken);
             }
         }
 
@@ -2797,7 +2811,7 @@ namespace Legendary.Engine.Processors
                 {
                     foreach (var player in players)
                     {
-                        if (this.communicator.CanPlayerSee(player))
+                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
                         {
                             if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
                             {
@@ -3373,8 +3387,6 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(user.Connection, $"You eat {item.Name}.", cancellationToken);
                         await this.communicator.SendToPlayer(user.Connection, $"You are no longer hungry.", cancellationToken);
 
-                        item.Food.Current -= 1;
-
                         // If a food value is 3, that equates to 3 meals. So when a player eats, each food value means 8 hours of food.
                         user.Character.Hunger.Current -= 8;
 
@@ -3489,7 +3501,7 @@ namespace Legendary.Engine.Processors
             var garbled = this.communicator.LanguageGenerator.BuildSentence(message);
             var skillRoll = this.random.Next(0, 99);
 
-            if (targetUser != null && !this.communicator.CanPlayerSee(targetUser.Value.Value.Character))
+            if (targetUser != null && !PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, targetUser.Value.Value.Character, user.Character))
             {
                 senderName = "Someone";
             }
@@ -3497,6 +3509,12 @@ namespace Legendary.Engine.Processors
             if (targetUser != null)
             {
                 var player = targetUser.Value.Value;
+
+                if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, user.Character, player.Character))
+                {
+                    await this.communicator.SendToPlayer(user.Connection, $"Nobody around by that name.", cancellationToken);
+                    return;
+                }
 
                 CommResult commResult;
 
@@ -3568,6 +3586,7 @@ namespace Legendary.Engine.Processors
         private async Task ShowCharactersInArea(UserData actor, List<Character>? characters, List<Mobile>? mobiles, CancellationToken cancellationToken)
         {
             var sb = new StringBuilder();
+            bool canSee = false;
 
             if (characters != null)
             {
@@ -3575,16 +3594,21 @@ namespace Legendary.Engine.Processors
 
                 foreach (var character in characters)
                 {
-                    sb.Append($"<span class='scan'>{character.FirstName.FirstCharToUpper()} is in ");
-
-                    var room = this.communicator.ResolveRoom(character.Location);
-
-                    if (room != null)
+                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, actor.Character, character))
                     {
-                        sb.Append($"{room?.Name} [{room?.RoomId}]");
-                    }
+                        canSee = true;
 
-                    sb.Append("</span>");
+                        sb.Append($"<span class='scan'>{character.FirstName.FirstCharToUpper()} is in ");
+
+                        var room = this.communicator.ResolveRoom(character.Location);
+
+                        if (room != null)
+                        {
+                            sb.Append($"{room?.Name} [{room?.RoomId}]");
+                        }
+
+                        sb.Append("</span>");
+                    }
                 }
             }
 
@@ -3592,20 +3616,32 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var mobile in mobiles)
                 {
-                    sb.Append($"<span class='scan'>{mobile.FirstName.FirstCharToUpper()} is in ");
-
-                    var room = this.communicator.ResolveRoom(mobile.Location);
-
-                    if (room != null)
+                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, actor.Character, mobile))
                     {
-                        sb.Append($"{room?.Name} [{room?.RoomId}]");
-                    }
+                        canSee = true;
 
-                    sb.Append("</span>");
+                        sb.Append($"<span class='scan'>{mobile.FirstName.FirstCharToUpper()} is in ");
+
+                        var room = this.communicator.ResolveRoom(mobile.Location);
+
+                        if (room != null)
+                        {
+                            sb.Append($"{room?.Name} [{room?.RoomId}]");
+                        }
+
+                        sb.Append("</span>");
+                    }
                 }
             }
 
-            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+            if (canSee)
+            {
+                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "There are no players near you.", cancellationToken);
+            }
         }
 
         private string ShowStatistics(Character actor)

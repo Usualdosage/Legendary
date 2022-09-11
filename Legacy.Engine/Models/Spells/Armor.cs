@@ -66,7 +66,7 @@ namespace Legendary.Engine.Models.Spells
                     await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
                     await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
 
-                    actor.AffectedBy.Add(effect);
+                    actor.AffectedBy.AddIfNotAffected(effect);
                     await this.Communicator.SendToPlayer(actor, $"You are protected by magical armor.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} is protected by magical armor.", cancellationToken);
                 }
@@ -91,7 +91,7 @@ namespace Legendary.Engine.Models.Spells
                         await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.ARMOR, cancellationToken);
                         await this.Communicator.PlaySoundToRoom(actor, target, Sounds.ARMOR, cancellationToken);
 
-                        target?.AffectedBy.Add(effect);
+                        target?.AffectedBy.AddIfNotAffected(effect);
                         await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is protected by your magical armor.", cancellationToken);
                         await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} is protected by {actor.FirstName}'s armor.", cancellationToken);
                     }

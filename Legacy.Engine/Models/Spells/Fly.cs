@@ -58,7 +58,7 @@ namespace Legendary.Engine.Models.Spells
                 {
                     await base.Act(actor, target, itemTarget, cancellationToken);
 
-                    actor.AffectedBy.Add(effect);
+                    actor.AffectedBy.AddIfNotAffected(effect);
 
                     await this.Communicator.SendToPlayer(actor, $"Your feet rise off the ground.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s feet rise off the ground.", cancellationToken);
@@ -74,7 +74,7 @@ namespace Legendary.Engine.Models.Spells
                 {
                     await base.Act(actor, target, itemTarget, cancellationToken);
 
-                    target?.AffectedBy.Add(effect);
+                    target?.AffectedBy.AddIfNotAffected(effect);
 
                     await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()}'s feet rise off the ground.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()}'s feet rise off the ground.", cancellationToken);

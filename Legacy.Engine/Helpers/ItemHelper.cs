@@ -294,7 +294,7 @@ namespace Legendary.Engine.Helpers
         /// <summary>
         /// Random loot drop from killing a mob.
         /// </summary>
-        /// <param name="mobLevel">The mob level</param>
+        /// <param name="mobLevel">The mob level.</param>
         /// <param name="characterLevel">The character level.</param>
         /// <param name="random">The random generator.</param>
         /// <returns>Item.</returns>

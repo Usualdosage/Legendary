@@ -62,7 +62,7 @@ namespace Legendary.Engine.Models.Spells
                     await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
                     await this.Communicator.PlaySoundToRoom(actor, target, Sounds.SANCTUARY, cancellationToken);
 
-                    actor.AffectedBy.Add(effect);
+                    actor.AffectedBy.AddIfNotAffected(effect);
                     await this.Communicator.SendToPlayer(actor, $"You are surrounded by a white aura.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
                 }
@@ -87,7 +87,7 @@ namespace Legendary.Engine.Models.Spells
                         await this.Communicator.PlaySound(target, Core.Types.AudioChannel.Spell, Sounds.SANCTUARY, cancellationToken);
                         await this.Communicator.PlaySoundToRoom(actor, target, Sounds.SANCTUARY, cancellationToken);
 
-                        target?.AffectedBy.Add(effect);
+                        target?.AffectedBy.AddIfNotAffected(effect);
                         await this.Communicator.SendToPlayer(actor, $"{target?.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
                         await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} is surrounded by a white aura.", cancellationToken);
                     }

@@ -55,6 +55,7 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new Identify(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Teleport(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 

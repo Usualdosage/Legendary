@@ -27,6 +27,8 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Generators;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Models.Spells;
 
     /// <summary>
     /// Additional action processing commands.
@@ -1761,6 +1763,27 @@ namespace Legendary.Engine.Processors
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
                 }
+            }
+        }
+
+        [HelpText("<p>Makes you visible to any and everyone. See also: HELP INVISIBILITY, HELP HIDE, HELP DETECT INVISIBILITY, HELP DETECT HIDDEN</p>")]
+        private async Task DoVisible(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.IsAffectedBy(nameof(Invisibility)))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "You fade back into existence.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} fades into existence.", cancellationToken);
+                actor.Character.AffectedBy.RemoveAll(a => a.Name == nameof(Invisibility));
+            }
+            else if (actor.Character.IsAffectedBy(nameof(Hide)))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "You step out of the shadows.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} steps out of the shadows.", cancellationToken);
+                actor.Character.AffectedBy.RemoveAll(a => a.Name == nameof(Hide));
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "You are already quite visible.", cancellationToken);
             }
         }
 

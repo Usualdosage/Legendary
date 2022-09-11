@@ -449,13 +449,6 @@ namespace Legendary.Core.Contracts
         long GetExperienceToLevel(Character character);
 
         /// <summary>
-        /// Determines whether a player is able to see (room, player, item, etc).
-        /// </summary>
-        /// <param name="actor">The character.</param>
-        /// <returns>True if player can see.</returns>
-        bool CanPlayerSee(Character actor);
-
-        /// <summary>
         /// Shows the members of the actor's group to the actor.
         /// </summary>
         /// <param name="actor">The actor in the group.</param>

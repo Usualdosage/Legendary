@@ -22,7 +22,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Definition of race data (lookup table).
         /// </summary>
-        public static Dictionary<Race, RaceStats> RaceData = new Dictionary<Race, RaceStats>()
+        private static Dictionary<Race, RaceStats> raceData = new Dictionary<Race, RaceStats>()
         {
             {
                 Race.Avian, new RaceStats()
@@ -125,7 +125,7 @@ namespace Legendary.Core.Models
                     ExperiencePenalty = 400,
                     Size = Size.Giant,
                     Alignments = new List<Alignment>() { Alignment.Evil },
-                    Abilities = new List<string>() { "FireGiant" },
+                    Abilities = new List<string>() { "FireGiant", "SmashDoor" },
                     BaseCarryWeight = 250,
                 }
             },
@@ -185,7 +185,7 @@ namespace Legendary.Core.Models
                     ExperiencePenalty = 450,
                     Size = Size.Large,
                     Alignments = new List<Alignment>() { Alignment.Neutral },
-                    Abilities = new List<string>() { "HalfOrc" },
+                    Abilities = new List<string>() { "HalfOrc", "SmashDoor" },
                     BaseCarryWeight = 240,
                 }
             },
@@ -215,7 +215,7 @@ namespace Legendary.Core.Models
                     ExperiencePenalty = 400,
                     Size = Size.Giant,
                     Alignments = new List<Alignment>() { Alignment.Neutral },
-                    Abilities = new List<string>() { "StoneGiant" },
+                    Abilities = new List<string>() { "StoneGiant", "SmashDoor" },
                     BaseCarryWeight = 250,
                 }
             },
@@ -230,10 +230,15 @@ namespace Legendary.Core.Models
                     ExperiencePenalty = 650,
                     Size = Size.Giant,
                     Alignments = new List<Alignment>() { Alignment.Good },
-                    Abilities = new List<string>() { "StormGiant" },
+                    Abilities = new List<string>() { "StormGiant", "SmashDoor" },
                     BaseCarryWeight = 250,
                 }
             },
         };
+
+        /// <summary>
+        /// Gets the race data.
+        /// </summary>
+        public static Dictionary<Race, RaceStats> RaceData { get => raceData; }
     }
 }

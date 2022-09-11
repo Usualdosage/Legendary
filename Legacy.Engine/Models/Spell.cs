@@ -56,7 +56,6 @@ namespace Legendary.Engine.Models
                 await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} extends {actor.Pronoun} hand toward {target?.FirstName} and utters the word, '{spellWords}'", cancellationToken);
             }
 
-            actor.Mana.Current -= this.ManaCost;
             await this.CheckImprove(actor, cancellationToken);
         }
 

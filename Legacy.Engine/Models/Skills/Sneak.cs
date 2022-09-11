@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
 
     /// <summary>
     /// Allows a player to sneak around silently.
@@ -61,7 +62,7 @@ namespace Legendary.Engine.Models.Skills
                     Duration = actor.Level / 5,
                 };
 
-                actor.AffectedBy.Add(effect);
+                actor.AffectedBy.AddIfNotAffected(effect);
             }
         }
     }

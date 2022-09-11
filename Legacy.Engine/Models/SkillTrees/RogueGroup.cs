@@ -63,6 +63,7 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
+                { new Hide(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

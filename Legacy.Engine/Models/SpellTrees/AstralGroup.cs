@@ -54,11 +54,18 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new PassDoor(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new DetectInvisibility(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group3 { get => new List<IAction>(); }
+        public override List<IAction> Group3
+        {
+            get => new List<IAction>()
+            {
+                { new Invisibility(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+            };
+        }
 
         /// <inheritdoc/>
         public override List<IAction> Group4 { get => new List<IAction>(); }
