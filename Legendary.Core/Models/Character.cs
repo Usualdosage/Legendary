@@ -30,6 +30,7 @@ namespace Legendary.Core.Models
         private MaxCurrent wis = new MaxCurrent(10, 10);
         private MaxCurrent dex = new MaxCurrent(10, 10);
         private MaxCurrent con = new MaxCurrent(10, 10);
+        private MaxCurrent carryWeight = new MaxCurrent(80, 80);
 
         private int defaultAge = 18;
         private int saveDeath = 8;
@@ -176,7 +177,28 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the carry weight of the player.
         /// </summary>
-        public MaxCurrent CarryWeight { get; set; } = new MaxCurrent(120, 120);
+        public MaxCurrent CarryWeight
+        {
+            get
+            {
+                var current = this.Equipment.Sum(e => e.Weight) + this.Inventory.Sum(i => i.Weight);
+                var size = Races.RaceData.FirstOrDefault(r => r.Key == this.Race);
+                if (size.Value != null)
+                {
+                    var max = size.Value.BaseCarryWeight + (this.Str.Max * 2);
+                    return new MaxCurrent(max, (int)current);
+                }
+                else
+                {
+                    return new MaxCurrent(100 + (this.Str.Max * 2), (int)current);
+                }
+            }
+
+            set
+            {
+                this.carryWeight = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the player's hunger counter.

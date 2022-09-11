@@ -248,12 +248,19 @@ namespace Legendary.Engine.Processors
                         {
                             if (item != null)
                             {
-                                await this.communicator.SendToPlayer(actor, $"You get {item.Name} from {container.Name}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+                                if (ItemHelper.CanCarry(actor, item))
+                                {
+                                    await this.communicator.SendToPlayer(actor, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
 
-                                var itemToClone = (Item)item;
-                                actor.Inventory.Add(itemToClone.Clone());
-                                itemsToRemove.Add(item);
+                                    var itemToClone = (Item)item;
+                                    actor.Inventory.Add(itemToClone.Clone());
+                                    itemsToRemove.Add(item);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor, $"You can't carry that much weight.", cancellationToken);
+                                }
                             }
                         }
                     }
@@ -1056,13 +1063,21 @@ namespace Legendary.Engine.Processors
 
                     if (targetPlayer != null)
                     {
-                        actor.Character.Inventory.Remove(itemToGive);
-                        targetPlayer.Character.Inventory.Add(itemToGive.DeepCopy());
+                        if (ItemHelper.CanCarry(targetPlayer.Character, itemToGive))
+                        {
+                            actor.Character.Inventory.Remove(itemToGive);
+                            actor.Character.CarryWeight.Current -= (double)itemToGive.Weight;
+                            targetPlayer.Character.Inventory.Add(itemToGive.DeepCopy());
 
-                        await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
-                        await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
 
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"{targetPlayer.Character.FirstName.FirstCharToUpper()} can't carry that much weight.", cancellationToken);
+                        }
                     }
                     else
                     {
@@ -3097,8 +3112,15 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
 
-                        actor.Character.Inventory.Add(item);
-                        itemsToRemove.Add(item);
+                        if (ItemHelper.CanCarry(actor.Character, item))
+                        {
+                            actor.Character.Inventory.Add(item);
+                            itemsToRemove.Add(item);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't carry that much weight.", cancellationToken);
+                        }
                     }
                 }
 
@@ -3164,8 +3186,15 @@ namespace Legendary.Engine.Processors
                             await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
                             await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
 
-                            actor.Character.Inventory.Add(item);
-                            room.Items.Remove(item);
+                            if (ItemHelper.CanCarry(actor.Character, item))
+                            {
+                                actor.Character.Inventory.Add(item);
+                                room.Items.Remove(item);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You can't carry that much weight.", cancellationToken);
+                            }
                         }
                     }
                     else
@@ -3179,11 +3208,18 @@ namespace Legendary.Engine.Processors
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name}.", cancellationToken);
+                            if (ItemHelper.CanCarry(actor.Character, item))
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name}.", cancellationToken);
 
-                            actor.Character.Inventory.Add(targetItem);
-                            room.Items.Remove(targetItem);
+                                actor.Character.Inventory.Add(targetItem);
+                                room.Items.Remove(targetItem);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You can't carry that much weight.", cancellationToken);
+                            }
                         }
                     }
                 }
@@ -3230,25 +3266,39 @@ namespace Legendary.Engine.Processors
 
                         if (matchingItems.Count == 1)
                         {
-                            // Only had 1, so use the original item.
-                            await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
+                            if (ItemHelper.CanCarry(actor.Character, item))
+                            {
+                                // Only had 1, so use the original item.
+                                await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name} from {container.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name} from {container.Name}.", cancellationToken);
 
-                            var itemClone = (Item)item;
-                            actor.Character.Inventory.Add(itemClone.DeepCopy());
-                            container.Contains.Remove(item);
+                                var itemClone = (Item)item;
+                                actor.Character.Inventory.Add(itemClone.DeepCopy());
+                                container.Contains.Remove(item);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You can't carry that much weight.", cancellationToken);
+                            }
                         }
                         else
                         {
-                            // Get the item by index.
-                            var targetItem = matchingItems[Math.Min(args.Index, matchingItems.Count - 1)];
+                            if (ItemHelper.CanCarry(actor.Character, item))
+                            {
+                                // Get the item by index.
+                                var targetItem = matchingItems[Math.Min(args.Index, matchingItems.Count - 1)];
 
-                            await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name} from {container.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name} from {container.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, $"You get {targetItem.Name} from {container.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {targetItem.Name} from {container.Name}.", cancellationToken);
 
-                            var targetItemClone = (Item)targetItem;
-                            actor.Character.Inventory.Add(targetItemClone.DeepCopy());
-                            container.Contains.Remove(targetItemClone);
+                                var targetItemClone = (Item)targetItem;
+                                actor.Character.Inventory.Add(targetItemClone.DeepCopy());
+                                container.Contains.Remove(targetItemClone);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You can't carry that much weight.", cancellationToken);
+                            }
                         }
                     }
                     else
@@ -3336,6 +3386,7 @@ namespace Legendary.Engine.Processors
                         if (item.Food.Current <= 0)
                         {
                             await this.communicator.SendToPlayer(user.Connection, $"You have eaten all of {item.Name}.", cancellationToken);
+                            user.Character.CarryWeight.Current -= (double)item.Weight;
                             user.Character.Inventory.Remove(item);
                         }
                         else
@@ -3392,6 +3443,7 @@ namespace Legendary.Engine.Processors
                     foreach (var itemToRemove in itemsToRemove)
                     {
                         user.Character.Inventory.Remove(itemToRemove);
+                        user.Character.CarryWeight.Current -= (double)itemToRemove.Weight;
                     }
                 }
                 else
@@ -3421,6 +3473,7 @@ namespace Legendary.Engine.Processors
                     foreach (var itemToRemove in itemsToRemove)
                     {
                         user.Character.Inventory.Remove(itemToRemove);
+                        user.Character.CarryWeight.Current -= (double)itemToRemove.Weight;
                     }
                 }
             }
@@ -3586,7 +3639,7 @@ namespace Legendary.Engine.Processors
                         Mana = $"{actor.Mana.Current}/{actor.Mana.Max}",
                         Movement = $"{actor.Movement.Current}/{actor.Movement.Max}",
                         Experience = actor.IsNPC ? "N/A" : actor.Experience.ToString(),
-                        Carry = "100/100",
+                        Carry = $"{(int)actor.CarryWeight.Current}/{(int)actor.CarryWeight.Max} lbs",
                         Level = actor.Level.ToString(),
                     },
                     Attributes = new Attributes()

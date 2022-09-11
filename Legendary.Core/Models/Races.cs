@@ -36,6 +36,7 @@ namespace Legendary.Core.Models
                     Size = Size.Medium,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral, Alignment.Evil },
                     Abilities = new List<string>() { "Avian" },
+                    BaseCarryWeight = 120,
                 }
             },
             {
@@ -50,6 +51,7 @@ namespace Legendary.Core.Models
                     Size = Size.Small,
                     Alignments = new List<Alignment>() { Alignment.Evil },
                     Abilities = new List<string>() { "Drow", "Sneak" },
+                    BaseCarryWeight = 80,
                 }
             },
             {
@@ -64,6 +66,7 @@ namespace Legendary.Core.Models
                     Size = Size.Small,
                     Alignments = new List<Alignment>() { Alignment.Evil },
                     Abilities = new List<string>() { "Duergar" },
+                    BaseCarryWeight = 130,
                 }
             },
             {
@@ -78,6 +81,7 @@ namespace Legendary.Core.Models
                     Size = Size.Small,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral },
                     Abilities = new List<string>() { "Dwarf", "EdgedWeapons" },
+                    BaseCarryWeight = 130,
                 }
             },
             {
@@ -92,6 +96,7 @@ namespace Legendary.Core.Models
                     Size = Size.Medium,
                     Alignments = new List<Alignment>() { Alignment.Good },
                     Abilities = new List<string>() { "Elf", "Sneak" },
+                    BaseCarryWeight = 120,
                 }
             },
             {
@@ -106,6 +111,7 @@ namespace Legendary.Core.Models
                     Size = Size.Tiny,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral, Alignment.Evil },
                     Abilities = new List<string>() { "Faerie" },
+                    BaseCarryWeight = 40,
                 }
             },
             {
@@ -120,6 +126,7 @@ namespace Legendary.Core.Models
                     Size = Size.Giant,
                     Alignments = new List<Alignment>() { Alignment.Evil },
                     Abilities = new List<string>() { "FireGiant" },
+                    BaseCarryWeight = 250,
                 }
             },
             {
@@ -134,6 +141,7 @@ namespace Legendary.Core.Models
                     Size = Size.Small,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral },
                     Abilities = new List<string>() { "Gnome" },
+                    BaseCarryWeight = 50,
                 }
             },
             {
@@ -148,6 +156,7 @@ namespace Legendary.Core.Models
                     Size = Size.Medium,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral },
                     Abilities = new List<string>() { "HalfElf" },
+                    BaseCarryWeight = 120,
                 }
             },
             {
@@ -162,6 +171,7 @@ namespace Legendary.Core.Models
                     Size = Size.Small,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral },
                     Abilities = new List<string>() { "Halfling" },
+                    BaseCarryWeight = 110,
                 }
             },
             {
@@ -176,6 +186,7 @@ namespace Legendary.Core.Models
                     Size = Size.Large,
                     Alignments = new List<Alignment>() { Alignment.Neutral },
                     Abilities = new List<string>() { "HalfOrc" },
+                    BaseCarryWeight = 240,
                 }
             },
             {
@@ -190,6 +201,7 @@ namespace Legendary.Core.Models
                     Size = Size.Medium,
                     Alignments = new List<Alignment>() { Alignment.Good, Alignment.Neutral, Alignment.Evil },
                     Abilities = new List<string>() { "Human" },
+                    BaseCarryWeight = 120,
                 }
             },
             {
@@ -204,6 +216,7 @@ namespace Legendary.Core.Models
                     Size = Size.Giant,
                     Alignments = new List<Alignment>() { Alignment.Neutral },
                     Abilities = new List<string>() { "StoneGiant" },
+                    BaseCarryWeight = 250,
                 }
             },
             {
@@ -218,6 +231,7 @@ namespace Legendary.Core.Models
                     Size = Size.Giant,
                     Alignments = new List<Alignment>() { Alignment.Good },
                     Abilities = new List<string>() { "StormGiant" },
+                    BaseCarryWeight = 250,
                 }
             },
         };

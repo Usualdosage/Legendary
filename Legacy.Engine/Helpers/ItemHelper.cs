@@ -88,6 +88,25 @@ namespace Legendary.Engine.Helpers
         }
 
         /// <summary>
+        /// Gets a valud indicating whether or not the player can carry the current item. Applies the weight.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="item">The item.</param>
+        /// <returns>True if they can carry it.</returns>
+        public static bool CanCarry(Character actor, IItem item)
+        {
+            if (actor.CarryWeight.Current + (double)item.Weight > actor.CarryWeight.Max)
+            {
+                return false;
+            }
+            else
+            {
+                actor.CarryWeight.Current += (double)item.Weight;
+                return true;
+            }
+        }
+
+        /// <summary>
         /// Creates a very basic piece of practice armor.
         /// </summary>
         /// <param name="random">The random generator.</param>

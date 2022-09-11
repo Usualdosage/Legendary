@@ -63,5 +63,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the racial abilities this race has. Includes languages.
         /// </summary>
         public List<string>? Abilities { get; set; }
+
+        /// <summary>
+        /// Gets or sets the base carry weight for the race.
+        /// </summary>
+        public int BaseCarryWeight { get; set; }
     }
 }

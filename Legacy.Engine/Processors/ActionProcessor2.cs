@@ -224,13 +224,19 @@ namespace Legendary.Engine.Processors
 
                                 if (actor.Character.Currency >= price)
                                 {
-                                    await this.communicator.SendToPlayer(actor.Connection, $"You purchase {item.Name} from {merchant.FirstName.FirstCharToUpper()} for {item.Value.ToMerchantSellPrice(actor.Character, merchant)}.", cancellationToken);
-                                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} purchases {item.Name} from {merchant.FirstName.FirstCharToUpper()}.", cancellationToken);
-                                    actor.Character.Currency -= price;
-                                    var newItem = item.DeepCopy();
-                                    actor.Character.Inventory.Add(newItem);
-
-                                    await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
+                                    if (ItemHelper.CanCarry(actor.Character, item))
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, $"You purchase {item.Name} from {merchant.FirstName.FirstCharToUpper()} for {item.Value.ToMerchantSellPrice(actor.Character, merchant)}.", cancellationToken);
+                                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} purchases {item.Name} from {merchant.FirstName.FirstCharToUpper()}.", cancellationToken);
+                                        actor.Character.Currency -= price;
+                                        var newItem = item.DeepCopy();
+                                        actor.Character.Inventory.Add(newItem);
+                                        await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, $"You can't carry that much weight.", cancellationToken);
+                                    }
                                 }
                                 else
                                 {
@@ -726,8 +732,11 @@ namespace Legendary.Engine.Processors
 
                     foreach (var item in itemsToEquip)
                     {
-                        actor.Character.Inventory.Add(item);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You have received {item.Name}.", cancellationToken);
+                        if (ItemHelper.CanCarry(actor.Character, item))
+                        {
+                            actor.Character.Inventory.Add(item);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You have received {item.Name}.", cancellationToken);
+                        }
                     }
                 }
                 else
@@ -1092,6 +1101,7 @@ namespace Legendary.Engine.Processors
                         }
 
                         actor.Character.Inventory.Remove(item);
+                        actor.Character.CarryWeight.Current -= (double)item.Weight;
                     }
                 }
                 else
@@ -1117,82 +1127,91 @@ namespace Legendary.Engine.Processors
                 {
                     List<Item> items = actor.Character.Equipment;
 
-                    if (string.IsNullOrWhiteSpace(args.Method))
+                    var hasDamagedItems = actor.Character.Equipment.Any(i => i.Durability.Current < i.Durability.Max);
+
+                    if (hasDamagedItems)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>It will cost you the following to get your items repaired:</span>\"<br/><ul>");
-                        var total = 0m;
-
-                        // List all damaged items, and the price of repair
-                        foreach (var item in items)
+                        if (string.IsNullOrWhiteSpace(args.Method))
                         {
-                            if (item.Durability.Current < item.Durability.Max)
-                            {
-                                var cost = .2m * (item.Level % 5);
-                                total += cost;
-                                sb.Append($"<li><span class='repair-item'>{item.Name}</span> ${cost} gold</li>");
-                            }
-                        }
-
-                        sb.Append("</ul>");
-
-                        sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>The total to repair everything will be {total} gold.</span>\"<br/>");
-
-                        await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
-                    }
-                    else
-                    {
-                        if (args.Method.ToLower() == "all")
-                        {
+                            StringBuilder sb = new StringBuilder();
+                            sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>It will cost you the following to get your items repaired:</span>\"<br/><ul>");
                             var total = 0m;
 
-                            // Repair all
+                            // List all damaged items, and the price of repair
                             foreach (var item in items)
                             {
-                                var cost = .2m * (item.Level % 5);
-                                total += cost;
-                            }
-
-                            if (actor.Character.Currency >= total)
-                            {
-                                foreach (var item in items)
+                                if (item.Durability.Current < item.Durability.Max)
                                 {
-                                    item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
+                                    var cost = .2m * (item.Level % 5);
+                                    total += cost;
+                                    sb.Append($"<li><span class='repair-item'>{item.Name}</span> ${cost} gold</li>");
                                 }
-
-                                actor.Character.Currency -= total;
-
-                                await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Ok, {actor.Character.FirstName}, all of your items have been repaired. The total was {total} gold.</span>\"<br/>", cancellationToken);
                             }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>You don't have enough coin to get everything repaired, {actor.Character.FirstName}.</span>\"<br/>");
-                            }
+
+                            sb.Append("</ul>");
+
+                            sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>The total to repair everything will be {total} gold.</span>\"<br/>");
+
+                            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
                         }
                         else
                         {
-                            var item = items.ParseTargetName(args.Method);
-
-                            if (item != null)
+                            if (args.Method.ToLower() == "all")
                             {
-                                var cost = .2m * (item.Level % 5);
+                                var total = 0m;
 
-                                if (actor.Character.Currency >= cost)
+                                // Repair all
+                                foreach (var item in items)
                                 {
-                                    item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
-                                    actor.Character.Currency -= cost;
-                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Ok, {actor.Character.FirstName}, I have repaired {item.Name}. The total was {cost} gold.</span>\"<br/>", cancellationToken);
+                                    var cost = .2m * (item.Level % 5);
+                                    total += cost;
+                                }
+
+                                if (actor.Character.Currency >= total)
+                                {
+                                    foreach (var item in items)
+                                    {
+                                        item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
+                                    }
+
+                                    actor.Character.Currency -= total;
+
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Ok, {actor.Character.FirstName}, all of your items have been repaired. The total was {total} gold.</span>\"<br/>", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>You don't have enough coin to get that repaired, {actor.Character.FirstName}.</span>\"<br/>");
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>You don't have enough coin to get everything repaired, {actor.Character.FirstName}.</span>\"<br/>");
                                 }
                             }
                             else
                             {
-                                await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>There's no way I can repair that, {actor.Character.FirstName}.</span>\"<br/>");
+                                var item = items.ParseTargetName(args.Method);
+
+                                if (item != null)
+                                {
+                                    var cost = .2m * (item.Level % 5);
+
+                                    if (actor.Character.Currency >= cost)
+                                    {
+                                        item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
+                                        actor.Character.Currency -= cost;
+                                        await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Ok, {actor.Character.FirstName}, I have repaired {item.Name}. The total was {cost} gold.</span>\"<br/>", cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>You don't have enough coin to get that repaired, {actor.Character.FirstName}.</span>\"<br/>");
+                                    }
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>There's no way I can repair that, {actor.Character.FirstName}.</span>\"<br/>");
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>Looks like all your equipment is in top shape, {actor.Character.FirstName}!</span>\"<br/>", cancellationToken);
                     }
                 }
             }
@@ -1324,6 +1343,7 @@ namespace Legendary.Engine.Processors
                                         merchant.Equipment.Add(newItem);
                                         merchant.Currency -= price;
                                         actor.Character.Inventory.Remove(item);
+                                        actor.Character.CarryWeight.Current -= (double)item.Weight;
 
                                         await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_SELL, cancellationToken);
                                     }
