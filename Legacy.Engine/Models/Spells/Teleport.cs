@@ -44,12 +44,6 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
-            var effect = new Effect()
-            {
-                Name = this.Name,
-                Duration = actor.Level / 3,
-            };
-
             if (target == null)
             {
                 var rooms = new List<Room>();
@@ -79,9 +73,6 @@ namespace Legendary.Engine.Models.Spells
                 if (randomRoom != null)
                 {
                     await base.Act(actor, target, itemTarget, cancellationToken);
-
-                    actor.AffectedBy.AddIfNotAffected(effect);
-
                     await this.Communicator.SendToPlayer(actor, $"Your close your eyes and teleport.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} closes {actor.Pronoun} eyes and vanishes!", cancellationToken);
 

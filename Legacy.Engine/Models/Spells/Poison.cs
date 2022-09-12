@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -78,7 +79,7 @@ namespace Legendary.Engine.Models.Spells
                             Effector = actor,
                             Action = this,
                             Name = this.Name,
-                            Duration = actor.Level / 10,
+                            Duration = Math.Max(1, actor.Level / 6),
                         };
 
                         await base.Act(actor, target, itemTarget, cancellationToken);

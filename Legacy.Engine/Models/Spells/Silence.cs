@@ -1,4 +1,4 @@
-﻿// <copyright file="Blindness.cs" company="Legendary™">
+﻿// <copyright file="Silence.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -18,27 +18,26 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Engine.Extensions;
 
     /// <summary>
-    /// Casts the blindness spell.
+    /// Casts the silence spell.
     /// </summary>
-    public class Blindness : Spell
+    public class Silence : Spell
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Blindness"/> class.
+        /// Initializes a new instance of the <see cref="Silence"/> class.
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Blindness(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Silence(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
             : base(communicator, random, world, logger, combat)
         {
-            this.Name = "Blindness";
-            this.ManaCost = 20;
+            this.Name = "Silence";
+            this.ManaCost = 40;
             this.CanInvoke = true;
-            this.DamageType = Core.Types.DamageType.Maledictive;
+            this.DamageType = Core.Types.DamageType.Afflictive;
             this.IsAffect = true;
-            this.AffectDuration = 3;
         }
 
         /// <inheritdoc/>
@@ -46,7 +45,7 @@ namespace Legendary.Engine.Models.Spells
         {
             if (target == null)
             {
-                await this.Communicator.SendToPlayer(actor, "Cast blindness on whom?", cancellationToken);
+                await this.Communicator.SendToPlayer(actor, "Cast silence on whom?", cancellationToken);
             }
             else
             {
@@ -66,8 +65,8 @@ namespace Legendary.Engine.Models.Spells
                     {
                         await base.Act(actor, target, itemTarget, cancellationToken);
 
-                        await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s eyes cloud for a moment, but it passes.", cancellationToken);
-                        await this.Communicator.SendToPlayer(target, $"You feel your eyes cloud for a moment, but it passes.", cancellationToken);
+                        await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s mouth wrinkles slightly, but returns to normal.", cancellationToken);
+                        await this.Communicator.SendToPlayer(target, $"You feel your mouth wrinkle slightly, but it returns to normal.", cancellationToken);
 
                         if (target != null)
                         {
@@ -86,9 +85,9 @@ namespace Legendary.Engine.Models.Spells
 
                         await base.Act(actor, target, itemTarget, cancellationToken);
 
-                        await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s eyes glaze over.", cancellationToken);
-                        await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} has blinded you!", cancellationToken);
-                        await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} has been blinded by {actor.FirstName}!", cancellationToken);
+                        await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()}'s mouth vanishes!", cancellationToken);
+                        await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} has silences you!", cancellationToken);
+                        await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target?.FirstName.FirstCharToUpper()} has been silenced by {actor.FirstName}!", cancellationToken);
 
                         target?.AffectedBy.AddIfNotAffected(effect);
 

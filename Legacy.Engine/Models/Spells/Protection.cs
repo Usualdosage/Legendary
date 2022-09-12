@@ -47,7 +47,7 @@ namespace Legendary.Engine.Models.Spells
             var effect = new Effect()
             {
                 Name = this.Name,
-                Duration = actor.Level / 10,
+                Duration = Math.Max(1, actor.Level / 6),
                 Spell = Math.Max(1, actor.Level / 20),
             };
 

@@ -264,9 +264,14 @@ namespace Legendary.Engine
             {
                 if (effect != null)
                 {
+                    if (effect.Duration == -1)
+                    {
+                        continue;
+                    }
+
                     effect.Duration -= 1;
 
-                    if (effect.Duration < 0)
+                    if (effect.Duration == 0)
                     {
                         if (effect.Name?.ToLower() == "ghost")
                         {
@@ -275,7 +280,19 @@ namespace Legendary.Engine
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                            if (effect.Name == nameof(Sneak))
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, $"You trample around loudly again.");
+                            }
+                            else if (effect.Name == nameof(Invisibility))
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, $"You fade back into existence.");
+                                await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} fades into existence.");
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                            }
 
                             if (user.Character.IsAffectedBy(nameof(Sleep)))
                             {

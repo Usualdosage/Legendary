@@ -102,6 +102,33 @@ namespace Legendary.Engine.Processors
                         item = this.communicator.ResolveItem(actor, args.Target);
                     }
 
+                    if (!string.IsNullOrWhiteSpace(args.Method))
+                    {
+                        // We may or may not have a target. The skill will figure that bit out.
+                        var target = this.communicator.ResolveCharacter(args.Method);
+
+                        // It's not a character, so maybe a mob.
+                        if (target == null)
+                        {
+                            var mob = this.communicator.ResolveMobile(args.Method, actor.Character);
+
+                            if (mob != null)
+                            {
+                                character = (Character)mob;
+                            }
+                        }
+                        else
+                        {
+                            character = target?.Character;
+                        }
+
+                        if (item == null)
+                        {
+                            // Target could be an item.
+                            item = this.communicator.ResolveItem(actor, args.Method);
+                        }
+                    }
+
                     if (await skill.IsSuccess(proficiency.Proficiency, cancellationToken))
                     {
                         try

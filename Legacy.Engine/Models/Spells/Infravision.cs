@@ -9,6 +9,7 @@
 
 namespace Legendary.Engine.Models.Spells
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -45,7 +46,7 @@ namespace Legendary.Engine.Models.Spells
             var effect = new Effect()
             {
                 Name = this.Name,
-                Duration = actor.Level / 5,
+                Duration = Math.Max(1, actor.Level / 3),
             };
 
             if (target == null)

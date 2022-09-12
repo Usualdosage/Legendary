@@ -434,7 +434,7 @@ namespace Legendary.Engine.Processors
             {
                 foreach (var effect in actor.Character.AffectedBy)
                 {
-                    if (effect.Name != nameof(Sneak) || effect.Name != nameof(Hide))
+                    if (effect.Name != nameof(Sneak) && effect.Name != nameof(Hide))
                     {
                         sb.Append($"<span class='player-affect'><li>{effect.Name} for {effect.Duration} hours.</li></span>");
                     }
@@ -1972,6 +1972,12 @@ namespace Legendary.Engine.Processors
             }
             else
             {
+                if (actor.Character.IsAffectedBy(nameof(Silence)))
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "You can't speak!", cancellationToken);
+                    return;
+                }
+
                 var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
 
                 await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
@@ -1985,26 +1991,33 @@ namespace Legendary.Engine.Processors
                 {
                     foreach (var player in players)
                     {
-                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
+                        if (player.IsAffectedBy(nameof(Sleep)) || player.CharacterFlags.Contains(CharacterFlags.Sleeping))
                         {
-                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
-                            {
-                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
-                            }
+                            continue;
                         }
                         else
                         {
-                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
                             {
-                                await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                {
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                }
                             }
                             else
                             {
-                                await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                {
+                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                }
                             }
                         }
                     }
@@ -2799,6 +2812,12 @@ namespace Legendary.Engine.Processors
 
             if (!string.IsNullOrWhiteSpace(sentence))
             {
+                if (actor.Character.IsAffectedBy(nameof(Silence)))
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, "You can't speak!", cancellationToken);
+                    return;
+                }
+
                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
                 await this.communicator.SendToPlayer(actor.Connection, $"You yell (in {speaking}) \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
 
@@ -2811,26 +2830,33 @@ namespace Legendary.Engine.Processors
                 {
                     foreach (var player in players)
                     {
-                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
+                        if (player.IsAffectedBy(nameof(Sleep)) || player.CharacterFlags.Contains(CharacterFlags.Sleeping))
                         {
-                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
-                            {
-                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
-                            }
+                            continue;
                         }
                         else
                         {
-                            if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
                             {
-                                await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                                if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                {
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                                }
                             }
                             else
                             {
-                                await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                                if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                {
+                                    await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                                }
                             }
                         }
                     }
@@ -3493,6 +3519,12 @@ namespace Legendary.Engine.Processors
 
         private async Task Tell(UserData user, string target, string message, CancellationToken cancellationToken = default)
         {
+            if (user.Character.IsAffectedBy(nameof(Silence)))
+            {
+                await this.communicator.SendToPlayer(user.Connection, "You can't speak!", cancellationToken);
+                return;
+            }
+
             var targetUser = Communicator.Users?.FirstOrDefault(u => u.Value.Username == target);
 
             string senderName = user.Character.FirstName.FirstCharToUpper();

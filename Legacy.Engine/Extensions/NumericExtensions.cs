@@ -65,6 +65,62 @@ namespace Legendary.Engine.Extensions
             };
         }
 
+        public static string CurrenyToWords(this decimal currency)
+        {
+            if (currency == 0)
+            {
+                return "nothing";
+            }
+            else
+            {
+                // Currency is a decimal, so like, 23.49. This would represent
+                // 23 gold, 4 silver, and 9 copper.
+                var currencyParts = currency.ToString().Split('.');
+                int gold = 0;
+                int silver = 0;
+                int copper = 0;
+
+                if (currencyParts.Length > 0)
+                {
+                    gold = int.Parse(currencyParts[0]);
+                }
+
+                if (currencyParts.Length > 1)
+                {
+                    // Section segment will be something like 4 or 49
+                    if (currencyParts[1].Length == 1)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                    }
+
+                    if (currencyParts[1].Length >= 2)
+                    {
+                        silver = int.Parse(currencyParts[1][0].ToString());
+                        copper = int.Parse(currencyParts[1][1].ToString());
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                if (gold > 0)
+                {
+                    sb.Append($"{gold} gold");
+                }
+
+                if (silver > 0)
+                {
+                    sb.Append($" {silver} silver");
+                }
+
+                if (copper > 0)
+                {
+                    sb.Append($" {copper} copper");
+                }
+
+                return sb.ToString();
+            }
+        }
+
         /// <summary>
         /// Converts a player's currency to a string description.
         /// </summary>

@@ -594,6 +594,12 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Sends a message to everyone in your group.</p><ul><li>gtell <em>message</em></li></ul>")]
         private async Task DoGTell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
+            if (actor.Character.IsAffectedBy(nameof(Silence)))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "You can't speak!", cancellationToken);
+                return;
+            }
+
             var sentence = args.Method;
             if (!string.IsNullOrWhiteSpace(sentence))
             {

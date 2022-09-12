@@ -17,6 +17,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Spells;
 
     /// <summary>
     /// Used to perform quick lookups of spells.
@@ -61,6 +62,13 @@ namespace Legendary.Engine.Processors
 
                 if (spell != null)
                 {
+                    // Check if the player is silenced
+                    if (actor.Character.IsAffectedBy(nameof(Silence)))
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, "You can't pronounce the words to the spell.", cancellationToken);
+                        return;
+                    }
+
                     // See if the player has enough mana to use this skill.
                     if (spell.ManaCost > actor.Character.Mana.Current)
                     {

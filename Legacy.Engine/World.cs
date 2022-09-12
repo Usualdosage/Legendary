@@ -870,7 +870,7 @@ namespace Legendary.Engine
             }
             catch (Exception exc)
             {
-                this.logger.Error("Error in ProcessMobileWander.", exc, this.communicator);
+                this.logger.Error($"Error in ProcessMobileWander: {exc.ToString()}", exc, this.communicator);
             }
         }
     }
