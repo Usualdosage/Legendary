@@ -1299,52 +1299,57 @@ namespace Legendary.Engine
                 double adjusted = 0d;
                 double expPerPlayer = 0d;
 
-                if (group.Count == 1)
-                {
-                    // Group has only 1 (shouldn't work, but anyway), so apply only to player.
-                    await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
-                    actor.Experience += experience;
+                var playersInRoom = this.communicator.GetPlayersInRoom(actor.Location);
 
-                    // See if the player advanced a level.
-                    if (experience > 0)
+                if (playersInRoom != null)
+                {
+                    var playersInGroupInRoom = playersInRoom.Where(g => group.Contains(g.CharacterId));
+
+                    var playersInGroupInRoomCount = playersInGroupInRoom.Count();
+
+                    if (playersInGroupInRoomCount == 1)
                     {
-                        await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                        adjusted = experience;
+                        expPerPlayer = adjusted;
+                    }
+                    else if (playersInGroupInRoomCount == 2)
+                    {
+                        adjusted = experience * 2.5d;
+                        expPerPlayer = adjusted / 2d;
+                    }
+                    else if (playersInGroupInRoomCount == 3)
+                    {
+                        adjusted = experience * 4d;
+                        expPerPlayer = adjusted / 3d;
+                    }
+                    else
+                    {
+                        adjusted = experience * (4 / group.Count);
+                        expPerPlayer = adjusted / group.Count;
                     }
 
-                    return;
-                }
-                else if (group.Count == 2)
-                {
-                    adjusted = experience * 2.2d;
-                    expPerPlayer = adjusted / 2d;
-                }
-                else if (group.Count == 3)
-                {
-                    adjusted = experience * 3.5d;
-                    expPerPlayer = adjusted / 3d;
+                    foreach (var member in playersInGroupInRoom)
+                    {
+                        var player = this.communicator.ResolveCharacter(member);
+
+                        if (player != null)
+                        {
+                            // Group was null or empty, so apply only to player.
+                            await this.communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
+                            actor.Experience += (int)expPerPlayer;
+
+                            // See if the player advanced a level.
+                            if (expPerPlayer > 0)
+                            {
+                                await this.communicator.CheckLevelAdvance(player.Character, cancellationToken);
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    adjusted = experience * (4 / group.Count);
-                    expPerPlayer = adjusted / group.Count;
-                }
-
-                foreach (var member in group)
-                {
-                    var player = this.communicator.ResolveCharacter(member);
-
-                    if (player != null)
-                    {
-                        // Group was null or empty, so apply only to player.
-                        await this.communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
-                        actor.Experience += (int)expPerPlayer;
-
-                        // See if the player advanced a level.
-                        if (expPerPlayer > 0)
-                        {
-                            await this.communicator.CheckLevelAdvance(player.Character, cancellationToken);
-                        }
-                    }
+                    // Not sure what the hell happened here, but there were no players in the group in the room.
+                    this.logger.Error("Attempted to apply experience to a group with no players in the same room.", this.communicator);
                 }
             }
             else
