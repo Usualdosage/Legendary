@@ -396,12 +396,19 @@ namespace Legendary.Core.Contracts
         List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location);
 
         /// <summary>
-        /// Gets all players in a given area.
+        /// Gets all players in a given area except the character.
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="location">The location.</param>
         /// <returns>List of players.</returns>
         List<Character>? GetPlayersInArea(Character actor, KeyValuePair<long, long> location);
+
+        /// <summary>
+        /// Gets all players in a given area.
+        /// </summary>
+        /// <param name="areaId">The area Id.</param>
+        /// <returns>List of players.</returns>
+        List<Character>? GetPlayersInArea(long areaId);
 
         /// <summary>
         /// Gets all players in a given location.

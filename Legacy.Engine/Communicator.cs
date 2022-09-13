@@ -1433,6 +1433,19 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public List<Character>? GetPlayersInArea(long areaId)
+        {
+            if (Users != null)
+            {
+                return Users.Where(u => u.Value.Character.Location.Key == areaId).Select(u => u.Value.Character).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <inheritdoc/>
         public List<Character>? GetPlayersInRoom(Character actor, KeyValuePair<long, long> location)
         {
             if (Users != null)

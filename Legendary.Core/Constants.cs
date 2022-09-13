@@ -87,6 +87,11 @@ namespace Legendary.Core
         public const long ITEM_LOOT_WEAPON = 9000007;
 
         /// <summary>
+        /// Random (autospawn) mobile.
+        /// </summary>
+        public const long RANDOM_MOBILE = 9000008;
+
+        /// <summary>
         /// Amount of health restored each tick.
         /// </summary>
         public const int STANDARD_HP_RECOVERY = 50;

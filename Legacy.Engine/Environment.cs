@@ -178,6 +178,51 @@ namespace Legendary.Engine
                     }
                 }
             }
+
+            // These rooms will autospawn mobs if there are players in them.
+            var autoSpawnRooms = this.world.Areas.SelectMany(a => a.Rooms.Where(r => r.MaxAutospawn.HasValue && r.MaxAutospawn > 0)).ToList();
+
+            foreach (var asRoom in autoSpawnRooms)
+            {
+                var playersInArea = this.communicator.GetPlayersInArea(asRoom.AreaId);
+
+                if (playersInArea != null)
+                {
+                    var mobsInArea = this.communicator.GetMobilesInArea(asRoom.AreaId);
+
+                    if (mobsInArea != null)
+                    {
+                        var spawnedMobs = mobsInArea.Where(m => m.CharacterId == Constants.RANDOM_MOBILE).ToList();
+
+                        if (asRoom.MaxAutospawn.HasValue && spawnedMobs.Count < asRoom.MaxAutospawn.Value)
+                        {
+                            var difference = asRoom.MaxAutospawn.Value - spawnedMobs.Count;
+
+                            for (int x = 0; x < difference; x++)
+                            {
+                                // Grab a random player.
+                                var actor = playersInArea[this.random.Next(0, playersInArea.Count)];
+
+                                // Spawn a mob in that player's range.
+                                var mobile = MobHelper.Autospawn(actor, asRoom, this.random);
+
+                                // Put it in a random room.
+                                var area = this.world.Areas.FirstOrDefault(a => a.AreaId == asRoom.AreaId);
+
+                                if (area != null)
+                                {
+                                    var randomRoom = area.Rooms[this.random.Next(0, area.Rooms.Count)];
+
+                                    if (randomRoom != null && mobile != null)
+                                    {
+                                        randomRoom.Mobiles.Add(mobile);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -271,7 +316,7 @@ namespace Legendary.Engine
 
                     effect.Duration -= 1;
 
-                    if (effect.Duration == 0)
+                    if (effect.Duration < 0)
                     {
                         if (effect.Name?.ToLower() == "ghost")
                         {

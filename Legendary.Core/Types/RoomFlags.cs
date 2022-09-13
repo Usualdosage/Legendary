@@ -28,5 +28,10 @@ namespace Legendary.Core.Types
         /// Mobs cannot enter or exist in this room.
         /// </summary>
         NoMobs = 2,
+
+        /// <summary>
+        /// Mobs will autospawn in this area if players are present.
+        /// </summary>
+        AutoSpawn = 3,
     }
 }

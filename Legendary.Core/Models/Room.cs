@@ -59,6 +59,11 @@ namespace Legendary.Core.Models
         public string? Image { get; set; }
 
         /// <summary>
+        /// Gets or sets the max number of mobs that will autospawn in this room.
+        /// </summary>
+        public int? MaxAutospawn { get; set; }
+
+        /// <summary>
         /// Gets or sets the video for the room.
         /// </summary>
         public string? Video { get; set; }
