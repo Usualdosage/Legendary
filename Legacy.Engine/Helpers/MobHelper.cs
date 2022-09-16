@@ -103,7 +103,7 @@ namespace Legendary.Engine.Helpers
             string? name = string.Empty;
             string? longDesc = string.Empty;
             string? shortDesc = string.Empty;
-            var rand = random.Next(0, 4);
+            var rand = random.Next(0, 6);
 
             switch (room.Terrain)
             {
@@ -123,6 +123,12 @@ namespace Legendary.Engine.Helpers
                                 name = "a city youth";
                                 shortDesc = $"{name.FirstCharToUpper()} walks haughtily along the streets here.";
                                 longDesc = $"{name.FirstCharToUpper()} is dressed in popular youth clothing. {mobile.PronounSubjective} is walking along arrogantly, without a care in the world. {mobile.PronounSubjective} is enjoying all of the benefits of being young and free.";
+                                break;
+                            case 4:
+                            case 5:
+                                name = "a dirty beggar";
+                                shortDesc = $"{name.FirstCharToUpper()} slinks along the alleyways here.";
+                                longDesc = $"{name.FirstCharToUpper()} is dressed in filthy rags. {mobile.PronounSubjective} smells to high heaven, and doesn't look like {mobile.PronounSubjective} has washed in weeks.";
                                 break;
                         }
 

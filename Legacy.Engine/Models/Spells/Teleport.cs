@@ -13,6 +13,7 @@ namespace Legendary.Engine.Models.Spells
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
@@ -72,10 +73,11 @@ namespace Legendary.Engine.Models.Spells
 
                 if (randomRoom != null)
                 {
+                    await this.Communicator.PlaySound(actor, Core.Types.AudioChannel.Spell, Sounds.TELEPORT, cancellationToken);
                     await base.Act(actor, target, itemTarget, cancellationToken);
                     await this.Communicator.SendToPlayer(actor, $"Your close your eyes and teleport.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} closes {actor.Pronoun} eyes and vanishes!", cancellationToken);
-
+                    await this.Communicator.PlaySoundToRoom(actor, target, Sounds.TELEPORT, cancellationToken);
                     actor.Location = new KeyValuePair<long, long>(randomRoom.AreaId, randomRoom.RoomId);
 
                     await this.Communicator.ShowRoomToPlayer(actor, cancellationToken);

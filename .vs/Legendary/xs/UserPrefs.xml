@@ -1,16 +1,19 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Extensions/NumericExtensions.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Helpers/MobHelper.cs">
     <Files>
-      <File FileName="Legacy.Engine/Models/SpellTrees/NegativeGroup.cs" Line="52" Column="10" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" Line="3527" Column="1" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="601" Column="14" />
-      <File FileName="Legacy.Engine/Models/Skills/Steal.cs" Line="93" Column="18" />
-      <File FileName="Legacy.Engine/Models/Skills/Hide.cs" Line="77" Column="22" />
-      <File FileName="Legacy.Engine/Models/Spells/Blindness.cs" Line="97" Column="95" />
-      <File FileName="Legacy.Engine/Models/Spell.cs" Line="73" Column="222" />
-      <File FileName="Legacy.Engine/Extensions/NumericExtensions.cs" Line="108" Column="18" />
-      <File FileName="Legacy.Engine/Models/SkillTrees/RogueGroup.cs" Line="19" Column="45" />
-      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" Line="132" Column="1" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" />
+      <File FileName="Legacy.Engine/Models/SkillTrees/RogueGroup.cs" />
+      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" />
+      <File FileName="Legacy.Engine/Combat.cs" Line="1504" Column="53" />
+      <File FileName="Legacy.Engine/World.cs" Line="847" Column="38" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="1437" Column="10" />
+      <File FileName="Legendary.Core/Types/RoomFlags.cs" Line="35" Column="23" />
+      <File FileName="Legendary.Core/Models/Room.cs" Line="64" Column="47" />
+      <File FileName="Legacy.Engine/Helpers/MobHelper.cs" Line="122" Column="36" />
+      <File FileName="Legacy.Engine/Environment.cs" Line="218" Column="1" />
+      <File FileName="Legendary.Core/Constants.cs" Line="90" Column="39" />
+      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="411" Column="56" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -26,7 +29,6 @@
               <Node name="Generators" expanded="True" />
               <Node name="Helpers" expanded="True" />
               <Node name="Models" expanded="True">
-                <Node name="Skills" expanded="True" />
                 <Node name="SkillTrees" expanded="True" />
                 <Node name="Spells" expanded="True" />
                 <Node name="SpellTrees" expanded="True" />
@@ -46,14 +48,14 @@
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1692" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1709" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Combat.cs" relfile="Legacy.Engine/Combat.cs" line="1318" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1705" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1722" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3316" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="491" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="63" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="97" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="90" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/World.cs" relfile="Legacy.Engine/World.cs" line="854" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

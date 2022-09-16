@@ -200,5 +200,20 @@ namespace Legendary.Core
         /// Summon MP3.
         /// </summary>
         public const string SUMMON = "https://legendary.file.core.windows.net/audio/soundfx/summon.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Turn Undead MP3.
+        /// </summary>
+        public const string TURNUNDEAD = "https://legendary.file.core.windows.net/audio/soundfx/turnundead.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Teleport MP3.
+        /// </summary>
+        public const string TELEPORT = "https://legendary.file.core.windows.net/audio/soundfx/teleport.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Heal MP3.
+        /// </summary>
+        public const string HEAL = "https://legendary.file.core.windows.net/audio/soundfx/heal.mp3" + SAS_TOKEN;
     }
 }

@@ -87,6 +87,7 @@ namespace Legendary.Engine.Models.SpellTrees
         {
             get => new List<IAction>()
             {
+                { new Heal(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
                 { new RestoreMana(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }

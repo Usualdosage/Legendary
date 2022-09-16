@@ -22,7 +22,8 @@ namespace Legendary.Engine.Models
         /// </summary>
         public static readonly Dictionary<string, Emote> Actions = new ()
         {
-            { "agree", new Emote("You agree completely.", "{0} nods in complete agreement.", "{0} nods at {1}.", "You nod at {1}.") },
+            { "agree", new Emote("You agree completely.", "{0} nods in complete agreement.", "{0} nods in agreement at {1}.", "You nod in agreement at {1}.") },
+            { "blink", new Emote("You beckon to follow.", "{0} beckons for you to follow.", "{0} beckons {1} to follow.", "You beckon {1} to follow.") },
             { "blink", new Emote("You blink slowly.", "{0} blinks slowly.", "{0} blinks slowly at {1}.", "You blink slowly at {1}.") },
             { "buff", new Emote("You buff your nails on your cloak.", "{0} buffs their nails on their cloak.", "{0} buffs their nails on their cloak, grinning at {1}.", "You buff your nails on your cloak, grinning at {1}.") },
             { "cackle", new Emote("You cackle with glee!", "{0} cackles with glee!", "{0} cackles delightfully at {1}.", "You cackle gleefully at {1}.") },

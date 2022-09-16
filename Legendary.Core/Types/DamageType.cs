@@ -83,5 +83,10 @@ namespace Legendary.Core.Types
         /// Exotic.
         /// </summary>
         Exotic = 13,
+
+        /// <summary>
+        /// Holy.
+        /// </summary>
+        Holy = 14,
     }
 }
