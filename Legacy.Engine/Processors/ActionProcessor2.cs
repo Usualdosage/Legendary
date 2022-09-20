@@ -605,36 +605,24 @@ namespace Legendary.Engine.Processors
             {
                 if (GroupHelper.IsInGroup(actor.Character.CharacterId) && actor.Character.GroupId != null)
                 {
-                    var group = GroupHelper.GetGroup(actor.Character.GroupId.Value);
+                    var group = GroupHelper.GetAllGroupMembers(actor.Character.GroupId.Value);
 
-                    if (group != null && group.Value.Value.Count > 0)
+                    if (group != null && group.Count > 0)
                     {
-                        var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
+                        var speakingLang = SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat);
+                        var speaking = actor.Character.Speaking ?? speakingLang?.Name;
                         var garbled = this.communicator.LanguageGenerator.BuildSentence(sentence);
                         var skillRoll = this.random.Next(0, 99);
 
                         await this.communicator.SendToPlayer(actor.Connection, $"You tell the group (in {speaking}) \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
 
-                        // If the player isn't the group owner, send a message to the actual owner.
-                        if (!GroupHelper.IsGroupOwner(actor.Character.CharacterId))
+                        if (speakingLang != null)
                         {
-                            var player = this.communicator.ResolveCharacter(group.Value.Key);
-
-                            if (player != null)
-                            {
-                                if (player.Character.HasSkill(speaking) && player.Character.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
-                                {
-                                    await this.communicator.SendToPlayer(player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group (in {speaking}) \"<span class='gtell'>{sentence}</span>\"", cancellationToken);
-                                }
-                                else
-                                {
-                                    await this.communicator.SendToPlayer(player.Character, $"{actor.Character.FirstName.FirstCharToUpper()} tells the group (in {speaking}) \"<span class='gtell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
-                                }
-                            }
+                            await speakingLang.CheckImprove(actor.Character, cancellationToken);
                         }
 
-                        // Now send a message to everyone else in the group.
-                        foreach (var target in group.Value.Value)
+                        // Send a message to everyone else in the group except the sender.
+                        foreach (var target in group)
                         {
                             if (target != actor.Character.CharacterId)
                             {

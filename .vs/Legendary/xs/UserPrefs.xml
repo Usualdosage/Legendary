@@ -1,19 +1,38 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Helpers/MobHelper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/World.cs">
     <Files>
       <File FileName="Legacy.Engine/Processors/ActionProcessor.cs" />
       <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" />
       <File FileName="Legacy.Engine/Models/SkillTrees/RogueGroup.cs" />
-      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" />
-      <File FileName="Legacy.Engine/Combat.cs" Line="1504" Column="53" />
-      <File FileName="Legacy.Engine/World.cs" Line="847" Column="38" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="1437" Column="10" />
-      <File FileName="Legendary.Core/Types/RoomFlags.cs" Line="35" Column="23" />
-      <File FileName="Legendary.Core/Models/Room.cs" Line="64" Column="47" />
-      <File FileName="Legacy.Engine/Helpers/MobHelper.cs" Line="122" Column="36" />
-      <File FileName="Legacy.Engine/Environment.cs" Line="218" Column="1" />
-      <File FileName="Legendary.Core/Constants.cs" Line="90" Column="39" />
-      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="411" Column="56" />
+      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" Line="160" Column="72" />
+      <File FileName="Legacy.Engine/Combat.cs" Line="337" Column="26" />
+      <File FileName="Legacy.Engine/World.cs" Line="854" Column="1" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="2103" Column="1" />
+      <File FileName="Legendary.Core/Types/RoomFlags.cs" />
+      <File FileName="Legendary.Core/Models/Room.cs" />
+      <File FileName="Legacy.Engine/Helpers/MobHelper.cs" Line="126" Column="39" />
+      <File FileName="Legacy.Engine/Environment.cs" />
+      <File FileName="Legendary.Core/Constants.cs" />
+      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" />
+      <File FileName="Legacy.Engine/Models/Spells/TurnUndead.cs" Line="76" Column="25" />
+      <File FileName="Legacy.Engine/Models/Spells/Fireball.cs" Line="71" Column="104" />
+      <File FileName="Legendary.Core/Types/DamageType.cs" Line="88" Column="17" />
+      <File FileName="Legendary.Core/Sounds.cs" Line="217" Column="95" />
+      <File FileName="Legacy.Engine/Models/Spells/Teleport.cs" Line="58" Column="22" />
+      <File FileName="Legacy.Engine/Models/Spells/LightningBolt.cs" Line="82" Column="44" />
+      <File FileName="Legacy.Engine/Models/Spell.cs" Line="76" Column="40" />
+      <File FileName="Legacy.Engine/Models/SpellTrees/NegativeGroup.cs" Line="1" Column="1" />
+      <File FileName="Legacy.Engine/Models/SpellTrees/DivineGroup.cs" Line="30" Column="63" />
+      <File FileName="Legacy.Engine/Models/SpellTrees/ConjuringGroup.cs" Line="1" Column="1" />
+      <File FileName="Legacy.Engine/Models/Spells/Fly.cs" Line="1" Column="1" />
+      <File FileName="Legacy.Engine/Models/Spells/CureCritical.cs" Line="22" Column="19" />
+      <File FileName="Legacy.Engine/Models/Spells/Heal.cs" Line="93" Column="69" />
+      <File FileName="Legacy.Engine/Models/Spells/CureBlindness.cs" Line="60" Column="18" />
+      <File FileName="Legacy.Engine/Models/SpellTrees/HealingGroup.cs" Line="86" Column="45" />
+      <File FileName="Legacy.Engine/Models/Emotes.cs" Line="26" Column="47" />
+      <File FileName="Legendary.Web/appsettings.json" Line="22" Column="2" />
+      <File FileName="Legendary.Web/appsettings.Development.json" Line="19" Column="21" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="14" Column="26" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -22,6 +41,7 @@
             <Node name="Legendary.Core" expanded="True">
               <Node name="Contracts" expanded="True" />
               <Node name="Models" expanded="True" />
+              <Node name="Types" expanded="True" />
             </Node>
             <Node name="Legendary.Data" expanded="True" />
             <Node name="Legendary.Engine" expanded="True">
@@ -35,6 +55,13 @@
               </Node>
               <Node name="Output" expanded="True" />
               <Node name="Processors" expanded="True" />
+              <Node name="World.cs" selected="True" />
+            </Node>
+            <Node name="Legendary.Web" expanded="True">
+              <Node name="Views" expanded="True">
+                <Node name="Home" expanded="True" />
+              </Node>
+              <Node name="appsettings.json" expanded="True" />
             </Node>
           </Node>
         </State>

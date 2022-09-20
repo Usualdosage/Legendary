@@ -774,7 +774,7 @@ namespace Legendary.Engine.Processors
                     {
                         foreach (var player in players)
                         {
-                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
+                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
                             {
                                 await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
                             }
@@ -1978,9 +1978,17 @@ namespace Legendary.Engine.Processors
                     return;
                 }
 
-                var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
+                var speakingLang = SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat);
+
+                var speaking = actor.Character.Speaking ?? speakingLang?.Name;
 
                 await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+
+                // Check if the language improves each time it's used.
+                if (speakingLang != null)
+                {
+                    await speakingLang.CheckImprove(actor.Character, cancellationToken);
+                }
 
                 var garbled = this.communicator.LanguageGenerator.BuildSentence(sentence);
                 var skillRoll = this.random.Next(0, 99);
@@ -2808,7 +2816,6 @@ namespace Legendary.Engine.Processors
         private async Task DoYell(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             var sentence = args.Method;
-            var speaking = actor.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
 
             if (!string.IsNullOrWhiteSpace(sentence))
             {
@@ -2818,8 +2825,16 @@ namespace Legendary.Engine.Processors
                     return;
                 }
 
+                var speakingLang = SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat);
+                var speaking = actor.Character.Speaking ?? speakingLang?.Name;
                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
                 await this.communicator.SendToPlayer(actor.Connection, $"You yell (in {speaking}) \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
+
+                // Check if the language improves each time it's used.
+                if (speakingLang != null)
+                {
+                    await speakingLang.CheckImprove(actor.Character, cancellationToken);
+                }
 
                 var garbled = this.communicator.LanguageGenerator.BuildSentence(sentence);
                 var skillRoll = this.random.Next(0, 99);
@@ -3529,7 +3544,8 @@ namespace Legendary.Engine.Processors
 
             string senderName = user.Character.FirstName.FirstCharToUpper();
 
-            var speaking = user.Character.Speaking ?? SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat)?.Name;
+            var speakingLang = SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat);
+            var speaking = user.Character.Speaking ?? speakingLang?.Name;
             var garbled = this.communicator.LanguageGenerator.BuildSentence(message);
             var skillRoll = this.random.Next(0, 99);
 
@@ -3585,6 +3601,12 @@ namespace Legendary.Engine.Processors
                             await this.communicator.SendToPlayer(user.Character.FirstName, target, $"[NOTIFICATION]|../img/notifications/message.png|{user.Character.FirstName} has sent you a message.", cancellationToken);
 
                             await this.communicator.SendToPlayer(user.Connection, $"You tell {target} (in {speaking}) \"<span class='tell'>{message}</span>\"", cancellationToken);
+
+                            // Check if the language improves each time it's used.
+                            if (speakingLang != null)
+                            {
+                                await speakingLang.CheckImprove(user.Character, cancellationToken);
+                            }
 
                             // Create the link between the two who are engaged in conversation.
                             if (Communicator.Tells.ContainsKey(user.Character.FirstName))
