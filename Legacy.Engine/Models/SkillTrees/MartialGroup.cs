@@ -77,6 +77,7 @@ namespace Legendary.Engine.Models.SkillTrees
             get => new List<IAction>()
             {
                 { new ThirdAttack(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new CriticalStrikes(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

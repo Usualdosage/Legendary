@@ -74,7 +74,7 @@ namespace Legendary.Engine.Models
             }
 
             await this.Combat.StartFighting(actor, target, cancellationToken);
-            await this.Combat.DoDamage(actor, target, this, cancellationToken);
+            await this.Combat.DoDamage(actor, target, this, false, cancellationToken);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Legendary.Engine.Models
                         if (!GroupHelper.IsGroupedWith(actor.CharacterId, user.Value.Character.CharacterId))
                         {
                             await this.Combat.StartFighting(actor, user.Value.Character, cancellationToken);
-                            await this.Combat.DoDamage(actor, user.Value.Character, this, cancellationToken);
+                            await this.Combat.DoDamage(actor, user.Value.Character, this, false, cancellationToken);
                         }
                     }
                 }
@@ -108,7 +108,7 @@ namespace Legendary.Engine.Models
                 foreach (var mobile in mobiles)
                 {
                     await this.Combat.StartFighting(actor, mobile, cancellationToken);
-                    await this.Combat.DoDamage(actor, mobile, this, cancellationToken);
+                    await this.Combat.DoDamage(actor, mobile, this, false, cancellationToken);
                 }
             }
         }

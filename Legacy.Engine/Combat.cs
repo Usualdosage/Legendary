@@ -22,6 +22,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
+    using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Processors;
     using MongoDB.Driver;
@@ -148,7 +149,7 @@ namespace Legendary.Engine
 
                         if (remainingMembers.Count > 0)
                         {
-                            var nextOnDeck = this.random.Next(0, remainingMembers.Count - 1);
+                            var nextOnDeck = this.random.Next(0, remainingMembers.Count);
 
                             // Retarget the attacks of the killer and their group.
                             var killerGroup = GroupHelper.GetAllGroupMembers(killer.CharacterId);
@@ -395,9 +396,10 @@ namespace Legendary.Engine
         /// <param name="actor">The actor.</param>
         /// <param name="target">The target.</param>
         /// <param name="action">The action.</param>
+        /// <param name="isCritical">Whether or not this was a critical hit.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>True if the target was killed.</returns>
-        public async Task<bool> DoDamage(Character actor, Character target, IAction? action, CancellationToken cancellationToken = default)
+        public async Task<bool> DoDamage(Character actor, Character target, IAction? action, bool isCritical = false, CancellationToken cancellationToken = default)
         {
             // Get the action the character is using to fight.
             IAction combatAction = action ?? this.GetCombatAction(actor);
@@ -465,6 +467,29 @@ namespace Legendary.Engine
             {
                 // Calculate damage FROM character TO target.
                 var damage = this.CalculateDamage(actor, target, combatAction);
+
+                // Double damage for critical strikes.
+                if (isCritical)
+                {
+                    var criticalStrikes = actor.GetSkillProficiency("critical strikes");
+
+                    if (criticalStrikes != null)
+                    {
+                        var result = this.random.Next(1, 101);
+
+                        if (result < criticalStrikes.Proficiency && result != 1)
+                        {
+                            damage *= 2;
+                            await this.communicator.SendToPlayer(actor, $"You land a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on you!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor, $"You nearly land a critical strike on {target.FirstName}, but miss.", cancellationToken);
+                        }
+                    }
+                }
 
                 // Calculate the damage verb.
                 var damFromVerb = CalculateDamageVerb(damage);
@@ -540,7 +565,14 @@ namespace Legendary.Engine
             bool dead = false;
 
             // First attack
-            dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+            var primaryAction = this.GetCombatAction(character);
+            SkillProficiency? primaryWeapon = character.GetSkillProficiency(primaryAction.Name);
+
+            if (primaryWeapon != null && primaryWeapon.Proficiency > 1)
+            {
+                var result = this.random.Next(1, 101);
+                dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
+            }
 
             // Second attack
             if (!dead)
@@ -549,10 +581,11 @@ namespace Legendary.Engine
 
                 if (secondAttack != null && secondAttack.Proficiency > 1)
                 {
-                    var result = this.random.Next(1, 99);
-                    if (result < secondAttack.Proficiency)
+                    var result = this.random.Next(1, 101);
+
+                    if (result < secondAttack.Proficiency && result != 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
                     }
 
                     SecondAttack skill = new SecondAttack(this.communicator, this.random, this.world, this.logger, this);
@@ -567,10 +600,10 @@ namespace Legendary.Engine
 
                 if (thirdAttack != null && thirdAttack.Proficiency > 1)
                 {
-                    var result = this.random.Next(1, 99);
-                    if (result < thirdAttack.Proficiency)
+                    var result = this.random.Next(1, 101);
+                    if (result < thirdAttack.Proficiency && result != 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
                     }
 
                     ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this.world, this.logger, this);
@@ -585,16 +618,36 @@ namespace Legendary.Engine
 
                 if (fourthAttack != null && fourthAttack.Proficiency > 1)
                 {
-                    var result = this.random.Next(1, 99);
-                    if (result < fourthAttack.Proficiency)
+                    var result = this.random.Next(1, 101);
+                    if (result < fourthAttack.Proficiency && result != 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), cancellationToken);
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
                     }
 
                     FourthAttack skill = new FourthAttack(this.communicator, this.random, this.world, this.logger, this);
                     await skill.CheckImprove(character, cancellationToken);
                 }
             }
+        }
+
+        /// <summary>
+        /// Absolutely determines if a player is dead.
+        /// </summary>
+        /// <param name="character">The character or mob.</param>
+        /// <returns>True, if dead.</returns>
+        public bool IsDead(Character character)
+        {
+            if (character.CharacterFlags != null && character.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                return true;
+            }
+
+            if (character.Health.Current <= 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -610,6 +663,16 @@ namespace Legendary.Engine
                 {
                     var character = user.Value.Character;
                     var target = this.communicator.ResolveFightingCharacter(character);
+
+                    if (this.IsDead(character))
+                    {
+                        return;
+                    }
+
+                    if (target != null && this.IsDead(target))
+                    {
+                        return;
+                    }
 
                     if (character != null && character.CharacterFlags.Contains(CharacterFlags.Fighting) && target != null)
                     {
@@ -686,7 +749,7 @@ namespace Legendary.Engine
             var damage = 0;
             for (var x = 0; x < hitDice; x++)
             {
-                damage += this.random.Next(1, damDice);
+                damage += this.random.Next(1, damDice + 1);
             }
 
             if (target.IsAffectedBy(EffectName.SANCTUARY))
@@ -717,7 +780,7 @@ namespace Legendary.Engine
         {
             if (!averageLevel.HasValue)
             {
-                int baseExperience = (target.Level * 5) + this.random.Next(1, 199);
+                int baseExperience = (target.Level * 5) + this.random.Next(1, 201);
 
                 if (actor.Level <= target.Level)
                 {
@@ -746,7 +809,7 @@ namespace Legendary.Engine
             }
             else
             {
-                int baseExperience = (target.Level * 5) + this.random.Next(1, 199);
+                int baseExperience = (target.Level * 5) + this.random.Next(1, 201);
 
                 if (averageLevel.Value <= target.Level)
                 {
@@ -1013,17 +1076,17 @@ namespace Legendary.Engine
             {
                 if (dodge != null)
                 {
-                    dodge.Proficiency = this.random.Next(2, 10);
+                    dodge.Proficiency = this.random.Next(1, 10);
                 }
 
                 if (parry != null)
                 {
-                    parry.Proficiency = this.random.Next(2, 10);
+                    parry.Proficiency = this.random.Next(1, 10);
                 }
 
                 if (evasive != null)
                 {
-                    evasive.Proficiency = this.random.Next(2, 10);
+                    evasive.Proficiency = this.random.Next(1, 10);
                 }
             }
 
@@ -1037,7 +1100,7 @@ namespace Legendary.Engine
                     if (dodge != null && dodge.Proficiency > 1)
                     {
                         var dodged = false;
-                        var dodgeResult = this.random.Next(1, 99);
+                        var dodgeResult = this.random.Next(1, 101);
                         if (dodgeResult < dodge.Proficiency)
                         {
                             await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} dodges your attack!", cancellationToken);
@@ -1056,7 +1119,7 @@ namespace Legendary.Engine
                     if (parry != null && parry.Proficiency > 1 && target.Equipment.Any(e => e.WearLocation.Contains(WearLocation.Wielded)))
                     {
                         var parried = false;
-                        var parryResult = this.random.Next(1, 99);
+                        var parryResult = this.random.Next(1, 101);
                         if (parryResult < parry.Proficiency)
                         {
                             await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} parries your attack!", cancellationToken);
@@ -1074,7 +1137,7 @@ namespace Legendary.Engine
                     if (evasive != null && evasive.Proficiency > 1)
                     {
                         bool evaded = false;
-                        var evadeResult = this.random.Next(1, 99);
+                        var evadeResult = this.random.Next(1, 101);
                         if (evadeResult < evasive.Proficiency)
                         {
                             await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} cleverly evades your attack!", cancellationToken);
@@ -1094,7 +1157,7 @@ namespace Legendary.Engine
                     if (evasive != null && evasive.Proficiency > 1)
                     {
                         bool evaded = false;
-                        var evadeResult = this.random.Next(1, 99);
+                        var evadeResult = this.random.Next(1, 101);
                         if (evadeResult < evasive.Proficiency)
                         {
                             await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} deftly evades your attack!", cancellationToken);
@@ -1131,7 +1194,7 @@ namespace Legendary.Engine
             }
 
             bool blocked = false;
-            var armorSavePct = this.random.Next(1, 100);
+            var armorSavePct = this.random.Next(1, 101);
 
             switch (action.DamageType)
             {
@@ -1178,11 +1241,11 @@ namespace Legendary.Engine
                 try
                 {
                     // Get the random piece of player's armor that performed the block.
-                    var allArmor = target.Equipment.Where(e => e.ItemType == ItemType.Armor).ToList();
+                    var allArmor = target.Equipment.Where(e => e.ItemType == ItemType.Armor && e.Durability.Current > 0).ToList();
 
                     if (allArmor.Count > 0)
                     {
-                        var armorIndex = this.random.Next(0, allArmor.Count - 1);
+                        var armorIndex = this.random.Next(0, allArmor.Count);
                         var randomGear = allArmor[armorIndex];
 
                         if (randomGear != null)
@@ -1196,7 +1259,7 @@ namespace Legendary.Engine
                             {
                                 // It's destroyed.
                                 await this.communicator.SendToPlayer(actor, $"You destroy {randomGear.Name}!", cancellationToken);
-                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Name}.", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Name}!", cancellationToken);
 
                                 target.Equipment.Remove(randomGear);
                             }
@@ -1220,7 +1283,7 @@ namespace Legendary.Engine
         /// <returns>True if the target saved.</returns>
         public bool DidSave(Character target, IAction action)
         {
-            var saveThrow = this.random.Next(1, 100);
+            var saveThrow = this.random.Next(1, 101);
 
             // Critical failure.
             if (saveThrow == 1)
@@ -1328,6 +1391,8 @@ namespace Legendary.Engine
                         expPerPlayer = adjusted / group.Count;
                     }
 
+                    this.logger.Info($"{actor.FirstName}'s group received {experience} total experience. There were {playersInGroupInRoomCount} players in the group (in the room). Adjusted was {adjusted}. Experience per player was {expPerPlayer}.", this.communicator);
+
                     foreach (var member in playersInGroupInRoom)
                     {
                         var player = this.communicator.ResolveCharacter(member);
@@ -1336,7 +1401,7 @@ namespace Legendary.Engine
                         {
                             // Group was null or empty, so apply only to player.
                             await this.communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
-                            actor.Experience += (int)expPerPlayer;
+                            player.Character.Experience += (int)expPerPlayer;
 
                             // See if the player advanced a level.
                             if (expPerPlayer > 0)
@@ -1511,7 +1576,7 @@ namespace Legendary.Engine
                 }
 
                 // Add any random loot drops
-                if (victim.IsNPC && this.random.Next(0, 100) < 50)
+                if (victim.IsNPC && this.random.Next(1, 101) < 50)
                 {
                     var item = ItemHelper.CreateRandomArmor(victim.Level, actorLevel, this.random);
 

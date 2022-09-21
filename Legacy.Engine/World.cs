@@ -724,104 +724,108 @@ namespace Legendary.Engine
         {
             List<Mobile> removeMobiles = new List<Mobile>();
 
-            // Process effects on mobiles, and (maybe) move them if they are wandering.
-            foreach (var mobile in room.Mobiles)
+            // This may not be the best option, but the mobs in the room need to be locked from other processes whil enumerating. Maybe check out SemaphoreSlim() at some point.
+            lock (room.Mobiles)
             {
-                try
+                // Process effects on mobiles, and (maybe) move them if they are wandering.
+                foreach (var mobile in room.Mobiles)
                 {
-                    if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
+                    try
                     {
-                        if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed) && !mobile.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        if (mobile.MobileFlags != null && mobile.MobileFlags.Any(a => a == MobileFlags.Wander))
                         {
-                            // If the mob is fighting someone, we'll handle this in the tracker.
-                            if (mobile.Fighting.HasValue)
+                            if (!mobile.CharacterFlags.Contains(CharacterFlags.Fighting) && !mobile.CharacterFlags.Contains(CharacterFlags.Charmed) && !mobile.CharacterFlags.Contains(CharacterFlags.Sleeping))
                             {
-                                continue;
-                            }
-                            else
-                            {
-                                // Mobiles have a 50% chance each tick to move around.
-                                var move = this.random.Next(0, 100);
-
-                                if (move <= 50)
+                                // If the mob is fighting someone, we'll handle this in the tracker.
+                                if (mobile.Fighting.HasValue)
                                 {
-                                    var randomExitNumber = this.random.Next(0, room.Exits.Count);
+                                    continue;
+                                }
+                                else
+                                {
+                                    // Mobiles have a 50% chance each tick to move around.
+                                    var move = this.random.Next(0, 100);
 
-                                    var exit = room.Exits[randomExitNumber];
-
-                                    var newArea = await this.FindArea(a => a.AreaId == exit.ToArea);
-                                    var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
-
-                                    bool isGhost = mobile.CharacterFlags.Contains(CharacterFlags.Ghost) || mobile.IsAffectedBy(nameof(PassDoor));
-                                    bool isFlying = mobile.Race == Race.Avian || mobile.Race == Race.Faerie || mobile.IsAffectedBy(nameof(Fly));
-
-                                    if (newArea != null && newRoom != null && newRoom.Flags != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
+                                    if (move <= 50)
                                     {
-                                        if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost)
-                                        {
-                                            return;
-                                        }
-                                        else if (newRoom.Flags.Contains(RoomFlags.NoMobs))
-                                        {
-                                            return;
-                                        }
-                                        else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
-                                        {
-                                            return;
-                                        }
-                                        else if (mobile.Location.Key != newArea.AreaId)
-                                        {
-                                            // Don't let mobs leave their home area.
-                                            continue;
-                                        }
-                                        else
-                                        {
-                                            string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+                                        var randomExitNumber = this.random.Next(0, room.Exits.Count);
 
-                                            if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
+                                        var exit = room.Exits[randomExitNumber];
+
+                                        var newArea = this.FindArea(a => a.AreaId == exit.ToArea).Result;
+                                        var newRoom = newArea?.Rooms?.FirstOrDefault(r => r.RoomId == exit.ToRoom);
+
+                                        bool isGhost = mobile.CharacterFlags.Contains(CharacterFlags.Ghost) || mobile.IsAffectedBy(nameof(PassDoor));
+                                        bool isFlying = mobile.Race == Race.Avian || mobile.Race == Race.Faerie || mobile.IsAffectedBy(nameof(Fly));
+
+                                        if (newArea != null && newRoom != null && newRoom.Flags != null && !newRoom.Flags.Contains(RoomFlags.NoMobs))
+                                        {
+                                            if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost)
                                             {
-                                                await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
-                                                exit.IsClosed = false;
+                                                return;
+                                            }
+                                            else if (newRoom.Flags.Contains(RoomFlags.NoMobs))
+                                            {
+                                                return;
+                                            }
+                                            else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
+                                            {
+                                                return;
+                                            }
+                                            else if (mobile.Location.Key != newArea.AreaId)
+                                            {
+                                                // Don't let mobs leave their home area.
                                                 continue;
                                             }
                                             else
                                             {
-                                                try
+                                                string? dir = Enum.GetName(typeof(Direction), exit.Direction)?.ToLower();
+
+                                                if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                                                 {
-                                                    await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
-
-                                                    // Remove the mobile from the prior location.
-                                                    var lastRoom = this.communicator.ResolveRoom(mobile.Location);
-
-                                                    if (lastRoom != null)
+                                                    this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
+                                                    exit.IsClosed = false;
+                                                    continue;
+                                                }
+                                                else
+                                                {
+                                                    try
                                                     {
-                                                        removeMobiles.Add(mobile);
-                                                    }
+                                                        this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
-                                                    // Add the mobile to the new location.
-                                                    var newLocation = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+                                                        // Remove the mobile from the prior location.
+                                                        var lastRoom = this.communicator.ResolveRoom(mobile.Location);
 
-                                                    var nextRoom = this.communicator.ResolveRoom(newLocation);
-
-                                                    if (nextRoom != null)
-                                                    {
-                                                        // Clone the mob, we'll destroy the other one.
-                                                        var mobileCopy = mobile.DeepCopy();
-
-                                                        // Set the mobile's new location.
-                                                        mobileCopy.Location = newLocation;
-
-                                                        nextRoom.Mobiles.Add(mobileCopy);
-
-                                                        if (!mobileCopy.IsAffectedBy(nameof(Sneak)))
+                                                        if (lastRoom != null)
                                                         {
-                                                            await this.communicator.SendToRoom(mobileCopy.Location, $"{mobileCopy.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                                            removeMobiles.Add(mobile);
+                                                        }
+
+                                                        // Add the mobile to the new location.
+                                                        var newLocation = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                                                        var nextRoom = this.communicator.ResolveRoom(newLocation);
+
+                                                        if (nextRoom != null)
+                                                        {
+                                                            // Clone the mob, we'll destroy the other one.
+                                                            var mobileCopy = mobile.DeepCopy();
+
+                                                            // Set the mobile's new location.
+                                                            mobileCopy.Location = newLocation;
+
+                                                            nextRoom.Mobiles.Add(mobileCopy);
+
+                                                            if (!mobileCopy.IsAffectedBy(nameof(Sneak)))
+                                                            {
+                                                                this.communicator.SendToRoom(mobileCopy.Location, $"{mobileCopy.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                                            }
                                                         }
                                                     }
-                                                }
-                                                catch (Exception exc)
-                                                {
-                                                    this.logger.Error("An error occurred at checkpoint WANDER.", exc, this.communicator);
+                                                    catch (Exception exc)
+                                                    {
+                                                        this.logger.Error("An error occurred at checkpoint WANDER.", exc, this.communicator);
+                                                    }
                                                 }
                                             }
                                         }
@@ -830,21 +834,21 @@ namespace Legendary.Engine
                             }
                         }
                     }
+                    catch (Exception exc)
+                    {
+                        this.logger.Error("An error occurred while processing mobile wander.", exc, this.communicator);
+                    }
+                }
+
+                try
+                {
+                    // Remove any mobiles from the room that moved.
+                    room.Mobiles.RemoveAll(r => removeMobiles.Contains(r));
                 }
                 catch (Exception exc)
                 {
-                    this.logger.Error("An error occurred while processing mobile wander.", exc, this.communicator);
+                    this.logger.Error("An error occurred while processing mobile wander. Cleanup failed.", exc, this.communicator);
                 }
-            }
-
-            try
-            {
-                // Remove any mobiles from the room that moved.
-                room.Mobiles.RemoveAll(r => removeMobiles.Any(m => m.CharacterId == r.CharacterId));
-            }
-            catch (Exception exc)
-            {
-                this.logger.Error("An error occurred while processing mobile wander. Cleanup failed.", exc, this.communicator);
             }
         }
 
@@ -912,7 +916,7 @@ namespace Legendary.Engine
             }
 
             // Remove any items the mobs picked up.
-            room.Items.RemoveAll(r => itemsToRemove.Any(i => i.ItemId == r.ItemId));
+            room.Items.RemoveAll(i => itemsToRemove.Contains(i));
         }
     }
 }

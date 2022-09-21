@@ -118,8 +118,23 @@ namespace Legendary.Engine
                                 this.logger.Debug("Repopulating areas...", null);
                                 foreach (var area in this.world.Areas)
                                 {
-                                    this.world.RepopulateMobiles(area);
-                                    this.world.RepopulateItems(area);
+                                    try
+                                    {
+                                        this.world.RepopulateMobiles(area);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        this.logger.Warn($"Error repopulating mobiles. {ex}", null);
+                                    }
+
+                                    try
+                                    {
+                                        this.world.RepopulateItems(area);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        this.logger.Warn($"Error repopulating items. {ex}", null);
+                                    }
                                 }
                             }
 
@@ -130,10 +145,17 @@ namespace Legendary.Engine
 
                             this.gameTicks = 0;
 
-                            var metrics = await this.world.UpdateGameMetrics(null);
+                            try
+                            {
+                                var metrics = await this.world.UpdateGameMetrics(null);
 
-                            // Raise the event to any listeners (e.g. Communicator).
-                            this.OnTick(this, new EngineEventArgs(this.gameTicks, metrics.CurrentHour, null));
+                                // Raise the event to any listeners (e.g. Communicator).
+                                this.OnTick(this, new EngineEventArgs(this.gameTicks, metrics.CurrentHour, null));
+                            }
+                            catch (Exception ex)
+                            {
+                                this.logger.Warn($"Error refreshing metrics. {ex}", null);
+                            }
                         }
                     }
                     catch (Exception ex)

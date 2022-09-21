@@ -87,7 +87,7 @@ namespace Legendary.Engine.Models.Skills
                         {
                             target.Currency -= randomAmount;
                             actor.Currency += randomAmount;
-                            await this.Communicator.SendToPlayer(actor, $"You filch {randomAmount.CurrenyToWords()} from {target.FirstName}.", cancellationToken);
+                            await this.Communicator.SendToPlayer(actor, $"You filch {randomAmount.CurrencyToWords()} from {target.FirstName}.", cancellationToken);
                         }
                     }
                 }

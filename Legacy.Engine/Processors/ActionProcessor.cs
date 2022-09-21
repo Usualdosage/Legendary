@@ -2736,12 +2736,19 @@ namespace Legendary.Engine.Processors
                     var wornLocations = actor.Character.Equipment.Select(w => w.WearLocation).ToList();
                     var inventoryCanWear = actor.Character.Inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
 
-                    foreach (var item in inventoryCanWear)
+                    if (inventoryCanWear.Count > 0)
                     {
-                        if (item.ItemType != ItemType.Weapon)
+                        foreach (var item in inventoryCanWear)
                         {
-                            await this.EquipItem(actor, "wear", item, false, cancellationToken);
+                            if (item.ItemType != ItemType.Weapon)
+                            {
+                                await this.EquipItem(actor, "wear", item, false, cancellationToken);
+                            }
                         }
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"You're wearing everything you can wear.", cancellationToken);
                     }
 
                     await this.communicator.SaveCharacter(actor);

@@ -65,7 +65,12 @@ namespace Legendary.Engine.Extensions
             };
         }
 
-        public static string CurrenyToWords(this decimal currency)
+        /// <summary>
+        /// Converts a decimal currency to language.
+        /// </summary>
+        /// <param name="currency">The currency.</param>
+        /// <returns>String.</returns>
+        public static string CurrencyToWords(this decimal currency)
         {
             if (currency == 0)
             {

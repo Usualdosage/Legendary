@@ -588,29 +588,36 @@ namespace Legendary.Engine
 
                         foreach (var roomGrouping in playersInRoom)
                         {
-                            // Get the location of the first player. All the rest in here are in the same area and room.
-                            var location = roomGrouping.First().Value.Character.Location;
-
-                            var room = this.communicator.ResolveRoom(location);
-
-                            if (room != null && room.Flags != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+                            try
                             {
-                                var weatherMessage = this.GenerateRandomWeather(room);
+                                // Get the location of the first player. All the rest in here are in the same area and room.
+                                var location = roomGrouping.First().Value.Character.Location;
 
-                                if (weatherMessage != null)
+                                var room = this.communicator.ResolveRoom(location);
+
+                                if (room != null && room.Flags != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
                                 {
-                                    await this.communicator.SendToRoom(location, weatherMessage.Message, cancellationToken);
-                                    await this.communicator.PlaySoundToRoom(location, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+                                    var weatherMessage = this.GenerateRandomWeather(room);
 
-                                    if (CurrentWeather.ContainsKey(room.AreaId))
+                                    if (weatherMessage != null)
                                     {
-                                        CurrentWeather[room.AreaId] = weatherMessage;
-                                    }
-                                    else
-                                    {
-                                        CurrentWeather.Add(room.AreaId, weatherMessage);
+                                        await this.communicator.SendToRoom(location, weatherMessage.Message, cancellationToken);
+                                        await this.communicator.PlaySoundToRoom(location, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+
+                                        if (CurrentWeather.ContainsKey(room.AreaId))
+                                        {
+                                            CurrentWeather[room.AreaId] = weatherMessage;
+                                        }
+                                        else
+                                        {
+                                            CurrentWeather.Add(room.AreaId, weatherMessage);
+                                        }
                                     }
                                 }
+                            }
+                            catch (Exception exc)
+                            {
+                                this.logger.Warn($"Error processing weather. {exc}", this.communicator);
                             }
                         }
                     }
