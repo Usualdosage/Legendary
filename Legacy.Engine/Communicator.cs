@@ -972,8 +972,8 @@ namespace Legendary.Engine
                         },
                         Experience = new Status()
                         {
-                            Current = this.GetExperienceToLevel(actor) - this.GetRemainingExperienceToLevel(actor),
-                            Max = this.GetExperienceToLevel(actor),
+                            Current = this.GetExperienceToLevel(actor, false) - this.GetRemainingExperienceToLevel(actor, false),
+                            Max = this.GetExperienceToLevel(actor, false),
                         },
                     },
                     ImageInfo = new ImageInfo()
@@ -1601,22 +1601,25 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public long GetRemainingExperienceToLevel(Character character)
+        public long GetRemainingExperienceToLevel(Character character, bool log)
         {
             var experience = character.Experience;
             var level = character.Level;
 
             // Total amount of experience needed to make level X.
-            var amountNeededToLevel = this.GetExperienceToLevel(character);
+            var amountNeededToLevel = this.GetExperienceToLevel(character, log);
 
-            this.logger.Info($"{character.FirstName} is level {level}, currently has {experience} experience and needs a total of {amountNeededToLevel}. They have {amountNeededToLevel - experience} experience to go.", this);
+            if (log)
+            {
+                this.logger.Info($"{character.FirstName} is level {level}, currently has {experience} experience and needs a total of {amountNeededToLevel}. They have {amountNeededToLevel - experience} experience to go.", this);
+            }
 
             // So if I have 10,000 experience, and I need 12,000 experience, the result will be 2,000.
             return (long)amountNeededToLevel - experience;
         }
 
         /// <inheritdoc/>
-        public long GetExperienceToLevel(Character character)
+        public long GetExperienceToLevel(Character character, bool log)
         {
             // Level 4 * 1500 = 6000
             // 6000 * 1
@@ -1634,7 +1637,10 @@ namespace Legendary.Engine
 
             var penalty = Races.RaceData.First(r => r.Key == character.Race).Value.ExperiencePenalty;
 
-            this.logger.Info($"{character.FirstName} is level {level} and needs {amountNeededToLevel} to level. They have an experience penalty of {penalty}. Total needed to level is {amountNeededToLevel + penalty}.", this);
+            if (log)
+            {
+                this.logger.Info($"{character.FirstName} is level {level} and needs {amountNeededToLevel} to level. They have an experience penalty of {penalty}. Total needed to level is {amountNeededToLevel + penalty}.", this);
+            }
 
             return (long)amountNeededToLevel + penalty;
         }
@@ -1646,7 +1652,7 @@ namespace Legendary.Engine
 
             if (level < 90)
             {
-                bool didAdvance = this.GetRemainingExperienceToLevel(character) <= 0;
+                bool didAdvance = this.GetRemainingExperienceToLevel(character, true) <= 0;
 
                 if (didAdvance)
                 {

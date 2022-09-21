@@ -445,15 +445,17 @@ namespace Legendary.Core.Contracts
         /// Gets the remaining amount of experience a player needs until they level.
         /// </summary>
         /// <param name="character">The character.</param>
+        /// <param name="log">If true, logs.</param>
         /// <returns>long.</returns>
-        long GetRemainingExperienceToLevel(Character character);
+        long GetRemainingExperienceToLevel(Character character, bool log);
 
         /// <summary>
         /// Gets the total amount of experience needed to get to the next level.
         /// </summary>
         /// <param name="character">The character.</param>
+        /// <param name="log">If true, logs.</param>
         /// <returns>long.</returns>
-        long GetExperienceToLevel(Character character);
+        long GetExperienceToLevel(Character character, bool log);
 
         /// <summary>
         /// Shows the members of the actor's group to the actor.
