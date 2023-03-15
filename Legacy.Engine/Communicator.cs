@@ -15,8 +15,6 @@ namespace Legendary.Engine
     using System.IO;
     using System.Linq;
     using System.Net.WebSockets;
-    using System.Numerics;
-    using System.Reflection;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -34,7 +32,6 @@ namespace Legendary.Engine
     using Legendary.Engine.Models.Output;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
-    using Legendary.Engine.Output;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
     using Microsoft.AspNetCore.Hosting;
@@ -904,14 +901,14 @@ namespace Legendary.Engine
             if (room != null)
             {
                 var soundIndex = this.random.Next(0, 7);
-                await this.PlaySound(actor, AudioChannel.Background, $"https://legendary.file.core.windows.net/audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
+                await this.PlaySound(actor, AudioChannel.Background, $"https://legendaryweb.file.core.windows.net/audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
 
                 // 40% chance to play the terrain SFX (e.g. forest, city)
                 var randomSfx = this.random.Next(0, 10);
 
                 if (randomSfx <= 4)
                 {
-                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"https://legendary.file.core.windows.net/audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
+                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"https://legendaryweb.file.core.windows.net/audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
                 }
 
                 // Check aggro
@@ -1495,19 +1492,6 @@ namespace Legendary.Engine
         }
 
         /// <summary>
-        /// Generates a situation based on the encounter.
-        /// </summary>
-        /// <param name="actor">The character.</param>
-        /// <param name="target">The mobile.</param>
-        /// <returns>string.</returns>
-        public string GetSituation(Character actor, Character target)
-        {
-            var gen1 = actor.Gender == Gender.Male ? "boy" : "girl";
-            var gen2 = target.Gender == Gender.Male ? "boy" : "girl";
-            return $"{gen1} and {gen2} talking to each other";
-        }
-
-        /// <summary>
         /// Allows mobs with personalities to communicate to characters who say things.
         /// </summary>
         /// <param name="character">The speaking character.</param>
@@ -1523,9 +1507,7 @@ namespace Legendary.Engine
             {
                 foreach (var mobile in mobiles)
                 {
-                    var situation = this.GetSituation(character, mobile);
-
-                    var response = await this.LanguageProcessor.Process(character, mobile, message, situation);
+                    var response = await this.LanguageProcessor.Process(character, mobile, message);
 
                     if (!string.IsNullOrWhiteSpace(response))
                     {

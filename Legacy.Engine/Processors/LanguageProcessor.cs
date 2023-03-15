@@ -13,6 +13,7 @@ namespace Legendary.Engine.Processors
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -22,7 +23,6 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
-    using Legendary.Engine.Generators;
     using Legendary.Engine.Models;
     using Newtonsoft.Json;
     using RestSharp;
@@ -37,8 +37,10 @@ namespace Legendary.Engine.Processors
         private readonly ICommunicator communicator;
         private readonly IServerSettings serverSettings;
         private readonly ILanguageGenerator generator;
+        private readonly string url = "https://api.openai.com/v1/chat/completions";
         private List<string>? excludeWords;
         private Dictionary<string, string>? replaceWords;
+        private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
@@ -56,6 +58,7 @@ namespace Legendary.Engine.Processors
             this.generator = generator;
             this.random = random;
             this.communicator = communicator;
+            this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
         }
 
         /// <summary>
@@ -80,9 +83,8 @@ namespace Legendary.Engine.Processors
         /// <param name="character">The character.</param>
         /// <param name="mobile">The mobile.</param>
         /// <param name="input">The input string.</param>
-        /// <param name="situation">The sitrep.</param>
         /// <returns>string.</returns>
-        public async Task<string?> Process(Character character, Mobile mobile, string input, string situation)
+        public async Task<string?> Process(Character character, Mobile mobile, string input)
         {
             if (mobile.UseAI)
             {
@@ -90,9 +92,26 @@ namespace Legendary.Engine.Processors
                 {
                     if (this.WillEngage(character, mobile, input))
                     {
-                        this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
+                        var persona = Persona.Load(mobile);
 
-                        return await this.Request(CleanInput(input, character.FirstName), situation, character.FirstName, mobile.FirstName);
+                        if (persona != null)
+                        {
+                            this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
+
+                            // We haven't trained this mobile yet, so train it.
+                            if (!this.mobileTrainingData.ContainsKey(mobile))
+                            {
+                                this.mobileTrainingData.Add(mobile, Train(persona, character, mobile));
+                            }
+
+                            // Chat response for the mobile with the training data.
+                            return await this.Chat(character, this.mobileTrainingData[mobile], CleanInput(input, character.FirstName));
+                        }
+                        else
+                        {
+                            this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} did not have a valid persona file or it could not be loaded.", this.communicator);
+                            return null;
+                        }
                     }
                     else
                     {
@@ -201,6 +220,79 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Sends a message to the ChatGPT server to process as a chat.
+        /// </summary>
+        /// <param name="character">The character speaking to the chat bot.</param>
+        /// <param name="trainingData">The training data.</param>
+        /// <param name="message">The message to send.</param>
+        /// <returns>String.</returns>
+        public async Task<string> Chat(Character character, List<dynamic> trainingData, string message)
+        {
+            trainingData.Add(new { role = "user", content = $"{character.FirstName}: {message}" });
+
+            // Create the request for the API sending the latest collection of chat messages
+            var request = new
+            {
+                messages = trainingData,
+                model = "gpt-3.5-turbo",
+                max_tokens = 1024,
+            };
+
+            try
+            {
+                // Send the request and capture the response
+                using var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.serverSettings.ChatGPTKey}");
+
+                var requestJson = JsonConvert.SerializeObject(request);
+                var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+
+                using var httpResponseMessage = await httpClient.PostAsync(this.url, requestContent);
+
+                var jsonString = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                var responseObject = JsonConvert.DeserializeAnonymousType(jsonString, new
+                {
+                    choices = new[] { new { message = new { role = string.Empty, content = string.Empty } } },
+                    error = new { message = string.Empty },
+                });
+
+                if (responseObject != null)
+                {
+                    // Check for errors
+                    if (!string.IsNullOrEmpty(responseObject?.error?.message))
+                    {
+                        return responseObject.error.message;
+                    }
+                    else
+                    {
+                        // Add the message object to the message collection so the bot "remembers"
+                        var messageObject = responseObject?.choices[0]?.message;
+
+                        if (messageObject != null)
+                        {
+                            trainingData.Add(messageObject);
+                            return messageObject.content;
+                        }
+                        else
+                        {
+                            return string.Empty;
+                        }
+                    }
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error(exc, this.communicator);
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// Remove any HTML or links.
         /// </summary>
         /// <param name="input">The input to clean.</param>
@@ -217,27 +309,49 @@ namespace Legendary.Engine.Processors
             return cleaned;
         }
 
-        private static string FormatSentence(string input)
+        /// <summary>
+        /// Trains the ChatGPT model on a particular persona.
+        /// </summary>
+        /// <param name="persona">The persona.</param>
+        /// <param name="character">The character the mob is engaged with.</param>
+        /// <param name="mobile">The mobile who is engaged.</param>
+        private static List<dynamic> Train(Persona persona, Character character, Mobile mobile)
         {
-            input = input.Trim();
-
-            input = input.Replace("error: ", string.Empty);
-
-            // Capitalize the first letter.
-            input = char.ToUpper(input[0]) + input[1..];
-
-            // If we don't have punctuation at the end, add a period by default.
-            if (!char.IsPunctuation(input[^1]))
+            var trainingInformation = new List<string>
             {
-                input += '.';
+                $"Your name is {persona.Name}.",
+                $"Your race is {mobile.Race}.",
+                $"Your age is {mobile.Age}.",
+                $"Your class is {persona.Class}.",
+                $"Your attitude is {persona.Attitude}.",
+                $"You are speaking with {character.FirstName} {character.LastName}.",
+                $"Your gender is {mobile.Gender}.",
+                $"Your alignment is {mobile.Alignment}.",
+                $"Your ethos is {mobile.Ethos}.",
+                $"The person you are speaking to has an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
+                $"The person you are speaking to is a {character.Gender} {character.Race}.",
+            };
+
+            if (persona.Background != null)
+            {
+                trainingInformation.AddRange(persona.Background);
             }
 
-            return input;
-        }
+            var messages = new List<dynamic>
+            {
+                new
+                {
+                    role = "system",
+                    content = string.Join(" ", trainingInformation),
+                },
+                new
+                {
+                    role = "assistant",
+                    content = persona.Prompt,
+                },
+            };
 
-        private static string Unpunctuate(string input)
-        {
-            return Regex.Replace(input, @"[^\w\s]", string.Empty);
+            return messages;
         }
 
         private bool WillEngage(Character actor, Mobile target, string message)
@@ -298,125 +412,6 @@ namespace Legendary.Engine.Processors
             }
 
             return engage;
-        }
-
-        private string GetErrorMessage()
-        {
-            return Constants.CONNECTION_ERROR[this.random.Next(0, Constants.CONNECTION_ERROR.Count - 1)];
-        }
-
-        private async Task<string> Request(string input, string situation, string actor, string target)
-        {
-            try
-            {
-                using (var client = new RestClient($"https://waifu.p.rapidapi.com/path?user_id=sample_user_id&message={input}&from_name={actor}&to_name={target}&situation={situation}&translate_from=auto&translate_to=auto"))
-                {
-                    var request = new RestRequest("/", Method.Post);
-                    request.AddHeader("content-type", "application/json");
-                    request.AddHeader("X-RapidAPI-Key", this.serverSettings.RapidAPIKey ?? string.Empty);
-                    request.AddHeader("X-RapidAPI-Host", "waifu.p.rapidapi.com");
-                    request.AddParameter("application/json", "{}", ParameterType.RequestBody);
-                    RestResponse response = await client.ExecuteAsync(request);
-                    if (response != null && !string.IsNullOrWhiteSpace(response.Content))
-                    {
-                        try
-                        {
-                            var results = response.Content;
-
-                            if (string.IsNullOrWhiteSpace(results))
-                            {
-                                return string.Empty;
-                            }
-
-                            var words = results.Split(' ');
-
-                            StringBuilder sb = new StringBuilder();
-
-                            foreach (var word in words)
-                            {
-                                // Check to see if we want to replace an uppercase word with a random word. Don't replace actor or target.
-                                var replacementWord = this.Replace(word, actor, target);
-
-                                sb.Append(replacementWord);
-
-                                sb.Append(' ');
-                            }
-
-                            // Remove trailing space.
-                            sb.Remove(sb.Length - 1, 1);
-
-                            // Remove any HTML or links.
-                            var cleaned = Regex.Replace(sb.ToString(), @"http[^\s]+", string.Empty);
-                            cleaned = Regex.Replace(cleaned, "<.*?>", string.Empty);
-
-                            // Add any necessary punctuation.
-                            return FormatSentence(cleaned);
-                        }
-                        catch (System.Exception)
-                        {
-                            return FormatSentence(response.Content);
-                        }
-                    }
-                }
-
-                return this.GetErrorMessage();
-            }
-            catch
-            {
-                return this.GetErrorMessage();
-            }
-        }
-
-        private string Replace(string word, string actor, string target)
-        {
-            // Ensure we're formatting an actual word.
-            if (string.IsNullOrWhiteSpace(word))
-            {
-                return word;
-            }
-
-            // Lowercase and remove all punctuation for our test word. This word does not get returned, it's just for parsing tests.
-            var testWord = Unpunctuate(word.ToLower());
-
-            // If it's a proper case word and it's not the name of the actor or the target.
-            if (char.IsUpper(word[0]) && word != actor && word != target)
-            {
-                if (this.replaceWords != null && this.replaceWords.ContainsKey(testWord))
-                {
-                    // Word should be replaced with another word.
-                    var replaceWith = this.replaceWords.First(r => r.Key == word.ToLower()).Value;
-
-                    // Uppercase the word.
-                    return char.ToUpper(replaceWith[0]) + replaceWith[1..];
-                }
-
-                if (this.excludeWords != null && this.excludeWords.Contains(testWord))
-                {
-                    // Word is excluded from replacement.
-                    return word;
-                }
-                else
-                {
-                    // Word should be replaced with a random word. The generator returns only uppercase words.
-                    this.logger.Debug($"Replaced word from {actor} '{word}' with '{testWord}' while speaking with {target}.", this.communicator);
-
-                    return this.generator.BuildSentence(testWord);
-                }
-            }
-            else
-            {
-                // It's not proper cased, so just see if we want to use a replacement word.
-                if (this.replaceWords != null && this.replaceWords.ContainsKey(testWord))
-                {
-                    // Word should be replaced with another word.
-                    return this.replaceWords.First(r => r.Key == word.ToLower()).Value;
-                }
-                else
-                {
-                    // No changes, use the word as-is.
-                    return word;
-                }
-            }
         }
     }
 }

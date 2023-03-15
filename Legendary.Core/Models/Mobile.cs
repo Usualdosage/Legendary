@@ -38,6 +38,11 @@ namespace Legendary.Core.Models
         public bool UseAI { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets the persona file to consume if this mbile uses AI.
+        /// </summary>
+        public string? PersonaFile { get; set; }
+
+        /// <summary>
         /// Gets or sets the handle which player the mob is speaking with, tracking, and fighting.
         /// </summary>
         public Character? PlayerTarget { get; set; }

@@ -23,9 +23,8 @@ namespace Legendary.Core.Contracts
         /// <param name="character">The character.</param>
         /// <param name="mobile">The mobile.</param>
         /// <param name="input">The message input.</param>
-        /// <param name="situation">The situation to train the AI on.</param>
         /// <returns>The result message.</returns>
-        Task<string?> Process(Character character, Mobile mobile, string input, string situation);
+        Task<string?> Process(Character character, Mobile mobile, string input);
 
         /// <summary>
         /// If a mob doesn't perform a verbal response, it may execute an emote.

@@ -526,7 +526,7 @@ namespace Legendary.Engine.Processors
                             {
                                 if (!userData.Character.HasSpell(kvp.Name.ToLower()))
                                 {
-                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Name, 75));
+                                    userData.Character.Spells.Add(new SpellProficiency(kvp.Name, 100));
                                 }
                             }
                         }

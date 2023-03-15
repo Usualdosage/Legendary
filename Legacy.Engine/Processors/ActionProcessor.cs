@@ -1978,11 +1978,9 @@ namespace Legendary.Engine.Processors
                     return;
                 }
 
-                var speakingLang = SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat);
+                var speakingLang = SkillHelper.ResolveSkill(actor.Character.Speaking, this.communicator, this.random, this.world, this.logger, this.combat);
 
-                var speaking = actor.Character.Speaking ?? speakingLang?.Name;
-
-                await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speakingLang?.Name}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
 
                 // Check if the language improves each time it's used.
                 if (speakingLang != null)
@@ -2007,29 +2005,31 @@ namespace Legendary.Engine.Processors
                         {
                             if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character))
                             {
-                                if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                if (player.HasSkill(speakingLang?.Name) && player.GetSkillProficiency(speakingLang?.Name)?.Proficiency >= skillRoll)
                                 {
-                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speakingLang?.Name}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speakingLang?.Name}) \"<span class='say'><span class='{speakingLang?.Name?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
                                 }
                             }
                             else
                             {
-                                if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
+                                if (player.HasSkill(speakingLang?.Name) && player.GetSkillProficiency(speakingLang?.Name)?.Proficiency >= skillRoll)
                                 {
-                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speakingLang?.Name}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speaking}) \"<span class='say'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speakingLang?.Name}) \"<span class='say'><span class='{speakingLang?.Name?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
                                 }
                             }
                         }
                     }
                 }
+
+                await this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, sentence, cancellationToken);
             }
         }
 
