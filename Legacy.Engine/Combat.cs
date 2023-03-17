@@ -1520,9 +1520,7 @@ namespace Legendary.Engine
         /// <returns>Skill proficiency.</returns>
         private SkillProficiency GetDefaultMobileProficiency(Character mobile, Character target)
         {
-            // TODO: Adjust this.
-            var skillProf = new SkillProficiency("hand to hand", 50);
-            return skillProf;
+            return new SkillProficiency("hand to hand", Math.Min(mobile.Level + 50, 99));
         }
 
         /// <summary>

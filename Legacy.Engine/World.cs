@@ -741,6 +741,19 @@ namespace Legendary.Engine
                                 {
                                     continue;
                                 }
+                                else if (mobile.PlayerTarget != null)
+                                {
+                                    if (this.communicator.IsInRoom(mobile.Location, mobile.PlayerTarget))
+                                    {
+                                        // If the mobile is engaged with a player, don't move it.
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        // Player left, so reset the target.
+                                        mobile.PlayerTarget = null;
+                                    }
+                                }
                                 else
                                 {
                                     // Mobiles have a 50% chance each tick to move around.

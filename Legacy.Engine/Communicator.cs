@@ -108,7 +108,7 @@ namespace Legendary.Engine
             this.LanguageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment);
 
             // Create the action helper.
             this.actionHelper = new ActionHelper(this, this.random, this.world, this.logger, this.combat);

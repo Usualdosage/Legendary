@@ -32,6 +32,6 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets the API key for Chat GPT.
         /// </summary>
-        string? ChatGPTKey { get; set; }
+        string? ChatGPTAPIKey { get; set; }
     }
 }

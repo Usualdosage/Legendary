@@ -14,6 +14,7 @@ namespace Legendary.Engine.Processors
     using System.IO;
     using System.Linq;
     using System.Net.Http;
+    using System.Numerics;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -23,7 +24,9 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Output;
     using Newtonsoft.Json;
     using RestSharp;
 
@@ -37,9 +40,8 @@ namespace Legendary.Engine.Processors
         private readonly ICommunicator communicator;
         private readonly IServerSettings serverSettings;
         private readonly ILanguageGenerator generator;
+        private readonly IEnvironment environment;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
-        private List<string>? excludeWords;
-        private Dictionary<string, string>? replaceWords;
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
 
         /// <summary>
@@ -50,7 +52,8 @@ namespace Legendary.Engine.Processors
         /// <param name="generator">The language generator.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random)
+        /// <param name="environment">The environment.</param>
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;
@@ -58,6 +61,7 @@ namespace Legendary.Engine.Processors
             this.generator = generator;
             this.random = random;
             this.communicator = communicator;
+            this.environment = environment;
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
         }
 
@@ -69,12 +73,6 @@ namespace Legendary.Engine.Processors
             var parserContent = File.ReadAllText(@"Data/parser.json");
 
             var parser = JsonConvert.DeserializeObject<Parser>(parserContent);
-
-            if (parser != null)
-            {
-                this.excludeWords = parser.Exclude;
-                this.replaceWords = parser.Replace;
-            }
         }
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace Legendary.Engine.Processors
                     {
                         var persona = Persona.Load(mobile);
 
-                        if (persona != null)
+                        if (persona != null && !string.IsNullOrWhiteSpace(persona.Name))
                         {
                             this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
 
@@ -105,7 +103,12 @@ namespace Legendary.Engine.Processors
                             }
 
                             // Chat response for the mobile with the training data.
-                            return await this.Chat(character, this.mobileTrainingData[mobile], CleanInput(input, character.FirstName));
+                            var message = await this.Chat(character, this.mobileTrainingData[mobile], CleanInput(input, character.FirstName));
+
+                            // Remove the name of the mobile from the result message.
+                            return CleanOutput(message, persona, mobile);
+
+                            // TODO: Maybe give the mob a chance to speak in their native language?
                         }
                         else
                         {
@@ -176,8 +179,16 @@ namespace Legendary.Engine.Processors
                             break;
                     }
 
-                    action = action.Replace("{0}", mobile.FirstName.FirstCharToUpper());
-                    action = action.Replace("{1}", mobile.Pronoun);
+                    if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, character, mobile))
+                    {
+                        action = action.Replace("{0}", "Someone");
+                        action = action.Replace("{1}", "their");
+                    }
+                    else
+                    {
+                        action = action.Replace("{0}", mobile.FirstName.FirstCharToUpper());
+                        action = action.Replace("{1}", mobile.Pronoun);
+                    }
 
                     return action;
                 }
@@ -188,7 +199,14 @@ namespace Legendary.Engine.Processors
 
                     if (emote != null)
                     {
-                        return emote.ToRoom.Replace("{0}", mobile.FirstName.FirstCharToUpper());
+                        if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, character, mobile))
+                        {
+                            return emote.ToRoom.Replace("{0}", "Someone");
+                        }
+                        else
+                        {
+                            return emote.ToRoom.Replace("{0}", mobile.FirstName.FirstCharToUpper());
+                        }
                     }
                     else
                     {
@@ -234,15 +252,15 @@ namespace Legendary.Engine.Processors
             var request = new
             {
                 messages = trainingData,
-                model = "gpt-3.5-turbo",
-                max_tokens = 1024,
+                model = "gpt-4",
+                max_tokens = 2048,
             };
 
             try
             {
                 // Send the request and capture the response
                 using var httpClient = new HttpClient();
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.serverSettings.ChatGPTKey}");
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.serverSettings.ChatGPTAPIKey}");
 
                 var requestJson = JsonConvert.SerializeObject(request);
                 var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
@@ -310,6 +328,30 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Removes character (mobile) and persona info from the output message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="persona">The mobile persona.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <returns>Cleaned output message.</returns>
+        private static string CleanOutput(string message, Persona persona, Mobile mobile)
+        {
+            if (!string.IsNullOrWhiteSpace(persona.Name))
+            {
+                message = message.Replace(persona.Name, string.Empty);
+            }
+
+            if (!string.IsNullOrWhiteSpace(mobile.LastName))
+            {
+                message = message.Replace(mobile.LastName, string.Empty);
+            }
+
+            message = message.Replace(mobile.FirstName, string.Empty);
+
+            return message.Replace(": ", string.Empty);
+        }
+
+        /// <summary>
         /// Trains the ChatGPT model on a particular persona.
         /// </summary>
         /// <param name="persona">The persona.</param>
@@ -326,8 +368,7 @@ namespace Legendary.Engine.Processors
                 $"Your attitude is {persona.Attitude}.",
                 $"You are speaking with {character.FirstName} {character.LastName}.",
                 $"Your gender is {mobile.Gender}.",
-                $"Your alignment is {mobile.Alignment}.",
-                $"Your ethos is {mobile.Ethos}.",
+                $"Your alignment is {mobile.Alignment}, and your ethos is {mobile.Ethos}.",
                 $"The person you are speaking to has an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
                 $"The person you are speaking to is a {character.Gender} {character.Race}.",
             };

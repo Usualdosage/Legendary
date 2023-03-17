@@ -9,9 +9,7 @@
 
 namespace Legendary.Core.Models
 {
-    using System;
     using System.Collections.Generic;
-    using Legendary.Core.Contracts;
     using Legendary.Core.Types;
 
     /// <summary>

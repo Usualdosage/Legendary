@@ -26,6 +26,6 @@ namespace Legendary.Networking.Models
         public string? RapidAPIKey { get; set; }
 
         /// <inheritdoc/>
-        public string? ChatGPTKey { get; set; }
+        public string? ChatGPTAPIKey { get; set; }
     }
 }

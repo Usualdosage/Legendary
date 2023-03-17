@@ -15,73 +15,78 @@ namespace Legendary.Core.Types
     public enum Terrain : short
     {
         /// <summary>
-        /// City. - 7
+        /// City.
         /// </summary>
         City = 0,
 
         /// <summary>
-        /// Mountains. - 7
+        /// Mountains.
         /// </summary>
         Mountains = 1,
 
         /// <summary>
-        /// Hills. - 7
+        /// Hills.
         /// </summary>
         Hills = 2,
 
         /// <summary>
-        /// Grasslands. - 7
+        /// Grasslands.
         /// </summary>
         Grasslands = 3,
 
         /// <summary>
-        /// Water. - 7
+        /// Water.
         /// </summary>
         Water = 4,
 
         /// <summary>
-        /// Swamp. - 7
+        /// Swamp.
         /// </summary>
         Swamp = 5,
 
         /// <summary>
-        /// Air. - 7
+        /// Air.
         /// </summary>
         Air = 6,
 
         /// <summary>
-        /// Beach. - 7
+        /// Beach.
         /// </summary>
         Beach = 7,
 
         /// <summary>
-        /// Ethereal. - 7
+        /// Ethereal.
         /// </summary>
         Ethereal = 8,
 
         /// <summary>
-        /// Forest. - 7
+        /// Forest.
         /// </summary>
         Forest = 9,
 
         /// <summary>
-        /// Jungle. - 7
+        /// Jungle.
         /// </summary>
         Jungle = 10,
 
         /// <summary>
-        /// Desert. - 7
+        /// Desert.
         /// </summary>
         Desert = 11,
 
         /// <summary>
-        /// Snow. - 7
+        /// Snow.
         /// </summary>
         Snow = 12,
 
         /// <summary>
-        /// Shallow water. - 7
+        /// Shallow water.
         /// </summary>
         Shallows = 13,
+
+        /// <summary>
+        /// Caves.
+        /// </summary>
+        Caves = 14,
     }
 }

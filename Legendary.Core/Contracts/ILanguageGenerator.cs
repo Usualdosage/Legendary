@@ -9,18 +9,16 @@
 
 namespace Legendary.Core.Contracts
 {
-    using System;
-
     /// <summary>
     /// Implementation contract for a language generator.
     /// </summary>
     public interface ILanguageGenerator
     {
         /// <summary>
-        /// Builds a sentence using the language generator.
+        /// Builds a random sentence from a random sentence.
         /// </summary>
-        /// <param name="sentence">The sentence.</param>
-        /// <returns>String.</returns>
-        public string BuildSentence(string sentence);
+        /// <param name="sentence">The source sentence.</param>
+        /// <returns>New sentence.</returns>
+        string BuildSentence(string sentence);
     }
 }
