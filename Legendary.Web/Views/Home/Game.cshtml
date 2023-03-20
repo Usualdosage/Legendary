@@ -1,0 +1,361 @@
+﻿@model UserModel
+
+<link rel="stylesheet" href="~/css/console.css" asp-append-version="true" />
+
+<div class="container-fluid h-100 main-container">
+    <div class="row h-100">
+        <div class="col h-100">
+            <div class="row console-container">
+                <div id="console" class="console">
+                    <div id="banner">Welcome to Legendary</div>
+                    <p class="loader"><i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> One moment while we establish a secure connection to Legendary...</p>
+                </div>
+            </div>
+            <div class="row input">
+                <input id="inputField" type="text" placeholder="What do you want to do?" />
+            </div>
+        </div>
+        <div class="col control-panel">
+            <div id="control-panel" >
+                <!-- This is rendered dynamically -->
+            </div>
+            <div class="component">
+                <table class="vol-table">
+                    <tr>
+                        <td>
+                            <label for="audioBackground" class="form-label">Music Volume</label>
+                            <input type="range" class="form-range" min="0" max="100" onchange="changeBgAudio(this)" id="audioBackground">
+                        </td>
+                        <td>
+                            <label for="audioSFXVolume" class="form-label">SFX Volume</label>
+                            <input type="range" class="form-range" min="0" max="100" onchange="changeSfxAudio(this)" id="audioSFX">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="audio-channels">
+    <audio id="channel0"></audio>
+    <audio id="channel1"></audio>
+    <audio id="channel2"></audio>
+    <audio id="channel3"></audio>
+    <audio id="channel4"></audio>
+    <audio id="channel5"></audio>
+    <audio id="channel6"></audio>
+    <audio id="channel7"></audio>
+</div>
+
+<!-- Component Template -->
+<script id="component-template" type="text/x-handlebars-template">
+    <h3>{{m.f}} ({{m.l}})</h3>
+    <h4>{{m.t}}</h4>
+    <div class="component">
+        <div class="progress" data-toggle="tooltip" title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
+            <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:{{m.s.hp.p}}%;" aria-valuenow="{{m.s.hp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.hp.p}}%</div>
+        </div>
+        <div class="progress" data-toggle="tooltip" title="Mana: {{m.s.mm.c}}/{{m.s.mm.m}}">
+            <div class="progress-bar progress-bar-striped" role="progressbar" style="width:{{m.s.mm.p}}%;" aria-valuenow="{{m.s.mm.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.mm.p}}%</div>
+        </div>
+        <div class="progress" data-toggle="tooltip" title="Movement: {{m.s.mv.c}}/{{m.s.mv.m}}">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:{{m.s.mv.p}}%;" aria-valuenow="{{m.s.mv.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.mv.p}}%</div>
+        </div>
+        <div class="progress" data-toggle="tooltip" title="Experience: {{m.s.exp.c}}/{{m.s.exp.m}}">
+            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width:{{m.s.exp.p}}%;" aria-valuenow="{{m.s.exp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.exp.p}}%</div>
+        </div>
+    </div>
+
+    <div class="component component-time-weather">
+        {{m.w.tm}}
+    </div>
+    <div class="component image-container">
+        <img class="image-content" onload='image_load(this);' onerror='image_error(this);' src="{{m.i.img}}" />
+    </div>
+    <div class="component image-caption">
+        {{m.i.c}}
+    </div>
+    <div class="component">
+        <table class="nav-table">
+            <tr>
+                <td><i move="nw" class="nav-arrow fa fa-arrow-up nw" title="Go Northwest" style="font-size:24px"></i></td>
+                <td><i move="north" class="nav-arrow fa fa-arrow-up" title="Go North" style="font-size:24px"></i></td>
+                <td><i move="ne" class="nav-arrow fa fa-arrow-up ne" title="Go Northeast" style="font-size:24px"></i></td>
+            </tr>
+            <tr>
+                <td><i move="west" class="nav-arrow fa fa-arrow-left" title="Go West" style="font-size:24px"></i></td>
+                <td class="nav-center"><input type="button" move="up" class="nav-arrow nav-up" title="Go Up" value="Up" /><input type="button" move="down" title="Go Down" class="nav-arrow nav-down" value="Down" /></td>
+                <td><i move="east" class="nav-arrow fa fa-arrow-right" title="Go East" style="font-size:24px"></i></td>
+            </tr>
+            <tr>
+                <td><i move="sw" class="nav-arrow fa fa-arrow-down sw" title="Go Southwest" style="font-size:24px"></i></td>
+                <td><i move="south" class="nav-arrow fa fa-arrow-down" title="Go South" style="font-size:24px"></i></td>
+                <td><i move="se" class="nav-arrow fa fa-arrow-down se" title="Go Southeast" style="font-size:24px"></i></td>
+            </tr>
+        </table>
+    </div>
+    
+</script>
+
+<!-- Score Template -->
+<script id="score-template" type="text/x-handlebars-template">
+    <div class="score-container">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 player-score-title">{{m.pe.na}} {{m.pe.ti}}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 player-section">Personal</div>
+                <div class="col-md-2 player-section">Vitals</div>
+                <div class="col-md-2 player-section">Attributes</div>
+                <div class="col-md-2 player-section">Armor</div>
+                <div class="col-md-2 player-section">Saves</div>
+                <div class="col-md-2 player-section">Other</div>
+            </div>
+            <div class="row">
+                <div class="col-md-1 label">
+                    Race
+                </div>
+                <div class="col-md-1">
+                    {{m.pe.ra}}
+                </div>
+                <div class="col-md-1 label">
+                    Health
+                </div>
+                <div class="col-md-1">
+                    {{m.vi.he}}
+                </div>
+                <div class="col-md-1 label">
+                    Strength
+                </div>
+                <div class="col-md-1">
+                    {{m.at.st}}
+                </div>
+                <div class="col-md-1 label">
+                    Blunt
+                </div>
+                <div class="col-md-1">
+                    {{m.ar.bl}}
+                </div>
+                <div class="col-md-1 label">
+                    Afflictive
+                </div>
+                <div class="col-md-1">
+                    {{m.sa.af}}
+                </div>
+                <div class="col-md-1 label">
+                    Trains
+                </div>
+                <div class="col-md-1">
+                    {{m.ot.tr}}
+                </div>
+            </div>
+            <div class="row alt">
+                <div class="col-md-1 label">
+                    Alignment
+                </div>
+                <div class="col-md-1">
+                    {{m.pe.al}}
+                </div>
+                <div class="col-md-1 label">
+                    Mana
+                </div>
+                <div class="col-md-1">
+                    {{m.vi.ma}}
+                </div>
+                <div class="col-md-1 label">
+                    Intelligence
+                </div>
+                <div class="col-md-1">
+                    {{m.at.in}}
+                </div>
+                <div class="col-md-1 label">
+                    Pierce
+                </div>
+                <div class="col-md-1">
+                    {{m.ar.pi}}
+                </div>
+                <div class="col-md-1 label">
+                    Maledictive
+                </div>
+                <div class="col-md-1">
+                    {{m.sa.ma}}
+                </div>
+                <div class="col-md-1 label">
+                    Practices
+                </div>
+                <div class="col-md-1">
+                    {{m.ot.pr}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1 label">
+                    Ethos
+                </div>
+                <div class="col-md-1">
+                    {{m.pe.et}}
+                </div>
+                <div class="col-md-1 label">
+                    Movement
+                </div>
+                <div class="col-md-1">
+                    {{m.vi.mo}}
+                </div>
+                <div class="col-md-1 label">
+                    Wisdom
+                </div>
+                <div class="col-md-1">
+                    {{m.at.wi}}
+                </div>
+                <div class="col-md-1 label">
+                    Edged
+                </div>
+                <div class="col-md-1">
+                    {{m.ar.ed}}
+                </div>
+                <div class="col-md-1 label">
+                    Spell
+                </div>
+                <div class="col-md-1">
+                    {{m.sa.sp}}
+                </div>
+                <div class="col-md-1 label">
+                    Gold
+                </div>
+                <div class="col-md-1">
+                    <span class="currency-gold">{{m.ot.go}}</span>
+                </div>
+            </div>
+            <div class="row alt">
+                <div class="col-md-1 label">
+                    Gender
+                </div>
+                <div class="col-md-1">
+                    {{m.pe.ge}}
+                </div>
+                <div class="col-md-1 label">
+                    Experience
+                </div>
+                <div class="col-md-1">
+                    {{m.vi.ex}}
+                </div>
+                <div class="col-md-1 label">
+                    Dexterity
+                </div>
+                <div class="col-md-1">
+                    {{m.at.de}}
+                </div>
+                <div class="col-md-1 label">
+                    Magic
+                </div>
+                <div class="col-md-1">
+                    {{m.ar.ma}}
+                </div>
+                <div class="col-md-1 label">
+                    Death
+                </div>
+                <div class="col-md-1">
+                    {{m.sa.de}}
+                </div>
+                <div class="col-md-1 label">
+                    Silver
+                </div>
+                <div class="col-md-1">
+                    <span class="currency-silver">{{m.ot.si}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1 label">
+                    Hometown
+                </div>
+                <div class="col-md-1">
+                    {{m.pe.ho}}
+                </div>
+                <div class="col-md-1 label">
+                    Carry
+                </div>
+                <div class="col-md-1">
+                    {{m.vi.ca}}
+                </div>
+                <div class="col-md-1 label">
+                    Constitution
+                </div>
+                <div class="col-md-1">
+                    {{m.at.co}}
+                </div>
+                <div class="col-md-1 label">
+                    Hit Dice
+                </div>
+                <div class="col-md-1">
+                    {{m.ot.hd}}
+                </div>
+                <div class="col-md-1 label">
+                    Negative
+                </div>
+                <div class="col-md-1">
+                    {{m.sa.ne}}
+                </div>
+                <div class="col-md-1 label">
+                    Copper
+                </div>
+                <div class="col-md-1">
+                    <span class="currency-copper">{{m.ot.co}}</span>
+                </div>
+            </div>
+            <div class="row alt">
+                <div class="col-md-1 label">
+                    Title
+                </div>
+                <div class="col-md-1">
+                    {{m.pe.ti}}
+                </div>
+                <div class="col-md-1 label">
+                    Level
+                </div>
+                <div class="col-md-1">
+                    {{m.vi.le}}
+                </div>
+                <div class="col-md-1 label">
+                    &nbsp;
+                </div>
+                <div class="col-md-1">
+                    &nbsp;
+                </div>
+                <div class="col-md-1 label">
+                    Dam Dice
+                </div>
+                <div class="col-md-1">
+                    {{m.ot.dd}}
+                </div>
+                <div class="col-md-1 label">
+                    Learns
+                </div>
+                <div class="col-md-1">
+                    {{m.sa.lr}}
+                </div>
+                <div class="col-md-1 label">
+                    Last Login
+                </div>
+                <div class="col-md-1">
+                    {{m.ot.la}}
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+    @section Scripts {
+        <script>$(function () {
+                const client = new LegendaryClient();
+                client.Connect();
+                $("#inputField").focus();
+            });
+
+            const image_error = function (e) {
+                e.src = "../../img/rooms/none.png";
+            }
+
+            const image_load = function (e) {
+
+            }</script>
+    }

@@ -11,7 +11,7 @@
     "Legendary.Web": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7777;http://localhost:7778",
+      "applicationUrl": "https://localhost:7779;http://localhost:7780",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "MONGOCONNECTION": "mongodb+srv://legacyadmin:8PoB23w2iMiMGyK5@legacy.uigz5.mongodb.net/Legacy",

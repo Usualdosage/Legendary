@@ -54,6 +54,7 @@ namespace Legendary.Web.Controllers
         /// Health check endpoint for Azure.
         /// </summary>
         /// <returns>JsonResult.</returns>
+        [Route("/Health")]
         public JsonResult Health()
         {
             return this.Json("200: Ok.");
@@ -64,9 +65,11 @@ namespace Legendary.Web.Controllers
         /// </summary>
         /// <returns>IActionResult.</returns>
         [HttpGet]
+        [Route("/Index")]
+        [Route("")]
         public IActionResult Index()
         {
-            return this.View("Login", new LoginModel(string.Empty, this.buildSettings));
+            return this.View("Index", this.buildSettings);
         }
 
         /// <summary>
@@ -75,14 +78,10 @@ namespace Legendary.Web.Controllers
         /// <returns>IActionResult.</returns>
         /// <param name="model">The login model.</param>
         [HttpGet]
-        public IActionResult Login(LoginModel model)
+        [Route("/Login")]
+        public IActionResult Login(LoginModel? model)
         {
-            if (model.BuildSettings == null)
-            {
-                model.BuildSettings = this.buildSettings;
-            }
-
-            return this.View("Login", model);
+            return this.View("Login", new LoginModel(model?.Message ?? string.Empty, this.buildSettings));
         }
 
         /// <summary>
@@ -92,6 +91,7 @@ namespace Legendary.Web.Controllers
         /// <param name="infoMessage">The information message if applicable.</param>
         /// <returns>IActionResult.</returns>
         [HttpGet]
+        [Route("/CreateUser")]
         public IActionResult CreateUser(string? race, string? infoMessage)
         {
             var statModel = this.GetStatModel(race);
@@ -258,7 +258,8 @@ namespace Legendary.Web.Controllers
         /// <param name="password">The password.</param>
         /// <returns>IActionResult.</returns>
         [HttpPost]
-        public async Task<IActionResult> Index(string username, string password)
+        [Route("/Game")]
+        public async Task<IActionResult> Game(string username, string password)
         {
             var ipAddress = this.Request.Host.ToString();
 
@@ -310,6 +311,7 @@ namespace Legendary.Web.Controllers
         /// </summary>
         /// <returns>IActionResult.</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("/Error")]
         public IActionResult Error()
         {
             return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });

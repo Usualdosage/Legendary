@@ -91,6 +91,7 @@ namespace Legendary.Web
             app.UseDeveloperExceptionPage();
 
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
 
             app.UseHttpsRedirection();
@@ -114,7 +115,7 @@ namespace Legendary.Web
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Login}");
+                    pattern: "{controller=Home}/{action=Index}");
             });
         }
     }

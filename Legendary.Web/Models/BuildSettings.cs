@@ -26,5 +26,35 @@ namespace Legendary.Web.Models
         /// Gets or sets the last release date.
         /// </summary>
         public DateTime? ReleaseDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of areas in the game.
+        /// </summary>
+        public int? TotalAreas { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of rooms in the game.
+        /// </summary>
+        public int? TotalRooms { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of active players in the game.
+        /// </summary>
+        public int? TotalPlayers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of playable races in the game.
+        /// </summary>
+        public int? TotalRaces { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of skills in the game.
+        /// </summary>
+        public int? TotalSkills { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total number of spells in the game.
+        /// </summary>
+        public int? TotalSpells { get; set; }
     }
 }

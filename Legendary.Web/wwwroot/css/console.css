@@ -78,6 +78,7 @@ body {
 }
 
 /* Globals */
+
 h4 {
     font-family: 'Balgruf';
     font-size: 1.2em;
@@ -293,55 +294,6 @@ h6 {
             color: #888
         }
 
-/* Login/Create Pages */
-.card {
-    box-shadow: 5px 5px 5px #666;
-}
-
-.card-body .row {
-    padding: 5px;
-}
-
-.card-text, .card-title, .card-footer {
-    color: #333;
-}
-
-.charinput {
-    width: 100%;
-    padding: 5px;
-    border: solid 1px #ccc;
-    border-radius: 3px;
-}
-
-.statinput {
-    width: 50px;
-    padding: 5px;
-    border: solid 1px #ccc;
-    border-radius: 3px;
-    text-align: center;
-}
-
-.descinput {
-    width: 100%;
-    padding: 5px;
-    border: solid 1px #ccc;
-    border-radius: 3px;
-    height: 120px;
-}
-
-.input-label {
-    float: left;
-    color: #666;
-    font-size: 0.8em;
-}
-
-.connected {
-    color: maroon;
-    font-size: 1.6em;
-    font-weight: bold;
-    font-family: "Balgruf";
-    text-shadow: 1px 1px 3px #444;
-}
 
 /* Player Console */
 

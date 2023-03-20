@@ -1,32 +1,49 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Core/Types/MobileFlags.cs">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Program.cs">
     <Files>
+      <File FileName="Legendary.Web/Data/Personas/Caralee.json" Line="5" Column="15" />
       <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" />
       <File FileName="Legacy.Engine/Combat.cs" />
       <File FileName="Legacy.Engine/Models/CommandArgs.cs" />
       <File FileName="Legacy.Engine/Environment.cs" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" />
-      <File FileName="Legendary.Core/Types/MobileFlags.cs" Line="33" Column="36" />
+      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="74" Column="1" />
+      <File FileName="Legendary.Core/Types/MobileFlags.cs" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="6" Column="28" />
+      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" Line="10" Column="113" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="12" Column="43" />
+      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="22" Column="45" />
+      <File FileName="Legendary.Web/Contracts/IBuildSettings.cs" Line="10" Column="34" />
+      <File FileName="Legendary.Web/Models/BuildSettings.cs" Line="58" Column="46" />
+      <File FileName="Legendary.Web/appsettings.json" Line="20" Column="20" />
+      <File FileName="Legendary.Web/appsettings.Development.json" Line="19" Column="21" />
+      <File FileName="Legendary.Web/Views/Home/Error.cshtml" Line="4" Column="75" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="69" Column="22" />
+      <File FileName="Legendary.Web/wwwroot/css/console.css" Line="1" Column="1" />
+      <File FileName="Legendary.Web/wwwroot/css/index.css" Line="15" Column="28" />
+      <File FileName="Legendary.Web/wwwroot/metrics.txt" Line="14" Column="76" />
+      <File FileName="Legendary.Web/Startup.cs" Line="108" Column="1" />
+      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="20" Column="8" />
+      <File FileName="Legendary.Web/Program.cs" Line="27" Column="51" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Core" expanded="True">
-              <Node name="Types" expanded="True" />
+          <Node name="Legendary">
+            <Node name="Legendary.Core">
+              <Node name="Dependencies" expanded="True">
+                <Node name="PackageDependencies" expanded="True" />
+              </Node>
             </Node>
-            <Node name="Legendary.Engine" expanded="True">
-              <Node name="Models" expanded="True" />
-              <Node name="Processors" expanded="True" />
-            </Node>
-            <Node name="Legendary.Networking" expanded="True" />
-            <Node name="Legendary.Web" expanded="True">
+            <Node name="Legendary.Web">
               <Node name="Controllers" expanded="True" />
               <Node name="Data" expanded="True">
                 <Node name="Personas" expanded="True" />
               </Node>
-              <Node name="appsettings.json" expanded="True" />
+              <Node name="Views">
+                <Node name="Content" expanded="True" />
+              </Node>
+              <Node name="Program.cs" selected="True" />
             </Node>
           </Node>
         </State>
@@ -49,6 +66,6 @@
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MultiItemStartupConfigurations />
 </Properties>

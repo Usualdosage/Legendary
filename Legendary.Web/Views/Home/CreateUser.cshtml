@@ -10,6 +10,8 @@
 
 <script src="~/js/create.js" asp-append-version="true"></script>
 
+<link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
+
 @Html.AntiForgeryToken()
 
 <div class="container" style="margin-top: 75px">
@@ -23,88 +25,85 @@
                     </div>
                     <div class="card-body">
                         <div class="row" style="color: #000">
-                            <div class="col-md">
-                                Your vital stats:
-                            </div>
-                            <div class="col-md">
-                                STR: <span id="str">@Model.Str</span>
-                            </div>
-                            <div class="col-md">
-                                INT: <span id="int">@Model.Int</span>
-                            </div>
-                            <div class="col-md">
-                                WIS: <span id="wis">@Model.Wis</span>
-                            </div>
-                            <div class="col-md">
-                                DEX: <span id="dex">@Model.Dex</span>
-                            </div>
-                            <div class="col-md">
-                                CON: <span id="con">@Model.Con</span>
-                            </div>
-                            <div class="col-md">
-                                <input type="button" class="btn btn-primary" onClick="reroll()" value="Reroll" />
-                            </div>
+                            <p>
+                                These are the required elements to create a character. Some things (like your description) can be changed or updated later. Your
+                                stats are presently based on a maximum of 18, but they can be enhanced later on in the game depending on your racial abilities,
+                                items, or skills.
+                            </p>
                         </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <input type="text" class="charinput" placeholder="First Name" name="FirstName" required />
+                            <div class="row" style="color: #000">
+                                <div class="col-md">
+                                    Your vital stats:
+                                </div>
+                                <div class="col-md">
+                                    STR: <span style="font-weight: bold" id="str">@Model.Str</span>
+                                </div>
+                                <div class="col-md">
+                                    INT: <span style="font-weight: bold" id="int">@Model.Int</span>
+                                </div>
+                                <div class="col-md">
+                                    WIS: <span style="font-weight: bold" id="wis">@Model.Wis</span>
+                                </div>
+                                <div class="col-md">
+                                    DEX: <span style="font-weight: bold" id="dex">@Model.Dex</span>
+                                </div>
+                                <div class="col-md">
+                                    CON: <span style="font-weight: bold" id="con">@Model.Con</span>
+                                </div>
+                                <div class="col-md">
+                                    <input type="button" class="btn btn-primary" onClick="reroll()" value="Reroll" />
+                                </div>
                             </div>
-                            <div class="col-md">
-                                <input type="text" class="charinput" placeholder="Last Name" name="LastName" />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" class="charinput" placeholder="First Name" name="FirstName" required />
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="charinput" placeholder="Last Name" name="LastName" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="password" type="password" class="charinput" required placeholder="Password" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input id="passwordConfirm" oninput="check(this)" type="password" class="charinput" placeholder="Confirm Password" name="Password" required />
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <input id="password" type="password" class="charinput" required placeholder="Password" />
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <select name="Gender" required
+                                            class="form-control"
+                                            asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Gender>()">
+                                        <option value="">Select Gender</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select id="ddlRace" class="form-control" asp-for="SelectedRace" asp-items="@(new SelectList(Model.PlayerRaces))"></select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select id="ddlAlign" class="form-control" asp-for="SelectedAlignment" asp-items="@(new SelectList(Model.Alignments))"></select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="Ethos" required
+                                            class="form-control"
+                                            asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Ethos>()">
+                                        <option value="">Select Ethos</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md">
-                                <input id="passwordConfirm" oninput="check(this)" type="password" class="charinput" placeholder="Confirm Password" name="Password" required />
+                            <div class="row">
+                                <div class="col-md">
+                                    <textarea name="LongDescription" class="descinput" placeholder="Enter Description" required></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <select name="Gender" required
-                                        class="form-control"
-                                        asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Gender>()">
-                                    <option value="">Select Gender</option>
-                                </select>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Index")">Back</a></li>
+                                <li class="list-group-item"><p class="alert">@Model.Message</p></li>
+                            </ul>
+                            <div class="card-footer">
+                                &copy;2022-@DateTime.Now.Year Legendary
                             </div>
-                            <div class="col-md">
-                                <select id="ddlRace" class="form-control" asp-for="SelectedRace" asp-items="@(new SelectList(Model.PlayerRaces))"></select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <select id="ddlAlign" class="form-control" asp-for="SelectedAlignment" asp-items="@(new SelectList(Model.Alignments))"></select>
-                            </div>
-                            <div class="col-md">
-                                <select name="Ethos" required
-                                        class="form-control"
-                                        asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Ethos>()">
-                                    <option value="">Select Ethos</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <textarea name="LongDescription" class="descinput" placeholder="Enter Description" required></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md">
-                                <input type="button" value="Create Avatar" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#avatarModal" />
-                                <input type="text" id="AvatarUrl" placeholder="Avatar URL" />
-                            </div>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Login")">Back</a></li>
-                            <li class="list-group-item"><p class="alert">@Model.Message</p></li>
-                        </ul>
-                        <div class="card-footer">
-                            &copy;2022 Legendary
                         </div>
                     </div>
-                </div>
             </form>
         </div>
     </div>
