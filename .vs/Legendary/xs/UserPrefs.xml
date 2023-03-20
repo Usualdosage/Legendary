@@ -1,31 +1,36 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/wwwroot/css/index.css">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Properties/PublishProfiles/Legendary-Web - Zip Deploy.pubxml">
     <Files>
       <File FileName="Legendary.Web/Data/Personas/Caralee.json" />
       <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" />
       <File FileName="Legacy.Engine/Combat.cs" />
       <File FileName="Legacy.Engine/Models/CommandArgs.cs" />
       <File FileName="Legacy.Engine/Environment.cs" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" Line="269" Column="1" />
-      <File FileName="Legendary.Web/wwwroot/js/create.js" Line="41" Column="27" />
-      <File FileName="Legendary.Web/Startup.cs" Line="112" Column="47" />
-      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="36" Column="15" />
-      <File FileName="Legendary.Web/Views/Home/Login.cshtml" Line="23" Column="26" />
-      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="11" Column="31" />
-      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="21" Column="44" />
-      <File FileName="Legendary.Web/Program.cs" Line="27" Column="1" />
-      <File FileName="Legendary.Web/Contracts/IBuildSettings.cs" Line="10" Column="34" />
-      <File FileName="Legendary.Web/wwwroot/css/index.css" Line="46" Column="17" />
+      <File FileName="Legendary.Web/Controllers/HomeController.cs" />
+      <File FileName="Legendary.Web/wwwroot/js/create.js" />
+      <File FileName="Legendary.Web/Startup.cs" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" />
+      <File FileName="Legendary.Web/Views/Home/Login.cshtml" />
+      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" />
+      <File FileName="Legendary.Web/Program.cs" />
+      <File FileName="Legendary.Web/Contracts/IBuildSettings.cs" />
+      <File FileName="Legendary.Web/wwwroot/css/index.css" Line="39" Column="22" />
+      <File FileName="Legendary.Web/.gitignore" Line="13" Column="10" />
+      <File FileName="Legendary.Web/appsettings.json" Line="25" Column="24" />
+      <File FileName="Legendary.Web/wwwroot/test.html" Line="69" Column="1" />
+      <File FileName="Legendary.Web/Properties/PublishProfiles/legendary-mud - Web Deploy.pubxml" Line="20" Column="11" />
+      <File FileName="Legendary.Web/Properties/PublishProfiles/Legendary-Web - Zip Deploy.pubxml" Line="16" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" selected="True">
-            <Node name="Legendary.Web" expanded="True">
-              <Node name="Views" expanded="True">
-                <Node name="Home" expanded="True" />
+          <Node name="Legendary">
+            <Node name="Legendary.Web" selected="True">
+              <Node name="Properties" expanded="True">
+                <Node name="PublishProfiles" expanded="True" />
               </Node>
+              <Node name="appsettings.json" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -33,18 +38,20 @@
     </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1687" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3316" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="491" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="63" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="97" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="90" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Core/Models/Persona.cs" relfile="Legendary.Core/Models/Persona.cs" line="76" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Core/Models/Persona.cs" relfile="Legendary.Core/Models/Persona.cs" line="72" column="1" />
-    <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="264" column="1" />
+    <BreakpointStore>
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Communicator.cs" relfile="Legacy.Engine/Communicator.cs" line="1687" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3316" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="491" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="63" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="97" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="90" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Core/Models/Persona.cs" relfile="Legendary.Core/Models/Persona.cs" line="76" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Core/Models/Persona.cs" relfile="Legendary.Core/Models/Persona.cs" line="72" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="264" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
