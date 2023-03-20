@@ -11,5 +11,7 @@ obj/
 *.user
 .DS_Store
 sqlnx.sqlite
+/Properties/launchSettings.json
+/Properties/PublishProfiles/*.pubxml
 appsettings.json
 appsettings.Development.json
