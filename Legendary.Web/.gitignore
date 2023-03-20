@@ -1,0 +1,15 @@
+﻿bin/
+obj/
+*.suo
+*.user
+/.vs/Legendary/DesignTimeBuild/.dtbcache.v2
+/.vs/Legendary/v17/.futdcache.v1
+/.vs/Legendary/project-colors.json
+/.vs/Legendary_MUD/project-colors.json
+/.vs/slnx.sqlite~Stashed changes
+/.vs/VSWorkspaceState.json
+*.user
+.DS_Store
+sqlnx.sqlite
+appsettings.json
+appsettings.Development.json

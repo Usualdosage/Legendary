@@ -55,6 +55,7 @@
     <None Remove="Data\" />
     <None Remove="Types\" />
     <None Remove="Data\Personas\" />
+    <None Remove=".gitignore" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legendary.Core\Legendary.Core.csproj">
@@ -80,5 +81,8 @@
     <Content Update="Data\Personas\Virgil.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include=".gitignore" />
   </ItemGroup>
 </Project>
