@@ -14,7 +14,9 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using System.Net.WebSockets;
+    using System.Security.Claims;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -34,6 +36,8 @@ namespace Legendary.Engine
     using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Processors;
     using Legendary.Engine.Types;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.CodeAnalysis;
@@ -47,6 +51,7 @@ namespace Legendary.Engine
         private readonly RequestDelegate requestDelegate;
         private readonly TitleGenerator titleGenerator;
         private readonly Combat combat;
+        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
         private readonly IDataService dataService;
@@ -65,6 +70,7 @@ namespace Legendary.Engine
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
         /// </summary>
+        /// <param name="httpContextAccessor">The http context.</param>
         /// <param name="requestDelegate">RequestDelegate.</param>
         /// <param name="webHostEnvironment">The hosting environment.</param>
         /// <param name="logger">ILogger.</param>
@@ -72,8 +78,9 @@ namespace Legendary.Engine
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="random">The random number generator.</param>
-        public Communicator(RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IRandom random)
+        public Communicator(IHttpContextAccessor httpContextAccessor, RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IRandom random)
         {
+            this.httpContextAccessor = httpContextAccessor;
             this.webHostEnvironment = webHostEnvironment;
             this.logger = logger;
             this.requestDelegate = requestDelegate;
@@ -313,6 +320,9 @@ namespace Legendary.Engine
 
                 await currentSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", cancellationToken);
                 currentSocket.Dispose();
+
+                // TODO: This is not working properly.
+                await Logout(context);
             }
         }
 
@@ -408,9 +418,15 @@ namespace Legendary.Engine
                     await this.SendToPlayer(user.Value.Value.Connection, $"You have disconnected.", cancellationToken);
                     await this.SendToRoom(user.Value.Value.Character.Location, $"{user.Value.Value.Character.FirstName} has left the realms.", cancellationToken);
 
-                    string message = $"{DateTime.UtcNow}: {player} has quit.";
+                    string message = $"{DateTime.UtcNow}: {player} has left Mystra.";
                     this.logger.Info(message, this);
                     await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
+
+                    // Sign out and redirect back to the login screen.
+                    if (this.httpContextAccessor.HttpContext != null)
+                    {
+                        this.httpContextAccessor.HttpContext.Response.StatusCode = 401;
+                    }
                 }
             }
             else
@@ -1759,6 +1775,22 @@ namespace Legendary.Engine
                 "c" or "ca" or "cas" or "cast" or "co" or "com" or "comm" or "commu" or "commun" or "commune" => true,
                 _ => false
             };
+        }
+
+        /// <summary>
+        /// Logs a user out of the game.
+        /// </summary>
+        /// <param name="context">The HttpContext.</param>
+        /// <returns>Task.</returns>
+        private static async Task Logout(HttpContext context)
+        {
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                RedirectUri = "/Login",
+            };
+
+            await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme, authProperties);
         }
 
         /// <summary>

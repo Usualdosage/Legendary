@@ -34,5 +34,12 @@ namespace Legendary.Core.Contracts
         /// <param name="input">The input.</param>
         /// <returns>String.</returns>
         string? ProcessEmote(Character character, Mobile mobile, string input);
+
+        /// <summary>
+        /// Generates a DALL-E 2 image based on the character's long description.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <returns>The image URL.</returns>
+        Task<string?> GenerateImage(Character character);
     }
 }

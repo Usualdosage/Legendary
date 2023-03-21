@@ -27,5 +27,11 @@ namespace Legendary.Networking.Models
 
         /// <inheritdoc/>
         public string? ChatGPTAPIKey { get; set; }
+
+        /// <inheritdoc/>
+        public string? AzureDefaultConnectionString { get; set; }
+
+        /// <inheritdoc/>
+        public string? AzureStorageKey { get; set; }
     }
 }

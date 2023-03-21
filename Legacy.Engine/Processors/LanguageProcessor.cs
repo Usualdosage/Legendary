@@ -13,12 +13,15 @@ namespace Legendary.Engine.Processors
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Numerics;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web;
+    using Azure;
+    using Azure.Storage.Files.Shares;
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
@@ -27,8 +30,10 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Output;
+    using Microsoft.AspNetCore.DataProtection.KeyManagement;
     using Newtonsoft.Json;
     using RestSharp;
+    using static System.Net.Mime.MediaTypeNames;
 
     /// <summary>
     /// Processes an input, and returns an AI response.
@@ -42,6 +47,7 @@ namespace Legendary.Engine.Processors
         private readonly ILanguageGenerator generator;
         private readonly IEnvironment environment;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
+        private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
 
         /// <summary>
@@ -238,6 +244,68 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Generates an image for a character based on their description.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <returns>URL to the image (when complete).</returns>
+        public async Task<string?> GenerateImage(Character character)
+        {
+            if (string.IsNullOrWhiteSpace(character.LongDescription))
+            {
+                return null;
+            }
+
+            string desc = character.LongDescription.Substring(0, Math.Min(character.LongDescription.Length, 300));
+
+            var request = new
+            {
+                prompt = $"Generate a photorealistic painting of a {character.Age} year old {character.Race} {character.Gender} that looks like the following description: {desc}",
+                n = 1,
+                size = "512x512",
+            };
+
+            var imageUrl = string.Empty;
+
+            using (var httpClient = new HttpClient())
+            {
+                // Send the request and capture the response
+                httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {this.serverSettings.ChatGPTAPIKey}");
+
+                var requestJson = JsonConvert.SerializeObject(request);
+                var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                requestContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+                using var httpResponseMessage = await httpClient.PostAsync(this.imageUrl, requestContent);
+
+                var jsonString = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                var responseObject = JsonConvert.DeserializeAnonymousType(jsonString, new
+                {
+                    data = new[] { new { url = string.Empty } },
+                });
+
+                imageUrl = responseObject.data[0].url;
+            }
+
+            // Upload to Azure and store.
+            using (var httpClient = new HttpClient())
+            {
+                using (var stream = await httpClient.GetStreamAsync(imageUrl))
+                {
+                    using (var mstream = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(mstream);
+                        mstream.Seek(0, SeekOrigin.Begin);
+
+                        var avatarImage = await this.UploadAvatarImage(character, mstream);
+
+                        return avatarImage;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Sends a message to the ChatGPT server to process as a chat.
         /// </summary>
         /// <param name="character">The character speaking to the chat bot.</param>
@@ -393,6 +461,60 @@ namespace Legendary.Engine.Processors
             };
 
             return messages;
+        }
+
+        /// <summary>
+        /// Uploads an avatar image to the Azure storage.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="stream">The memory stream.</param>
+        /// <returns>String of uploaded URL.</returns>
+        private async Task<string?> UploadAvatarImage(Character character, Stream stream)
+        {
+            try
+            {
+                string? connectionString = this.serverSettings.AzureDefaultConnectionString;
+
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                {
+                    // Name of the share, directory, and file we'll create
+                    string shareName = "avatars";
+                    string fileName = $"{character.FirstName}{character.LastName}.png";
+                    ShareClient share = new ShareClient(connectionString, shareName);
+                    share.CreateIfNotExists();
+
+                    ShareDirectoryClient directory = share.GetDirectoryClient("/");
+
+                    try
+                    {
+                        // Get a reference to a file and upload it
+                        ShareFileClient file = directory.GetFileClient(fileName);
+
+                        string imageUrl = $"https://legendaryweb.file.core.windows.net/avatars/{fileName}?{this.serverSettings.AzureStorageKey}";
+
+                        var response = await file.CreateAsync(stream.Length);
+
+                        await file.UploadRangeAsync(new HttpRange(0, stream.Length), stream);
+
+                        return imageUrl;
+                    }
+                    catch (Exception exc)
+                    {
+                        this.logger.Error(exc, this.communicator);
+                        return null;
+                    }
+                }
+                else
+                {
+                    this.logger.Error("Azure default connection string is not configured.", this.communicator);
+                    return null;
+                }
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error(exc, this.communicator);
+                return null;
+            }
         }
 
         private bool WillEngage(Character actor, Mobile target, string message)

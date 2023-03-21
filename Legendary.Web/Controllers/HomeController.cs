@@ -218,22 +218,24 @@ namespace Legendary.Web.Controllers
                                 }
                         }
 
-                        var pwHash = Crypt.ComputeSha256Hash(form["Password"]);
-                        character.Password = pwHash;
+                        var rawData = form["Password"].ToString();
 
-                        character.CharacterId = Math.Abs(character.GetHashCode());
-
-                        var avatarUrl = form["AvatarUrl"];
-
-                        if (!string.IsNullOrWhiteSpace(avatarUrl))
+                        if (!string.IsNullOrWhiteSpace(rawData))
                         {
-                            // Save the avatar to the player. TODO: Upload this file to our server instead.
-                            character.Image = avatarUrl;
+                            var pwHash = Crypt.ComputeSha256Hash(rawData);
+
+                            character.Password = pwHash;
+
+                            character.CharacterId = Math.Abs(character.GetHashCode());
+
+                            await this.dataService.CreateCharacter(character);
+
+                            return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
                         }
-
-                        await this.dataService.CreateCharacter(character);
-
-                        return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
+                        else
+                        {
+                            return this.View("Login", new LoginModel("Password not provided. Please try again..", this.buildSettings));
+                        }
                     }
                     else
                     {
@@ -302,7 +304,7 @@ namespace Legendary.Web.Controllers
 
                 this.logger.LogInformation("{username} is logging in from {ipAddress}...", username, ipAddress);
 
-                return this.View("Index", userModel);
+                return this.View("Game", userModel);
             }
         }
 

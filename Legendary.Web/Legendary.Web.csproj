@@ -55,7 +55,6 @@
     <None Remove="Data\" />
     <None Remove="Types\" />
     <None Remove="Data\Personas\" />
-    <None Remove=".gitignore" />
     <None Remove="Properties\PublishProfiles\legendary-mud - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
@@ -82,8 +81,5 @@
     <Content Update="Data\Personas\Virgil.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include=".gitignore" />
   </ItemGroup>
 </Project>

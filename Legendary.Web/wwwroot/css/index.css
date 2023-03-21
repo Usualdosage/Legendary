@@ -20,6 +20,13 @@ body {
     src: url('../fonts/Balgruf.otf') format('truetype');
 }
 
+h1 {
+    font-family: 'Balgruf';
+    font-size: 2.2em;
+    margin: 0px;
+    padding-top: 10px;
+}
+
 h2 {
     font-family: 'Balgruf';
     font-size: 1.6em;
@@ -47,6 +54,18 @@ h6 {
 }
 
 /* Login/Create Pages */
+.jumbotron {
+    background-color: #000;
+    opacity: 0.8;
+    box-shadow: 5px 5px 5px #000;
+    padding: 20px;
+    color: #fff;
+}
+
+.lead {
+    color: lightyellow;
+}
+
 .card {
     box-shadow: 5px 5px 5px #666;
 }

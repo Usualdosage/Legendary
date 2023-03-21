@@ -9,6 +9,7 @@
 
 namespace Legendary.Web
 {
+    using System.Linq;
     using Legendary.Core.Contracts;
     using Legendary.Data;
     using Legendary.Data.Contracts;
@@ -78,7 +79,21 @@ namespace Legendary.Web
 
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Home/Login";
+                    options.LogoutPath = "/Home/Login";
+                });
+
+            // Ensure we pass the HTTP Context to the required classes.
+            services.AddHttpContextAccessor();
+
+            var accessor = services.Last(s => s.ServiceType == typeof(IHttpContextAccessor)).ImplementationInstance;
+
+            if (accessor != null)
+            {
+                services.AddSingleton<IHttpContextAccessor>((IHttpContextAccessor)accessor);
+            }
         }
 
         /// <summary>

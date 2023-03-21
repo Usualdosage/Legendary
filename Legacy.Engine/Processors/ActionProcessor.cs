@@ -343,6 +343,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("autoloot", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAutoloot)));
             this.actions.Add("autosac", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(5, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAutosac)));
             this.actions.Add("awards", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(6, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAwards)));
+            this.actions.Add("avatar", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoAvatar)));
             this.actions.Add("buy", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoBuy)));
             this.actions.Add("close", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoClose)));
             this.actions.Add("commands", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCommands)));
@@ -446,6 +447,31 @@ namespace Legendary.Engine.Processors
             }
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+        }
+
+        [HelpText("<p>Generates an avatar based on your character description. May only be done once per level. Note: Only the first 400 chracters of your description are considered.</p>")]
+        private async Task DoAvatar(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(actor.Character.LongDescription))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You do not have a description. You must have a description to create an avatar.", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Your avatar is being generated based on your description. It will be saved to your profile when complete. <span class='wait'></span>", cancellationToken);
+                var image = await this.communicator.LanguageProcessor.GenerateImage(actor.Character);
+                if (!string.IsNullOrWhiteSpace(image))
+                {
+                    // TODO: actor.Character.HasGeneratedImage = true;
+                    actor.Character.Image = image;
+                    await this.communicator.SaveCharacter(actor);
+                    await this.communicator.SendToPlayer(actor.Connection, $"Your avatar is generated. Type 'LOOK SELF' to review.", cancellationToken);
+                }
+                else
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"Unable to generate your avatar at this time.", cancellationToken);
+                }
+            }
         }
 
         [SightRequired]

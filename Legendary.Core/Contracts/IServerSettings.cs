@@ -33,5 +33,15 @@ namespace Legendary.Core.Contracts
         /// Gets or sets the API key for Chat GPT.
         /// </summary>
         string? ChatGPTAPIKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default connection string for Azure storage.
+        /// </summary>
+        string? AzureDefaultConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets or sets the key for Azure storage retrieval.
+        /// </summary>
+        string? AzureStorageKey { get; set; }
     }
 }
