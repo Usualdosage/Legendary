@@ -40,11 +40,9 @@ namespace Legendary.Web
                 {
                     webBuilder.ConfigureAppConfiguration(config =>
                     {
-                        // Retrieve the connection string
-                        IConfiguration settings = config.Build();
-
-                        // TODO: Get this from...somewhere ELSE.
-                        string connectionString = "Endpoint=https://legendary-app-config.azconfig.io;Id=Y0Tr-l0-s0:0WL90d5l7407y3noFUOP;Secret=OKFZyv7/sC9uZmpzJmRMXH9fdChcnLQi0YN++wzv1SM=";
+                        // Get the connection string from an environment variable.
+                        string connectionString = Environment.GetEnvironmentVariable("AZUREAPPSETTINGSCONNECTIONSTRING") ??
+                            throw new Exception("Unable to load app config from Azure App Settings.");
 
                         // Load configuration from Azure App Configuration
                         config.AddAzureAppConfiguration(connectionString);
