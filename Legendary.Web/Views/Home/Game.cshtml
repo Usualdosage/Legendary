@@ -1,4 +1,5 @@
 ﻿@model UserModel
+@using Newtonsoft.Json; 
 
 <link rel="stylesheet" href="~/css/console.css" asp-append-version="true" />
 
@@ -16,8 +17,13 @@
             </div>
         </div>
         <div class="col control-panel">
-            <div id="control-panel" >
+            <div id="control-panel">
                 <!-- This is rendered dynamically -->
+            </div>
+            <div class="component">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                    Create Message
+                </button>
             </div>
             <div class="component">
                 <table class="vol-table">
@@ -47,9 +53,44 @@
     <audio id="channel7"></audio>
 </div>
 
+<!-- Modal for messages -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="messageModalLabel">Create a Message</h3>
+                <input type="hidden" id="playerName" value="@Model.UserName" />
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">To</span>
+                    <div class="form-control" id="message-to">
+                        <input type="text" id="message-to-email" class="email-address-input" />
+                    </div>
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">Subject</span>
+                    <input type="text" class="form-control" required id="message-subject" aria-describedby="basic-addon3">
+                </div>
+                <div class="input-group">
+                    <textarea style="width: 100%" required id="message-body"></textarea>
+                </div>
+                <div class="input-group">
+                    <span id="validator" class="badge validator"></span>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="client.SendMessage()">Send</button>
+                </div>
+            </div>
+    </div>
+</div>
+
 <!-- Component Template -->
 <script id="component-template" type="text/x-handlebars-template">
-    <h3>{{m.f}} ({{m.l}})</h3>
+    <h3>{{m.f}}</h3>
     <h4>{{m.t}}</h4>
     <div class="component">
         <div class="progress" data-toggle="tooltip" title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
@@ -94,7 +135,6 @@
             </tr>
         </table>
     </div>
-    
 </script>
 
 <!-- Score Template -->
@@ -345,10 +385,12 @@
 </script>
 
     @section Scripts {
-        <script>$(function () {
+        <script>
+            $(function () {
                 const client = new LegendaryClient();
                 client.Connect();
                 $("#inputField").focus();
+                this.client = client;
             });
 
             const image_error = function (e) {
@@ -357,5 +399,27 @@
 
             const image_load = function (e) {
 
-            }</script>
+            }
+
+            tinymce.init({
+                selector: 'textarea#message-body',
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                tinycomments_mode: 'embedded',
+                invalid_elements: "script"
+            });
+
+            let userNames = [];
+
+            @if (Model.Usernames != null)
+            {
+                foreach (var name in Model.Usernames)
+                {
+                    @:userNames.push("@name");
+                }
+            }
+
+            autocomplete(document.getElementById("message-to-email"), userNames);
+        </script>
+
     }

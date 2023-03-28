@@ -25,35 +25,5 @@ namespace Legendary.Web.Contracts
         /// Gets or sets the last release date.
         /// </summary>
         DateTime? ReleaseDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total number of areas in the game.
-        /// </summary>
-        int? TotalAreas { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total number of rooms in the game.
-        /// </summary>
-        int? TotalRooms { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total number of active players in the game.
-        /// </summary>
-        int? TotalPlayers { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total number of playable races in the game.
-        /// </summary>
-        int? TotalRaces { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total number of skills in the game.
-        /// </summary>
-        int? TotalSkills { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total number of spells in the game.
-        /// </summary>
-        int? TotalSpells { get; set; }
     }
 }

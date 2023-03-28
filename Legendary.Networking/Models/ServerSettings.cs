@@ -23,9 +23,6 @@ namespace Legendary.Networking.Models
         public int? ApiPort { get; set; }
 
         /// <inheritdoc/>
-        public string? RapidAPIKey { get; set; }
-
-        /// <inheritdoc/>
         public string? ChatGPTAPIKey { get; set; }
 
         /// <inheritdoc/>
@@ -33,5 +30,20 @@ namespace Legendary.Networking.Models
 
         /// <inheritdoc/>
         public string? AzureStorageKey { get; set; }
+
+        /// <inheritdoc/>
+        public string? FromEmailAddress { get; set; }
+
+        /// <inheritdoc/>
+        public string? FromEmailPassword { get; set; }
+
+        /// <inheritdoc/>
+        public string? FromEmailName { get; set; }
+
+        /// <inheritdoc/>
+        public string? MongoConnectionString { get; set; }
+
+        /// <inheritdoc/>
+        public string? MongoDatabaseName { get; set; }
     }
 }

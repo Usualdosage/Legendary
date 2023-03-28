@@ -189,7 +189,7 @@ namespace Legendary.Engine.Processors
         {
             await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
             await this.world.LoadWorld();
-            await this.world.CleanupWorld();
+            await this.world.CleanupWorld(cancellationToken);
             this.world.Populate();
             this.communicator.RestartGameLoop();
             await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
@@ -272,9 +272,12 @@ namespace Legendary.Engine.Processors
 
                     if (mobile != null)
                     {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You SLAY {mobile.FirstName} in cold blood!", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} SLAYS {mobile.FirstName} in cold blood!", cancellationToken);
-                        await this.combat.KillMobile(mobile, actor.Character, cancellationToken);
+                        if (this.communicator.IsInRoom(mobile.Location, actor.Character))
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You SLAY {mobile.FirstName} in cold blood!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} SLAYS {mobile.FirstName} in cold blood!", cancellationToken);
+                            await this.combat.KillMobile(mobile, actor.Character, cancellationToken);
+                        }
                     }
                     else
                     {

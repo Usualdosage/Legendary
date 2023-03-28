@@ -1,13 +1,5 @@
 ﻿@model StatModel
 
-<script type="text/javascript">function check(input) {
-        if (input.value != document.getElementById('password').value) {
-            input.setCustomValidity('Passwords must match.');
-        } else {
-            input.setCustomValidity('');
-        }
-    }</script>
-
 <script src="~/js/create.js" asp-append-version="true"></script>
 
 <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
@@ -25,84 +17,106 @@
                     </div>
                     <div class="card-body">
                         <div class="row" style="color: #000">
-                            <p>
+                            <p style="text-align: left">
                                 These are the required elements to create a character. Some things (like your description) can be changed or updated later. Your
                                 stats are presently based on a maximum of 18, but they can be enhanced later on in the game depending on your racial abilities,
                                 items, or skills.
                             </p>
                         </div>
-                            <div class="row" style="color: #000">
-                                <div class="col-md">
-                                    Your vital stats:
-                                </div>
-                                <div class="col-md">
-                                    STR: <span style="font-weight: bold" id="str">@Model.Str</span>
-                                </div>
-                                <div class="col-md">
-                                    INT: <span style="font-weight: bold" id="int">@Model.Int</span>
-                                </div>
-                                <div class="col-md">
-                                    WIS: <span style="font-weight: bold" id="wis">@Model.Wis</span>
-                                </div>
-                                <div class="col-md">
-                                    DEX: <span style="font-weight: bold" id="dex">@Model.Dex</span>
-                                </div>
-                                <div class="col-md">
-                                    CON: <span style="font-weight: bold" id="con">@Model.Con</span>
-                                </div>
-                                <div class="col-md">
-                                    <input type="button" class="btn btn-primary" onClick="reroll()" value="Reroll" />
-                                </div>
+                        <hr/>
+                        <div class="row" style="color: #000">
+                            <div class="col-md">
+                                Your vital stats:
                             </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <input type="text" class="charinput" placeholder="First Name" name="FirstName" required />
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="text" class="charinput" placeholder="Last Name" name="LastName" />
-                                </div>
-                                <div class="col-md-3">
-                                    <input id="password" type="password" class="charinput" required placeholder="Password" />
-                                </div>
-                                <div class="col-md-3">
-                                    <input id="passwordConfirm" oninput="check(this)" type="password" class="charinput" placeholder="Confirm Password" name="Password" required />
-                                </div>
+                            <div class="col-md">
+                                STR: <span style="font-weight: bold" id="str">@Model.Str</span>
                             </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <select name="Gender" required
-                                            class="form-control"
-                                            asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Gender>()">
-                                        <option value="">Select Gender</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select id="ddlRace" class="form-control" asp-for="SelectedRace" asp-items="@(new SelectList(Model.PlayerRaces))"></select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select id="ddlAlign" class="form-control" asp-for="SelectedAlignment" asp-items="@(new SelectList(Model.Alignments))"></select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select name="Ethos" required
-                                            class="form-control"
-                                            asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Ethos>()">
-                                        <option value="">Select Ethos</option>
-                                    </select>
-                                </div>
+                            <div class="col-md">
+                                INT: <span style="font-weight: bold" id="int">@Model.Int</span>
                             </div>
-                            <div class="row">
-                                <div class="col-md">
-                                    <textarea name="LongDescription" class="descinput" placeholder="Enter Description" required></textarea>
-                                </div>
+                            <div class="col-md">
+                                WIS: <span style="font-weight: bold" id="wis">@Model.Wis</span>
                             </div>
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Index")">Back</a></li>
-                                <li class="list-group-item"><p class="alert">@Model.Message</p></li>
-                            </ul>
-                            <div class="card-footer">
-                                &copy;2022-@DateTime.Now.Year Legendary
+                            <div class="col-md">
+                                DEX: <span style="font-weight: bold" id="dex">@Model.Dex</span>
+                            </div>
+                            <div class="col-md">
+                                CON: <span style="font-weight: bold" id="con">@Model.Con</span>
+                            </div>
+                            <div class="col-md">
+                                <input type="button" class="btn btn-primary" onClick="reroll()" value="Reroll" />
                             </div>
                         </div>
+                        <hr/>
+                        <div class="row" style="color: #000">
+                            <p style="text-align: left">
+                                Your name needs to be unique, as only one character may posess it. Think of a creative fantasy name and avoid common
+                                names. You may be required to change it otherwise. Also, do not include numbers, spaces, or special characters, as they
+                                will be removed. <b>You will use just your first name to login.</b>
+                            </p>
+                            <p style="text-align: left">
+                                Your password must contain a minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character.
+                                They are hashed and salted on our side, so if you lose your password, it is not recoverable, but may be able to be reset.
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" class="charinput" placeholder="First Name" onblur="checkName(this)" name="FirstName" required />
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="charinput" placeholder="Last Name" onblur="checkName(this)" name="LastName" />
+                            </div>
+                            <div class="col-md-3">
+                                <input id="password" type="password" class="charinput" required placeholder="Password" />
+                            </div>
+                            <div class="col-md-3">
+                                <input id="passwordConfirm" onblur="check(this)" type="password" class="charinput" placeholder="Confirm Password" name="Password" required />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <select name="Gender" required
+                                        class="form-control"
+                                        asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Gender>()">
+                                    <option value="">Select Gender</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="ddlRace" class="form-control" asp-for="SelectedRace" asp-items="@(new SelectList(Model.PlayerRaces))"></select>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="ddlAlign" class="form-control" asp-for="SelectedAlignment" asp-items="@(new SelectList(Model.Alignments))"></select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="Ethos" required
+                                        class="form-control"
+                                        asp-items="Html.GetEnumSelectList<Legendary.Core.Types.Ethos>()">
+                                    <option value="">Select Ethos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="row" style="color: #000">
+                            <p style="text-align: left">
+                                Your description is important! It will be used by the AI to dynamically generate your avatar image, and will be the first
+                                thing most people notice about you. It's recommended that you provide 8 to 12 sentences describing your character as another
+                                character would see you. Avoid "feelings" like "you are scared when you look upon me", and focus more on literal descriptions.
+                                If you're stuck, or need some help, try giving some keywords to <a href="https://chat.openai.com/chat" target="_blank">OpenAI</a> and see what it comes up with!'
+                            </p>
+                        </div>                        
+                        <div class="row">
+                            <div class="col-md">
+                                <textarea name="LongDescription" class="descinput" onblur="checkDesc(this)" placeholder="Enter Description" required maxlength="1000"></textarea>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><input type="submit" class="btn btn-primary" value="Create" />&nbsp;<a class="btn btn-secondary" href="@Url.Action("Index")">Back</a></li>
+                            <li class="list-group-item"><p class="alert">@Model.Message</p></li>
+                        </ul>
+                        <div class="card-footer">
+                            &copy;2022-@DateTime.Now.Year Legendary
+                        </div>
+                    </div>
                     </div>
             </form>
         </div>
@@ -130,52 +144,3 @@
         </div>
     </div>
 </div>
-
-
-
-<script>const frame = document.getElementById('frame');
-
-    frame.src = 'https://legendary.readyplayer.me/avatar?clearCache&bodyType=halfBody';
-
-    window.addEventListener('message', subscribe);
-    document.addEventListener('message', subscribe);
-
-    function subscribe(event) {
-        const json = parse(event);
-
-        if (json.source !== 'readyplayerme') {
-            return;
-        }
-
-        if (json.eventName === 'v1.frame.ready') {
-            frame.contentWindow.postMessage(
-                JSON.stringify({
-                    target: 'readyplayerme',
-                    type: 'subscribe',
-                    eventName: 'v1.**'
-                }),
-                '*'
-            );
-        }
-
-        // Get avatar GLB URL
-        if (json.eventName === 'v1.avatar.exported') {
-            console.log(`Avatar URL: ${json.data.url}`);
-            document.getElementById('AvatarUrl').value = `${json.data.url}`;
-            document.getElementById('frame').hidden = true;
-        }
-
-        // Get user id
-        if (json.eventName === 'v1.user.set') {
-            console.log(`User with id ${json.data.id} set: ${JSON.stringify(json)}`);
-        }
-    }
-
-    function parse(event) {
-        try {
-            return JSON.parse(event.data);
-        }
-        catch (error) {
-            return null;
-        }
-    }</script>

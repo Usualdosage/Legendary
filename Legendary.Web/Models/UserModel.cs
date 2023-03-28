@@ -9,6 +9,8 @@
 
 namespace Legendary.Web.Models
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Represents a user forthe purpose of login.
     /// </summary>
@@ -41,5 +43,10 @@ namespace Legendary.Web.Models
         /// Gets the password.
         /// </summary>
         public string Password { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the list of usernames for the message center.
+        /// </summary>
+        public List<string>? Usernames { get; set; }
     }
 }

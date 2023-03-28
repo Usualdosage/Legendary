@@ -34,6 +34,7 @@ namespace Legendary.Engine
     {
         private readonly IRandom random;
         private readonly ICommunicator communicator;
+        private readonly IMessageProcessor messageProcessor;
         private readonly IEnvironment environment;
         private readonly ILogger logger;
         private readonly IWorld world;
@@ -48,16 +49,18 @@ namespace Legendary.Engine
         /// <param name="environment">The environment.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="logger">The logger.</param>
-        public Combat(ICommunicator communicator, IWorld world, IEnvironment environment, IRandom random, ILogger logger)
+        /// <param name="messageProcessor">The message processor.</param>
+        public Combat(ICommunicator communicator, IWorld world, IEnvironment environment, IRandom random, ILogger logger, IMessageProcessor messageProcessor)
         {
             this.random = random;
             this.communicator = communicator;
             this.environment = environment;
             this.logger = logger;
             this.world = world;
+            this.messageProcessor = messageProcessor;
 
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
-            this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this);
+            this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this, messageProcessor);
         }
 
         /// <summary>
@@ -1072,7 +1075,7 @@ namespace Legendary.Engine
             SkillProficiency? evasive = target.GetSkillProficiency("evasive");
 
             // If blinded, severely reduce the effectiveness of defensive skills.
-            if (target.IsAffectedBy(EffectName.BLINDNESS))
+            if (target.IsAffectedBy(EffectName.BLINDNESS) || target.IsAffectedBy(EffectName.DIRTKICKING))
             {
                 if (dodge != null)
                 {

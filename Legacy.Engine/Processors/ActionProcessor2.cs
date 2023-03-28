@@ -29,6 +29,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
+    using SkiaSharp;
 
     /// <summary>
     /// Additional action processing commands.
@@ -356,154 +357,6 @@ namespace Legendary.Engine.Processors
         }
 
         [SightRequired]
-        [HelpText("<p>When accompanied by a teacher, use this command to learn new skill or spell trees. See also: HELP PRACTICE, HELP TRAIN<ul><li>learn <em>tree</em></li></ul></p>")]
-        private async Task DoLearn(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
-            if (mobs != null)
-            {
-                var teacher = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Teacher));
-                if (teacher == null)
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a teacher here.", cancellationToken);
-                }
-                else
-                {
-                    if (string.IsNullOrWhiteSpace(args.Method) && string.IsNullOrWhiteSpace(args.Target))
-                    {
-                        await this.ShowAvailableTrees(actor, teacher, cancellationToken);
-                    }
-                    else
-                    {
-                        if (actor.Character.Learns <= 0)
-                        {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You don't have any learning sessions available.", cancellationToken);
-                        }
-                        else
-                        {
-                            // [learn] [martial] group [II]
-                            var action = args.Action;
-                            var groupName = args.Method ?? string.Empty;
-                            var groupNum = args.Target ?? string.Empty;
-
-                            // Check if this is a) available to learn and b) has been learned already.
-                            if (!TreeHelper.CanLearnGroup(actor, groupName, groupNum, teacher, this.communicator, this.random, this.world, this.logger, this.combat))
-                            {
-                                await this.communicator.SendToPlayer(actor.Connection, $"You are not able to learn that group at this time and place.", cancellationToken);
-                            }
-                            else
-                            {
-                                // Add the skill or spell group abilities to the player's proficiencies, all starting at 1%
-                                var skillsToAdd = TreeHelper.GetSkills(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
-                                var spellsToAdd = TreeHelper.GetSpells(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
-
-                                StringBuilder sb = new StringBuilder();
-
-                                // We will teach skills or spells, but not both.
-                                if (skillsToAdd != null && skillsToAdd.Count > 0)
-                                {
-                                    // Deduct a learning session
-                                    actor.Character.Learns -= 1;
-
-                                    foreach (var skill in skillsToAdd)
-                                    {
-                                        sb.Append($"{teacher.FirstName.FirstCharToUpper()} instructs you on the various methods of '{skill.Name}'.<br/>");
-                                        actor.Character.Skills.Add(new SkillProficiency(skill.Name, 1));
-                                    }
-                                }
-                                else if (spellsToAdd != null && spellsToAdd.Count > 0)
-                                {
-                                    // Deduct a learning session
-                                    actor.Character.Learns -= 1;
-
-                                    foreach (var spell in spellsToAdd)
-                                    {
-                                        sb.Append($"{teacher.FirstName.FirstCharToUpper()} instructs you on the uses of the spell '{spell.Name}'.<br/>");
-                                        actor.Character.Spells.Add(new SpellProficiency(spell.Name, 1));
-                                    }
-                                }
-                                else
-                                {
-                                    sb.Append($"There was nothing to learn in that group.<br/>");
-                                }
-
-                                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
-                                await this.communicator.SaveCharacter(actor);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a teacher here.", cancellationToken);
-            }
-        }
-
-        [SightRequired]
-        [HelpText("<p>Lists all items for sale by a merchant. See also: HELP SELL, HELP BUY</p>")]
-        private async Task DoList(UserData actor, CommandArgs args, CancellationToken cancellationToken)
-        {
-            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
-            if (mobs != null)
-            {
-                var merchant = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
-                if (merchant == null)
-                {
-                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
-                }
-                else
-                {
-                    StringBuilder sb = new StringBuilder();
-
-                    if (merchant.Equipment != null && merchant.Equipment.Count > 0)
-                    {
-                        sb.Append($"{merchant.FirstName.FirstCharToUpper()} offers the following items for sale:<br/><ul>");
-
-                        var equipment = merchant.Equipment.GroupBy(g => g.ItemId);
-
-                        foreach (var group in equipment)
-                        {
-                            var item = group.First();
-
-                            if (item.WearLocation != null && !item.WearLocation.Contains(Core.Types.WearLocation.None))
-                            {
-                                switch (item.ItemType)
-                                {
-                                    case Core.Types.ItemType.Currency:
-                                    case Core.Types.ItemType.Spring:
-                                        break;
-                                    default:
-                                        {
-                                            if (item.Value > 0)
-                                            {
-                                                var price = item.Value.ToMerchantSellPrice(actor.Character, merchant);
-                                                sb.Append($"<li>{item.Name}, for {price}.</li>");
-                                            }
-
-                                            break;
-                                        }
-                                }
-                            }
-                        }
-
-                        sb.Append($"</ul>");
-
-                        await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} is not currently offering anything for sale.", cancellationToken);
-                    }
-                }
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
-            }
-        }
-
-        [SightRequired]
         [HelpText("<p>Command not yet available.</p>")]
         private async Task DoGain(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -659,6 +512,272 @@ namespace Legendary.Engine.Processors
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Tell your group what?", cancellationToken);
             }
+        }
+
+        [SightRequired]
+        [HelpText("<p>When accompanied by a teacher, use this command to learn new skill or spell trees. See also: HELP PRACTICE, HELP TRAIN<ul><li>learn <em>tree</em></li></ul></p>")]
+        private async Task DoLearn(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+            if (mobs != null)
+            {
+                var teacher = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Teacher));
+                if (teacher == null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a teacher here.", cancellationToken);
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(args.Method) && string.IsNullOrWhiteSpace(args.Target))
+                    {
+                        await this.ShowAvailableTrees(actor, teacher, cancellationToken);
+                    }
+                    else
+                    {
+                        if (actor.Character.Learns <= 0)
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You don't have any learning sessions available.", cancellationToken);
+                        }
+                        else
+                        {
+                            // [learn] [martial] group [II]
+                            var action = args.Action;
+                            var groupName = args.Method ?? string.Empty;
+                            var groupNum = args.Target ?? string.Empty;
+
+                            // Check if this is a) available to learn and b) has been learned already.
+                            if (!TreeHelper.CanLearnGroup(actor, groupName, groupNum, teacher, this.communicator, this.random, this.world, this.logger, this.combat))
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You are not able to learn that group at this time and place.", cancellationToken);
+                            }
+                            else
+                            {
+                                // Add the skill or spell group abilities to the player's proficiencies, all starting at 1%
+                                var skillsToAdd = TreeHelper.GetSkills(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
+                                var spellsToAdd = TreeHelper.GetSpells(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
+
+                                StringBuilder sb = new StringBuilder();
+
+                                // We will teach skills or spells, but not both.
+                                if (skillsToAdd != null && skillsToAdd.Count > 0)
+                                {
+                                    // Deduct a learning session
+                                    actor.Character.Learns -= 1;
+
+                                    foreach (var skill in skillsToAdd)
+                                    {
+                                        sb.Append($"{teacher.FirstName.FirstCharToUpper()} instructs you on the various methods of '{skill.Name}'.<br/>");
+                                        actor.Character.Skills.Add(new SkillProficiency(skill.Name, 1));
+                                    }
+                                }
+                                else if (spellsToAdd != null && spellsToAdd.Count > 0)
+                                {
+                                    // Deduct a learning session
+                                    actor.Character.Learns -= 1;
+
+                                    foreach (var spell in spellsToAdd)
+                                    {
+                                        sb.Append($"{teacher.FirstName.FirstCharToUpper()} instructs you on the uses of the spell '{spell.Name}'.<br/>");
+                                        actor.Character.Spells.Add(new SpellProficiency(spell.Name, 1));
+                                    }
+                                }
+                                else
+                                {
+                                    sb.Append($"There was nothing to learn in that group.<br/>");
+                                }
+
+                                await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                                await this.communicator.SaveCharacter(actor);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a teacher here.", cancellationToken);
+            }
+        }
+
+        [SightRequired]
+        [HelpText("<p>Lists all items for sale by a merchant. See also: HELP SELL, HELP BUY</p>")]
+        private async Task DoList(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var mobs = this.communicator.GetMobilesInRoom(actor.Character.Location);
+            if (mobs != null)
+            {
+                var merchant = mobs.FirstOrDefault(m => m.MobileFlags != null && m.MobileFlags.Contains(Core.Types.MobileFlags.Shopkeeper));
+                if (merchant == null)
+                {
+                    await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    if (merchant.Equipment != null && merchant.Equipment.Count > 0)
+                    {
+                        sb.Append($"{merchant.FirstName.FirstCharToUpper()} offers the following items for sale:<br/><ul>");
+
+                        var equipment = merchant.Equipment.GroupBy(g => g.ItemId);
+
+                        foreach (var group in equipment)
+                        {
+                            var item = group.First();
+
+                            if (item.WearLocation != null && !item.WearLocation.Contains(Core.Types.WearLocation.None))
+                            {
+                                switch (item.ItemType)
+                                {
+                                    case Core.Types.ItemType.Currency:
+                                    case Core.Types.ItemType.Spring:
+                                        break;
+                                    default:
+                                        {
+                                            if (item.Value > 0)
+                                            {
+                                                var price = item.Value.ToMerchantSellPrice(actor.Character, merchant);
+                                                sb.Append($"<li>{item.Name}, for {price}.</li>");
+                                            }
+
+                                            break;
+                                        }
+                                }
+                            }
+                        }
+
+                        sb.Append($"</ul>");
+
+                        await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"{merchant.FirstName.FirstCharToUpper()} is not currently offering anything for sale.", cancellationToken);
+                    }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"There isn't a merchant here.", cancellationToken);
+            }
+        }
+
+        [SightRequired]
+        [HelpText("<p>Manages your messages. See also: HELP MESSAGES. <ul><li>message <em>read new</em></li><li>message <em>read #</em></li><li>message <em>delete all</em></li><li>message <em>read #</em></li></ul></p>")]
+        private async Task DoMessage(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            // [message] [read/delete] all/new/#
+            var commandName = args.Method?.ToLower() ?? string.Empty;
+            var messageGroup = args.Target?.ToLower() ?? string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(commandName))
+            {
+                switch (commandName)
+                {
+                    default:
+                        {
+                            await this.communicator.SendToPlayer(actor.Connection, "You can either READ or DELETE a message.", cancellationToken);
+                            break;
+                        }
+
+                    case "read":
+                        {
+                            if (!string.IsNullOrWhiteSpace(messageGroup))
+                            {
+                                if (messageGroup == "new")
+                                {
+                                    var message = await this.messageProcessor.GetFirstUnreadMessage(actor.Character, cancellationToken);
+                                    if (message != null)
+                                    {
+                                        await this.messageProcessor.ShowMessageToPlayer(message, actor.Character, cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, "You have no unread messages.", cancellationToken);
+                                    }
+                                }
+                                else if (int.TryParse(messageGroup, out int messageIndex))
+                                {
+                                    var message = await this.messageProcessor.GetMessage(actor.Character, messageIndex, cancellationToken);
+                                    if (message != null)
+                                    {
+                                        await this.messageProcessor.ShowMessageToPlayer(message, actor.Character, cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Connection, "That message does not exist.", cancellationToken);
+                                    }
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, "Read which message (select a number or 'new').", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "Read which message (select a number or 'new').", cancellationToken);
+                            }
+
+                            break;
+                        }
+
+                    case "delete":
+                        {
+                            if (!string.IsNullOrWhiteSpace(messageGroup))
+                            {
+                                if (messageGroup == "all")
+                                {
+                                    await this.messageProcessor.DeleteAllMessages(actor.Character, cancellationToken);
+                                    await this.communicator.SendToPlayer(actor.Connection, "You burn all of your messages.", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} lights a handful of messages on fire and incinterates them.", cancellationToken);
+                                }
+                                else if (int.TryParse(messageGroup, out int messageIndex))
+                                {
+                                    await this.messageProcessor.DeleteMessage(actor.Character, messageIndex, cancellationToken);
+                                    await this.communicator.SendToPlayer(actor.Connection, "You burn the message.", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName} lights a message on fire and incinterates it.", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, "Delete which message? (select a number or 'all').", cancellationToken);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "Delete which message? (select a number or 'all').", cancellationToken);
+                            }
+
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, "Do what with a message, now?", cancellationToken);
+            }
+        }
+
+        [SightRequired]
+        [HelpText("<p>Lists all of your messages. See also: HELP MESSAGE</p>")]
+        private async Task DoMessages(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            var messages = await this.messageProcessor.GetAllMessagesForPlayer(actor.Character, cancellationToken);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<h3>Messages</h3><ol>");
+
+            var newCount = messages.Count(m => m.ReadDate == null);
+
+            sb.Append($"<p class='messageSummary'>You have {newCount} unread messages.</p>");
+
+            foreach (var message in messages)
+            {
+                sb.Append($"<li>{(message.ReadDate == null ? "<div class='message-list-item'><span class='newMessage'>NEW</span> " : string.Empty)}{message.SentDate} From: <b>{message.FromName}</b> Subject: {message.Subject}</div></li>");
+            }
+
+            sb.Append("</ol>");
+
+            await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
 
         [HelpText("<p>Outfits your player with a very basic set of travel equipment. Useful if you find yourself naked.</p><ul><li>outfit</li></ul>")]
@@ -1782,7 +1901,7 @@ namespace Legendary.Engine.Processors
         }
 
         [SightRequired]
-        [HelpText("<p>Watches a brief scene as mentioned in the room description.<ul><li>watch scene</li></ul></p>")]
+        [HelpText("<p>Watches a brief scene as mentioned in the room description.<ul><li>watch <em>keyword</em></li></ul></p>")]
         private async Task DoWatch(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))

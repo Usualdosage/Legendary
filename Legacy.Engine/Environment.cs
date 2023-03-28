@@ -323,28 +323,29 @@ namespace Legendary.Engine
                             await this.communicator.SendToPlayer(user.Connection, $"You are no longer a ghost.");
                             user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Ghost);
                         }
+                        else if (effect.Name == nameof(Sneak))
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"You trample around loudly again.");
+                        }
+                        else if (effect.Name == nameof(Invisibility))
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"You fade back into existence.");
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} fades into existence.");
+                        }
+                        else if (effect.Name == nameof(DirtKicking))
+                        {
+                            await this.communicator.SendToPlayer(user.Connection, $"Your rub the dirt out of your eyes.");
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} rubs the dirt out of their eyes.");
+                        }
+                        else if (effect.Name == nameof(Sleep))
+                        {
+                            user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
+                            await this.communicator.SendToPlayer(user.Connection, $"You wake and stand up.");
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} wakes and stands up.");
+                        }
                         else
                         {
-                            if (effect.Name == nameof(Sneak))
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"You trample around loudly again.");
-                            }
-                            else if (effect.Name == nameof(Invisibility))
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"You fade back into existence.");
-                                await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} fades into existence.");
-                            }
-                            else
-                            {
-                                await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
-                            }
-
-                            if (user.Character.IsAffectedBy(nameof(Sleep)))
-                            {
-                                user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
-                                await this.communicator.SendToPlayer(user.Connection, $"You wake and stand up.");
-                                await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} wakes and stands up.");
-                            }
+                            await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
                         }
                     }
                     else

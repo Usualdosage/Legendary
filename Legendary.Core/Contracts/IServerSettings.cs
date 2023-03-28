@@ -25,11 +25,6 @@ namespace Legendary.Core.Contracts
         int? ApiPort { get; set; }
 
         /// <summary>
-        /// Gets or sets the API key for the chatbot.
-        /// </summary>
-        string? RapidAPIKey { get; set; }
-
-        /// <summary>
         /// Gets or sets the API key for Chat GPT.
         /// </summary>
         string? ChatGPTAPIKey { get; set; }
@@ -43,5 +38,30 @@ namespace Legendary.Core.Contracts
         /// Gets or sets the key for Azure storage retrieval.
         /// </summary>
         string? AzureStorageKey { get; set; }
+
+        /// <summary>
+        /// Gets or sets the from email address.
+        /// </summary>
+        string? FromEmailAddress { get; set; }
+
+        /// <summary>
+        /// Gets or sets the from email password.
+        /// </summary>
+        string? FromEmailPassword { get; set; }
+
+        /// <summary>
+        /// Gets or sets the from email username.
+        /// </summary>
+        string? FromEmailName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Mongo connection string.
+        /// </summary>
+        string? MongoConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Mongo database name.
+        /// </summary>
+        string? MongoDatabaseName { get; set; }
     }
 }

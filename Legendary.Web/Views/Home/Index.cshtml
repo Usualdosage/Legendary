@@ -1,4 +1,4 @@
-﻿@model Legendary.Web.Contracts.IBuildSettings
+﻿@model IndexModel
 @using System;
 
 <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
@@ -35,7 +35,7 @@
                     <p>
                         Based on the <a href="https://a.co/d/iXQfW80">Legendary Role Playing Game</a> by Matthew Martin, illustrated by Anna Slempo.
                     </p>
-                    <p><b>Are you a developer?</b> Legendary is built using Websockets over C# on the .NET 7.0 Framework, with a MongoDB back end. We'd love your input. <a href="https://github.com/Usualdosage/Legendary" target="_blank">Find us today on Github</a> and join the project!</p>
+                    <p><b>Are you a developer?</b> Legendary is built using secure Websockets over ASP.NET and C# on the .NET 7.0 Framework, with a MongoDB back end. We'd love your input. <a href="https://github.com/Usualdosage/Legendary" target="_blank">Find us today on Github</a> and join the project!</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><a class="btn btn-primary" href="@Url.Action("Login")">Login</a>&nbsp;<a class="btn btn-secondary" href="@Url.Action("CreateUser")">Create a Character</a></li>
                     </ul>
@@ -54,19 +54,11 @@
                 </div>
                 <div class="card-body">
                     <ul>
-                        <li><b>@Model.Version</b> Updated to .NET Framework 7.</li>
-                        <li><b>@Model.Version</b> AI personas now implemented for some mobs (more to come).</li>
-                        <li><b>@Model.Version</b> All item descriptions and images have been redone using ChatGPT-4/Dall-E.</li>
-                        <li><b>@Model.Version</b> All mobile descriptions and images have been redone using ChatGPT-4/Dall-E.</li>
-                        <li><b>@Model.Version</b> All room descriptions and images have been redone using ChatGPT-4/Dall-E.</li>
-                        <li><b>@Model.Version</b> Mobiles should no longer wander off if you are actively speaking to them.</li>
-                        <li><b>1.15b</b> Languages are now available and encoded! HELP SPEAK for information.</li>
-                        <li><b>1.15b</b> Skill trees are complete, just need to finish fleshing out all skills and spells.</li>
-                        <li><b>1.15b</b> 25+ bugs and enhancements squashed/implemented from Github project.</li>
+                        <li><b>@Model.BuildSettings?.Version</b> Messaging within the system is now fully operational. Create a message from the console, and read them in-game. See HELP MESSAGES for more.</li>                        
                     </ul>
                 </div>
                 <div class="card-footer">
-                    Last build published and released on @Model.ReleaseDate?.ToShortDateString().
+                    Last build published and released on @Model.BuildSettings?.ReleaseDate?.ToShortDateString().
                 </div>
             </div>
         </div>
@@ -84,7 +76,7 @@
                                 <div class="card" style="width: 12rem;">
                                     <div class="card-body">
                                         <h5 class="card-title">Areas</h5>
-                                        <p class="card-text">There are @Model.TotalAreas total areas.</p>
+                                        <p class="card-text">There are @Model.GameMetrics?.TotalAreas total areas.</p>
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +84,7 @@
                                 <div class="card" style="width: 12rem;">
                                     <div class="card-body">
                                         <h5 class="card-title">Rooms</h5>
-                                        <p class="card-text">There are @Model.TotalRooms total rooms.</p>
+                                        <p class="card-text">There are @Model.GameMetrics?.TotalRooms total rooms.</p>
                                     </div>
                                 </div>
                             </div>
@@ -100,31 +92,31 @@
                                 <div class="card" style="width: 12rem;">
                                     <div class="card-body">
                                         <h5 class="card-title">Players</h5>
-                                        <p class="card-text">There are @Model.TotalPlayers total players.</p>
+                                        <p class="card-text">There are @Model.GameMetrics?.MaxPlayers total players.</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2">
                                 <div class="card" style="width: 12rem;">
                                     <div class="card-body">
-                                        <h5 class="card-title">Skills</h5>
-                                        <p class="card-text">There are @Model.TotalSkills total skills.</p>
+                                        <h5 class="card-title">Items</h5>
+                                        <p class="card-text">There are @Model.GameMetrics?.TotalItems total items.</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2">
                                 <div class="card" style="width: 12rem;">
                                     <div class="card-body">
-                                        <h5 class="card-title">Spells</h5>
-                                        <p class="card-text">There are @Model.TotalSpells total spells.</p>
+                                        <h5 class="card-title">Mobiles</h5>
+                                        <p class="card-text">There are @Model.GameMetrics?.TotalMobiles total mobiles.</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2">
                                 <div class="card" style="width: 12rem;">
                                     <div class="card-body">
-                                        <h5 class="card-title">Races</h5>
-                                        <p class="card-text">There are @Model.TotalRaces total playable races.</p>
+                                        <h5 class="card-title">Most Kills</h5>
+                                        <p class="card-text">@Model.GameMetrics?.MostKills has the record for kills.</p>
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +124,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    Last metrics generated @DateTime.Now.
+                    Last game startup was @Model.GameMetrics?.LastStartupDateTime. Legendary has been online for @Model.GameMetrics?.Uptime.Days days, @Model.GameMetrics?.Uptime.Hours hours, and @Model.GameMetrics?.Uptime.Minutes minutes since last deployment/restart.
                 </div>
             </div>
         </div>

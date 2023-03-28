@@ -1,14 +1,13 @@
-﻿
-class LegendaryClient {
+﻿class LegendaryClient {
 
     constructor() {
-
+        
     }
 
     Connect() {
         var protocol = location.protocol === "https:" ? "wss:" : "ws:";
         var wsUri = protocol + "//" + window.location.host;
-        var socket = new WebSocket(wsUri);
+        const socket = new WebSocket(wsUri);
         let commandIndex = 0;
         let commands = [];
         const $console = $("#console");
@@ -196,8 +195,72 @@ class LegendaryClient {
 
         var bindNav = function () {
             $(".nav-arrow").on("click", function (e) {
-                socket.send($(this).attr("move"));
+                this.socket.send($(this).attr("move"));
             })
         }
+
+        this.socket = socket;
+    }
+
+    SendMessage() {
+        let toList = $(".email-address");
+
+        let validator = document.getElementById("validator");
+
+        validator.style.display = "none";
+
+        if (toList.length === 0) {
+            validator.innerText = 'You must provide at least one recipient.';
+            validator.style.display = "block";
+            return;
+        }
+
+        let messageSubject = document.getElementById('message-subject');
+
+        if (messageSubject.value === '') {
+            validator.innerText = 'You must provide a subject.';
+            validator.style.display = "block";
+            return;
+        }
+
+        let messageContent = tinymce.get("message-body").getContent();
+
+        if (messageContent === '') {
+            validator.innerText = 'You must provide message content.';
+            validator.style.display = "block";
+            return;
+        }
+
+        let toAddresses = [];
+
+        toList.toArray().map(m => { toAddresses.push(m.innerText); });
+
+        var data = {
+            FromAddress: $("#playerName").val(),
+            ToAddresses: toAddresses,
+            Subject: messageSubject.value,
+            Content: messageContent
+        };
+
+        fetch("/Message", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            let messageModal = document.getElementById('messageModal');
+            let modal = bootstrap.Modal.getInstance(messageModal)
+            modal.hide();
+            $("#console").append("<span class='message'>Your hand your message to a messenger and send them on their way.</span>");
+            this.socket.send(JSON.stringify(data));
+        })
+        .catch((error) => {
+            validator.innerText = 'There was a problem sending your message. Please try again later.';
+            validator.style.display = "block";
+            console.error("Error:", error);
+        });
     }
 }

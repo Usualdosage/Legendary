@@ -63,19 +63,18 @@ namespace Legendary.Web
             services.AddControllersWithViews();
 
             // Load the configuration values.
-            services.Configure<DatabaseSettings>(this.Configuration.GetSection(nameof(DatabaseSettings)));
-            services.Configure<ServerSettings>(this.Configuration.GetSection(nameof(ServerSettings)));
-            services.Configure<BuildSettings>(this.Configuration.GetSection(nameof(BuildSettings)));
+            services.Configure<ServerSettings>(this.Configuration.GetSection("Legendary:ServerSettings"));
+            services.Configure<BuildSettings>(this.Configuration.GetSection("Legendary:BuildSettings"));
 
             // Apply necessary DI containers for fully independent services.
             services.AddSingleton<ILogger, Logger>();
             services.AddSingleton<IRandom, Random>();
-            services.AddSingleton<IDatabaseSettings>(sp => sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             services.AddSingleton<IServerSettings>(sp => sp.GetRequiredService<IOptions<ServerSettings>>().Value);
             services.AddSingleton<IDBConnection, MongoConnection>();
             services.AddTransient<IDataService, DataService>();
             services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
+            services.AddSingleton<IMailService, MailService>();
 
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

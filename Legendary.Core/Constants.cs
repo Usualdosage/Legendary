@@ -17,6 +17,16 @@ namespace Legendary.Core
     public static class Constants
     {
         /// <summary>
+        /// This is where all new players begin.
+        /// </summary>
+        public const long START_AREA = 31866;
+
+        /// <summary>
+        /// This is where all new players begin.
+        /// </summary>
+        public const long START_ROOM = 32075;
+
+        /// <summary>
         /// The Area ID for Griffonshire, the hometown.
         /// </summary>
         public const long GRIFFONSHIRE_AREA = 6828;

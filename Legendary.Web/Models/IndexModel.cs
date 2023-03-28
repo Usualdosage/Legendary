@@ -1,4 +1,4 @@
-﻿// <copyright file="BuildSettings.cs" company="Legendary™">
+﻿// <copyright file="IndexModel.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -10,21 +10,22 @@
 namespace Legendary.Web.Models
 {
     using System;
+    using Legendary.Core.Models;
     using Legendary.Web.Contracts;
 
     /// <summary>
-    /// Displayed to the end user on the web interface.
+    /// Contains the needed properties to render on the Index view.
     /// </summary>
-    public class BuildSettings : IBuildSettings
+    public class IndexModel
     {
         /// <summary>
-        /// Gets or sets the build version.
+        /// Gets or sets the game metrics.
         /// </summary>
-        public string? Version { get; set; }
+        public GameMetrics? GameMetrics { get; set; }
 
         /// <summary>
-        /// Gets or sets the last release date.
+        /// Gets or sets the build settings.
         /// </summary>
-        public DateTime? ReleaseDate { get; set; }
+        public IBuildSettings? BuildSettings { get; set; }
     }
 }

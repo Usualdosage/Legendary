@@ -67,6 +67,7 @@
 
 html, body {
     height: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -78,6 +79,12 @@ body {
 }
 
 /* Globals */
+
+h3 {
+    font-family: 'Balgruf';
+    font-size: 1.6em;
+    color: maroon;
+}
 
 h4 {
     font-family: 'Balgruf';
@@ -105,6 +112,92 @@ h6 {
     height: 16px;
     display: inline-block;
     background-size: contain;
+}
+
+/* Message */
+
+.tox {
+    height: 400px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+    .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+        color: #333;
+    }
+
+        .autocomplete-items div:hover {
+            /*when hovering an item:*/
+            background-color: #e9e9e9;
+        }
+
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #ffffff;
+}
+
+.email-address {
+    color: #fff;
+    font-size: 1em;
+    padding: 5px;
+    display: inline-block;
+    border-radius: 4px;
+    font-weight: bold;
+    background-color: #0d6efd;
+    margin-right: 5px;
+    cursor: default;
+}
+
+.email-address-input {
+    width: 120px;
+    border-radius: 3px;
+    border: solid 1px #ccc;
+    margin-right: 10px;
+}
+
+.validator {
+    background-color: red;
+    display: inline-block;
+    margin: 4px;
+    display: none;
+}
+
+.newMessage {
+    display: inline;
+    border: solid 1px #ccc;
+    font-size: .5em;
+    border-radius: 6px;
+    background-color: yellow;
+    color: #333;
+    padding: 2px;
+}
+
+.message-list-item
+{
+
 }
 
 /* Group Info */
@@ -414,11 +507,22 @@ input:focus {
     width: 100%;    
     border: solid 1px #666;
     border-radius: 5px;
-    margin-top: 10px;
-    padding: 5px;
+    margin-top: 8px;
+    padding: 4px;
     box-shadow: 3px 3px 3px #000;
     background-color: #222;
     
+}
+
+button {
+    width: 100%;
+    font-size: .8em;
+    margin: 0px;
+    padding: 0px;
+    border-radius: 3px;
+    border: solid 1px #333;
+    font-family: 'Balgruf';
+    background-color: #999;
 }
 
 .image-caption {

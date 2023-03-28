@@ -9,8 +9,11 @@
 
 namespace Legendary.Engine.Extensions
 {
+    using System;
+    using System.Collections.Generic;
     using Legendary.Core.Models;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Extensions of various objects.
@@ -37,6 +40,32 @@ namespace Legendary.Engine.Extensions
         {
             var json = JsonConvert.SerializeObject(item);
             return JsonConvert.DeserializeObject<Item>(json);
+        }
+
+        /// <summary>
+        /// Checks to see if this is a valid JSON object.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="token">The token output.</param>
+        /// <returns>True if valid.</returns>
+        public static bool IsJson(this string input, out List<Command>? token)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                token = null;
+                return false;
+            }
+
+            try
+            {
+                token = JsonConvert.DeserializeObject<List<Command>>(input);
+                return true;
+            }
+            catch
+            {
+                token = null;
+                return false;
+            }
         }
     }
 }

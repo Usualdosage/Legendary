@@ -17,7 +17,7 @@ namespace Legendary.Core
         /// <summary>
         /// Needs to be appended to requests to access file share.
         /// </summary>
-        public const string SAS_TOKEN = "?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+        public const string SAS_TOKEN = "?sv=2021-12-02&ss=f&srt=o&sp=r&se=2033-03-27T03:05:21Z&st=2023-03-26T19:05:21Z&spr=https&sig=CntsekRqNb4x6Yu4dXN5VO4L2vLkCBtzAxHk4%2B8PdNM%3D";
 
         /// <summary>
         /// Armor MP3.

@@ -66,6 +66,7 @@ namespace Legendary.Engine.Models.SkillTrees
         {
             get => new List<IAction>()
             {
+                { new DirtKicking(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
                 { new SecondAttack(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
                 { new EvasiveManeuvers(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };

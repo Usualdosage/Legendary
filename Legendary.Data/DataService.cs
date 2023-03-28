@@ -67,6 +67,11 @@ namespace Legendary.Data
         /// </summary>
         public IMongoCollection<GameMetrics> GameMetrics { get => this.dbConnection.Database.GetCollection<GameMetrics>("GameMetrics"); }
 
+        /// <summary>
+        /// Gets the messages.
+        /// </summary>
+        public IMongoCollection<Message> Messages { get => this.dbConnection.Database.GetCollection<Message>("Messages"); }
+
         /// <inheritdoc/>
         public async Task<ReplaceOneResult?> SaveCharacter(Character character, CancellationToken cancellationToken)
         {

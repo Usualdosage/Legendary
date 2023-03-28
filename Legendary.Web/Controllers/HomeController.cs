@@ -16,16 +16,21 @@ namespace Legendary.Web.Controllers
     using System.Security.Claims;
     using System.Threading.Tasks;
     using Legendary.Core;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Data.Contracts;
     using Legendary.Engine;
+    using Legendary.Engine.Contracts;
+    using Legendary.Engine.Extensions;
+    using Legendary.Engine.Helpers;
     using Legendary.Web.Contracts;
     using Legendary.Web.Models;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using MongoDB.Driver;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -36,6 +41,8 @@ namespace Legendary.Web.Controllers
         private readonly ILogger<HomeController> logger;
         private readonly IDataService dataService;
         private readonly IBuildSettings buildSettings;
+        private readonly IServerSettings serverSettings;
+        private readonly IMailService mailService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
@@ -43,11 +50,15 @@ namespace Legendary.Web.Controllers
         /// <param name="logger">The logger.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="buildSettings">The build settings.</param>
-        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings)
+        /// <param name="serverSettings">The server settings.</param>
+        /// <param name="mailService">The mail service.</param>
+        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings, IServerSettings serverSettings, IMailService mailService)
         {
             this.logger = logger;
             this.dataService = dataService;
             this.buildSettings = buildSettings;
+            this.serverSettings = serverSettings;
+            this.mailService = mailService;
         }
 
         /// <summary>
@@ -67,9 +78,10 @@ namespace Legendary.Web.Controllers
         [HttpGet]
         [Route("/Index")]
         [Route("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return this.View("Index", this.buildSettings);
+            var gameMetrics = await this.dataService.GetGameMetrics();
+            return this.View("Index", new IndexModel() { GameMetrics = gameMetrics, BuildSettings = this.buildSettings });
         }
 
         /// <summary>
@@ -168,9 +180,9 @@ namespace Legendary.Web.Controllers
                     {
                         var character = new Character();
 
-                        character.FirstName = form["FirstName"].ToString();
-                        character.LastName = form["LastName"].ToString();
-                        character.ShortDescription = form["FirstName"].ToString();
+                        character.FirstName = form["FirstName"].ToString().FirstCharToUpper();
+                        character.LastName = form["LastName"].ToString().FirstCharToUpper();
+                        character.ShortDescription = form["FirstName"].ToString().FirstCharToUpper();
                         character.LongDescription = form["LongDescription"].ToString();
                         character.Health = new MaxCurrent(30, 30);
                         character.Movement = new MaxCurrent(30, 30);
@@ -229,6 +241,15 @@ namespace Legendary.Web.Controllers
                             character.CharacterId = Math.Abs(character.GetHashCode());
 
                             await this.dataService.CreateCharacter(character);
+
+                            try
+                            {
+                                await this.mailService.SendEmailMessage("m9049934009@gmail.com", "New Player", $"{character.FirstName} {character.LastName} has joined the realms as of {DateTime.Now}!");
+                            }
+                            catch
+                            {
+                                // Do nothing.
+                            }
 
                             return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
                         }
@@ -304,7 +325,91 @@ namespace Legendary.Web.Controllers
 
                 this.logger.LogInformation("{username} is logging in from {ipAddress}...", username, ipAddress);
 
+                // Grab the list of users for the message center.
+                var characters = await this.dataService.Characters.Find(_ => true).ToListAsync();
+                userModel.Usernames = characters.Select(u => u.FirstName).ToList();
+
                 return this.View("Game", userModel);
+            }
+        }
+
+        /// <summary>
+        /// Submits a message to the database.
+        /// </summary>
+        /// <param name="data">The message model.</param>
+        /// <returns>JsonResult.</returns>
+        [HttpPost]
+        [Route("/Message")]
+        public async Task<JsonResult> Message([FromBody]MessageModel data)
+        {
+            if (string.IsNullOrEmpty(data.FromAddress))
+            {
+                return this.Json("Player was null.");
+            }
+
+            if (data.ToAddresses == null || data.ToAddresses.Count == 0)
+            {
+                return this.Json("No one to send to.");
+            }
+
+            if (string.IsNullOrEmpty(data.Subject))
+            {
+                return this.Json("No subject provided.");
+            }
+
+            if (string.IsNullOrWhiteSpace(data.Content))
+            {
+                return this.Json("No content provided.");
+            }
+
+            var from = await this.dataService.FindCharacter(c => c.FirstName.ToLower() == data.FromAddress.ToLower());
+
+            if (from == null)
+            {
+                return this.Json("Coold not find player.");
+            }
+
+            try
+            {
+                var maxMessages = await this.dataService.Messages.CountDocumentsAsync(_ => true) + 2;
+
+                List<Command> jsonCommands = new List<Command>();
+
+                foreach (var playerName in data.ToAddresses)
+                {
+                    var player = await this.dataService.FindCharacter(c => c.FirstName.ToLower() == playerName.ToLower());
+
+                    if (player != null)
+                    {
+                        var message = new Message()
+                        {
+                            From = from.CharacterId,
+                            To = player.CharacterId,
+                            FromName = from.FirstName.FirstCharToUpper(),
+                            ToName = player.FirstName.FirstCharToUpper(),
+                            Subject = data.Subject,
+                            Content = data.Content,
+                            SentDate = DateTime.UtcNow,
+                            MessageId = maxMessages++,
+                        };
+
+                        await this.dataService.Messages.InsertOneAsync(message);
+
+                        var response = new Command()
+                        {
+                            Action = "Message",
+                            Context = message.MessageId.ToString(),
+                        };
+
+                        jsonCommands.Add(response);
+                    }
+                }
+
+                return this.Json(jsonCommands);
+            }
+            catch (Exception exc)
+            {
+                return this.Json(exc);
             }
         }
 

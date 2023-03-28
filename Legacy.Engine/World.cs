@@ -360,7 +360,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<GameMetrics> UpdateGameMetrics(Exception? lastException, CancellationToken cancellationToken)
+        public async Task<GameMetrics> UpdateGameMetrics(Exception? lastException, DateTime? startup, CancellationToken cancellationToken)
         {
             try
             {
@@ -392,9 +392,9 @@ namespace Legendary.Engine
                     }
                 }
 
-                metrics.HostURL = "https://legendary-mud.azurewebsites.net";
+                metrics.HostURL = "https://legendary-web.azurewebsites.net";
                 metrics.LastError = lastException;
-                metrics.LastStartupDateTime ??= DateTime.UtcNow;
+                metrics.LastStartupDateTime = startup.HasValue ? startup : metrics.LastStartupDateTime;
                 metrics.MaxPlayers = this.dataService.Characters.CountDocuments(c => c.CharacterId > 0, cancellationToken: cancellationToken);
                 metrics.TotalAreas = this.Areas.Count;
                 metrics.TotalMobiles = this.Mobiles.Count;
@@ -404,8 +404,17 @@ namespace Legendary.Engine
                 // Update the local cached version.
                 this.GameMetrics = metrics;
 
-                // TODO
-                // metrics.MostKills = this.dataService.Characters.Find(c => c.Metrics != null && c.Metrics.PlayerKills > 0).SortByDescending(s => s.Metrics.PlayerKills).FirstOrDefault(cancellationToken: cancellationToken).FirstName;
+                var killer = this.dataService.Characters.Find(c => c.Metrics != null && c.Metrics.PlayerKills > 0 && !c.IsNPC).SortByDescending(s => s.Metrics.PlayerKills).FirstOrDefault(cancellationToken: cancellationToken);
+
+                if (killer != null)
+                {
+                    metrics.MostKills = killer.FirstName.ToLower().FirstCharToUpper();
+                }
+                else
+                {
+                    metrics.MostKills = "Nobody";
+                }
+
                 await this.dataService.SaveGameMetrics(metrics, cancellationToken);
 
                 return metrics;
@@ -775,15 +784,15 @@ namespace Legendary.Engine
                                         {
                                             if (newRoom.Terrain == Terrain.Air && !isFlying && !isGhost)
                                             {
-                                                return;
+                                                continue;
                                             }
                                             else if (newRoom.Flags.Contains(RoomFlags.NoMobs))
                                             {
-                                                return;
+                                                continue;
                                             }
                                             else if (newRoom.Terrain == Terrain.Water && !isFlying && !isGhost && mobile.Inventory.Any(i => i.ItemType == ItemType.Boat))
                                             {
-                                                return;
+                                                continue;
                                             }
                                             else if (mobile.Location.Key != newArea.AreaId)
                                             {
@@ -892,6 +901,7 @@ namespace Legendary.Engine
                                         var itemToGet = items[random];
 
                                         var clonedItem = itemToGet.DeepCopy();
+
                                         await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {clonedItem.Name}.", cancellationToken);
 
                                         var targetWearLocation = clonedItem.WearLocation.FirstOrDefault(w => w != WearLocation.None);
@@ -901,12 +911,15 @@ namespace Legendary.Engine
                                         // If they don't have anything equipped there, equip it.
                                         if (equipped == null && !clonedItem.WearLocation.Contains(WearLocation.InventoryOnly))
                                         {
+                                            this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {clonedItem.ShortDescription} and is wearing it now.", this.communicator);
                                             var verb = clonedItem.ItemType == ItemType.Weapon ? "wields" : "wears";
                                             mobile.Equipment.Add(clonedItem);
                                             await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} {verb} {clonedItem.Name}.", cancellationToken);
                                         }
                                         else
                                         {
+                                            this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {clonedItem.ShortDescription} and added it to their inventory.", this.communicator);
+
                                             // Just add to inventory.
                                             mobile.Inventory.Add(clonedItem);
                                         }

@@ -14,7 +14,9 @@ namespace Legendary.Engine
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
+    using System.Net.Mail;
     using System.Net.WebSockets;
     using System.Security.Claims;
     using System.Text;
@@ -42,6 +44,7 @@ namespace Legendary.Engine
     using Microsoft.AspNetCore.Http;
     using Microsoft.CodeAnalysis;
     using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Handles communication between the engine and connected sockets.
@@ -58,6 +61,7 @@ namespace Legendary.Engine
         private readonly IEngine engine;
         private readonly IRandom random;
         private readonly IWorld world;
+        private readonly IMessageProcessor messageProcessor;
         private readonly IEnvironment environment;
         private readonly IServerSettings serverSettings;
         private readonly IWebHostEnvironment webHostEnvironment;
@@ -108,8 +112,11 @@ namespace Legendary.Engine
             this.engine.Tick += this.Engine_Tick;
             this.engine.VioTick += this.Engine_VioTick;
 
+            // Message processor for mail.
+            this.messageProcessor = new MessageProcessor(this, this.world, this.dataService, this.logger);
+
             // Create the combat processor.
-            this.combat = new Combat(this, this.world, this.environment, this.random, this.logger);
+            this.combat = new Combat(this, this.world, this.environment, this.random, this.logger, this.messageProcessor);
 
             // Create the language generator.
             this.LanguageGenerator = new LanguageGenerator(this.random);
@@ -129,7 +136,7 @@ namespace Legendary.Engine
             // Create instances of the action, skill, and spell processors.
             this.skillProcessor = new SkillProcessor(this, this.random, this.world, this.combat, this.logger);
             this.spellProcessor = new SpellProcessor(this, this.random, this.world, this.combat, this.logger);
-            this.actionProcessor = new ActionProcessor(this, this.environment, this.world, this.logger, this.random, this.combat);
+            this.actionProcessor = new ActionProcessor(this, this.environment, this.world, this.logger, this.random, this.combat, this.messageProcessor);
         }
 
         /// <summary>
@@ -271,7 +278,7 @@ namespace Legendary.Engine
                 }
 
                 // Update the metrics before we display the game updates.
-                await this.world.UpdateGameMetrics(null, cancellationToken);
+                await this.world.UpdateGameMetrics(null, null, cancellationToken);
 
                 // Update the player's console.
                 await this.SendGameUpdate(userData.Character, null, null, cancellationToken);
@@ -280,6 +287,14 @@ namespace Legendary.Engine
 
                 // Show the room to the player.
                 await this.ShowRoomToPlayer(userData.Character, cancellationToken);
+
+                // Show new messages.
+                var messageCount = await this.messageProcessor.GetNewMessagesForPlayer(userData.Character, cancellationToken);
+
+                if (messageCount > 0)
+                {
+                    await this.SendToPlayer(userData.Character, $"<p>You have {messageCount} new messages.</p>", cancellationToken);
+                }
 
                 while (true)
                 {
@@ -745,7 +760,7 @@ namespace Legendary.Engine
 
             sb.Append($"<span class='room-description'>{room?.Description}</span><br/>");
 
-            if (!string.IsNullOrWhiteSpace(room?.WatchKeyword) && !string.IsNullOrWhiteSpace(room?.Image))
+            if (!string.IsNullOrWhiteSpace(room?.WatchKeyword) && !string.IsNullOrWhiteSpace(room?.Video))
             {
                 sb.Append($"<span class='room-video'>You can <b>watch</b> the <i>{room.WatchKeyword}</i> here.</span><br/>");
             }
@@ -1936,7 +1951,7 @@ namespace Legendary.Engine
             if (character.Level == 1 && character.Experience == 0)
             {
                 // New player starting point.
-                character.Location = new KeyValuePair<long, long>(31866, 32075);
+                character.Location = new KeyValuePair<long, long>(Constants.START_AREA, Constants.START_ROOM);
 
                 switch (character.Alignment)
                 {
@@ -2124,60 +2139,87 @@ namespace Legendary.Engine
 
             try
             {
-                CommandArgs? args = CommandArgs.ParseCommand(input);
-
-                if (args == null)
+                // Check if we have received a JSON input. We only parse a select few of these.
+                if (input.IsJson(out List<Command>? commandList))
                 {
-                    await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
+                    if (commandList != null)
+                    {
+                        foreach (var command in commandList)
+                        {
+                            if ((command?.Action?.ToLower() == "message") && long.TryParse(command?.Context, out long messageId))
+                            {
+                                // Someone sent a message, so deliver it.
+                                var message = await this.messageProcessor.GetMessage(messageId, cancellationToken);
+                                if (message != null)
+                                {
+                                    await this.messageProcessor.DeliverMessage(message, cancellationToken);
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    // See if this is a single emote
-                    var emote = Emotes.Get(args.Action);
+                    CommandArgs? args = CommandArgs.ParseCommand(input);
 
-                    if (emote != null)
+                    if (args == null)
                     {
-                        await this.ProcessEmote(emote, actor, args, cancellationToken);
+                        await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
                     }
                     else
                     {
-                        // See if this is a skill
-                        if (!string.IsNullOrWhiteSpace(args.Action) && actor.Character.HasSkill(args.Action))
-                        {
-                            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
-                            {
-                                await this.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
-                                return;
-                            }
+                        // See if this is a single emote
+                        var emote = Emotes.Get(args.Action);
 
-                            if (this.skillProcessor != null)
-                            {
-                                await this.skillProcessor.DoSkill(actor, args, cancellationToken);
-                                return;
-                            }
-                            else
-                            {
-                                await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
-                                return;
-                            }
+                        if (emote != null)
+                        {
+                            await this.ProcessEmote(emote, actor, args, cancellationToken);
                         }
-                        else if (IsCasting(args.Action))
+                        else
                         {
-                            if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                            // See if this is a skill
+                            if (!string.IsNullOrWhiteSpace(args.Action) && actor.Character.HasSkill(args.Action))
                             {
-                                await this.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
-                                return;
-                            }
-
-                            // If casting, see what they are casting and see if they can cast it.
-                            if (!string.IsNullOrWhiteSpace(args.Method))
-                            {
-                                if (actor.Character.HasSpell(args.Method))
+                                if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
                                 {
-                                    if (this.spellProcessor != null)
+                                    await this.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
+                                    return;
+                                }
+
+                                if (this.skillProcessor != null)
+                                {
+                                    await this.skillProcessor.DoSkill(actor, args, cancellationToken);
+                                    return;
+                                }
+                                else
+                                {
+                                    await this.SendToPlayer(actor.Connection, "You don't know how to do that.", cancellationToken);
+                                    return;
+                                }
+                            }
+                            else if (IsCasting(args.Action))
+                            {
+                                if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                                {
+                                    await this.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
+                                    return;
+                                }
+
+                                // If casting, see what they are casting and see if they can cast it.
+                                if (!string.IsNullOrWhiteSpace(args.Method))
+                                {
+                                    if (actor.Character.HasSpell(args.Method))
                                     {
-                                        await this.spellProcessor.DoSpell(actor, args, cancellationToken);
-                                        return;
+                                        if (this.spellProcessor != null)
+                                        {
+                                            await this.spellProcessor.DoSpell(actor, args, cancellationToken);
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            await this.SendToPlayer(actor.Connection, "You don't know how to cast that.", cancellationToken);
+                                            return;
+                                        }
                                     }
                                     else
                                     {
@@ -2187,22 +2229,17 @@ namespace Legendary.Engine
                                 }
                                 else
                                 {
-                                    await this.SendToPlayer(actor.Connection, "You don't know how to cast that.", cancellationToken);
-                                    return;
+                                    await this.SendToPlayer(actor.Connection, "Commune or cast what?", cancellationToken);
                                 }
                             }
                             else
                             {
-                                await this.SendToPlayer(actor.Connection, "Commune or cast what?", cancellationToken);
-                            }
-                        }
-                        else
-                        {
-                            // Not casting, using a skill, or emoting, so check actions.
-                            if (this.actionProcessor != null)
-                            {
-                                await this.actionProcessor.DoAction(actor, args, cancellationToken);
-                                return;
+                                // Not casting, using a skill, or emoting, so check actions.
+                                if (this.actionProcessor != null)
+                                {
+                                    await this.actionProcessor.DoAction(actor, args, cancellationToken);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -2235,18 +2272,26 @@ namespace Legendary.Engine
                         }
                     }
                 }
+
+                // See if any AI mobs in the room will communicate with the player after this emote.
+                var commsTask = this.CheckMobCommunication(actor.Character, actor.Character.Location, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
+
+                // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             else
             {
                 // Is target a player or mob?
                 var targetChar = this.ResolveCharacter(args.Method);
 
-                // Get all players that are not the actor.
-                var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
-
                 if (targetChar != null)
                 {
                     await this.SendToPlayer(actor.Character, emote.SelfToTarget.Replace("{1}", targetChar.Character.FirstName.FirstCharToUpper()), cancellationToken);
+
+                    // Get all players that are not the actor.
+                    var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
 
                     if (players != null)
                     {
@@ -2274,6 +2319,9 @@ namespace Legendary.Engine
                     {
                         await this.SendToPlayer(actor.Character, emote.SelfToTarget.Replace("{1}", mobile.FirstName), cancellationToken);
 
+                        // Get all players that are not the actor.
+                        var players = this.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
                         if (players != null)
                         {
                             foreach (var player in players)
@@ -2284,6 +2332,14 @@ namespace Legendary.Engine
                                 }
                             }
                         }
+
+                        // See if any AI mobs in the room will communicate with the player after this emote.
+                        var commsTask = this.CheckMobCommunication(actor.Character, actor.Character.Location, emote.ToRoom.Replace("{0}", actor.Character.FirstName).Replace("{1}", "you"), cancellationToken);
+
+                        // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                        Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     }
                     else
                     {

@@ -28,5 +28,10 @@ namespace Legendary.Core.Models
         /// Poison effect.
         /// </summary>
         public const string SANCTUARY = "sanctuary";
+
+        /// <summary>
+        /// Dirt kicking effect.
+        /// </summary>
+        public const string DIRTKICKING = "dirt kicking";
     }
 }

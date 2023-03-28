@@ -35,7 +35,7 @@ namespace Legendary.Engine.Helpers
         /// <returns>True if the player can see.</returns>
         public static bool CanPlayerSee(IEnvironment environment, ICommunicator communicator, Character actor)
         {
-            if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS))
+            if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS || e.Name == EffectName.DIRTKICKING))
             {
                 return false;
             }
@@ -44,6 +44,11 @@ namespace Legendary.Engine.Helpers
 
             if (room != null && room.Flags != null)
             {
+                if (room.Flags.Contains(RoomFlags.Bright))
+                {
+                    return true;
+                }
+
                 if (environment.IsNight || room.Flags.Contains(RoomFlags.Dark))
                 {
                     if (actor.IsAffectedBy(nameof(Infravision)))
@@ -62,6 +67,10 @@ namespace Legendary.Engine.Helpers
                             {
                                 return false;
                             }
+                        }
+                        else
+                        {
+                            return true;
                         }
                     }
                 }
@@ -90,7 +99,7 @@ namespace Legendary.Engine.Helpers
                 return true;
             }
 
-            if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS))
+            if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS || e.Name == EffectName.DIRTKICKING))
             {
                 return false;
             }
@@ -101,6 +110,11 @@ namespace Legendary.Engine.Helpers
             {
                 if (room.Flags != null)
                 {
+                    if (room.Flags.Contains(RoomFlags.Bright))
+                    {
+                        return true;
+                    }
+
                     if (environment.IsNight || room.Flags.Contains(RoomFlags.Dark))
                     {
                         if (actor.IsAffectedBy(nameof(Infravision)))

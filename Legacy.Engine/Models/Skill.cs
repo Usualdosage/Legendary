@@ -41,6 +41,7 @@ namespace Legendary.Engine.Models
         public override async Task PostAction(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken = default)
         {
             await this.CheckImprove(actor, cancellationToken);
+            await base.PostAction(actor, target, itemTarget, cancellationToken);
         }
     }
 }

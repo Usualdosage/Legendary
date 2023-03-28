@@ -4,6 +4,46 @@
     });
 });
 
+function check(input) {
+    if (input.value != document.getElementById('password').value) {
+        input.setCustomValidity('Passwords must match.');
+        return;
+    }
+
+    var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/g;
+
+    if (input.value.match(regex) === null) {
+        input.setCustomValidity('Passwords must contain at least 8 characters, one uppercase letter, one lower case letter, and a number.');
+        return;
+    }
+
+    input.setCustomValidity('');
+}
+
+function checkName(input) {
+
+    if (input.value === "") {
+        input.setCustomValidity('');
+        return;
+    }
+
+    var regex = /[a-zA-Z]+/g;
+    if (input.value.match(regex) === null) {
+        input.setCustomValidity('Your name cannot contain numbers or special characters.');
+        return;
+    }
+
+    input.setCustomValidity('');
+}
+
+function checkDesc(input) {
+    if (input.value.length < 200) {
+        input.setCustomValidity('Please provide some more detail in your description.');
+    } else {
+        input.setCustomValidity('');
+    }
+}
+
 function reroll() {
 
     var race = $("#ddlRace").val();

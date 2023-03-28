@@ -28,6 +28,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Output;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Output;
@@ -45,6 +46,7 @@ namespace Legendary.Engine.Processors
         private readonly IEnvironment environment;
         private readonly IWorld world;
         private readonly ILogger logger;
+        private readonly IMessageProcessor messageProcessor;
         private readonly ActionHelper actionHelper;
         private readonly AwardProcessor awardProcessor;
         private readonly IRandom random;
@@ -61,13 +63,15 @@ namespace Legendary.Engine.Processors
         /// <param name="logger">The logger.</param>
         /// <param name="random">The Random Number generator.</param>
         /// <param name="combat">The combat class.</param>
-        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, Combat combat)
+        /// <param name="messageProcessor">The message processor.</param>
+        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, Combat combat, IMessageProcessor messageProcessor)
         {
             this.communicator = communicator;
             this.world = world;
             this.environment = environment;
             this.logger = logger;
             this.random = random;
+            this.messageProcessor = messageProcessor;
             this.combat = combat;
             this.actionHelper = new ActionHelper(this.communicator, random, world, logger, combat);
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
@@ -83,7 +87,7 @@ namespace Legendary.Engine.Processors
         /// <returns>Direction.</returns>
         public static Direction ParseDirection(string direction)
         {
-            return direction switch
+            return direction.ToLower() switch
             {
                 "s" or "south" => Direction.South,
                 "e" or "east" => Direction.East,
@@ -132,7 +136,7 @@ namespace Legendary.Engine.Processors
         {
             try
             {
-                // Get the matching actions for the command word.
+                // Get the matching actions for the command word ordered by preference.
                 var action = this.actions
                     .Where(a => a.Key.StartsWith(args.Action.ToLower()))
                     .OrderBy(a => a.Value.Key)
@@ -374,6 +378,8 @@ namespace Legendary.Engine.Processors
             this.actions.Add("list", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoList)));
             this.actions.Add("lock", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLock)));
             this.actions.Add("look", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLook)));
+            this.actions.Add("message", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMessage)));
+            this.actions.Add("messages", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMessages)));
             this.actions.Add("murder", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoCombat)));
             this.actions.Add("newbie", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(4, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoNewbieChat)));
             this.actions.Add("north", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
@@ -806,6 +812,14 @@ namespace Legendary.Engine.Processors
                             }
                         }
                     }
+
+                    // See if any AI mobs in the room will communicate with the player.
+                    var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+
+                    // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 }
             }
         }
@@ -1657,6 +1671,11 @@ namespace Legendary.Engine.Processors
                                 }
                             }
 
+                            // Put the char in the new room.
+                            actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
+
+                            // Send the leaving message. This HAS to be done after for mob engagement purposes or else the mob will think the player is
+                            // still in the room with them.
                             if (actor.Character.IsAffectedBy(nameof(Hide)))
                             {
                                 await this.communicator.SendToPlayer(actor.Connection, "You step out of the shadows.", cancellationToken);
@@ -1674,15 +1693,10 @@ namespace Legendary.Engine.Processors
                                 await this.communicator.PlaySound(actor.Character, AudioChannel.BackgroundSFX, Sounds.WALK, cancellationToken);
                             }
 
-                            // Put the char in the new room.
-                            actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
-
                             // Track exploration for award purposes.
-                            if (actor.Character.Metrics.RoomsExplored.ContainsKey(exit.ToArea))
+                            if (actor.Character.Metrics.RoomsExplored.TryGetValue(exit.ToArea, out List<long>? value))
                             {
-                                var roomList = actor.Character.Metrics.RoomsExplored[exit.ToArea];
-
-                                if (!roomList.Contains(exit.ToRoom))
+                                if (!value.Contains(exit.ToRoom))
                                 {
                                     actor.Character.Metrics.RoomsExplored[exit.ToArea].Add(exit.ToRoom);
                                     await this.awardProcessor.CheckVoyagerAward(exit.ToArea, actor.Character, cancellationToken);
@@ -1710,6 +1724,14 @@ namespace Legendary.Engine.Processors
                                     actor.Character.Movement.Current -= moves;
                                     await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                                 }
+
+                                // See if any AI mobs in the room will communicate with the player.
+                                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters the room.", cancellationToken);
+
+                               // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                                Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                             }
 
                             await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
@@ -2055,7 +2077,13 @@ namespace Legendary.Engine.Processors
                     }
                 }
 
-                await this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, sentence, cancellationToken);
+                // See if any AI mobs in the room will communicate with the player.
+                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} says, in {speakingLang?.Name}, '{sentence}'.", cancellationToken);
+
+                // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
         }
 
@@ -2909,6 +2937,14 @@ namespace Legendary.Engine.Processors
                         }
                     }
                 }
+
+                // See if any AI mobs in the room will communicate with the player.
+                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} yells loudly, in {speakingLang?.Name}, '{sentence}'.", cancellationToken);
+
+                // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
             else
             {
@@ -3744,7 +3780,7 @@ namespace Legendary.Engine.Processors
 
             var message = new ScoreMessage()
             {
-                Message = new Message()
+                Message = new Legendary.Engine.Output.Message()
                 {
                     Personal = new Personal()
                     {

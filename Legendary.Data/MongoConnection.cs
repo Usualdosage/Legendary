@@ -10,6 +10,7 @@
 namespace Legendary.Data
 {
     using System;
+    using Legendary.Core.Contracts;
     using Legendary.Data.Contracts;
     using MongoDB.Driver;
 
@@ -18,24 +19,24 @@ namespace Legendary.Data
     /// </summary>
     public class MongoConnection : IDBConnection
     {
-        private readonly IDatabaseSettings databaseSettings;
+        private readonly IServerSettings serverSettings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MongoConnection"/> class.
         /// </summary>
-        /// <param name="databaseSettings">The database settings.</param>
-        public MongoConnection(IDatabaseSettings databaseSettings)
+        /// <param name="serverSettings">The server settings.</param>
+        public MongoConnection(IServerSettings serverSettings)
         {
-            if (databaseSettings == null)
+            if (serverSettings == null)
             {
-                throw new ArgumentNullException(nameof(databaseSettings));
+                throw new ArgumentNullException(nameof(serverSettings));
             }
 
-            this.databaseSettings = databaseSettings;
+            this.serverSettings = serverSettings;
 
-            var settings = MongoClientSettings.FromConnectionString(this.databaseSettings.ConnectionString);
+            var settings = MongoClientSettings.FromConnectionString(this.serverSettings.MongoConnectionString);
             this.Client = new MongoClient(settings);
-            this.Database = this.Client.GetDatabase(this.databaseSettings.DatabaseName);
+            this.Database = this.Client.GetDatabase(this.serverSettings.MongoDatabaseName);
         }
 
         /// <summary>

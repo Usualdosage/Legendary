@@ -171,6 +171,7 @@ namespace Legendary.Engine.Processors
 
                     switch (mobile.Emotion)
                     {
+                        default:
                         case Core.Types.Emotion.Neutral:
                             action = Constants.EMOTE_ACTION_NEUTRAL[this.random.Next(0, Constants.EMOTE_ACTION_NEUTRAL.Count - 1)];
                             break;
@@ -529,6 +530,7 @@ namespace Legendary.Engine.Processors
                 if (target.PlayerTarget != null && !this.communicator.IsInRoom(target.Location, target.PlayerTarget))
                 {
                     target.PlayerTarget = null;
+                    return false;
                 }
 
                 // If the player and target are already engaged in conversation, there is a 70-90% chance it will speak.

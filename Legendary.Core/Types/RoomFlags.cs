@@ -25,13 +25,23 @@ namespace Legendary.Core.Types
         Indoors = 1,
 
         /// <summary>
+        /// Open space for a room flag.
+        /// </summary>
+        Unused = 2,
+
+        /// <summary>
         /// Mobs cannot enter or exist in this room.
         /// </summary>
-        NoMobs = 2,
+        NoMobs = 3,
 
         /// <summary>
         /// Mobs will autospawn in this area if players are present.
         /// </summary>
-        AutoSpawn = 3,
+        AutoSpawn = 4,
+
+        /// <summary>
+        /// Room is always bright.
+        /// </summary>
+        Bright = 5,
     }
 }

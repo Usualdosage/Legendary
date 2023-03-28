@@ -69,7 +69,7 @@ namespace Legendary.Engine
 
                 this.logger.Info("Updating the game metrics...", null);
 
-                await this.world.UpdateGameMetrics(null);
+                await this.world.UpdateGameMetrics(null, DateTime.UtcNow);
 
                 this.logger.Info("Populating the world with mobiles and items...", null);
 
@@ -147,7 +147,7 @@ namespace Legendary.Engine
 
                             try
                             {
-                                var metrics = await this.world.UpdateGameMetrics(null);
+                                var metrics = await this.world.UpdateGameMetrics(null, null);
 
                                 // Raise the event to any listeners (e.g. Communicator).
                                 this.OnTick(this, new EngineEventArgs(this.gameTicks, metrics.CurrentHour, null));
@@ -162,7 +162,7 @@ namespace Legendary.Engine
                     {
                         this.logger.Error(ex.ToString(), null);
 
-                        await this.world.UpdateGameMetrics(ex);
+                        await this.world.UpdateGameMetrics(ex, null);
 
                         // If we hit an exception, we need to restart the timer.
                         this.StartGameLoop();
