@@ -88,5 +88,10 @@ namespace Legendary.Core.Types
         /// Holy.
         /// </summary>
         Holy = 14,
+
+        /// <summary>
+        /// Ice.
+        /// </summary>
+        Ice = 15,
     }
 }
