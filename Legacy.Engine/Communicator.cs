@@ -1979,11 +1979,13 @@ namespace Legendary.Engine
 
                 // Calculate the advance trains and practices.
                 var trains = character.Int.Max / 4;
-                var pracs = character.Wis.Max / 4;
-
                 character.Trains += (int)trains;
+
+                var pracs = character.Wis.Max / 4;
                 character.Practices += (int)pracs;
+
                 character.Learns = 3;
+
                 character.Experience = 1;
 
                 var raceStats = Races.RaceData.First(r => r.Key == character.Race);
@@ -2059,8 +2061,15 @@ namespace Legendary.Engine
             character.Movement.Max += move;
 
             // Calculate the advance trains and practices.
-            var trains = character.Int.Max / 3.5;
-            var pracs = character.Wis.Max / 3.5;
+
+            // Every 5th level, a character gets a new set of trains based on their intelligence.
+            if (character.Level % 5 == 0)
+            {
+                var trains = character.Int.Max / 4;
+                character.Trains += (int)trains;
+            }
+
+            var pracs = character.Wis.Max / 4;
 
             // Every 5 levels, character gets a learning session.
             if (character.Level % 5 == 0)
@@ -2068,13 +2077,9 @@ namespace Legendary.Engine
                 character.Learns += 1;
             }
 
-            character.Trains += (int)trains;
             character.Practices += (int)pracs;
 
             this.UpdateTitle(character);
-
-            // Save all the changes.
-            await this.SaveCharacter(character);
 
             await this.SendToPlayer(character, $"You advanced a level! You gained {hp} health, {mana} mana, and {move} movement. You have {character.Trains} training sessions and {character.Practices} practices.", cancellationToken);
             await this.PlaySound(character, AudioChannel.Actor, Sounds.LEVELUP, cancellationToken);
@@ -2083,6 +2088,9 @@ namespace Legendary.Engine
             {
                 await this.awardProcessor.GrantAward(6, character, $"advanced to level {character.Level}", cancellationToken);
             }
+
+            // Save all the changes.
+            await this.SaveCharacter(character);
         }
 
         private void UpdateTitle(Character character)

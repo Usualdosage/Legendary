@@ -757,11 +757,6 @@ namespace Legendary.Engine
                                         // If the mobile is engaged with a player, don't move it.
                                         continue;
                                     }
-                                    else
-                                    {
-                                        // Player left, so reset the target.
-                                        mobile.PlayerTarget = null;
-                                    }
                                 }
                                 else
                                 {
@@ -918,10 +913,16 @@ namespace Legendary.Engine
                                         }
                                         else
                                         {
-                                            this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {clonedItem.ShortDescription} and added it to their inventory.", this.communicator);
+                                            var containsItem = mobile.Inventory.Any(i => i.ItemId == clonedItem.ItemId);
 
-                                            // Just add to inventory.
-                                            mobile.Inventory.Add(clonedItem);
+                                            // Only add it if they don't already have one, otherwise they will collect thousands of things.
+                                            if (!containsItem)
+                                            {
+                                                this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {clonedItem.ShortDescription} and added it to their inventory.", this.communicator);
+
+                                                // Just add to inventory.
+                                                mobile.Inventory.Add(clonedItem);
+                                            }
                                         }
 
                                         itemsToRemove.Add(itemToGet);
