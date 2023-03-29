@@ -17,6 +17,7 @@ namespace Legendary.Engine
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
@@ -369,6 +370,8 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task ProcessItemRot(UserData userData, CancellationToken cancellationToken = default)
         {
+            var inventoryToRemove = new List<Item>();
+
             foreach (var item in userData.Character.Inventory)
             {
                 if (item.RotTimer == -1)
@@ -379,7 +382,7 @@ namespace Legendary.Engine
                 {
                     item.RotTimer -= 1;
 
-                    if (item.RotTimer == 0)
+                    if (item.RotTimer <= 0)
                     {
                         if (item.ItemId == Constants.ITEM_SPRING)
                         {
@@ -397,45 +400,54 @@ namespace Legendary.Engine
                         {
                             await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                         }
+
+                        inventoryToRemove.Add(item);
                     }
                 }
             }
 
-            userData.Character.Inventory.RemoveAll(i => i.RotTimer == 0);
+            userData.Character.Inventory.RemoveAll(i => inventoryToRemove.Contains(i));
+
+            var equipmentToRemove = new Dictionary<WearLocation, Item>();
 
             foreach (var item in userData.Character.Equipment)
             {
-                if (item.RotTimer == -1)
+                if (item.Value.RotTimer == -1)
                 {
                     continue;
                 }
                 else
                 {
-                    item.RotTimer -= 1;
+                    item.Value.RotTimer -= 1;
 
-                    if (item.RotTimer == 0)
+                    if (item.Value.RotTimer <= 0)
                     {
-                        if (item.ItemId == Constants.ITEM_SPRING)
+                        if (item.Value.ItemId == Constants.ITEM_SPRING)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} dries up.", cancellationToken);
                         }
-                        else if (item.ItemId == Constants.ITEM_LIGHT)
+                        else if (item.Value.ItemId == Constants.ITEM_LIGHT)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
                         }
-                        else if (item.ItemId == Constants.ITEM_FOOD)
+                        else if (item.Value.ItemId == Constants.ITEM_FOOD)
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} rots away.", cancellationToken);
                         }
                         else
                         {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
+                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
                         }
+
+                        equipmentToRemove.Add(item.Key, item.Value);
                     }
                 }
             }
 
-            userData.Character.Equipment.RemoveAll(i => i.RotTimer == 0);
+            foreach (var key in equipmentToRemove.Keys)
+            {
+                userData.Character.Equipment.Remove(key);
+            }
         }
 
         private async Task ProcessTime(int gameHour)

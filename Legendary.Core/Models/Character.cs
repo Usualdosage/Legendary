@@ -17,6 +17,7 @@ namespace Legendary.Core.Models
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
+    using MongoDB.Bson.Serialization.Options;
     using static MongoDB.Driver.WriteConcern;
 
     /// <summary>
@@ -181,7 +182,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                var current = this.Equipment.Sum(e => e.Weight) + this.Inventory.Sum(i => i.Weight);
+                var current = this.Equipment.Sum(e => e.Value.Weight) + this.Inventory.Sum(i => i.Weight);
                 var size = Races.RaceData.FirstOrDefault(r => r.Key == this.Race);
                 if (size.Value != null)
                 {
@@ -323,7 +324,7 @@ namespace Legendary.Core.Models
                 hitDice += Math.Round((this.Dex.Current - 12) * .5, 0);
 
                 // Sum up all hit dice modifiers for their equipment they are wearing.
-                hitDice += this.Equipment.Sum(s => s.HitDice);
+                hitDice += this.Equipment.Sum(s => s.Value.HitDice);
 
                 // Sum up any hit modifiers the user has as an effect.
                 hitDice += this.AffectedBy.Sum(s => s.HitDice ?? 0);
@@ -350,7 +351,7 @@ namespace Legendary.Core.Models
                 damDice += Math.Round((this.Str.Current - 12) * .5, 0);
 
                 // Sum up all damage dice modifiers for their equipment they are wearing.
-                damDice += this.Equipment.Sum(s => s.DamageDice);
+                damDice += this.Equipment.Sum(s => s.Value.DamageDice);
 
                 // Sum up any damage modifiers the user has as an effect.
                 damDice += this.AffectedBy.Sum(s => s.DamageDice ?? 0);
@@ -451,7 +452,11 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's equipment.
         /// </summary>
-        public List<Item> Equipment { get; set; } = new List<Item>();
+        /// <remarks>
+        /// This is an irritating thing about Mongo's C# driver.
+        /// </remarks>
+        [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
+        public Dictionary<WearLocation, Item> Equipment { get; set; } = new Dictionary<WearLocation, Item>();
 
         /// <summary>
         /// Gets or sets the player's followers.
@@ -475,7 +480,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveSpell + this.AffectedBy.Sum(a => a.Spell ?? 0) + this.Equipment.Sum(s => s.SaveSpell ?? 0);
+                return this.saveSpell + this.AffectedBy.Sum(a => a.Spell ?? 0) + this.Equipment.Sum(s => s.Value.SaveSpell ?? 0);
             }
 
             set
@@ -491,7 +496,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveNegative + this.AffectedBy.Sum(a => a.Negative ?? 0) + this.Equipment.Sum(s => s.SaveNegative ?? 0);
+                return this.saveNegative + this.AffectedBy.Sum(a => a.Negative ?? 0) + this.Equipment.Sum(s => s.Value.SaveNegative ?? 0);
             }
 
             set
@@ -507,7 +512,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveMaledictive + this.AffectedBy.Sum(a => a.Maledictive ?? 0) + this.Equipment.Sum(s => s.SaveMaledictive ?? 0);
+                return this.saveMaledictive + this.AffectedBy.Sum(a => a.Maledictive ?? 0) + this.Equipment.Sum(s => s.Value.SaveMaledictive ?? 0);
             }
 
             set
@@ -523,7 +528,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveAfflictive + this.AffectedBy.Sum(a => a.Afflictive ?? 0) + this.Equipment.Sum(s => s.SaveAfflictive ?? 0);
+                return this.saveAfflictive + this.AffectedBy.Sum(a => a.Afflictive ?? 0) + this.Equipment.Sum(s => s.Value.SaveAfflictive ?? 0);
             }
 
             set
@@ -539,7 +544,7 @@ namespace Legendary.Core.Models
         {
             get
             {
-                return this.saveDeath + this.AffectedBy.Sum(a => a.Death ?? 0) + this.Equipment.Sum(s => s.SaveDeath ?? 0);
+                return this.saveDeath + this.AffectedBy.Sum(a => a.Death ?? 0) + this.Equipment.Sum(s => s.Value.SaveDeath ?? 0);
             }
 
             set

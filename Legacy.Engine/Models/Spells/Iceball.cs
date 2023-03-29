@@ -1,4 +1,4 @@
-﻿// <copyright file="Fireball.cs" company="Legendary™">
+﻿// <copyright file="Iceball.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -22,7 +22,7 @@ namespace Legendary.Engine.Models.Spells
     public class Iceball : Spell
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Fireball"/> class.
+        /// Initializes a new instance of the <see cref="Iceball"/> class.
         /// </summary>
         /// <param name="communicator">ICommunicator.</param>
         /// <param name="random">The random number generator.</param>

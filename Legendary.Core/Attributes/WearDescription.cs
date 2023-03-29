@@ -20,14 +20,28 @@ namespace Legendary.Core.Attributes
         /// Initializes a new instance of the <see cref="WearDescription"/> class.
         /// </summary>
         /// <param name="description">The description.</param>
-        public WearDescription(string description)
+        /// <param name="wearAction">The action.</param>
+        /// <param name="removeAction">The remove action.</param>
+        public WearDescription(string description, string wearAction, string removeAction)
         {
             this.Description = description;
+            this.WearAction = wearAction;
+            this.RemoveAction = removeAction;
         }
 
         /// <summary>
         /// Gets or sets the wear description.
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the wear action.
+        /// </summary>
+        public string WearAction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the remove action.
+        /// </summary>
+        public string RemoveAction { get; set; }
     }
 }

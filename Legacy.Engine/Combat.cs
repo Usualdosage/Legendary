@@ -329,11 +329,11 @@ namespace Legendary.Engine
         /// <returns>IAction.</returns>
         public IAction GetCombatAction(Character actor)
         {
-            var wielded = actor.Equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Wielded));
+            var wielded = actor.Equipment.FirstOrDefault(e => e.Key == WearLocation.Wielded);
 
-            if (wielded != null)
+            if (wielded.Value != null)
             {
-                switch (wielded.WeaponType)
+                switch (wielded.Value.WeaponType)
                 {
                     default:
                         {
@@ -1009,7 +1009,7 @@ namespace Legendary.Engine
 
                 // Remove all equipment, currency, and inventory.
                 actor.Inventory = new List<Item>();
-                actor.Equipment = new List<Item>();
+                actor.Equipment = new Dictionary<WearLocation, Item>();
                 actor.Currency = 0m;
 
                 // Send the character to their home.
@@ -1119,7 +1119,7 @@ namespace Legendary.Engine
                     }
 
                     // Must be wielding a weapon in order to parry.
-                    if (parry != null && parry.Proficiency > 1 && target.Equipment.Any(e => e.WearLocation.Contains(WearLocation.Wielded)))
+                    if (parry != null && parry.Proficiency > 1 && target.Equipment.Any(e => e.Key == WearLocation.Wielded))
                     {
                         var parried = false;
                         var parryResult = this.random.Next(1, 101);
@@ -1202,7 +1202,7 @@ namespace Legendary.Engine
             switch (action.DamageType)
             {
                 default:
-                    var targetMagicPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Magic);
+                    var targetMagicPct = target.Equipment.Where(e => e.Value.ItemType == ItemType.Armor).Sum(s => s.Value.Magic);
                     targetMagicPct += target.AffectedBy.Sum(a => a.Magic ?? 0);
                     if (armorSavePct < targetMagicPct)
                     {
@@ -1211,7 +1211,7 @@ namespace Legendary.Engine
 
                     break;
                 case DamageType.Pierce:
-                    var targetPiercePct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Pierce);
+                    var targetPiercePct = target.Equipment.Where(e => e.Value.ItemType == ItemType.Armor).Sum(s => s.Value.Pierce);
                     targetPiercePct += target.AffectedBy.Sum(a => a.Pierce ?? 0);
                     if (armorSavePct < targetPiercePct)
                     {
@@ -1220,7 +1220,7 @@ namespace Legendary.Engine
 
                     break;
                 case DamageType.Slash:
-                    var targetSlashPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Edged);
+                    var targetSlashPct = target.Equipment.Where(e => e.Value.ItemType == ItemType.Armor).Sum(s => s.Value.Edged);
                     targetSlashPct += target.AffectedBy.Sum(a => a.Slash ?? 0);
                     if (armorSavePct < targetSlashPct)
                     {
@@ -1229,7 +1229,7 @@ namespace Legendary.Engine
 
                     break;
                 case DamageType.Blunt:
-                    var targetBluntPct = target.Equipment.Where(e => e.ItemType == ItemType.Armor).Sum(s => s.Blunt);
+                    var targetBluntPct = target.Equipment.Where(e => e.Value.ItemType == ItemType.Armor).Sum(s => s.Value.Blunt);
                     targetBluntPct += target.AffectedBy.Sum(a => a.Blunt ?? 0);
                     if (armorSavePct < targetBluntPct)
                     {
@@ -1244,27 +1244,27 @@ namespace Legendary.Engine
                 try
                 {
                     // Get the random piece of player's armor that performed the block.
-                    var allArmor = target.Equipment.Where(e => e.ItemType == ItemType.Armor && e.Durability.Current > 0).ToList();
+                    var allArmor = target.Equipment.Where(e => e.Value.ItemType == ItemType.Armor && e.Value.Durability.Current > 0).ToList();
 
                     if (allArmor.Count > 0)
                     {
                         var armorIndex = this.random.Next(0, allArmor.Count);
                         var randomGear = allArmor[armorIndex];
 
-                        if (randomGear != null)
+                        if (randomGear.Value != null)
                         {
                             await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} blocks your attack with their armor!", cancellationToken);
-                            await this.communicator.SendToPlayer(target, $"You absorb {actor.FirstName}'s attack with {randomGear.Name}!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You absorb {actor.FirstName}'s attack with {randomGear.Value.Name}!", cancellationToken);
 
-                            randomGear.Durability.Current -= 1;
+                            randomGear.Value.Durability.Current -= 1;
 
-                            if (randomGear.Durability.Current <= 0)
+                            if (randomGear.Value.Durability.Current <= 0)
                             {
                                 // It's destroyed.
-                                await this.communicator.SendToPlayer(actor, $"You destroy {randomGear.Name}!", cancellationToken);
-                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Name}!", cancellationToken);
+                                await this.communicator.SendToPlayer(actor, $"You destroy {randomGear.Value.Name}!", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Value.Name}!", cancellationToken);
 
-                                target.Equipment.Remove(randomGear);
+                                target.Equipment.Remove(randomGear.Key);
                             }
                         }
                     }
@@ -1567,7 +1567,7 @@ namespace Legendary.Engine
                 // Add any equipment.
                 foreach (var eq in victim.Equipment)
                 {
-                    corpse.Contains.Add(eq.Clone());
+                    corpse.Contains.Add(eq.Value.Clone());
                 }
 
                 // Add any inventory.

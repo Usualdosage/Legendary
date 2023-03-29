@@ -57,7 +57,8 @@ namespace Legendary.Engine.Helpers
                     }
                     else
                     {
-                        var light = actor.Equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Light));
+                        var light = actor.Equipment.FirstOrDefault(e => e.Key == WearLocation.Light).Value;
+
                         if (light == null)
                         {
                             // See if there is a light in the room
@@ -141,7 +142,8 @@ namespace Legendary.Engine.Helpers
                         }
                         else
                         {
-                            var light = actor.Equipment.FirstOrDefault(e => e.WearLocation.Contains(WearLocation.Light));
+                            var light = actor.Equipment.FirstOrDefault(e => e.Key == WearLocation.Light).Value;
+
                             if (light == null)
                             {
                                 // See if there is a light in the room

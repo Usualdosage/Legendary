@@ -1147,7 +1147,7 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Displays the current equipment worn by your player. See also: HELP INVENTORY, HELP WEAR.</p><ul><li>equipment</li></ul>")]
         private async Task DoEquipment(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            var equipment = this.actionHelper.GetEquipment(actor.Character);
+            var equipment = ActionHelper.GetEquipment(actor.Character);
             await this.communicator.SendToPlayer(actor.Connection, equipment, cancellationToken);
         }
 
@@ -1922,43 +1922,46 @@ namespace Legendary.Engine.Processors
 
                 if (itemName == "all")
                 {
-                    List<Item> itemsToRemove = new List<Item>();
+                    Dictionary<WearLocation, Item> itemsToRemove = new Dictionary<WearLocation, Item>();
 
                     foreach (var target in actor.Character.Equipment)
                     {
                         // Un-equip each item and put back in inventory.
-                        if (!target.ItemFlags.Contains(ItemFlags.Cursed))
+                        if (!target.Value.ItemFlags.Contains(ItemFlags.Cursed))
                         {
-                            itemsToRemove.Add(target);
-                            actor.Character.Inventory.Add(target);
-                            await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                            itemsToRemove.Add(target.Key, target.Value);
+                            actor.Character.Inventory.Add(target.Value);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Value.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Value.Name}.", cancellationToken);
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {target.Name}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {target.Value.Name}.", cancellationToken);
                         }
                     }
 
-                    actor.Character.Equipment.RemoveAll(i => itemsToRemove.Contains(i));
+                    foreach (var key in itemsToRemove.Keys)
+                    {
+                        actor.Character.Equipment.Remove(key);
+                    }
                 }
                 else
                 {
-                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Name.Contains(itemName));
+                    var target = actor.Character.Equipment.FirstOrDefault(i => i.Value.Name.ToLower().Contains(itemName.ToLower()));
 
-                    if (target != null)
+                    if (target.Value != null)
                     {
                         // Un-equip the item and put back in inventory.
-                        if (!target.ItemFlags.Contains(ItemFlags.Cursed))
+                        if (!target.Value.ItemFlags.Contains(ItemFlags.Cursed))
                         {
-                            actor.Character.Inventory.Add(target);
-                            actor.Character.Equipment.Remove(target);
-                            await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Name}.", cancellationToken);
+                            actor.Character.Inventory.Add(target.Value);
+                            actor.Character.Equipment.Remove(target.Key);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You remove {target.Value.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} removes {target.Value.Name}.", cancellationToken);
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {target.Name}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {target.Value.Name}.", cancellationToken);
                         }
                     }
                     else
@@ -2786,23 +2789,13 @@ namespace Legendary.Engine.Processors
 
                 if (itemName == "all")
                 {
-                    // Get everything in the player's inventory that can be worn without replacing stuff that is already worn.
-                    var wornLocations = actor.Character.Equipment.Select(w => w.WearLocation).ToList();
-                    var inventoryCanWear = actor.Character.Inventory.Where(i => !wornLocations.Contains(i.WearLocation)).ToList();
-
-                    if (inventoryCanWear.Count > 0)
+                    var itemsToEquip = actor.Character.Inventory.Where(i => i.ItemType != ItemType.Weapon).ToList();
+                    foreach (var item in itemsToEquip)
                     {
-                        foreach (var item in inventoryCanWear)
+                        if (item.ItemType != ItemType.Weapon)
                         {
-                            if (item.ItemType != ItemType.Weapon)
-                            {
-                                await this.EquipItem(actor, "wear", item, false, cancellationToken);
-                            }
+                            await this.EquipItem(actor, "wear", item, false, cancellationToken);
                         }
-                    }
-                    else
-                    {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You're wearing everything you can wear.", cancellationToken);
                     }
 
                     await this.communicator.SaveCharacter(actor);
@@ -2819,11 +2812,7 @@ namespace Legendary.Engine.Processors
                         }
                         else
                         {
-                            foreach (var wearLocation in target.WearLocation)
-                            {
-                                await this.EquipItem(actor, "wear", target, true, cancellationToken);
-                            }
-
+                            await this.EquipItem(actor, "wear", target, true, cancellationToken);
                             await this.communicator.SaveCharacter(actor);
                         }
                     }
@@ -2964,41 +2953,66 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         private async Task EquipItem(UserData actor, string verb, Item item, bool removeIfEquipped, CancellationToken cancellationToken)
         {
-            // See if they are already wearing something there.
-            var targetWearLocation = item.WearLocation.FirstOrDefault(w => w != WearLocation.None);
-
-            var equipped = actor.Character.Equipment.FirstOrDefault(i => i.WearLocation.Contains(targetWearLocation));
-
-            // Equip the item, there's not anything currently there.
-            if (equipped == null && !item.WearLocation.Contains(WearLocation.InventoryOnly))
+            if (item.WearLocation.Contains(WearLocation.InventoryOnly) || item.WearLocation.Contains(WearLocation.None))
             {
-                actor.Character.Equipment.Add(item);
-                actor.Character.Inventory.Remove(item);
-                await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
-                await this.communicator.SendToRoom(actor.Character, actor.Character.Location,  $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"You can't {verb} {item.Name}.", cancellationToken);
+                return;
             }
-            else if (equipped != null)
+
+            // Get the locations that are already occupied by this item.
+            var usedLocations = actor.Character.Equipment.Where(e => item.WearLocation.Contains(e.Key)).ToList();
+
+            // East, no used locations, so this can drop into the first one.
+            if (usedLocations.Count == 0)
             {
+                var wearDescription = item.WearLocation.First().ToWearDescription();
+
+                actor.Character.Inventory.Remove(item);
+                actor.Character.Equipment.Add(item.WearLocation.First(), item);
+
+                await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name} {wearDescription?.WearAction}.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+            }
+            else if (usedLocations.Count > 0 && usedLocations.Count < item.WearLocation.Count)
+            {
+                // This means there is at least one empty location we can put this item, so get the first one. Should never be an empty sequence.
+                var newLocation = item.WearLocation.First(w => !actor.Character.Equipment.ContainsKey(w));
+
+                var wearDescription = newLocation.ToWearDescription();
+
+                actor.Character.Inventory.Remove(item);
+                actor.Character.Equipment.Add(newLocation, item);
+
+                await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name} {wearDescription?.WearAction}.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+            }
+            else
+            {
+                // All locations are used, so we need to remove one thing before we wear this.
                 if (removeIfEquipped)
                 {
-                    if (!item.WearLocation.Contains(WearLocation.InventoryOnly))
+                    if (item.ItemFlags.Contains(ItemFlags.Cursed))
                     {
-                        // Replace the item, removing the old and putting it back into the inventory.
-                        await this.communicator.SendToPlayer(actor.Connection, $"You stop {verb}ing {equipped.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} stops {verb}ing {equipped.Name}.", cancellationToken);
-
-                        actor.Character.Equipment.Remove(equipped);
-                        actor.Character.Inventory.Add(equipped);
-
-                        // Add to the equipment.
-                        actor.Character.Equipment.Add(item);
-                        actor.Character.Inventory.Remove(item);
-                        await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location,  $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+                        await this.communicator.SendToPlayer(actor.Connection, $"You can't remove {item.Name}!", cancellationToken);
                     }
                     else
                     {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You can't wield {item.Name}.", cancellationToken);
+                        var firstUsedLocation = usedLocations.First();
+
+                        var wearDescription = firstUsedLocation.Key.ToWearDescription();
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"You remove {firstUsedLocation.Value.Name} {wearDescription?.RemoveAction}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} stops using {firstUsedLocation.Value.Name}.", cancellationToken);
+
+                        actor.Character.Equipment.Remove(firstUsedLocation.Key);
+                        actor.Character.Inventory.Add(firstUsedLocation.Value);
+
+                        // Add to the equipment.
+                        actor.Character.Equipment.Add(firstUsedLocation.Key, item);
+                        actor.Character.Inventory.Remove(item);
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name} {wearDescription?.WearAction}.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
                     }
                 }
             }
@@ -3769,14 +3783,14 @@ namespace Legendary.Engine.Processors
 
         private string ShowStatistics(Character actor)
         {
-            List<Item> equipment = actor.Equipment;
+            Dictionary<WearLocation, Item> equipment = actor.Equipment;
             List<Effect> effects = actor.AffectedBy;
             var currencyTuple = actor.Currency.GetCurrency();
 
-            int pierceTotal = equipment.Sum(a => a?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
-            int slashTotal = equipment.Sum(a => a?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
-            int bluntTotal = equipment.Sum(a => a?.Blunt ?? 0) + effects.Sum(a => a?.Blunt ?? 0);
-            int magicTotal = equipment.Sum(a => a?.Magic ?? 0) + effects.Sum(a => a?.Magic ?? 0);
+            int pierceTotal = equipment.Sum(a => a.Value?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
+            int slashTotal = equipment.Sum(a => a.Value?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
+            int bluntTotal = equipment.Sum(a => a.Value?.Blunt ?? 0) + effects.Sum(a => a?.Blunt ?? 0);
+            int magicTotal = equipment.Sum(a => a.Value?.Magic ?? 0) + effects.Sum(a => a?.Magic ?? 0);
 
             var message = new ScoreMessage()
             {

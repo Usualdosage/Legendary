@@ -217,9 +217,9 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        if (merchant.Equipment != null && merchant.Equipment.Count > 0)
+                        if (merchant.Inventory != null && merchant.Inventory.Count > 0)
                         {
-                            var item = merchant.Equipment.ParseTargetName(args.Method);
+                            var item = merchant.Inventory.ParseTargetName(args.Method);
 
                             if (item != null)
                             {
@@ -615,11 +615,11 @@ namespace Legendary.Engine.Processors
                 {
                     StringBuilder sb = new StringBuilder();
 
-                    if (merchant.Equipment != null && merchant.Equipment.Count > 0)
+                    if (merchant.Inventory != null && merchant.Inventory.Count > 0)
                     {
                         sb.Append($"{merchant.FirstName.FirstCharToUpper()} offers the following items for sale:<br/><ul>");
 
-                        var equipment = merchant.Equipment.GroupBy(g => g.ItemId);
+                        var equipment = merchant.Inventory.GroupBy(g => g.ItemId);
 
                         foreach (var group in equipment)
                         {
@@ -789,7 +789,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                var head = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Head));
+                var head = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Head)).Value;
 
                 List<Item> itemsToEquip = new List<Item>();
 
@@ -798,42 +798,42 @@ namespace Legendary.Engine.Processors
                     itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Head));
                 }
 
-                var torso = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Torso));
+                var torso = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Torso)).Value;
 
                 if (torso == null)
                 {
                     itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Torso));
                 }
 
-                var feet = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Feet));
+                var feet = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Feet)).Value;
 
                 if (feet == null)
                 {
                     itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Feet));
                 }
 
-                var arms = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Arms));
+                var arms = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Arms)).Value;
 
                 if (torso == null)
                 {
                     itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Arms));
                 }
 
-                var hands = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Hands));
+                var hands = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Hands)).Value;
 
                 if (hands == null)
                 {
                     itemsToEquip.Add(ItemHelper.CreatePracticeGear(this.random, WearLocation.Hands));
                 }
 
-                var weapon = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Wielded));
+                var weapon = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Wielded)).Value;
 
                 if (weapon == null)
                 {
                     itemsToEquip.Add(ItemHelper.CreatePracticeWeapon(this.random));
                 }
 
-                var light = actor.Character.Equipment.FirstOrDefault(f => f.WearLocation.Contains(WearLocation.Light));
+                var light = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Light)).Value;
 
                 if (light == null)
                 {
@@ -1240,9 +1240,9 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    List<Item> items = actor.Character.Equipment;
+                    Dictionary<WearLocation, Item> items = actor.Character.Equipment;
 
-                    var hasDamagedItems = actor.Character.Equipment.Any(i => i.Durability.Current < i.Durability.Max);
+                    var hasDamagedItems = actor.Character.Equipment.Any(i => i.Value?.Durability.Current < i.Value?.Durability.Max);
 
                     if (hasDamagedItems)
                     {
@@ -1255,11 +1255,15 @@ namespace Legendary.Engine.Processors
                             // List all damaged items, and the price of repair
                             foreach (var item in items)
                             {
-                                if (item.Durability.Current < item.Durability.Max)
+                                if (item.Value?.Durability.Current < item.Value?.Durability.Max)
                                 {
-                                    var cost = .2m * (item.Level % 5);
-                                    total += cost;
-                                    sb.Append($"<li><span class='repair-item'>{item.Name}</span> ${cost} gold</li>");
+                                    var cost = .2m * (item.Value?.Level % 5);
+
+                                    if (cost != null)
+                                    {
+                                        total += cost.Value;
+                                        sb.Append($"<li><span class='repair-item'>{item.Value?.Name}</span> ${cost} gold</li>");
+                                    }
                                 }
                             }
 
@@ -1278,15 +1282,18 @@ namespace Legendary.Engine.Processors
                                 // Repair all
                                 foreach (var item in items)
                                 {
-                                    var cost = .2m * (item.Level % 5);
-                                    total += cost;
+                                    var cost = .2m * (item.Value?.Level % 5);
+                                    if (cost != null)
+                                    {
+                                        total += cost.Value;
+                                    }
                                 }
 
                                 if (actor.Character.Currency >= total)
                                 {
                                     foreach (var item in items)
                                     {
-                                        item.Durability = new MaxCurrent(item.Durability.Max, item.Durability.Max);
+                                        item.Value.Durability = new MaxCurrent(item.Value.Durability.Max, item.Value.Durability.Max);
                                     }
 
                                     actor.Character.Currency -= total;
@@ -1455,7 +1462,7 @@ namespace Legendary.Engine.Processors
                                         await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} sells {item.Name} to {merchant.FirstName.FirstCharToUpper()}.", cancellationToken);
                                         actor.Character.Currency += price;
                                         var newItem = item.DeepCopy();
-                                        merchant.Equipment.Add(newItem);
+                                        merchant.Inventory.Add(newItem);
                                         merchant.Currency -= price;
                                         actor.Character.Inventory.Remove(item);
                                         actor.Character.CarryWeight.Current -= (double)item.Weight;

@@ -36,6 +36,7 @@ namespace Legendary.Engine
         private readonly IDataService dataService;
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
+        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
@@ -94,6 +95,15 @@ namespace Legendary.Engine
                 var itemId = resetGroup.Key;
                 var maxItems = resetGroup.Count();
                 var currentItems = area.Rooms.Sum(r => r.Items?.Where(i => i.ItemId == itemId).Count());
+                var mobsInArea = this.communicator.GetMobilesInArea(area.AreaId);
+
+                // Scavenging mobs will pickup items. We don't want an eternal repop, so include those in the counts.
+                if (mobsInArea != null)
+                {
+                    var mobInventoryItems = mobsInArea.Sum(m => m.Inventory.Where(i => i.ItemId == itemId).Count());
+                    var mobEquipmentItems = mobsInArea.Sum(m => m.Equipment.Where(e => e.Value.ItemId == itemId).Count());
+                    currentItems = currentItems + mobInventoryItems + mobEquipmentItems;
+                }
 
                 if (maxItems == currentItems)
                 {
@@ -156,7 +166,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public void RepopulateMobiles(Area area)
+        public async void RepopulateMobiles(Area area)
         {
             var resets = area.Rooms.SelectMany(r => r.MobileResets);
 
@@ -206,7 +216,8 @@ namespace Legendary.Engine
                                 if (item != null)
                                 {
                                     var itemClone = item.DeepCopy();
-                                    clone.Equipment.Add(itemClone);
+
+                                    await this.EquipMob(clone, itemClone);
                                 }
                             }
 
@@ -244,7 +255,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public void Populate()
+        public async void Populate()
         {
             foreach (var area in this.Areas)
             {
@@ -302,7 +313,7 @@ namespace Legendary.Engine
                                 if (item != null)
                                 {
                                     var itemClone = item.DeepCopy();
-                                    clone.Equipment.Add(itemClone);
+                                    await this.EquipMob(clone, itemClone);
                                 }
                             }
 
@@ -617,10 +628,51 @@ namespace Legendary.Engine
                 cancellationToken);
         }
 
+        /// <summary>
+        /// Equips an item to a mob, as long as the mob isn't already wearing an item there.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="item">The item.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task EquipMob(Mobile mobile, Item item, CancellationToken cancellationToken = default)
+        {
+            // Get the first open wear location in a character's equipment that matches a wear location of the item.
+            var openSlot = mobile.Equipment.FirstOrDefault(e => item.WearLocation.Contains(e.Key));
+
+            if (openSlot.Value == null && !item.WearLocation.Contains(WearLocation.InventoryOnly) && !item.WearLocation.Contains(WearLocation.None))
+            {
+                if (item.WearLocation.Count > 0)
+                {
+                    mobile.Equipment.Add(item.WearLocation.First(), item);
+
+                    if (item.ItemType == ItemType.Weapon)
+                    {
+                        await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wields {item.Name}.", cancellationToken);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wears {item.Name}.", cancellationToken);
+                    }
+
+                    this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and is wearing it now.", this.communicator);
+                }
+            }
+            else
+            {
+                await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {item.Name}.", cancellationToken);
+
+                this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and added it to their inventory.", this.communicator);
+
+                // Just add to inventory.
+                mobile.Inventory.Add(item);
+            }
+        }
+
         private void ApplyMobileSkills(Mobile mobile)
         {
             // Apply skills to mobs based on their equipment.
-            var wielded = mobile.Equipment.FirstOrDefault(c => c.WearLocation.Contains(WearLocation.Wielded));
+            var wielded = mobile.Equipment.FirstOrDefault(c => c.Key == WearLocation.Wielded).Value;
 
             var proficiency = Math.Min(95, 50 + mobile.Level);
 
@@ -733,8 +785,9 @@ namespace Legendary.Engine
         {
             List<Mobile> removeMobiles = new List<Mobile>();
 
-            // This may not be the best option, but the mobs in the room need to be locked from other processes whil enumerating. Maybe check out SemaphoreSlim() at some point.
-            lock (room.Mobiles)
+            await this.semaphore.WaitAsync(cancellationToken);
+
+            try
             {
                 // Process effects on mobiles, and (maybe) move them if they are wandering.
                 foreach (var mobile in room.Mobiles)
@@ -800,7 +853,7 @@ namespace Legendary.Engine
 
                                                 if (exit.IsDoor && exit.IsClosed && !exit.IsLocked)
                                                 {
-                                                    this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
+                                                    await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} opens the {dir} {exit.DoorName ?? "door"}.", cancellationToken);
                                                     exit.IsClosed = false;
                                                     continue;
                                                 }
@@ -808,7 +861,7 @@ namespace Legendary.Engine
                                                 {
                                                     try
                                                     {
-                                                        this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
+                                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} leaves {dir}.", cancellationToken);
 
                                                         // Remove the mobile from the prior location.
                                                         var lastRoom = this.communicator.ResolveRoom(mobile.Location);
@@ -835,7 +888,7 @@ namespace Legendary.Engine
 
                                                             if (!mobileCopy.IsAffectedBy(nameof(Sneak)))
                                                             {
-                                                                this.communicator.SendToRoom(mobileCopy.Location, $"{mobileCopy.FirstName.FirstCharToUpper()} enters.", cancellationToken);
+                                                                await this.communicator.SendToRoom(mobileCopy.Location, $"{mobileCopy.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                                                             }
                                                         }
                                                     }
@@ -867,6 +920,10 @@ namespace Legendary.Engine
                     this.logger.Error("An error occurred while processing mobile wander. Cleanup failed.", exc, this.communicator);
                 }
             }
+            finally
+            {
+                this.semaphore.Release();
+            }
         }
 
         private async Task DoMobileScavenge(Room room, CancellationToken cancellationToken)
@@ -895,37 +952,18 @@ namespace Legendary.Engine
                                         var random = this.random.Next(0, items.Count - 1);
                                         var itemToGet = items[random];
 
-                                        var clonedItem = itemToGet.DeepCopy();
-
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {clonedItem.Name}.", cancellationToken);
-
-                                        var targetWearLocation = clonedItem.WearLocation.FirstOrDefault(w => w != WearLocation.None);
-
-                                        var equipped = mobile.Equipment.FirstOrDefault(i => i.WearLocation.Contains(targetWearLocation));
-
-                                        // If they don't have anything equipped there, equip it.
-                                        if (equipped == null && !clonedItem.WearLocation.Contains(WearLocation.InventoryOnly))
+                                        if (itemToGet.WearLocation.Contains(WearLocation.None))
                                         {
-                                            this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {clonedItem.ShortDescription} and is wearing it now.", this.communicator);
-                                            var verb = clonedItem.ItemType == ItemType.Weapon ? "wields" : "wears";
-                                            mobile.Equipment.Add(clonedItem);
-                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} {verb} {clonedItem.Name}.", cancellationToken);
+                                            continue;
                                         }
                                         else
                                         {
-                                            var containsItem = mobile.Inventory.Any(i => i.ItemId == clonedItem.ItemId);
+                                            var clonedItem = itemToGet.DeepCopy();
 
-                                            // Only add it if they don't already have one, otherwise they will collect thousands of things.
-                                            if (!containsItem)
-                                            {
-                                                this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {clonedItem.ShortDescription} and added it to their inventory.", this.communicator);
+                                            await this.EquipMob(mobile, clonedItem, cancellationToken);
 
-                                                // Just add to inventory.
-                                                mobile.Inventory.Add(clonedItem);
-                                            }
+                                            itemsToRemove.Add(itemToGet);
                                         }
-
-                                        itemsToRemove.Add(itemToGet);
                                     }
                                     catch (Exception exc)
                                     {

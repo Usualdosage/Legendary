@@ -15,6 +15,7 @@ namespace Legendary.Engine.Extensions
     using System.Text.RegularExpressions;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
 
     /// <summary>
     /// Extensions for strings.
@@ -159,6 +160,17 @@ namespace Legendary.Engine.Extensions
             {
                 return matchResult.Value;
             }
+        }
+
+        /// <summary>
+        /// Get the most likely name from a list of targets for a given input.
+        /// </summary>
+        /// <param name="targets">The list of targets.</param>
+        /// <param name="input">The string to match.</param>
+        /// <returns>Mobile.</returns>
+        public static Item? ParseTargetName(this Dictionary<WearLocation, Item> targets, string? input)
+        {
+            return ParseTargetName(targets.Values.ToList(), input);
         }
 
         /// <summary>

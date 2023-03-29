@@ -10,12 +10,53 @@
 namespace Legendary.Engine.Extensions
 {
     using System;
+    using System.Linq;
+    using System.Reflection;
+    using Legendary.Core.Attributes;
+    using Legendary.Core.Types;
 
     /// <summary>
     ///  Extension methods for enums.
     /// </summary>
     public static class EnumExtensions
     {
+        /// <summary>
+        /// Gets a WearDescription for a given wear location.
+        /// </summary>
+        /// <param name="wearLocation">The wear location.</param>
+        /// <returns>WearDescription.</returns>
+        public static WearDescription? ToWearDescription(this WearLocation wearLocation)
+        {
+            try
+            {
+                var enumType = typeof(WearLocation);
+                var memberInfos = enumType.GetMember(wearLocation.ToString());
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
+
+                if (valueAttributes != null && valueAttributes.Length > 0)
+                {
+                    var descAttribute = valueAttributes[0] as WearDescription;
+                    if (descAttribute != null)
+                    {
+                        return descAttribute;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Gets a random enumeration value.
         /// </summary>

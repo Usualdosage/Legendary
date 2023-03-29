@@ -48,7 +48,7 @@ namespace Legendary.Engine.Models.Spells
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
-            var holySymbol = actor.Equipment.FirstOrDefault(e => e.ItemFlags.Contains(Core.Types.ItemFlags.Holy));
+            var holySymbol = actor.Equipment.FirstOrDefault(e => e.Value.ItemFlags.Contains(Core.Types.ItemFlags.Holy)).Value;
 
             if (holySymbol == null)
             {

@@ -2121,11 +2121,11 @@ namespace Legendary.Engine
             // Worn items.
             if (target.IsNPC)
             {
-                sb.Append(this.actionHelper.GetOnlyEquipment(target));
+                sb.Append(ActionHelper.GetOnlyEquipment(target));
             }
             else
             {
-                sb.Append(this.actionHelper.GetEquipment(target));
+                sb.Append(ActionHelper.GetEquipment(target));
             }
 
             return sb.ToString();

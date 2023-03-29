@@ -64,14 +64,14 @@ namespace Legendary.Engine.Models.Skills
 
                 if (character != null)
                 {
-                    var actorWeapon = actor.Equipment.FirstOrDefault(w => w.WearLocation.Contains(Core.Types.WearLocation.Wielded));
-                    var targetWeapon = character.Equipment.FirstOrDefault(w => w.WearLocation.Contains(Core.Types.WearLocation.Wielded));
+                    var actorWeapon = actor.Equipment.FirstOrDefault(w => w.Key == Core.Types.WearLocation.Wielded);
+                    var targetWeapon = character.Equipment.FirstOrDefault(w => w.Key == Core.Types.WearLocation.Wielded);
 
-                    if (targetWeapon == null)
+                    if (targetWeapon.Value == null)
                     {
                         await this.Communicator.SendToPlayer(actor, $"{character.FirstName} is not wielding a weapon.", cancellationToken);
                     }
-                    else if (actorWeapon == null)
+                    else if (actorWeapon.Value == null)
                     {
                         await this.Communicator.SendToPlayer(actor, $"You are not wielding a weapon.", cancellationToken);
                     }
@@ -82,7 +82,7 @@ namespace Legendary.Engine.Models.Skills
                         // The chance to retain is the target's dex * 4.
                         var pctToRetain = character.Dex.Current * 4;
 
-                        switch (actorWeapon.WeaponType)
+                        switch (actorWeapon.Value.WeaponType)
                         {
                             default:
                             case Core.Types.WeaponType.Exotic:
@@ -110,18 +110,18 @@ namespace Legendary.Engine.Models.Skills
 
                         if (this.Random.Next(0, 100) > pctToRetain)
                         {
-                            if (!targetWeapon.ItemFlags.Contains(ItemFlags.Cursed))
+                            if (!targetWeapon.Value.ItemFlags.Contains(ItemFlags.Cursed))
                             {
                                 await this.Communicator.SendToPlayer(actor, $"You disarm {character.FirstName}!", cancellationToken);
                                 await this.Communicator.SendToPlayer(character, $"{actor.FirstName} disarms you!", cancellationToken);
                                 await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} disarms {character.FirstName}!", cancellationToken);
 
-                                character.Equipment.Remove(targetWeapon);
+                                character.Equipment.Remove(targetWeapon.Key);
                                 var room = this.Communicator.ResolveRoom(actor.Location);
 
                                 if (room != null)
                                 {
-                                    room.Items.Add(targetWeapon.DeepCopy());
+                                    room.Items.Add(targetWeapon.Value.DeepCopy());
                                 }
                             }
                             else

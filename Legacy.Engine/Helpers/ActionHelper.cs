@@ -85,6 +85,82 @@ namespace Legendary.Engine.Helpers
         }
 
         /// <summary>
+        /// Gets the description of the wear location.
+        /// </summary>
+        /// <param name="wearLocation">The wear location.</param>
+        /// <returns>String.</returns>
+        public static string GetWearLocationWearAction(string wearLocation)
+        {
+            try
+            {
+                var enumType = typeof(WearLocation);
+                var memberInfos =
+                enumType.GetMember(wearLocation);
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
+
+                if (valueAttributes != null && valueAttributes.Count() > 0)
+                {
+                    var descAttribute = valueAttributes[0] as WearDescription;
+                    if (descAttribute != null)
+                    {
+                        return descAttribute.WearAction;
+                    }
+                    else
+                    {
+                        return WearLocation.None.ToString();
+                    }
+                }
+                else
+                {
+                    return WearLocation.None.ToString();
+                }
+            }
+            catch
+            {
+                return WearLocation.None.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Gets the description of the wear location.
+        /// </summary>
+        /// <param name="wearLocation">The wear location.</param>
+        /// <returns>String.</returns>
+        public static string GetWearLocationRemoveAction(string wearLocation)
+        {
+            try
+            {
+                var enumType = typeof(WearLocation);
+                var memberInfos =
+                enumType.GetMember(wearLocation);
+                var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType);
+                var valueAttributes = enumValueMemberInfo?.GetCustomAttributes(typeof(WearDescription), false);
+
+                if (valueAttributes != null && valueAttributes.Count() > 0)
+                {
+                    var descAttribute = valueAttributes[0] as WearDescription;
+                    if (descAttribute != null)
+                    {
+                        return descAttribute.RemoveAction;
+                    }
+                    else
+                    {
+                        return WearLocation.None.ToString();
+                    }
+                }
+                else
+                {
+                    return WearLocation.None.ToString();
+                }
+            }
+            catch
+            {
+                return WearLocation.None.ToString();
+            }
+        }
+
+        /// <summary>
         /// Gets the description of the liquid.
         /// </summary>
         /// <param name="liquidType">The liquid type.</param>
@@ -191,7 +267,7 @@ namespace Legendary.Engine.Helpers
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <returns>String.</returns>
-        public string GetEquipment(Character actor)
+        public static string GetEquipment(Character actor)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -210,7 +286,7 @@ namespace Legendary.Engine.Helpers
                 }
 
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                var item = actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location));
+                var item = actor.Equipment.FirstOrDefault(a => a.Key == location).Value;
 
                 sb.Append("<tr>");
                 sb.Append($"<td class='wear-table-location'>{description}</td><td class='wear-table-item'>{DecorateItem(item, null) ?? "nothing."}");
@@ -233,7 +309,7 @@ namespace Legendary.Engine.Helpers
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <returns>String.</returns>
-        public string GetOnlyEquipment(Character actor)
+        public static string GetOnlyEquipment(Character actor)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -252,7 +328,7 @@ namespace Legendary.Engine.Helpers
                 }
 
                 var location = Enum.Parse<WearLocation>(wearLocation);
-                var gear = DecorateItem(actor.Equipment.FirstOrDefault(a => a.WearLocation.Contains(location)), null);
+                var gear = DecorateItem(actor.Equipment.FirstOrDefault(a => a.Key == location).Value, null);
 
                 if (!string.IsNullOrWhiteSpace(gear))
                 {

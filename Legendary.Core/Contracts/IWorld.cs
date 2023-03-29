@@ -245,5 +245,14 @@ namespace Legendary.Core.Contracts
         /// <param name="area">The area.</param>
         /// <returns>Task.</returns>
         Task CleanupItems(Area area);
+
+        /// <summary>
+        /// Equips an item to a mob, as long as the mob isn't already wearing an item there.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="item">The item.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task EquipMob(Mobile mobile, Item item, CancellationToken cancellationToken = default);
     }
 }
