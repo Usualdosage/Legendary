@@ -19,6 +19,7 @@ namespace Legendary.Engine
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
@@ -38,6 +39,7 @@ namespace Legendary.Engine
         private readonly IEnvironment environment;
         private readonly ILogger logger;
         private readonly IWorld world;
+        private readonly IDataService dataService;
         private readonly AwardProcessor awardProcessor;
         private readonly ActionProcessor actionProcessor;
 
@@ -50,7 +52,8 @@ namespace Legendary.Engine
         /// <param name="random">The random number generator.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="messageProcessor">The message processor.</param>
-        public Combat(ICommunicator communicator, IWorld world, IEnvironment environment, IRandom random, ILogger logger, IMessageProcessor messageProcessor)
+        /// <param name="dataService">The data service.</param>
+        public Combat(ICommunicator communicator, IWorld world, IEnvironment environment, IRandom random, ILogger logger, IMessageProcessor messageProcessor, IDataService dataService)
         {
             this.random = random;
             this.communicator = communicator;
@@ -58,9 +61,10 @@ namespace Legendary.Engine
             this.logger = logger;
             this.world = world;
             this.messageProcessor = messageProcessor;
+            this.dataService = dataService;
 
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
-            this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this, messageProcessor);
+            this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this, messageProcessor, dataService);
         }
 
         /// <summary>

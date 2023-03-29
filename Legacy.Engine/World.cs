@@ -222,7 +222,7 @@ namespace Legendary.Engine
                             }
 
                             // Apply skills.
-                            this.ApplyMobileSkills(clone);
+                            ApplyMobileSkills(clone);
 
                             // Add the mobile to the room.
                             room.Mobiles?.Add(clone);
@@ -317,7 +317,7 @@ namespace Legendary.Engine
                                 }
                             }
 
-                            this.ApplyMobileSkills(clone);
+                            ApplyMobileSkills(clone);
 
                             room.Mobiles?.Add(clone);
                         }
@@ -669,7 +669,11 @@ namespace Legendary.Engine
             }
         }
 
-        private void ApplyMobileSkills(Mobile mobile)
+        /// <summary>
+        /// Adds all of the default skills to the mob.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        public static void ApplyMobileSkills(Mobile mobile)
         {
             // Apply skills to mobs based on their equipment.
             var wielded = mobile.Equipment.FirstOrDefault(c => c.Key == WearLocation.Wielded).Value;

@@ -23,6 +23,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Core.Extensions;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Data.Contracts;
     using Legendary.Engine.Attributes;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
@@ -47,6 +48,7 @@ namespace Legendary.Engine.Processors
         private readonly IWorld world;
         private readonly ILogger logger;
         private readonly IMessageProcessor messageProcessor;
+        private readonly IDataService dataService;
         private readonly ActionHelper actionHelper;
         private readonly AwardProcessor awardProcessor;
         private readonly IRandom random;
@@ -64,7 +66,8 @@ namespace Legendary.Engine.Processors
         /// <param name="random">The Random Number generator.</param>
         /// <param name="combat">The combat class.</param>
         /// <param name="messageProcessor">The message processor.</param>
-        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, Combat combat, IMessageProcessor messageProcessor)
+        /// <param name="dataService">The data service.</param>
+        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, Combat combat, IMessageProcessor messageProcessor, IDataService dataService)
         {
             this.communicator = communicator;
             this.world = world;
@@ -75,6 +78,7 @@ namespace Legendary.Engine.Processors
             this.combat = combat;
             this.actionHelper = new ActionHelper(this.communicator, random, world, logger, combat);
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
+            this.dataService = dataService;
 
             this.ConfigureActions();
             this.ConfigureWizActions();

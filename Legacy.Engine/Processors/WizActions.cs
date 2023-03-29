@@ -23,6 +23,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using MongoDB.Driver;
 
     /// <summary>
     /// Contains methods that are specific to wizard (immortal) actions.
@@ -36,6 +37,7 @@ namespace Legendary.Engine.Processors
         {
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
             this.wizActions.Add("grant", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGrant)));
+            this.wizActions.Add("load", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLoad)));
             this.wizActions.Add("peace", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPeace)));
             this.wizActions.Add("reload", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoReload)));
             this.wizActions.Add("repop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoRepop)));
@@ -149,6 +151,133 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     await this.communicator.SendToPlayer(actor.Connection, $"That person isn't here.", cancellationToken);
+                }
+            }
+        }
+
+        [MinimumLevel(95)]
+        private async Task DoLoad(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Load what (mobile, item)?", cancellationToken);
+            }
+            else
+            {
+                switch (args.Method.ToLower())
+                {
+                    default:
+                        await this.communicator.SendToPlayer(actor.Connection, $"Load what (mobile, item)?", cancellationToken);
+                        break;
+                    case "mobile":
+                        if (long.TryParse(args.Target, out long mobileId))
+                        {
+                            var mobiles = await this.dataService.Mobiles.FindAsync(m => m.CharacterId == mobileId, cancellationToken: cancellationToken);
+                            var mobile = await mobiles.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+                            if (mobile != null)
+                            {
+                                var room = this.communicator.ResolveRoom(actor.Character.Location);
+                                if (room != null)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You have created {mobile.FirstName} from the ether!", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} has created {mobile.FirstName} from the ether!", cancellationToken);
+
+                                    var clone = mobile.DeepCopy();
+                                    clone.Location = actor.Character.Location;
+
+                                    // Add items to mobs.
+                                    foreach (var itemReset in clone.EquipmentResets)
+                                    {
+                                        var items = await this.dataService.Items.FindAsync(i => i.ItemId == itemReset.ItemId, cancellationToken: cancellationToken);
+                                        var item = await items.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+                                        if (item != null)
+                                        {
+                                            var itemClone = item.DeepCopy();
+                                            await this.world.EquipMob(clone, itemClone, cancellationToken);
+                                        }
+                                    }
+
+                                    World.ApplyMobileSkills(clone);
+
+                                    room.Mobiles?.Add(clone);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "That creature doesn't seem to exist.", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            var mobile = this.communicator.ResolveMobile(args.Target, actor.Character);
+                            if (mobile != null)
+                            {
+                                var room = this.communicator.ResolveRoom(actor.Character.Location);
+                                if (room != null)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You have created {mobile.FirstName} from the ether!", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} has created {mobile.FirstName} from the ether!", cancellationToken);
+
+                                    var clone = mobile.DeepCopy();
+                                    clone.Location = actor.Character.Location;
+
+                                    // Add items to mobs.
+                                    foreach (var itemReset in clone.EquipmentResets)
+                                    {
+                                        var items = await this.dataService.Items.FindAsync(i => i.ItemId == itemReset.ItemId, cancellationToken: cancellationToken);
+                                        var item = await items.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+                                        if (item != null)
+                                        {
+                                            var itemClone = item.DeepCopy();
+                                            await this.world.EquipMob(clone, itemClone, cancellationToken);
+                                        }
+                                    }
+
+                                    World.ApplyMobileSkills(clone);
+
+                                    room.Mobiles?.Add(clone);
+                                }
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "That creature doesn't seem to exist.", cancellationToken);
+                            }
+                        }
+
+                        break;
+                    case "item":
+                        if (long.TryParse(args.Target, out long itemId))
+                        {
+                            var item = this.communicator.ResolveItem(itemId);
+                            if (item != null)
+                            {
+                                actor.Character.Inventory.Add(item.Clone());
+                                await this.communicator.SendToPlayer(actor.Connection, $"You create {item.Name} into your inventory!", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} has created {item.Name}!", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "That item doesn't seem to exist.", cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            var item = this.communicator.ResolveItem(actor, args.Target);
+                            if (item != null)
+                            {
+                                actor.Character.Inventory.Add(item.Clone());
+                                await this.communicator.SendToPlayer(actor.Connection, $"You create {item.Name} into your inventory!", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName} has created {item.Name}!", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor.Connection, "That item doesn't seem to exist.", cancellationToken);
+                            }
+                        }
+
+                        break;
                 }
             }
         }

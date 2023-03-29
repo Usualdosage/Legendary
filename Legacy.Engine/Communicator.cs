@@ -116,7 +116,7 @@ namespace Legendary.Engine
             this.messageProcessor = new MessageProcessor(this, this.world, this.dataService, this.logger);
 
             // Create the combat processor.
-            this.combat = new Combat(this, this.world, this.environment, this.random, this.logger, this.messageProcessor);
+            this.combat = new Combat(this, this.world, this.environment, this.random, this.logger, this.messageProcessor, this.dataService);
 
             // Create the language generator.
             this.LanguageGenerator = new LanguageGenerator(this.random);
@@ -136,7 +136,7 @@ namespace Legendary.Engine
             // Create instances of the action, skill, and spell processors.
             this.skillProcessor = new SkillProcessor(this, this.random, this.world, this.combat, this.logger);
             this.spellProcessor = new SpellProcessor(this, this.random, this.world, this.combat, this.logger);
-            this.actionProcessor = new ActionProcessor(this, this.environment, this.world, this.logger, this.random, this.combat, this.messageProcessor);
+            this.actionProcessor = new ActionProcessor(this, this.environment, this.world, this.logger, this.random, this.combat, this.messageProcessor, this.dataService);
         }
 
         /// <summary>
