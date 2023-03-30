@@ -1146,6 +1146,29 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public async Task<CommResult> SendToArea(Character actor, KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default)
+        {
+            var buffer = Encoding.UTF8.GetBytes(message);
+            var segment = new ArraySegment<byte>(buffer);
+
+            if (Users != null)
+            {
+                foreach (var user in Users)
+                {
+                    if (user.Value.Character.CharacterId != actor.CharacterId && user.Value.Character.Location.Key == location.Key)
+                    {
+                        if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
+                        {
+                            await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                        }
+                    }
+                }
+            }
+
+            return CommResult.Ok;
+        }
+
+        /// <inheritdoc/>
         public async Task<CommResult> SendToChannel(CommChannel? channel, string socketId, string message, CancellationToken cancellationToken = default)
         {
             var comm = this.Channels.FirstOrDefault(c => c.Name.ToLower() == channel?.Name.ToLower());
@@ -1538,21 +1561,23 @@ namespace Legendary.Engine
             {
                 foreach (var mobile in mobiles)
                 {
-                    var response = await this.LanguageProcessor.Process(character, mobile, message);
+                    var responses = await this.LanguageProcessor.Process(character, mobile, message, cancellationToken);
 
-                    if (!string.IsNullOrWhiteSpace(response))
+                    if (responses != null && responses.Length > 0)
                     {
-                        response = $"{mobile.FirstName.FirstCharToUpper()} says \"<span class='say'>{response}</span>\"";
-                        await this.SendToRoom(mobile.Location, response, cancellationToken);
+                        foreach (var response in responses)
+                        {
+                            await this.SendToRoom(mobile.Location, response, cancellationToken);
+                        }
                     }
                     else
                     {
                         // Mob did not want to communicate, so it may do an emote instead.
-                        response = this.LanguageProcessor.ProcessEmote(character, mobile, message);
+                        var emoteResponse = this.LanguageProcessor.ProcessEmote(character, mobile, message);
 
-                        if (!string.IsNullOrWhiteSpace(response))
+                        if (!string.IsNullOrWhiteSpace(emoteResponse))
                         {
-                            await this.SendToRoom(mobile.Location, response, cancellationToken);
+                            await this.SendToRoom(mobile.Location, emoteResponse, cancellationToken);
                         }
                     }
                 }

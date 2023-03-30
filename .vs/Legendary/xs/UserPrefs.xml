@@ -7,7 +7,7 @@
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3378" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3404" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="63" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="97" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="90" column="1" />
@@ -16,35 +16,35 @@
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/MailService.cs" relfile="Legacy.Engine/MailService.cs" line="71" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/MailService.cs" relfile="Legacy.Engine/MailService.cs" line="66" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/MailService.cs" relfile="Legacy.Engine/MailService.cs" line="57" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/World.cs" relfile="Legacy.Engine/World.cs" line="414" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/World.cs" relfile="Legacy.Engine/World.cs" line="501" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="412" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor2.cs" relfile="Legacy.Engine/Processors/ActionProcessor2.cs" line="1919" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/LanguageProcessor.cs" relfile="Legacy.Engine/Processors/LanguageProcessor.cs" line="533" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Program.cs" relfile="Legendary.Web/Program.cs" line="49" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor2.cs" relfile="Legacy.Engine/Processors/ActionProcessor2.cs" line="1926" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Tests/GlobalSuppressions.cs">
     <Files>
-      <File FileName="Legendary.Core/Contracts/IMessageProcessor.cs" />
-      <File FileName="Legendary.Web/Controllers/HomeController.cs" />
-      <File FileName="Legendary.Web/wwwroot/js/controls.js" />
-      <File FileName="Legendary.Web/wwwroot/js/client.js" />
-      <File FileName="Legendary.Web/wwwroot/js/create.js" />
-      <File FileName="Legendary.Core/Models/Mobile.cs" />
-      <File FileName="Legendary.Core/Models/Message.cs" />
-      <File FileName="Legendary.Web/Startup.cs" />
-      <File FileName="Legendary.Web/Program.cs" Line="46" Column="106" />
-      <File FileName="Legacy.Engine/Models/Emotes.cs" />
-      <File FileName="Legendary.Networking/Models/ServerSettings.cs" />
+      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="95" Column="14" />
+      <File FileName="Legendary.Tests/ProcessorTests/LanguageProcessorTests.cs" Line="42" Column="10" />
+      <File FileName="Legendary.Tests/Usings.cs" Line="8" Column="16" />
+      <File FileName="Legendary.Tests/GlobalSuppressions.cs" Line="8" Column="170" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Core" expanded="True">
+            <Node name="Legendary.Core">
               <Node name="Contracts" expanded="True" />
             </Node>
-            <Node name="Legendary.Web" selected="True" />
+            <Node name="Legendary.Engine">
+              <Node name="Output" expanded="True" />
+            </Node>
+            <Node name="Legendary.Networking" expanded="True" />
+            <Node name="Legendary.Tests" selected="True">
+              <Node name="Dependencies" expanded="True">
+                <Node name="ProjectDependencies" expanded="True" />
+              </Node>
+              <Node name="ProcessorTests" expanded="True" />
+            </Node>
           </Node>
         </State>
       </Pad>

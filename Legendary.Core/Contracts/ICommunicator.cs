@@ -319,6 +319,16 @@ namespace Legendary.Core.Contracts
         Task<CommResult> SendToArea(KeyValuePair<long, long> location, string socketId, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Sends a message to everyone in an area, EXCEPT the sender.
+        /// </summary>
+        /// <param name="actor">The sender.</param>
+        /// <param name="location">The location.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="cancellationToken">CancellationToken.</param>
+        /// <returns>Task with result.</returns>
+        Task<CommResult> SendToArea(Character actor, KeyValuePair<long, long> location, string message, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Sends a message to a channel.
         /// </summary>
         /// <param name="channel">The channel.</param>

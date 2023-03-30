@@ -48,57 +48,74 @@ namespace Legendary.Engine.Models.Skills
         /// <inheritdoc/>
         public override async Task Act(Character actor, Character? target, Item? itemTarget, CancellationToken cancellationToken)
         {
-            if (target == null)
+            var room = this.Communicator.ResolveRoom(actor.Location);
+
+            if (room != null)
             {
-                await this.Communicator.SendToPlayer(actor, "Kick dirt at whom?", cancellationToken);
-            }
-            else
-            {
-                if (target.Location.Value != actor.Location.Value)
+                var canDirtKick = room.Terrain != Core.Types.Terrain.Air && room.Terrain != Core.Types.Terrain.Ethereal && room.Terrain != Core.Types.Terrain.Shallows && room.Terrain != Core.Types.Terrain.Water && room.Terrain != Core.Types.Terrain.Swamp;
+
+                if (!canDirtKick)
                 {
-                    await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
+                    await this.Communicator.SendToPlayer(actor, "There's no dirt here to kick.", cancellationToken);
+                    return;
+                }
+
+                if (target == null)
+                {
+                    await this.Communicator.SendToPlayer(actor, "Kick dirt at whom?", cancellationToken);
                 }
                 else
                 {
-                    if (target.IsAffectedBy(this) || target.IsAffectedBy(EffectName.BLINDNESS))
+                    if (target.Location.Value != actor.Location.Value)
                     {
-                        await this.Communicator.SendToPlayer(actor, $"{target.FirstName} is already blinded.", cancellationToken);
-                        return;
-                    }
-
-                    if (this.Combat.DidSave(target, this))
-                    {
-                        if (target != null)
-                        {
-                            await base.Act(actor, target, itemTarget, cancellationToken);
-
-                            await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} avoids your kicked dirt.", cancellationToken);
-                            await this.Communicator.SendToPlayer(target, $"You avoid {actor.FirstName.FirstCharToUpper()}'s kicked dirt.", cancellationToken);
-
-                            await this.Combat.StartFighting(actor, target, cancellationToken);
-                        }
+                        await this.Communicator.SendToPlayer(actor, "They aren't here.", cancellationToken);
                     }
                     else
                     {
-                        if (target != null)
+                        if (target.IsAffectedBy(this) || target.IsAffectedBy(EffectName.BLINDNESS))
                         {
-                            var effect = new Effect()
+                            await this.Communicator.SendToPlayer(actor, $"{target.FirstName} is already blinded.", cancellationToken);
+                            return;
+                        }
+
+                        if (this.Combat.DidSave(target, this))
+                        {
+                            if (target != null)
                             {
-                                Effector = actor,
-                                Action = this,
-                                Name = this.Name,
-                                Duration = Math.Max(1, actor.Level / 8) / 2,
-                            };
+                                await base.Act(actor, target, itemTarget, cancellationToken);
 
-                            await base.Act(actor, target, itemTarget, cancellationToken);
+                                await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} avoids your kicked dirt.", cancellationToken);
+                                await this.Communicator.SendToPlayer(target, $"You avoid {actor.FirstName.FirstCharToUpper()}'s kicked dirt.", cancellationToken);
 
-                            await this.Communicator.SendToPlayer(actor, $"You kick dirt into {target.FirstName.FirstCharToUpper()}'s eyes!", cancellationToken);
-                            await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} kicks dirt into your eyes!", cancellationToken);
-                            await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} his blinded by {actor.FirstName} kicked dirt!", cancellationToken);
+                                await this.Combat.StartFighting(actor, target, cancellationToken);
+                            }
+                        }
+                        else
+                        {
+                            if (target != null)
+                            {
+                                var modifier = room.Terrain == Core.Types.Terrain.Desert || room.Terrain == Core.Types.Terrain.Beach ? 6 : 8;
 
-                            target.AffectedBy.AddIfNotAffected(effect);
+                                var effect = new Effect()
+                                {
+                                    Effector = actor,
+                                    Action = this,
+                                    Name = this.Name,
+                                    Duration = Math.Max(1, actor.Level / modifier) / 2,
+                                };
 
-                            await this.Combat.StartFighting(actor, target, cancellationToken);
+                                await base.Act(actor, target, itemTarget, cancellationToken);
+
+                                var material = room.Terrain == Core.Types.Terrain.Desert || room.Terrain == Core.Types.Terrain.Beach ? "sand" : "dirt";
+
+                                await this.Communicator.SendToPlayer(actor, $"You kick {material} into {target.FirstName.FirstCharToUpper()}'s eyes!", cancellationToken);
+                                await this.Communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} kicks {material} into your eyes!", cancellationToken);
+                                await this.Communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} his blinded by {actor.FirstName} kicked {material}!", cancellationToken);
+
+                                target.AffectedBy.AddIfNotAffected(effect);
+
+                                await this.Combat.StartFighting(actor, target, cancellationToken);
+                            }
                         }
                     }
                 }

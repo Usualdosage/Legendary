@@ -85,6 +85,10 @@
 
                 displayNotification(img, text);
             }
+            else if (message.startsWith("[CLEARCHAT]"))
+            {
+                $(".chat-bubble").remove();
+            }
             else if (message.startsWith("{"))
             {
                 // Parse the incoming message.

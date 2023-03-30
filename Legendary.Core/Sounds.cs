@@ -213,5 +213,10 @@ namespace Legendary.Core
         /// Heal MP3.
         /// </summary>
         public const string HEAL = "https://legendaryweb.file.core.windows.net/audio/soundfx/heal.mp3" + SAS_TOKEN;
+
+        /// <summary>
+        /// Gate MP3.
+        /// </summary>
+        public const string GATE = "https://legendaryweb.file.core.windows.net/audio/soundfx/teleport.mp3" + SAS_TOKEN;
     }
 }

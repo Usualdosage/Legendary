@@ -18,6 +18,7 @@ namespace Legendary.Engine.Processors
     using System.Numerics;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
     using Azure;
@@ -29,11 +30,13 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Models.Output;
     using Legendary.Engine.Output;
     using Microsoft.AspNetCore.DataProtection.KeyManagement;
     using Newtonsoft.Json;
     using RestSharp;
     using static System.Net.Mime.MediaTypeNames;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Processes an input, and returns an AI response.
@@ -49,6 +52,7 @@ namespace Legendary.Engine.Processors
         private readonly string url = "https://api.openai.com/v1/chat/completions";
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
+        private Dictionary<Mobile, bool> processingDictionary;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
@@ -69,6 +73,172 @@ namespace Legendary.Engine.Processors
             this.communicator = communicator;
             this.environment = environment;
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
+            this.processingDictionary = new Dictionary<Mobile, bool>();
+        }
+
+        /// <summary>
+        /// Parses an AI response into say messages and emotes.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="persona">The mobile persona.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <returns>Cleaned output message.</returns>
+        public static string[]? CleanOutput(string message, Persona persona, Mobile mobile)
+        {
+            List<string> messages = new List<string>();
+
+            message = message.Trim();
+
+            if (message.Contains('*'))
+            {
+                List<string> sentences = new List<string>();
+                StringBuilder sbFormat = new StringBuilder();
+
+                bool open = true;
+
+                for (int i = 0; i < message.Length; i++)
+                {
+                    if (message[i] == '*')
+                    {
+                        sbFormat.AppendFormat(open ? "[{0}" : "{0}]", message[i]);
+                        open = !open;
+                    }
+                    else
+                    {
+                        sbFormat.Append(message[i]);
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                foreach (char c in sbFormat.ToString())
+                {
+                    if (c == '[')
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sentences.Add(sb.ToString());
+                            sb = new StringBuilder();
+                            sb.Append(c);
+                        }
+                        else
+                        {
+                            sb.Append(c);
+                        }
+                    }
+                    else if (c == ']')
+                    {
+                        sb.Append(c);
+                        sentences.Add(sb.ToString());
+                        sb = new StringBuilder();
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+
+                sentences.Add(sb.ToString().Trim());
+
+                foreach (var sentence in sentences)
+                {
+                    if (string.IsNullOrWhiteSpace(sentence))
+                    {
+                        continue;
+                    }
+                    else if (sentence[0] == '[')
+                    {
+                        // This is an emote
+                        var temp = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
+                        temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
+                        messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
+                    }
+                    else
+                    {
+                        // Not an emote with brackets, so clean it up.
+                        if (sentence.StartsWith("EMOTE"))
+                        {
+                            if (!char.IsPunctuation(sentence[0]))
+                            {
+                                var temp = sentence.Replace("EMOTE:", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
+                                temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
+                                messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
+                            }
+                            else
+                            {
+                                var temp = sentence.Substring(1, sentence.Length - 1).Replace("EMOTE:", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
+                                temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
+                                messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
+                            }
+                        }
+                        else
+                        {
+                            var temp = sentence.Replace(persona.Name ?? mobile.FirstName, string.Empty).Replace(":", string.Empty).Replace(persona.Name ?? mobile.FirstName, string.Empty).Trim();
+
+                            if (!string.IsNullOrWhiteSpace(temp))
+                            {
+                                if (!char.IsPunctuation(sentence[0]))
+                                {
+                                    messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
+                                }
+                                else
+                                {
+                                    temp = temp.Substring(1, temp.Length - 1).Trim();
+
+                                    if (!string.IsNullOrWhiteSpace(temp))
+                                    {
+                                        messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (message.StartsWith("EMOTE"))
+                {
+                    if (!char.IsPunctuation(message[0]))
+                    {
+                        var temp = message.Replace("EMOTE:", string.Empty).Trim();
+                        temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty);
+                        messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
+                    }
+                    else
+                    {
+                        var temp = message.Substring(1, message.Length - 1).Replace("EMOTE:", string.Empty).Trim();
+
+                        if (!string.IsNullOrWhiteSpace(temp))
+                        {
+                            messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
+                        }
+                    }
+                }
+                else
+                {
+                    var temp = message.Replace(persona.Name ?? mobile.FirstName, string.Empty).Replace(":", string.Empty).Trim();
+
+                    if (!string.IsNullOrWhiteSpace(temp))
+                    {
+                        if (!char.IsPunctuation(temp[0]))
+                        {
+                            messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
+                        }
+                        else
+                        {
+                            temp = temp.Substring(1, temp.Length - 1).Trim();
+
+                            if (!string.IsNullOrWhiteSpace(temp))
+                            {
+                                messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return messages.ToArray();
         }
 
         /// <summary>
@@ -88,7 +258,7 @@ namespace Legendary.Engine.Processors
         /// <param name="mobile">The mobile.</param>
         /// <param name="input">The input string.</param>
         /// <returns>string.</returns>
-        public async Task<string?> Process(Character character, Mobile mobile, string input)
+        public async Task<string[]?> Process(Character character, Mobile mobile, string input, CancellationToken cancellationToken = default)
         {
             if (mobile.UseAI)
             {
@@ -100,7 +270,7 @@ namespace Legendary.Engine.Processors
 
                         if (persona != null && !string.IsNullOrWhiteSpace(persona.Name))
                         {
-                            this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
+                            this.logger.Debug($"{persona.Name ?? mobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
 
                             // We haven't trained this mobile yet, so train it.
                             if (!this.mobileTrainingData.ContainsKey(mobile))
@@ -108,13 +278,42 @@ namespace Legendary.Engine.Processors
                                 this.mobileTrainingData.Add(mobile, Train(persona, character, mobile));
                             }
 
+                            await this.communicator.SendToPlayer(character, $"<span class='chat-bubble'>{persona.Name ?? mobile.FirstName.FirstCharToUpper()}<img class='typing' src='img/typing.gif'></span>", cancellationToken);
+
+                            // Keep the AI mobs single-threaded, or things go off the rails fast.
+                            if (!this.processingDictionary.ContainsKey(mobile))
+                            {
+                                this.processingDictionary.Add(mobile, true);
+                            }
+                            else
+                            {
+                                if (this.processingDictionary[mobile] == true)
+                                {
+                                    return null;
+                                }
+
+                                this.processingDictionary[mobile] = true;
+                            }
+
                             // Chat response for the mobile with the training data.
                             var message = await this.Chat(character, this.mobileTrainingData[mobile], CleanInput(input, character.FirstName));
 
                             // Remove the name of the mobile from the result message.
-                            return CleanOutput(message, persona, mobile);
-
-                            // TODO: Maybe give the mob a chance to speak in their native language?
+                            try
+                            {
+                                await this.communicator.SendToPlayer(character, "[CLEARCHAT]", cancellationToken);
+                                return CleanOutput(message, persona, mobile);
+                            }
+                            catch (Exception exc)
+                            {
+                                await this.communicator.SendToPlayer(character, $"{persona.Name ?? mobile.FirstName.FirstCharToUpper()} looks a bit confused.", cancellationToken);
+                                this.logger.Error(exc, this.communicator);
+                                return null;
+                            }
+                            finally
+                            {
+                                this.processingDictionary[mobile] = false;
+                            }
                         }
                         else
                         {
@@ -129,7 +328,7 @@ namespace Legendary.Engine.Processors
                         if (chance < 10)
                         {
                             this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} ignored {character.FirstName}.", this.communicator);
-                            return Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)];
+                            return new string[1] { $"{mobile.FirstName.FirstCharToUpper()} says, \"<span class='say'>{Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)]}</span>\"" };
                         }
                         else
                         {
@@ -394,30 +593,6 @@ namespace Legendary.Engine.Processors
             cleaned = cleaned.Replace("says", string.Empty);
             cleaned = cleaned.Replace("error:", string.Empty);
             return cleaned;
-        }
-
-        /// <summary>
-        /// Removes character (mobile) and persona info from the output message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="persona">The mobile persona.</param>
-        /// <param name="mobile">The mobile.</param>
-        /// <returns>Cleaned output message.</returns>
-        private static string CleanOutput(string message, Persona persona, Mobile mobile)
-        {
-            if (!string.IsNullOrWhiteSpace(persona.Name))
-            {
-                message = message.Replace(persona.Name, string.Empty);
-            }
-
-            if (!string.IsNullOrWhiteSpace(mobile.LastName))
-            {
-                message = message.Replace(mobile.LastName, string.Empty);
-            }
-
-            message = message.Replace(mobile.FirstName, string.Empty);
-
-            return message.Replace(": ", string.Empty);
         }
 
         /// <summary>

@@ -79,6 +79,7 @@ namespace Legendary.Engine.Models.SkillTrees
             {
                 { new ThirdAttack(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
                 { new CriticalStrikes(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Warcry(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
             };
         }
 

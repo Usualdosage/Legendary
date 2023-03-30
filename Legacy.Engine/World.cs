@@ -68,6 +68,82 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public GameMetrics? GameMetrics { get; internal set; } = null;
 
+        /// <summary>
+        /// Adds all of the default skills to the mob.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        public static void ApplyMobileSkills(Mobile mobile)
+        {
+            // Apply skills to mobs based on their equipment.
+            var wielded = mobile.Equipment.FirstOrDefault(c => c.Key == WearLocation.Wielded).Value;
+
+            var proficiency = Math.Min(95, 50 + mobile.Level);
+
+            if (wielded != null)
+            {
+                switch (wielded.DamageType)
+                {
+                    case DamageType.Blunt:
+                        {
+                            mobile.Skills.Add(new SkillProficiency("blunt weapons", proficiency));
+                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
+                            break;
+                        }
+
+                    case DamageType.Slash:
+                        {
+                            mobile.Skills.Add(new SkillProficiency("edged weapons", proficiency));
+                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
+                            break;
+                        }
+
+                    case DamageType.Pierce:
+                        {
+                            mobile.Skills.Add(new SkillProficiency("piercing weapons", proficiency));
+                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
+                            break;
+                        }
+                }
+            }
+
+            // All mobs have basic hand to hand
+            mobile.Skills.Add(new SkillProficiency("hand to hand", proficiency));
+
+            // All mobs have basic dodge
+            mobile.Skills.Add(new SkillProficiency("dodge", proficiency));
+
+            // Mobs with a dex of 16 or above get evasive
+            if (mobile.Dex.Current >= 16)
+            {
+                mobile.Skills.Add(new SkillProficiency("evasive maneuvers", proficiency));
+            }
+
+            // Mobs >= level 20 have second attack
+            if (mobile.Level >= 20)
+            {
+                mobile.Skills.Add(new SkillProficiency("second attack", proficiency));
+            }
+
+            // Mobs >= level 40 have third attack
+            if (mobile.Level >= 40)
+            {
+                mobile.Skills.Add(new SkillProficiency("third attack", proficiency));
+            }
+
+            // Mobs >= level 60 have fourth attack
+            if (mobile.Level >= 60)
+            {
+                mobile.Skills.Add(new SkillProficiency("fourth attack", proficiency));
+            }
+
+            // If mobile is wimpy, set to 25% of total HP.
+            if (mobile.MobileFlags != null && mobile.MobileFlags.Contains(MobileFlags.Wimpy))
+            {
+                var wimpy = (double)mobile.Health.Max * .25d;
+                mobile.Wimpy = (int)wimpy;
+            }
+        }
+
         /// <inheritdoc/>
         public async Task LoadWorld()
         {
@@ -666,82 +742,6 @@ namespace Legendary.Engine
 
                 // Just add to inventory.
                 mobile.Inventory.Add(item);
-            }
-        }
-
-        /// <summary>
-        /// Adds all of the default skills to the mob.
-        /// </summary>
-        /// <param name="mobile">The mobile.</param>
-        public static void ApplyMobileSkills(Mobile mobile)
-        {
-            // Apply skills to mobs based on their equipment.
-            var wielded = mobile.Equipment.FirstOrDefault(c => c.Key == WearLocation.Wielded).Value;
-
-            var proficiency = Math.Min(95, 50 + mobile.Level);
-
-            if (wielded != null)
-            {
-                switch (wielded.DamageType)
-                {
-                    case DamageType.Blunt:
-                        {
-                            mobile.Skills.Add(new SkillProficiency("blunt weapons", proficiency));
-                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
-                            break;
-                        }
-
-                    case DamageType.Slash:
-                        {
-                            mobile.Skills.Add(new SkillProficiency("edged weapons", proficiency));
-                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
-                            break;
-                        }
-
-                    case DamageType.Pierce:
-                        {
-                            mobile.Skills.Add(new SkillProficiency("piercing weapons", proficiency));
-                            mobile.Skills.Add(new SkillProficiency("parry", proficiency));
-                            break;
-                        }
-                }
-            }
-
-            // All mobs have basic hand to hand
-            mobile.Skills.Add(new SkillProficiency("hand to hand", proficiency));
-
-            // All mobs have basic dodge
-            mobile.Skills.Add(new SkillProficiency("dodge", proficiency));
-
-            // Mobs with a dex of 16 or above get evasive
-            if (mobile.Dex.Current >= 16)
-            {
-                mobile.Skills.Add(new SkillProficiency("evasive maneuvers", proficiency));
-            }
-
-            // Mobs >= level 20 have second attack
-            if (mobile.Level >= 20)
-            {
-                mobile.Skills.Add(new SkillProficiency("second attack", proficiency));
-            }
-
-            // Mobs >= level 40 have third attack
-            if (mobile.Level >= 40)
-            {
-                mobile.Skills.Add(new SkillProficiency("third attack", proficiency));
-            }
-
-            // Mobs >= level 60 have fourth attack
-            if (mobile.Level >= 60)
-            {
-                mobile.Skills.Add(new SkillProficiency("fourth attack", proficiency));
-            }
-
-            // If mobile is wimpy, set to 25% of total HP.
-            if (mobile.MobileFlags != null && mobile.MobileFlags.Contains(MobileFlags.Wimpy))
-            {
-                var wimpy = (double)mobile.Health.Max * .25d;
-                mobile.Wimpy = (int)wimpy;
             }
         }
 

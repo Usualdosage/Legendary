@@ -810,9 +810,12 @@ namespace Legendary.Engine.Processors
                     {
                         foreach (var player in players)
                         {
-                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
+                            if (player != actor.Character)
                             {
-                                await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+                                if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
+                                {
+                                    await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+                                }
                             }
                         }
                     }
@@ -2138,6 +2141,11 @@ namespace Legendary.Engine.Processors
                     {
                         sb.Append($"<span class='scan'>{mob.FirstName.FirstCharToUpper()}</span>");
                     }
+                }
+
+                if (players == null && mobs == null)
+                {
+                    sb.Append($"<span class='scan'>Nothing.</span>");
                 }
             }
 
@@ -3826,6 +3834,7 @@ namespace Legendary.Engine.Processors
                         Wis = $"{actor.Wis.Max} ({actor.Wis.Current})",
                         Int = $"{actor.Int.Max} ({actor.Int.Current})",
                         Con = $"{actor.Con.Max} ({actor.Con.Current})",
+                        Deity = actor.Deity.ToString(),
                     },
                     Armor = new Output.Armor()
                     {

@@ -38,7 +38,7 @@ namespace Legendary.Engine.Models.Spells
             this.Name = "Teleport";
             this.ManaCost = 50;
             this.CanInvoke = true;
-            this.IsAffect = true;
+            this.IsAffect = false;
             this.AffectDuration = 0;
         }
 

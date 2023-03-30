@@ -23,6 +23,24 @@ namespace Legendary.Engine.Extensions
     public static class StringExtensions
     {
         /// <summary>
+        /// Replaces the first occurrence of a word in a string.
+        /// </summary>
+        /// <param name="text">The text to look within.</param>
+        /// <param name="search">The text to find in the string.</param>
+        /// <param name="replace">The text to replace the search text with.</param>
+        /// <returns>string.</returns>
+        public static string ReplaceFirst(this string text, string search, string replace)
+        {
+            int pos = text.IndexOf(search);
+            if (pos < 0)
+            {
+                return text;
+            }
+
+            return string.Concat(text.AsSpan(0, pos), replace, text.AsSpan(pos + search.Length));
+        }
+
+        /// <summary>
         /// Converts the first character of a string to uppercase.
         /// </summary>
         /// <param name="input">The input.</param>

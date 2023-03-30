@@ -114,6 +114,13 @@ h6 {
     background-size: contain;
 }
 
+.typing
+{
+    height: 16px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+}
+
 /* Message */
 
 .tox {

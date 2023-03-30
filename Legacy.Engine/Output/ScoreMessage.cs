@@ -199,6 +199,12 @@ namespace Legendary.Engine.Output
         /// </summary>
         [JsonProperty("co")]
         public string? Con { get; set; }
+
+        /// <summary>
+        /// Gets or sets deity.
+        /// </summary>
+        [JsonProperty("dt")]
+        public string? Deity { get; set; }
     }
 
     /// <summary>

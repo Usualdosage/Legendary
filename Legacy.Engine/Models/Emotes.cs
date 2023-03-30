@@ -41,6 +41,7 @@ namespace Legendary.Engine.Models
             { "grumble", new Emote("You grumble, annoyed.", "{0} grumbles loudly.", "{0} grumbles loudly at {1}.", "You grumble, annoyed, at {1}.") },
             { "hiccup", new Emote("*HIC*", "{0} hiccups.", "{0} looks at {1} and hiccups.", "You look at {1} and hiccup cutely.") },
             { "hug", new Emote("You hug yourself.", "{0} hugs themself tightly.", "{0} hugs {1}.", "You hug {1}.") },
+            { "kiss", new Emote("You blow a kiss.", "{0} blows a kiss.", "{0} kisses {1}.", "You kiss {1}.") },
             { "laugh", new Emote("You laugh.", "{0} laughs.", "{0} laughs straight at {1}.", "You laugh directly at {1}.") },
             { "lick", new Emote("You lick your lips.", "{0} licks their lips.", "{0} licks their lips at {1}.", "You lick your lips at {1}.") },
             { "lol", new Emote("You laugh out loud!", "{0} laughs out loud!", "{0} laughs out loud at {1}.", "You laugh out loud at {1}.") },
