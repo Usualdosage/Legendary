@@ -11,6 +11,7 @@ namespace Legendary.Core.Types
 {
     using System;
     using System.Collections.Generic;
+    using Legendary.Core.Models;
     using MongoDB.Bson.Serialization.Attributes;
     using MongoDB.Bson.Serialization.Options;
 
@@ -76,5 +77,10 @@ namespace Legendary.Core.Types
         /// </summary>
         [BsonDictionaryOptions(DictionaryRepresentation.ArrayOfArrays)]
         public Dictionary<long, List<long>> RoomsExplored { get; set; } = new Dictionary<long, List<long>>();
+
+        /// <summary>
+        /// Gets or sets the current game map data for rendering on the client.
+        /// </summary>
+        public List<Room> GameMap { get; set; } = new List<Room>();
     }
 }

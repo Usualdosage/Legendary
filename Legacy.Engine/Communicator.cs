@@ -12,6 +12,7 @@ namespace Legendary.Engine
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Dynamic;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -465,6 +466,17 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public bool IsInRoom(KeyValuePair<long, long> location, string target)
+        {
+            if (Users != null)
+            {
+                return Users.Any(u => u.Value.Character.FirstName == target && u.Value.Character.Location.InSamePlace(location));
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc/>
         public async Task Attack(UserData user, string targetName, CancellationToken cancellationToken = default)
         {
             targetName = targetName.ToLower();
@@ -642,7 +654,14 @@ namespace Legendary.Engine
                             }
 
                             // Update player stats
-                            await this.SendGameUpdate(actor, mobile.FirstName, mobile.Image, cancellationToken);
+                            if (mobile.XActive.HasValue && mobile.XActive.Value == true && !string.IsNullOrWhiteSpace(mobile.XImage))
+                            {
+                                await this.SendGameUpdate(actor, mobile.FirstName, mobile.XImage, cancellationToken);
+                            }
+                            else
+                            {
+                                await this.SendGameUpdate(actor, mobile.FirstName, mobile.Image, cancellationToken);
+                            }
                         }
                         else
                         {
@@ -973,54 +992,64 @@ namespace Legendary.Engine
             var room = this.ResolveRoom(actor.Location);
             var metrics = this.world.GameMetrics;
 
-            var outputMessage = new OutputMessage()
+            if (area != null && room != null)
             {
-                Message = new Models.Output.Message()
+                var outputMessage = new OutputMessage()
                 {
-                    FirstName = actor.FirstName,
-                    Level = actor.Level,
-                    Title = actor.Title,
-                    Condition = Combat.GetPlayerCondition(actor),
-                    Stats = new StatMessage()
+                    Message = new Models.Output.Message()
                     {
-                        Health = new Status()
+                        FirstName = actor.FirstName,
+                        Level = actor.Level,
+                        Title = actor.Title,
+                        Condition = Combat.GetPlayerCondition(actor),
+                        Stats = new StatMessage()
                         {
-                            Current = actor.Health.Current,
-                            Max = actor.Health.Max,
+                            Health = new Status()
+                            {
+                                Current = actor.Health.Current,
+                                Max = actor.Health.Max,
+                            },
+                            Mana = new Status()
+                            {
+                                Current = actor.Mana.Current,
+                                Max = actor.Mana.Max,
+                            },
+                            Movement = new Status()
+                            {
+                                Current = actor.Movement.Current,
+                                Max = actor.Movement.Max,
+                            },
+                            Experience = new Status()
+                            {
+                                Current = this.GetExperienceToLevel(actor, false) - this.GetRemainingExperienceToLevel(actor, false),
+                                Max = this.GetExperienceToLevel(actor, false),
+                            },
                         },
-                        Mana = new Status()
+                        ImageInfo = new ImageInfo()
                         {
-                            Current = actor.Mana.Current,
-                            Max = actor.Mana.Max,
+                            Caption = caption ?? area?.Description,
+                            Image = image ?? actor.LastImage,
                         },
-                        Movement = new Status()
+                        Weather = new Models.Output.Weather()
                         {
-                            Current = actor.Movement.Current,
-                            Max = actor.Movement.Max,
+                            Image = null,
+                            Time = metrics != null ? DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second) : null,
+                            Temp = null,
                         },
-                        Experience = new Status()
+                        Map = new Models.Output.Map()
                         {
-                            Current = this.GetExperienceToLevel(actor, false) - this.GetRemainingExperienceToLevel(actor, false),
-                            Max = this.GetExperienceToLevel(actor, false),
+                            Current = actor.Location.Value,
+                            Rooms = area?.Rooms.Where(r => actor.Metrics.RoomsExplored.ContainsKey(area.AreaId)).Select(r => new { r.AreaId, r.RoomId, r.Exits }).ToArray(),
+                            PlayersInArea = this.GetPlayersInArea(area?.AreaId)?.Select(p => new { p.CharacterId, p.FirstName, p.Location.Value })?.ToArray(),
+                            MobsInArea = this.GetMobilesInArea(area?.AreaId)?.Select(m => new { m.CharacterId, m.FirstName, m.Location.Value })?.ToArray(),
                         },
                     },
-                    ImageInfo = new ImageInfo()
-                    {
-                        Caption = caption ?? area?.Description,
-                        Image = image ?? actor.LastImage,
-                    },
-                    Weather = new Models.Output.Weather()
-                    {
-                        Image = null,
-                        Time = metrics != null ? DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second) : null,
-                        Temp = null,
-                    },
-                },
-            };
+                };
 
-            var output = JsonConvert.SerializeObject(outputMessage);
+                var output = JsonConvert.SerializeObject(outputMessage);
 
-            await this.SendToPlayer(actor, output, cancellationToken);
+                await this.SendToPlayer(actor, output, cancellationToken);
+            }
         }
 
         /// <inheritdoc/>
@@ -1484,11 +1513,18 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public List<Character>? GetPlayersInArea(long areaId)
+        public List<Character>? GetPlayersInArea(long? areaId)
         {
-            if (Users != null)
+            if (areaId.HasValue)
             {
-                return Users.Where(u => u.Value.Character.Location.Key == areaId).Select(u => u.Value.Character).ToList();
+                if (Users != null)
+                {
+                    return Users.Where(u => u.Value.Character.Location.Key == areaId).Select(u => u.Value.Character).ToList();
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
@@ -1526,7 +1562,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public List<Mobile>? GetMobilesInArea(long areaId)
+        public List<Mobile>? GetMobilesInArea(long? areaId)
         {
             List<Mobile> mobiles = new List<Mobile>();
             var area = this.world.Areas.FirstOrDefault(a => a.AreaId == areaId);

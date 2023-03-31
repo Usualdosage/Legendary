@@ -24,7 +24,7 @@ namespace Legendary.Core.Models
     /// Represents a single character.
     /// </summary>
     [BsonIgnoreExtraElements]
-    public class Character
+    public partial class Character
     {
         private MaxCurrent str = new MaxCurrent(10, 10);
         private MaxCurrent intg = new MaxCurrent(10, 10);
@@ -389,12 +389,12 @@ namespace Legendary.Core.Models
                             return "their";
                         }
 
-                    case Legendary.Core.Types.Gender.Female:
+                    case Gender.Female:
                         {
                             return "her";
                         }
 
-                    case Legendary.Core.Types.Gender.Male:
+                    case Gender.Male:
                         {
                             return "his";
                         }
@@ -416,12 +416,12 @@ namespace Legendary.Core.Models
                             return "they";
                         }
 
-                    case Legendary.Core.Types.Gender.Female:
+                    case Gender.Female:
                         {
                             return "she";
                         }
 
-                    case Legendary.Core.Types.Gender.Male:
+                    case Gender.Male:
                         {
                             return "he";
                         }
@@ -673,8 +673,11 @@ namespace Legendary.Core.Models
         /// <returns>True if affected.</returns>
         public bool IsAffectedBy(string action)
         {
-            string effectName = Regex.Replace(action, "([a-z])([A-Z])", "$1 $2");
+            string effectName = EffectRegex().Replace(action, "$1 $2");
             return this.AffectedBy.Any(a => a.Name?.ToLower() == effectName.ToLower());
         }
+
+        [GeneratedRegex("([a-z])([A-Z])")]
+        private static partial Regex EffectRegex();
     }
 }

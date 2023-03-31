@@ -85,9 +85,10 @@
 
                 displayNotification(img, text);
             }
-            else if (message.startsWith("[CLEARCHAT]"))
+            else if (message.startsWith("CLEARCHAT"))
             {
-                $(".chat-bubble").remove();
+                var mobileId = message.split(":")[1];
+                $(".chat-bubble-" + mobileId).remove();
             }
             else if (message.startsWith("{"))
             {
@@ -110,8 +111,8 @@
 
                     $(".loader").hide();
 
-                    // Bind the nav buttons.
-                    bindNav();
+                    // Generate the mini-map.
+                    renderMiniMap(context.m.m);
 
                     // Bind the tooltips.
                     $('[data-toggle="tooltip"]').tooltip({ boundary: 'window', placement: 'left' });
@@ -197,13 +198,62 @@
             $(this).select();
         });
 
-        var bindNav = function () {
-            $(".nav-arrow").on("click", function (e) {
-                this.socket.send($(this).attr("move"));
-            })
+        this.socket = socket;
+
+        // Mini-map operations
+        const canvas = document.getElementById("mini-map");
+        const ctx = canvas.getContext("2d");
+        const roomWidth = 19;
+        const roomHeight = 7;
+
+        var renderMiniMap = function (mapData) {
+            let currentRoom = mapData.c;
+            let rooms = mapData.r;
+            let playersInArea = mapData.p;
+            let mobsInArea = mapData.m;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let x = 0, room; room = rooms[x]; x++) {
+
+                var positionX = ((room.RoomId - room.AreaId) % 20) * roomWidth;
+                var positionY = Math.floor((room.RoomId - room.AreaId) / 20) * roomHeight;
+
+                var hasMob = mobsInArea.find(m => m.Value == room.RoomId) != null;
+                var hasPlayer = playersInArea.find(p => p.Value == room.RoomId) != null;
+
+                if (room.RoomId == currentRoom) {
+                    renderRoom(positionX, positionY, "purple", true, false, false);
+                }
+                else {
+                    renderRoom(positionX, positionY, "#666666", false, hasMob, hasPlayer);
+                }
+            }
         }
 
-        this.socket = socket;
+        var renderRoom = function (x, y, color, fill, hasMob, hasPlayer) {
+            ctx.beginPath();
+            ctx.lineWidth = "1";
+            if (fill) {
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, roomWidth, roomHeight);
+            }
+            else {
+                ctx.rect(x, y, roomWidth, roomHeight);
+                ctx.strokeStyle = color;
+                ctx.stroke();
+            }
+
+            if (hasMob) {
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(x + (roomWidth / 2 - 2), y + roomHeight / 2, 2, 1);
+            }
+
+            if (hasPlayer) {
+                ctx.fillStyle = "red";
+                ctx.fillRect(x + (roomWidth / 2 + 2), y + roomHeight / 2, 2, 1);
+            }
+        };
     }
 
     SendMessage() {

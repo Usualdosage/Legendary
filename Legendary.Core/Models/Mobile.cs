@@ -45,7 +45,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the handle which player the mob is speaking with, tracking, and fighting.
         /// </summary>
-        public Character? PlayerTarget { get; set; }
+        public string? PlayerTarget { get; set; }
 
         /// <summary>
         /// Gets or sets the equipment resets for the mobile.
@@ -66,5 +66,15 @@ namespace Legendary.Core.Models
         /// Gets or sets the damage dice.
         /// </summary>
         public override int DamageDice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the XImage.
+        /// </summary>
+        public string? XImage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the XActive.
+        /// </summary>
+        public bool? XActive { get; set; }
     }
 }

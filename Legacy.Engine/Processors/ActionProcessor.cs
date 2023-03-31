@@ -1681,6 +1681,9 @@ namespace Legendary.Engine.Processors
                             // Put the char in the new room.
                             actor.Character.Location = new KeyValuePair<long, long>(exit.ToArea, exit.ToRoom);
 
+                            // Add the new room to the game map.
+                            actor.Character.Metrics.GameMap.AddIfNotExists(newRoom);
+
                             // Send the leaving message. This HAS to be done after for mob engagement purposes or else the mob will think the player is
                             // still in the room with them.
                             if (actor.Character.IsAffectedBy(nameof(Hide)))

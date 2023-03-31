@@ -10,6 +10,7 @@
 namespace Legendary.Engine.Models.Output
 {
     using System;
+    using Legendary.Core.Models;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -77,6 +78,12 @@ namespace Legendary.Engine.Models.Output
         /// </summary>
         [JsonProperty("i")]
         public ImageInfo? ImageInfo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the map data.
+        /// </summary>
+        [JsonProperty("m")]
+        public Map? Map { get; set; }
     }
 
     /// <summary>
@@ -177,5 +184,36 @@ namespace Legendary.Engine.Models.Output
         /// </summary>
         [JsonProperty("p")]
         public int Percentage => (int)Math.Round((this.Current / this.Max) * 100);
+    }
+
+    /// <summary>
+    /// Map container.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Compiled together in single JSON object.")]
+    public class Map
+    {
+        /// <summary>
+        /// Gets or sets the current room.
+        /// </summary>
+        [JsonProperty("c")]
+        public long Current { get; set; }
+
+        /// <summary>
+        /// Gets or sets the map context.
+        /// </summary>
+        [JsonProperty("r")]
+        public dynamic[]? Rooms { get; set; }
+
+        /// <summary>
+        /// Gets or sets the mobs in the area.
+        /// </summary>
+        [JsonProperty("m")]
+        public dynamic[]? MobsInArea { get; set; }
+
+        /// <summary>
+        /// Gets or sets the players in the area.
+        /// </summary>
+        [JsonProperty("p")]
+        public dynamic[]? PlayersInArea { get; set; }
     }
 }

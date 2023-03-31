@@ -365,6 +365,14 @@ namespace Legendary.Core.Contracts
         bool IsInRoom(KeyValuePair<long, long> location, Character target);
 
         /// <summary>
+        /// Returns true if the target is in the provided room.
+        /// </summary>
+        /// <param name="location">The location.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>True if the target is in the room.</returns>
+        bool IsInRoom(KeyValuePair<long, long> location, string target);
+
+        /// <summary>
         /// Add a user to the specified channel (by name).
         /// </summary>
         /// <param name="channelName">The channel name.</param>
@@ -417,7 +425,7 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="areaId">The area Id.</param>
         /// <returns>List of players.</returns>
-        List<Character>? GetPlayersInArea(long areaId);
+        List<Character>? GetPlayersInArea(long? areaId);
 
         /// <summary>
         /// Gets all players in a given location.
@@ -431,7 +439,7 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="areaId">The area.</param>
         /// <returns>List of mobiles.</returns>
-        List<Mobile>? GetMobilesInArea(long areaId);
+        List<Mobile>? GetMobilesInArea(long? areaId);
 
         /// <summary>
         /// Gets all of the items currently in the given location.

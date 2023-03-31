@@ -257,6 +257,7 @@ namespace Legendary.Engine.Processors
         /// <param name="character">The character.</param>
         /// <param name="mobile">The mobile.</param>
         /// <param name="input">The input string.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>string.</returns>
         public async Task<string[]?> Process(Character character, Mobile mobile, string input, CancellationToken cancellationToken = default)
         {
@@ -278,7 +279,7 @@ namespace Legendary.Engine.Processors
                                 this.mobileTrainingData.Add(mobile, Train(persona, character, mobile));
                             }
 
-                            await this.communicator.SendToPlayer(character, $"<span class='chat-bubble'>{persona.Name ?? mobile.FirstName.FirstCharToUpper()}<img class='typing' src='img/typing.gif'></span>", cancellationToken);
+                            await this.communicator.SendToPlayer(character, $"<span class='chat-bubble-{mobile.CharacterId}'>{persona.Name ?? mobile.FirstName.FirstCharToUpper()}<img class='typing' src='img/typing.gif'></span>", cancellationToken);
 
                             // Keep the AI mobs single-threaded, or things go off the rails fast.
                             if (!this.processingDictionary.ContainsKey(mobile))
@@ -298,10 +299,12 @@ namespace Legendary.Engine.Processors
                             // Chat response for the mobile with the training data.
                             var message = await this.Chat(character, this.mobileTrainingData[mobile], CleanInput(input, character.FirstName));
 
-                            // Remove the name of the mobile from the result message.
+                            CheckConvertToXMob(message, mobile);
+
+                            // Parse all of the resulting language.
                             try
                             {
-                                await this.communicator.SendToPlayer(character, "[CLEARCHAT]", cancellationToken);
+                                await this.communicator.SendToPlayer(character, $"CLEARCHAT:{mobile.CharacterId}", cancellationToken);
                                 return CleanOutput(message, persona, mobile);
                             }
                             catch (Exception exc)
@@ -579,6 +582,33 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Converts this mobile to "adult" mode.
+        /// </summary>
+        /// <param name="message">The message to check for keywords.</param>
+        /// <param name="mobile">The mobile.</param>
+        private static void CheckConvertToXMob(string message, Mobile mobile)
+        {
+            if (mobile.UseAI)
+            {
+                if (message.Contains("satisfy you", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("sultry", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("please you", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("lust", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("lurid", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("excitement", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("desire", StringComparison.CurrentCultureIgnoreCase)
+                    || message.Contains("pleasure", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    mobile.XActive = true;
+                }
+                else
+                {
+                    mobile.XActive = false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Remove any HTML or links.
         /// </summary>
         /// <param name="input">The input to clean.</param>
@@ -705,13 +735,14 @@ namespace Legendary.Engine.Processors
                 if (target.PlayerTarget != null && !this.communicator.IsInRoom(target.Location, target.PlayerTarget))
                 {
                     target.PlayerTarget = null;
+                    target.XActive = false;
                     return false;
                 }
 
                 // If the player and target are already engaged in conversation, there is a 70-90% chance it will speak.
-                if (target.PlayerTarget?.FirstName == actor.FirstName)
+                if (target.PlayerTarget == actor.FirstName)
                 {
-                    chance += this.random.Next(70, 90);
+                    chance += this.random.Next(75, 95);
                     this.logger.Debug($"{target.FirstName.FirstCharToUpper()} is engaged with {actor.FirstName}. Chance: {chance}.", this.communicator);
                 }
                 else
@@ -722,11 +753,12 @@ namespace Legendary.Engine.Processors
                     this.logger.Debug($"{target.FirstName.FirstCharToUpper()} is distracted. Chance: {chance}.", this.communicator);
 
                     // Mob is engaged to a target, but someone else is speaking. 10% chance to engage with them instead.
-                    if (target.PlayerTarget != null || target.PlayerTarget?.FirstName != actor.FirstName)
+                    if (string.IsNullOrWhiteSpace(target.PlayerTarget) || target.FirstName != actor.FirstName)
                     {
                         if (this.random.Next(0, 100) < 35)
                         {
                             this.logger.Debug($"{target.FirstName.FirstCharToUpper()} decided to engage {actor.FirstName}.", this.communicator);
+                            target.XActive = false;
                             return true;
                         }
                     }
@@ -747,7 +779,7 @@ namespace Legendary.Engine.Processors
                     this.logger.Debug($"{target.FirstName.FirstCharToUpper()} has become engaged with {actor.FirstName}. Chance: {chance}.", this.communicator);
 
                     // Set a flag on the target and actor showing they are engaged in conversation.
-                    target.PlayerTarget = actor;
+                    target.PlayerTarget = actor.FirstName;
                 }
             }
 

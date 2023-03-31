@@ -21,6 +21,10 @@
                 <!-- This is rendered dynamically -->
             </div>
             <div class="component">
+                <canvas id="mini-map">
+                </canvas>
+            </div>
+            <div class="component">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
                     Create Message
                 </button>
@@ -115,25 +119,6 @@
     </div>
     <div class="component image-caption">
         {{m.i.c}}
-    </div>
-    <div class="component">
-        <table class="nav-table">
-            <tr>
-                <td><i move="nw" class="nav-arrow fa fa-arrow-up nw" title="Go Northwest" style="font-size:24px"></i></td>
-                <td><i move="north" class="nav-arrow fa fa-arrow-up" title="Go North" style="font-size:24px"></i></td>
-                <td><i move="ne" class="nav-arrow fa fa-arrow-up ne" title="Go Northeast" style="font-size:24px"></i></td>
-            </tr>
-            <tr>
-                <td><i move="west" class="nav-arrow fa fa-arrow-left" title="Go West" style="font-size:24px"></i></td>
-                <td class="nav-center"><input type="button" move="up" class="nav-arrow nav-up" title="Go Up" value="Up" /><input type="button" move="down" title="Go Down" class="nav-arrow nav-down" value="Down" /></td>
-                <td><i move="east" class="nav-arrow fa fa-arrow-right" title="Go East" style="font-size:24px"></i></td>
-            </tr>
-            <tr>
-                <td><i move="sw" class="nav-arrow fa fa-arrow-down sw" title="Go Southwest" style="font-size:24px"></i></td>
-                <td><i move="south" class="nav-arrow fa fa-arrow-down" title="Go South" style="font-size:24px"></i></td>
-                <td><i move="se" class="nav-arrow fa fa-arrow-down se" title="Go Southeast" style="font-size:24px"></i></td>
-            </tr>
-        </table>
     </div>
 </script>
 

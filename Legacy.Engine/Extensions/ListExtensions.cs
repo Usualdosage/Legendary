@@ -55,5 +55,22 @@ namespace Legendary.Engine.Extensions
                 input.Add(effect);
             }
         }
+
+        /// <summary>
+        /// Adds a room to the game map as long as it isn't already there.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="room">The room.</param>
+        public static void AddIfNotExists(this List<Room> list, Room room)
+        {
+            if (list.Any(l => l == room))
+            {
+                return;
+            }
+            else
+            {
+                list.Add(room);
+            }
+        }
     }
 }

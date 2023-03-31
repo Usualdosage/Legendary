@@ -121,6 +121,14 @@ h6 {
     margin-bottom: 6px;
 }
 
+/* Mini-Map */
+#mini-map
+{
+    width: 216px;
+    height: 200px;
+    background-color: #222;
+}
+
 /* Message */
 
 .tox {
