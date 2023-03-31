@@ -106,6 +106,13 @@ h6 {
     margin-top: 5px;
 }
 
+.warning {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.0em;
+    color: Red;
+    font-weight: bolder;
+}
+
 .wait {
     background-image: url(../img/loading.gif);
     width: 16px;

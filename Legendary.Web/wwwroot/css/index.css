@@ -47,6 +47,13 @@ h5 {
     margin: 0px;
 }
 
+.warning {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.0em;
+    color: Red;
+    font-weight: bolder;
+}
+
 h6 {
     font-family: 'Balgruf';
     font-size: 1em;
