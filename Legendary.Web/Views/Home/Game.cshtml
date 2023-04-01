@@ -20,12 +20,15 @@
             <div id="control-panel">
                 <!-- This is rendered dynamically -->
             </div>
-            <div class="component">
+            <div class="component" style="position: relative">
                 <canvas id="mini-map">
                 </canvas>
+                <div id="explored">
+                    <div class="ribbon-row"><div class="ribbon-block"><h1><span>Area <b id="span_explored">0</b>% Explored</span></h1></div></div>
+                </div>
             </div>
             <div class="component">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" style="padding: 0px !important; margin: 0px !important;" data-bs-target="#messageModal">
                     Create Message
                 </button>
             </div>
@@ -33,11 +36,11 @@
                 <table class="vol-table">
                     <tr>
                         <td>
-                            <label for="audioBackground" class="form-label">Music Volume</label>
+                            <label for="audioBackground" class="form-label" style="font-size: .7em">Music Volume</label>
                             <input type="range" class="form-range" min="0" max="100" onchange="changeBgAudio(this)" id="audioBackground">
                         </td>
                         <td>
-                            <label for="audioSFXVolume" class="form-label">SFX Volume</label>
+                            <label for="audioSFXVolume" class="form-label" style="font-size: .7em">SFX Volume</label>
                             <input type="range" class="form-range" min="0" max="100" onchange="changeSfxAudio(this)" id="audioSFX">
                         </td>
                     </tr>
@@ -94,8 +97,8 @@
 
 <!-- Component Template -->
 <script id="component-template" type="text/x-handlebars-template">
-    <h3>{{m.f}}</h3>
-    <h4>{{m.t}}</h4>
+    <h3 id="username">{{m.f}}</h3>
+    <h4 id="title">{{m.t}}</h4>
     <div class="component">
         <div class="progress" data-toggle="tooltip" title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
             <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:{{m.s.hp.p}}%;" aria-valuenow="{{m.s.hp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.hp.p}}%</div>
@@ -388,7 +391,7 @@
 
             tinymce.init({
                 selector: 'textarea#message-body',
-                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss',
+                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage tinycomments tableofcontents footnotes autocorrect typography inlinecss',
                 toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
                 tinycomments_mode: 'embedded',
                 invalid_elements: "script"

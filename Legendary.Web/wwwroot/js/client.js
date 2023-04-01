@@ -12,6 +12,8 @@
         let commands = [];
         const $console = $("#console");
         var updateUI = true;
+        var isScrolling = false;
+        var lastScrollTop = 0;
 
         window.onfocus = function () {
             if (document.title.indexOf("*") > -1) {
@@ -157,7 +159,9 @@
             }
 
             // Autoscroll
-            $console.prop("scrollTop", $console.prop("scrollHeight"));
+            if (!isScrolling) {
+                $console.prop("scrollTop", $console.prop("scrollHeight"));
+            }
 
             // Autotrim if there are more than 500 messages
             var $remove = $(".message");
@@ -167,10 +171,21 @@
             }
         };
 
-        
+        $console.on("scroll", function (e) {
+            var st = $(this).scrollTop();
+            if (st > lastScrollTop) {
+                isScrolling = false;
+            } else {
+                // Allow scrolling back through the console.
+                isScrolling = true;
+            }
+            lastScrollTop = st;
+        });
         
         $("#inputField").on("click", function (e) {
+            isScrolling = false;
             $(this).select();
+            $console.prop("scrollTop", $console.prop("scrollHeight"));
         });
 
         $("#inputField").on("keydown", function (e) {
@@ -223,7 +238,7 @@
         // Mini-map operations
         const canvas = document.getElementById("mini-map");
         const ctx = canvas.getContext("2d");
-        const roomWidth = 19;
+        const roomWidth = 15;
         const roomHeight = 7;
 
         var renderMiniMap = function (mapData) {
@@ -232,6 +247,9 @@
             let playersInArea = mapData.p;
             let mobsInArea = mapData.m;
 
+            var explored = document.getElementById("span_explored");
+            explored.innerText = Math.round(mapData.x);
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             for (let x = 0, room; room = rooms[x]; x++) {
@@ -239,14 +257,14 @@
                 var positionX = ((room.RoomId - room.AreaId) % 20) * roomWidth;
                 var positionY = Math.floor((room.RoomId - room.AreaId) / 20) * roomHeight;
 
-                var hasMob = mobsInArea.find(m => m.Value == room.RoomId) != null;
-                var hasPlayer = playersInArea.find(p => p.Value == room.RoomId) != null;
+                var mobInRoom = mobsInArea.find(m => m.Value == room.RoomId);
+                var playerInRoom = playersInArea.find(p => p.Value == room.RoomId);
 
                 if (room.RoomId == currentRoom) {
-                    renderRoom(positionX, positionY, "purple", true, false, false);
+                    renderRoom(positionX, positionY, "blue", true, false, false);
                 }
                 else {
-                    renderRoom(positionX, positionY, "#666666", false, hasMob, hasPlayer);
+                    renderRoom(positionX, positionY, "#999999", false, mobInRoom != null, playerInRoom != null);
                 }
             }
         }
@@ -257,8 +275,13 @@
             if (fill) {
                 ctx.fillStyle = color;
                 ctx.fillRect(x, y, roomWidth, roomHeight);
+                ctx.strokeStyle = "#999999";
+                ctx.rect(x, y, roomWidth, roomHeight);
+                ctx.stroke();
             }
             else {
+                ctx.fillStyle = "#444444";
+                ctx.fillRect(x, y, roomWidth, roomHeight);
                 ctx.rect(x, y, roomWidth, roomHeight);
                 ctx.strokeStyle = color;
                 ctx.stroke();

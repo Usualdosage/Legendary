@@ -994,6 +994,11 @@ namespace Legendary.Engine
 
             if (area != null && room != null)
             {
+                var roomsExplored = actor.Metrics.RoomsExplored.FirstOrDefault(r => r.Key == area.AreaId).Value.ToList();
+                var totalVisited = actor.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count());
+                var total = area.Rooms.Count;
+                var explorationPct = (double)((double)totalVisited / (double)total) * 100;
+
                 var outputMessage = new OutputMessage()
                 {
                     Message = new Models.Output.Message()
@@ -1039,9 +1044,10 @@ namespace Legendary.Engine
                         Map = new Models.Output.Map()
                         {
                             Current = actor.Location.Value,
-                            Rooms = area?.Rooms.Where(r => actor.Metrics.RoomsExplored.ContainsKey(area.AreaId)).Select(r => new { r.AreaId, r.RoomId, r.Exits }).ToArray(),
+                            Rooms = area?.Rooms.Where(r => roomsExplored.Contains(r.RoomId)).ToArray(),
                             PlayersInArea = this.GetPlayersInArea(area?.AreaId)?.Select(p => new { p.CharacterId, p.FirstName, p.Location.Value })?.ToArray(),
                             MobsInArea = this.GetMobilesInArea(area?.AreaId)?.Select(m => new { m.CharacterId, m.FirstName, m.Location.Value })?.ToArray(),
+                            PercentageExplored = explorationPct,
                         },
                     },
                 };

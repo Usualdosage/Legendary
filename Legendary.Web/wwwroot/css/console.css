@@ -132,8 +132,22 @@ h6 {
 #mini-map
 {
     width: 216px;
-    height: 200px;
+    height: 212px;
     background-color: #222;
+    margin: 0px;
+    padding: 0px;
+}
+
+#explored {
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+}
+
+#span_explored
+{
+    display: inline;
 }
 
 /* Message */
@@ -441,6 +455,18 @@ h6 {
     background-size: cover;
 }
 
+#username
+{
+    margin: 0px !important;
+    margin-top: 5px !important;
+    color: red;
+}
+
+#title
+{
+    margin: 0px !important;
+}
+
 #banner {
     width: 100%;
     height: 120px;
@@ -551,7 +577,7 @@ button {
     text-align: center;
     font-size: .7em;
     font-style: italic;
-    height: 50px;
+    height: 65px;
     overflow: auto;
     /* Firefox */
     scrollbar-width: thin; /* "auto" or "thin" */
@@ -631,7 +657,8 @@ button {
 }
 
 component .vol-table {
-    width: 100%;    
+    width: 100%;
+    padding: 0px;
 }
 
         .component .nav-table tr td {

@@ -215,5 +215,11 @@ namespace Legendary.Engine.Models.Output
         /// </summary>
         [JsonProperty("p")]
         public dynamic[]? PlayersInArea { get; set; }
+
+        /// <summary>
+        /// Gets or sets the exploration percentage of the area.
+        /// </summary>
+        [JsonProperty("x")]
+        public double PercentageExplored { get; set; }
     }
 }

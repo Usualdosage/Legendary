@@ -72,7 +72,7 @@ namespace Legendary.Engine.Processors
             if (area != null)
             {
                 var totalVisited = actor.Character.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count());
-                var total = area.Rooms.Count();
+                var total = area.Rooms.Count;
                 var explorationPct = (double)((double)totalVisited / (double)total) * 100;
 
                 sb.Append($"<div class='player-section'>{area.Name}</div>");
