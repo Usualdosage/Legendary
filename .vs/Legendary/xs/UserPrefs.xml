@@ -17,39 +17,44 @@
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/MailService.cs" relfile="Legacy.Engine/MailService.cs" line="57" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/World.cs" relfile="Legacy.Engine/World.cs" line="501" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="412" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor2.cs" relfile="Legacy.Engine/Processors/ActionProcessor2.cs" line="1926" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Views/Home/Game.cshtml">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Views/Shared/_Layout.cshtml">
     <Files>
-      <File FileName="Legendary.Tests/ProcessorTests/LanguageProcessorTests.cs" Line="22" Column="22" />
-      <File FileName="Legendary.Tests/Usings.cs" Line="8" Column="16" />
-      <File FileName="Legendary.Tests/GlobalSuppressions.cs" Line="9" Column="1" />
-      <File FileName="Legendary.Core/Contracts/ILanguageProcessor.cs" Line="29" Column="25" />
-      <File FileName="Legendary.Core/GlobalSuppressions.cs" Line="15" Column="1" />
-      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="281" Column="104" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="1021" Column="50" />
-      <File FileName="Legendary.Web/wwwroot/js/client.js" Line="181" Column="12" />
-      <File FileName="Legendary.Web/wwwroot/css/console.css" Line="129" Column="27" />
-      <File FileName="Legendary.Web/Program.cs" Line="17" Column="1" />
-      <File FileName="Legendary.Core/Constants.cs" Line="161" Column="48" />
-      <File FileName="Legendary.Core/Types/WearLocation.cs" Line="1" Column="1" />
-      <File FileName="Legendary.Core/Models/UserData.cs" Line="1" Column="1" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="58" Column="69" />
-      <File FileName="Legacy.Engine/Output/OutputMessage.cs" Line="193" Column="18" />
-      <File FileName="Legacy.Engine/GlobalSuppressions.cs" Line="17" Column="168" />
-      <File FileName="Legendary.Web/wwwroot/js/controls.js" Line="1" Column="1" />
-      <File FileName="Legendary.Web/Views/Home/Game.cshtml" Line="26" Column="19" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="476" Column="26" />
+      <File FileName="Legendary.Web/wwwroot/js/client.js" Line="147" Column="22" />
+      <File FileName="Legendary.Web/wwwroot/css/console.css" Line="110" Column="39" />
+      <File FileName="Legendary.Web/Program.cs" />
+      <File FileName="Legendary.Core/Models/UserData.cs" Line="6" Column="48" />
+      <File FileName="Legendary.Web/Views/Home/Game.cshtml" Line="30" Column="26" />
+      <File FileName="Legendary.Core/Models/Exit.cs" Line="35" Column="20" />
+      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="265" Column="14" />
+      <File FileName="Legendary.Data/DataService.cs" Line="94" Column="18" />
+      <File FileName="Legendary.Core/Types/Metrics.cs" Line="84" Column="23" />
+      <File FileName="Legendary.Core/Models/Room.cs" Line="21" Column="6" />
+      <File FileName="Legendary.Core/Models/Mobile.cs" Line="49" Column="1" />
+      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="371" Column="53" />
+      <File FileName="Legacy.Engine/World.cs" Line="812" Column="85" />
+      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" Line="13" Column="5" />
+      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="28" Column="399" />
+      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="40" Column="391" />
+      <File FileName="Legendary.Web/wwwroot/css/index.css" Line="50" Column="1" />
+      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="1936" Column="18" />
+      <File FileName="Legendary.Web/Views/_ViewImports.cshtml" Line="1" Column="1" />
+      <File FileName="Legendary.Web/Views/_ViewStart.cshtml" Line="1" Column="1" />
+      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="31" Column="8" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True">
-            <Node name="Legendary.Core">
+          <Node name="Legendary">
+            <Node name="Legendary.Core" expanded="True">
+              <Node name="Contracts" expanded="True" />
               <Node name="Models" expanded="True" />
+              <Node name="Types" expanded="True" />
             </Node>
-            <Node name="Legendary.Engine">
-              <Node name="Extensions" expanded="True" />
+            <Node name="Legendary.Data" expanded="True" />
+            <Node name="Legendary.Engine" expanded="True">
               <Node name="Output" expanded="True" />
               <Node name="Processors" expanded="True" />
             </Node>
@@ -58,16 +63,15 @@
               <Node name="ProcessorTests" expanded="True" />
             </Node>
             <Node name="Legendary.Web">
-              <Node name="Data" expanded="True">
-                <Node name="Personas" expanded="True" />
-              </Node>
               <Node name="Views">
-                <Node name="Home">
-                  <Node name="Game.cshtml" selected="True" />
+                <Node name="Content" expanded="True" />
+                <Node name="Home" expanded="True" />
+                <Node name="Shared">
+                  <Node name="_Layout.cshtml" selected="True" />
                 </Node>
               </Node>
               <Node name="wwwroot">
-                <Node name="img" expanded="True" />
+                <Node name="css" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -75,7 +79,7 @@
       </Pad>
       <Pad Id="MonoDevelop.UnitTesting.TestPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True" selected="True" />
+          <Node name="Legendary" expanded="True" />
         </State>
       </Pad>
     </Pads>

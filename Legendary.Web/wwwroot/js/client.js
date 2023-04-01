@@ -56,14 +56,10 @@
 
                         if (promise !== undefined) {
                             promise.then(_ => {
-                                if (channel === 0) {
-                                    audioElem.volume = 0.2;
-                                }
-                                else {
-                                    audioElem.volume = 1.0;
-                                }
+                                console.log("Playing background audio.")
                             }).catch(error => {
                                 // Autoplay was prevented, no sound for you.
+                                console.log("Autoplay of audio has been disabled.")
                             });
                         }
                     }
@@ -134,6 +130,28 @@
                     return;
                 }
             }
+            else if (message.startsWith("<video"))
+            {
+                $console.append("<span class='message'>" + message + "</span>");
+
+                // Stop playing the other audio if the user is watching a video.
+                const videoElement = document.querySelector("video");
+                videoElement.addEventListener("play", function () {
+                    const audioElements = document.getElementsByTagName('audio');
+                    for (const audio of audioElements) {
+                        audio.pause();
+                    }
+                    console.log("All background audio paused.");
+                });
+
+                videoElement.addEventListener("ended", function () {
+                    const audioElements = document.getElementsByTagName('audio');
+                    for (const audio of audioElements) {
+                        audio.play();
+                    }
+                    console.log("All background audio un-paused.");
+                });
+            }
             else {
                 $console.append("<span class='message'>" + message + "</span>");
             }
@@ -149,6 +167,8 @@
             }
         };
 
+        
+        
         $("#inputField").on("click", function (e) {
             $(this).select();
         });

@@ -1,10 +1,5 @@
 ﻿$(function () {
-
-    var volume = document.getElementById("channel0");
-
-    if (volume) {
-        volume.volume = .3;
-    }
+    loadAudioPreferences();
 
     Notification.requestPermission().then((result) => {
         console.log(result);
@@ -15,20 +10,54 @@ function displayNotification(img, text) {
     const notification = new Notification('Legendary', { body: text, icon: img });
 }
 
+function loadAudioPreferences() {
+    var preferences = simpleStorage.get("legendary_preferences");
+    if (!preferences)
+    {
+        preferences = [.20, .15, .15, .15, .15, .15, .15, .15];
+    }
+
+    const audioElements = document.getElementsByTagName('audio');
+
+    if (audioElements.length > 0) {
+        
+        index = 0;
+        for (let audio of audioElements) {
+            audio.volume = preferences[index];
+            index++;
+        }
+
+        document.getElementById("audioBackground").value = audioElements[0].volume * 100;
+        document.getElementById("audioSFX").value = audioElements[1].volume * 100;
+    }
+}
+
+function updateAudioPreferences() {
+    const audioElements = document.getElementsByTagName('audio');
+
+    if (audioElements.length > 0) {
+        var preferences = [];
+        for (const audio of audioElements) {
+            preferences.push(audio.volume);
+        }
+        simpleStorage.set("legendary_preferences", preferences);
+    }
+}
+
 function changeBgAudio(e) {
     var newVolume = (e.value / 100);
     document.getElementById("channel0").volume = newVolume;
+    updateAudioPreferences();
 }
 
 function changeSfxAudio(e) {
     var newVolume = (e.value / 100);
-    document.getElementById("channel1").volume = newVolume;
-    document.getElementById("channel2").volume = newVolume;
-    document.getElementById("channel3").volume = newVolume;
-    document.getElementById("channel4").volume = newVolume;
-    document.getElementById("channel5").volume = newVolume;
-    document.getElementById("channel6").volume = newVolume;
-    document.getElementById("channel7").volume = newVolume;
+    const audioElements = document.getElementsByTagName('audio');
+    for (let x = 1, audio; audio = audioElements[x]; x++)
+    {
+        audioElements[x].volume = newVolume;
+    }
+    updateAudioPreferences();
 }
 
 function autocomplete(inp, arr) {
