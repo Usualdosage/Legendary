@@ -633,15 +633,18 @@ namespace Legendary.Engine
 
                                         foreach (var itemGroup in itemGroups)
                                         {
-                                            var item = itemGroup.First();
+                                            if (itemGroup != null)
+                                            {
+                                                var item = itemGroup.First();
 
-                                            if (itemGroup.Count() == 1)
-                                            {
-                                                sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
-                                            }
-                                            else
-                                            {
-                                                sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                                                if (itemGroup.Count() == 1)
+                                                {
+                                                    sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
+                                                }
+                                                else
+                                                {
+                                                    sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                                                }
                                             }
                                         }
 
@@ -697,15 +700,18 @@ namespace Legendary.Engine
 
                                     foreach (var itemGroup in itemGroups)
                                     {
-                                        var item = itemGroup.First();
+                                        if (itemGroup != null)
+                                        {
+                                            var item = itemGroup.First();
 
-                                        if (itemGroup.Count() == 1)
-                                        {
-                                            sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
-                                        }
-                                        else
-                                        {
-                                            sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                                            if (itemGroup.Count() == 1)
+                                            {
+                                                sb.AppendLine($"<span class='inventory-item'>{ActionHelper.DecorateItem(item, null)}</span>");
+                                            }
+                                            else
+                                            {
+                                                sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, null)}</span>");
+                                            }
                                         }
                                     }
 
@@ -815,15 +821,18 @@ namespace Legendary.Engine
 
                 foreach (var itemGroup in itemGroups)
                 {
-                    var item = itemGroup.First();
+                    if (itemGroup != null)
+                    {
+                        var item = itemGroup.First();
 
-                    if (itemGroup.Count() == 1)
-                    {
-                        sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
-                    }
-                    else
-                    {
-                        sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                        if (itemGroup.Count() == 1)
+                        {
+                            sb.Append($"<span class='item'>{ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                        }
+                        else
+                        {
+                            sb.Append($"<span class='item'>({itemGroup.Count()}) {ActionHelper.DecorateItem(item, item.ShortDescription)}</span>");
+                        }
                     }
                 }
             }
@@ -835,58 +844,61 @@ namespace Legendary.Engine
 
                 foreach (var mobGroup in mobGroups)
                 {
-                    var mob = mobGroup.First();
-                    string effects = this.GetEffects(mob);
-
-                    if (mobGroup.Count() == 1)
+                    if (mobGroup != null)
                     {
-                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
-                        {
-                            if (mob.CharacterFlags.Contains(CharacterFlags.Sleeping))
-                            {
-                                sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
-                            }
-                            else
-                            {
-                                sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var sleepingMobs = mobGroup.Any(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+                        var mob = mobGroup.First();
+                        string effects = this.GetEffects(mob);
 
-                        if (sleepingMobs)
+                        if (mobGroup.Count() == 1)
                         {
-                            var sleeping = mobGroup.Where(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
-                            var notSleeping = mobGroup.Where(m => !m.CharacterFlags.Contains(CharacterFlags.Sleeping));
-
                             if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
                             {
-                                if (sleeping.Count() == 1)
+                                if (mob.CharacterFlags.Contains(CharacterFlags.Sleeping))
                                 {
                                     sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
                                 }
                                 else
                                 {
-                                    sb.Append($"<span class='mobile'>({sleeping.Count()}){effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
-                                }
-
-                                if (notSleeping.Count() == 1)
-                                {
                                     sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
-                                }
-                                else
-                                {
-                                    sb.Append($"<span class='mobile'>({notSleeping.Count()}) {effects}{mob.ShortDescription}</span>");
                                 }
                             }
                         }
                         else
                         {
-                            if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
+                            var sleepingMobs = mobGroup.Any(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+
+                            if (sleepingMobs)
                             {
-                                sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
+                                var sleeping = mobGroup.Where(m => m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+                                var notSleeping = mobGroup.Where(m => !m.CharacterFlags.Contains(CharacterFlags.Sleeping));
+
+                                if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
+                                {
+                                    if (sleeping.Count() == 1)
+                                    {
+                                        sb.Append($"<span class='mobile'>{effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                                    }
+                                    else
+                                    {
+                                        sb.Append($"<span class='mobile'>({sleeping.Count()}){effects}{mob.FirstName.FirstCharToUpper()} is sleeping here.</span>");
+                                    }
+
+                                    if (notSleeping.Count() == 1)
+                                    {
+                                        sb.Append($"<span class='mobile'>{effects}{mob.ShortDescription}</span>");
+                                    }
+                                    else
+                                    {
+                                        sb.Append($"<span class='mobile'>({notSleeping.Count()}) {effects}{mob.ShortDescription}</span>");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, actor, mob))
+                                {
+                                    sb.Append($"<span class='mobile'>({mobGroup.Count()}) {effects}{mob.ShortDescription}</span>");
+                                }
                             }
                         }
                     }
@@ -2152,6 +2164,9 @@ namespace Legendary.Engine
             this.UpdateTitle(character);
 
             await this.SendToPlayer(character, $"You advanced a level! You gained {hp} health, {mana} mana, and {move} movement. You have {character.Trains} training sessions and {character.Practices} practices.", cancellationToken);
+
+            this.logger.Info($"{character.FirstName} has advanced to level {character.Level}!", this);
+
             await this.PlaySound(character, AudioChannel.Actor, Sounds.LEVELUP, cancellationToken);
 
             if (character.Level % 10 == 0 && this.awardProcessor != null)
@@ -2492,7 +2507,8 @@ namespace Legendary.Engine
                     this.CleanupGroups();
 
                     // See what's going on around the players.
-                    this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour);
+                    var cts = new CancellationTokenSource();
+                    this.environment.ProcessEnvironmentChanges(engineEventArgs.GameTicks, engineEventArgs.GameHour, cts.Token);
 
                     // Perform tasks on individual players.
                     foreach (var user in Users)

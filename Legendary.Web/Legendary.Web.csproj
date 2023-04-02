@@ -35,7 +35,6 @@
     <Content Remove="wwwroot\fonts\" />
     <Content Remove="stylecop.json" />
     <Content Remove="wwwroot\img\notifications\" />
-    <Content Remove="Data\Personas\Virgil.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\img\" />
@@ -76,9 +75,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Data\parser.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Data\Personas\Virgil.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

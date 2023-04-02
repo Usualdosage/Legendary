@@ -229,11 +229,55 @@ namespace Legendary.Engine.Processors
                                 {
                                     if (ItemHelper.CanCarry(actor.Character, item))
                                     {
-                                        await this.communicator.SendToPlayer(actor.Connection, $"You purchase {item.Name} from {merchant.FirstName.FirstCharToUpper()} for {item.Value.ToMerchantSellPrice(actor.Character, merchant)}.", cancellationToken);
+                                        if (actor.Character.HasSkill(nameof(Extort)))
+                                        {
+                                            if (SkillHelper.CheckSuccess(nameof(Extort), actor.Character, this.random))
+                                            {
+                                                bool mastery = await SkillHelper.CheckImprove(nameof(Extort), actor.Character, this.random, this.communicator, cancellationToken);
+
+                                                await this.communicator.SendToPlayer(actor.Connection, $"You glower and intimidate {merchant.FirstName.FirstCharToUpper()} into just giving you {item.Name} for free!", cancellationToken);
+                                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} intimidates {merchant.FirstName.FirstCharToUpper()} into giving {actor.Character.Pronoun} {item.Name} for free.", cancellationToken);
+                                                actor.Character.Inventory.Add(item.DeepCopy());
+
+                                                if (mastery)
+                                                {
+                                                    await this.awardProcessor.GrantAward(8, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
+                                                }
+
+                                                return;
+                                            }
+                                        }
+
+                                        if (actor.Character.HasSkill(nameof(Haggle)))
+                                        {
+                                            if (SkillHelper.CheckSuccess(nameof(Haggle), actor.Character, this.random))
+                                            {
+                                                var percentOff = (decimal)this.random.Next(1, actor.Character.Level / 2) / 100m;
+                                                price = price * percentOff;
+
+                                                bool mastery = await SkillHelper.CheckImprove(nameof(Haggle), actor.Character, this.random, this.communicator, cancellationToken);
+
+                                                await this.communicator.SendToPlayer(actor.Connection, $"You are able to haggle with {merchant.FirstName.FirstCharToUpper()} over {item.Name} from and talk {merchant.Pronoun} down to {price.ToMerchantSellPrice(actor.Character, merchant)}!", cancellationToken);
+                                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} haggles with {merchant.FirstName.FirstCharToUpper()} for a bit, then purchases {item.Name}.", cancellationToken);
+
+                                                actor.Character.Currency -= price;
+
+                                                actor.Character.Inventory.Add(item.DeepCopy());
+
+                                                if (mastery)
+                                                {
+                                                    await this.awardProcessor.GrantAward(8, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
+                                                }
+
+                                                await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
+                                                return;
+                                            }
+                                        }
+
+                                        await this.communicator.SendToPlayer(actor.Connection, $"You purchase {item.Name} from {merchant.FirstName.FirstCharToUpper()} for {price.ToMerchantSellPrice(actor.Character, merchant)}.", cancellationToken);
                                         await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} purchases {item.Name} from {merchant.FirstName.FirstCharToUpper()}.", cancellationToken);
                                         actor.Character.Currency -= price;
-                                        var newItem = item.DeepCopy();
-                                        actor.Character.Inventory.Add(newItem);
+                                        actor.Character.Inventory.Add(item.DeepCopy());
                                         await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
                                     }
                                     else

@@ -73,35 +73,38 @@ namespace Legendary.Engine.Extensions
 
             foreach (var targetGroup in targetGroups)
             {
-                var target = targetGroup.First();
-
-                List<string> allTokens = new List<string>();
-                var firstNameTokens = target.FirstName?.ToLower().Split(' ').ToList();
-                var lastNameTokens = target.LastName?.ToLower().Split(' ').ToList();
-
-                if (firstNameTokens != null)
+                if (targetGroup != null)
                 {
-                    allTokens.AddRange(firstNameTokens);
-                }
+                    var target = targetGroup.First();
 
-                if (lastNameTokens != null)
-                {
-                    allTokens.AddRange(lastNameTokens);
-                }
+                    List<string> allTokens = new List<string>();
+                    var firstNameTokens = target.FirstName?.ToLower().Split(' ').ToList();
+                    var lastNameTokens = target.LastName?.ToLower().Split(' ').ToList();
 
-                int matchCount = 0;
-
-                foreach (var token in allTokens)
-                {
-                    if (Regex.IsMatch(token, input))
+                    if (firstNameTokens != null)
                     {
-                        matchCount += 1;
+                        allTokens.AddRange(firstNameTokens);
                     }
-                }
 
-                if (!bestMatch.ContainsKey(matchCount))
-                {
-                    bestMatch.Add(matchCount, target);
+                    if (lastNameTokens != null)
+                    {
+                        allTokens.AddRange(lastNameTokens);
+                    }
+
+                    int matchCount = 0;
+
+                    foreach (var token in allTokens)
+                    {
+                        if (Regex.IsMatch(token, input))
+                        {
+                            matchCount += 1;
+                        }
+                    }
+
+                    if (!bestMatch.ContainsKey(matchCount))
+                    {
+                        bestMatch.Add(matchCount, target);
+                    }
                 }
             }
 
@@ -136,35 +139,38 @@ namespace Legendary.Engine.Extensions
 
             foreach (var targetGroup in targetGroups)
             {
-                var target = targetGroup.First();
-
-                List<string> allTokens = new List<string>();
-                var nameTokens = target.Name?.ToLower().Split(' ').ToList();
-                var descriptionTokens = target.ShortDescription?.ToLower().Split(' ').ToList();
-
-                if (nameTokens != null)
+                if (targetGroup != null)
                 {
-                    allTokens.AddRange(nameTokens);
-                }
+                    var target = targetGroup.First();
 
-                if (descriptionTokens != null)
-                {
-                    allTokens.AddRange(descriptionTokens);
-                }
+                    List<string> allTokens = new List<string>();
+                    var nameTokens = target.Name?.ToLower().Split(' ').ToList();
+                    var descriptionTokens = target.ShortDescription?.ToLower().Split(' ').ToList();
 
-                int matchCount = 0;
-
-                foreach (var token in allTokens)
-                {
-                    if (Regex.IsMatch(token, input))
+                    if (nameTokens != null)
                     {
-                        matchCount += 1;
+                        allTokens.AddRange(nameTokens);
                     }
-                }
 
-                if (!bestMatch.ContainsKey(matchCount))
-                {
-                    bestMatch.Add(matchCount, target);
+                    if (descriptionTokens != null)
+                    {
+                        allTokens.AddRange(descriptionTokens);
+                    }
+
+                    int matchCount = 0;
+
+                    foreach (var token in allTokens)
+                    {
+                        if (Regex.IsMatch(token, input))
+                        {
+                            matchCount += 1;
+                        }
+                    }
+
+                    if (!bestMatch.ContainsKey(matchCount))
+                    {
+                        bestMatch.Add(matchCount, target);
+                    }
                 }
             }
 

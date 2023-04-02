@@ -559,7 +559,7 @@ namespace Legendary.Engine
                         }
 
                         // Apply affects to mobiles.
-                        await this.ProcessMobileAffects(room, cancellationToken);
+                        await ProcessMobileAffects(room, cancellationToken);
 
                         // Move mobiles who wander.
                         await this.ProcessMobileWander(room, cancellationToken);
@@ -731,7 +731,7 @@ namespace Legendary.Engine
                         await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wears {item.Name}.", cancellationToken);
                     }
 
-                    this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and is wearing it now.", this.communicator);
+                    this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and is wearing it now.", this.communicator);
                 }
             }
             else
@@ -745,7 +745,7 @@ namespace Legendary.Engine
             }
         }
 
-        private async Task ProcessMobileAffects(Room room, CancellationToken cancellationToken)
+        private static async Task ProcessMobileAffects(Room room, CancellationToken cancellationToken)
         {
             // Process effects on mobiles, and (maybe) move them if they are wandering.
             foreach (var mobile in room.Mobiles)
@@ -761,7 +761,7 @@ namespace Legendary.Engine
 
                             if (effect.Effector != null && effect.Action != null)
                             {
-                                await effect.Action.OnTick(mobile, effect);
+                                await effect.Action.OnTick(mobile, effect, cancellationToken);
                             }
                         }
                     }

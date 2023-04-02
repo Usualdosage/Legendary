@@ -160,7 +160,7 @@ namespace Legendary.Engine.Processors
                         {
                             if (!char.IsPunctuation(sentence[0]))
                             {
-                                var temp = sentence.Replace("EMOTE:", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
+                                var temp = sentence.Replace("EMOTE", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
                                 temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
                                 messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
                             }
@@ -201,13 +201,13 @@ namespace Legendary.Engine.Processors
                 {
                     if (!char.IsPunctuation(message[0]))
                     {
-                        var temp = message.Replace("EMOTE:", string.Empty).Trim();
+                        var temp = message.Replace("EMOTE", string.Empty).Trim();
                         temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty);
                         messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
                     }
                     else
                     {
-                        var temp = message.Substring(1, message.Length - 1).Replace("EMOTE:", string.Empty).Trim();
+                        var temp = message.Substring(1, message.Length - 1).Replace("EMOTE", string.Empty).Trim();
 
                         if (!string.IsNullOrWhiteSpace(temp))
                         {

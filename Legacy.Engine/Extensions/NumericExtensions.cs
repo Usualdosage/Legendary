@@ -14,6 +14,7 @@ namespace Legendary.Engine.Extensions
     using System.Text;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
+    using Legendary.Engine.Models.Skills;
 
     /// <summary>
     /// Extensions for numeric data types.

@@ -2977,7 +2977,7 @@ namespace Legendary.Engine.Processors
             // Get the locations that are already occupied by this item.
             var usedLocations = actor.Character.Equipment.Where(e => item.WearLocation.Contains(e.Key)).ToList();
 
-            // East, no used locations, so this can drop into the first one.
+            // Easy, no used locations, so this can drop into the first one.
             if (usedLocations.Count == 0)
             {
                 var wearDescription = item.WearLocation.First().ToWearDescription();

@@ -12,6 +12,7 @@ namespace Legendary.Engine
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Numerics;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core;
@@ -24,6 +25,7 @@ namespace Legendary.Engine
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Skills;
     using Legendary.Engine.Models.Spells;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Represents the user environment.
@@ -132,25 +134,26 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="gameTicks">The game ticks.</param>
         /// <param name="gameHour">The game hour.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task ProcessEnvironmentChanges(int gameTicks, int gameHour)
+        public async Task ProcessEnvironmentChanges(int gameTicks, int gameHour, CancellationToken cancellationToken = default)
         {
             if (Communicator.Users != null)
             {
                 foreach (var user in Communicator.Users)
                 {
-                    await this.ProcessRecovery(user.Value);
-                    await this.ProcessItemRot(user.Value);
+                    await this.ProcessRecovery(user.Value, cancellationToken);
+                    await this.ProcessItemRot(user.Value, cancellationToken);
                     await this.ProcessAffects(user.Value);
                 }
 
                 await this.ProcessTime(gameHour);
-                await this.ProcessMobiles();
-                await this.ProcessWeather();
+                await this.ProcessMobiles(cancellationToken);
+                await this.ProcessWeather(cancellationToken);
             }
         }
 
-        private async Task ProcessMobiles()
+        private async Task ProcessMobiles(CancellationToken cancellationToken = default)
         {
             var areas = this.world.Areas;
 
@@ -171,7 +174,7 @@ namespace Legendary.Engine
                                     if (mobile.IsAffectedBy(nameof(Sleep)))
                                     {
                                         mobile.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wakes and stands up.");
+                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wakes and stands up.", cancellationToken);
                                     }
                                 }
                             }
@@ -230,8 +233,9 @@ namespace Legendary.Engine
         /// Recovery is based on the player's vitals, assuming it would take 8 hours of uninterrupted sleep to fully recover.
         /// </summary>
         /// <param name="user">The user.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        private async Task ProcessRecovery(UserData user)
+        private async Task ProcessRecovery(UserData user, CancellationToken cancellationToken)
         {
             var standardHPRecover = user.Character.Health.Max / 24;
             var standardManaRecover = user.Character.Mana.Max / 24;
@@ -252,12 +256,22 @@ namespace Legendary.Engine
 
             if (user.Character.HasSkill(nameof(FastHealing)))
             {
-                standardHPRecover += this.random.Next(5, user.Character.Level);
+                var fastHealingProficiency = user.Character.GetSkillProficiency(nameof(FastHealing));
+                if (fastHealingProficiency != null && SkillHelper.CheckSuccess(nameof(FastHealing), user.Character, this.random))
+                {
+                    standardHPRecover += this.random.Next(5, user.Character.Level);
+                    await SkillHelper.CheckImprove(nameof(FastHealing), user.Character, this.random, this.communicator, cancellationToken);
+                }
             }
 
             if (user.Character.HasSpell(nameof(Trance)))
             {
-                standardManaRecover += this.random.Next(5, user.Character.Level);
+                var tranceProficiency = user.Character.GetSkillProficiency(nameof(Trance));
+                if (tranceProficiency != null && SkillHelper.CheckSuccess(nameof(Trance), user.Character, this.random))
+                {
+                    standardManaRecover += this.random.Next(5, user.Character.Level);
+                    await SkillHelper.CheckImprove(nameof(Trance), user.Character, this.random, this.communicator, cancellationToken);
+                }
             }
 
             var moveRestore = Math.Min(user.Character.Movement.Max - user.Character.Movement.Current, standardMoveRecover);
@@ -304,7 +318,7 @@ namespace Legendary.Engine
             }
         }
 
-        private async Task ProcessAffects(UserData user)
+        private async Task ProcessAffects(UserData user, CancellationToken cancellationToken = default)
         {
             foreach (var effect in user.Character.AffectedBy)
             {
@@ -321,39 +335,39 @@ namespace Legendary.Engine
                     {
                         if (effect.Name?.ToLower() == "ghost")
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You are no longer a ghost.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You are no longer a ghost.", cancellationToken);
                             user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Ghost);
                         }
                         else if (effect.Name == nameof(Sneak))
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You trample around loudly again.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You trample around loudly again.", cancellationToken);
                         }
                         else if (effect.Name == nameof(Invisibility))
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"You fade back into existence.");
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} fades into existence.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You fade back into existence.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} fades into existence.", cancellationToken);
                         }
                         else if (effect.Name == nameof(DirtKicking))
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"Your rub the dirt out of your eyes.");
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} rubs the dirt out of their eyes.");
+                            await this.communicator.SendToPlayer(user.Connection, $"Your rub the dirt out of your eyes.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} rubs the dirt out of their eyes.", cancellationToken);
                         }
                         else if (effect.Name == nameof(Sleep))
                         {
                             user.Character.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
-                            await this.communicator.SendToPlayer(user.Connection, $"You wake and stand up.");
-                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} wakes and stands up.");
+                            await this.communicator.SendToPlayer(user.Connection, $"You wake and stand up.", cancellationToken);
+                            await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName} wakes and stands up.", cancellationToken);
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.");
+                            await this.communicator.SendToPlayer(user.Connection, $"The {effect.Name} effect wears off.", cancellationToken);
                         }
                     }
                     else
                     {
                         if (effect.Effector != null && effect.Action != null)
                         {
-                            await effect.Action.OnTick(user.Character, effect);
+                            await effect.Action.OnTick(user.Character, effect, cancellationToken);
                         }
                     }
                 }
@@ -603,27 +617,30 @@ namespace Legendary.Engine
                         {
                             try
                             {
-                                // Get the location of the first player. All the rest in here are in the same area and room.
-                                var location = roomGrouping.First().Value.Character.Location;
-
-                                var room = this.communicator.ResolveRoom(location);
-
-                                if (room != null && room.Flags != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
+                                if (roomGrouping != null)
                                 {
-                                    var weatherMessage = this.GenerateRandomWeather(room);
+                                    // Get the location of the first player. All the rest in here are in the same area and room.
+                                    var location = roomGrouping.First().Value.Character.Location;
 
-                                    if (weatherMessage != null)
+                                    var room = this.communicator.ResolveRoom(location);
+
+                                    if (room != null && room.Flags != null && !room.Flags.Contains(Core.Types.RoomFlags.Indoors))
                                     {
-                                        await this.communicator.SendToRoom(location, weatherMessage.Message, cancellationToken);
-                                        await this.communicator.PlaySoundToRoom(location, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+                                        var weatherMessage = this.GenerateRandomWeather(room);
 
-                                        if (CurrentWeather.ContainsKey(room.AreaId))
+                                        if (weatherMessage != null)
                                         {
-                                            CurrentWeather[room.AreaId] = weatherMessage;
-                                        }
-                                        else
-                                        {
-                                            CurrentWeather.Add(room.AreaId, weatherMessage);
+                                            await this.communicator.SendToRoom(location, weatherMessage.Message, cancellationToken);
+                                            await this.communicator.PlaySoundToRoom(location, Core.Types.AudioChannel.Weather, weatherMessage.Sound, cancellationToken);
+
+                                            if (CurrentWeather.ContainsKey(room.AreaId))
+                                            {
+                                                CurrentWeather[room.AreaId] = weatherMessage;
+                                            }
+                                            else
+                                            {
+                                                CurrentWeather.Add(room.AreaId, weatherMessage);
+                                            }
                                         }
                                     }
                                 }

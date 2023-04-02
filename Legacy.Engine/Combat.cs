@@ -1382,7 +1382,7 @@ namespace Legendary.Engine
 
                 if (playersInRoom != null)
                 {
-                    var playersInGroupInRoom = playersInRoom.Where(g => group.Contains(g.CharacterId));
+                    var playersInGroupInRoom = playersInRoom.Where(g => group != null && group.Contains(g.CharacterId));
 
                     var playersInGroupInRoomCount = playersInGroupInRoom.Count();
 

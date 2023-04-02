@@ -9,6 +9,7 @@
 
 namespace Legendary.Core.Contracts
 {
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -26,8 +27,9 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="gameTicks">The game ticks.</param>
         /// <param name="gameHour">The hour of the game.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task ProcessEnvironmentChanges(int gameTicks, int gameHour);
+        Task ProcessEnvironmentChanges(int gameTicks, int gameHour, CancellationToken cancellationToken);
 
         /// <summary>
         /// Randomly generates the weather for the world.
