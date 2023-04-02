@@ -123,7 +123,7 @@ namespace Legendary.Engine
             this.LanguageGenerator = new LanguageGenerator(this.random);
 
             // Create the language processor.
-            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService);
 
             // Create the action helper.
             this.actionHelper = new ActionHelper(this, this.random, this.world, this.logger, this.combat);
@@ -1621,18 +1621,18 @@ namespace Legendary.Engine
 
             if (mobiles != null && mobiles.Count > 0)
             {
-                foreach (var mobile in mobiles)
-                {
-                    var responses = await this.LanguageProcessor.Process(character, mobile, message, cancellationToken);
+                var (responses, mobile) = await this.LanguageProcessor.Process(character, mobiles, message, cancellationToken);
 
-                    if (responses != null && responses.Length > 0)
+                if (responses != null && responses.Length > 0 && mobile != null)
+                {
+                    foreach (var response in responses)
                     {
-                        foreach (var response in responses)
-                        {
-                            await this.SendToRoom(mobile.Location, response, cancellationToken);
-                        }
+                        await this.SendToRoom(mobile.Location, response, cancellationToken);
                     }
-                    else
+                }
+                else
+                {
+                    if (mobile != null)
                     {
                         // Mob did not want to communicate, so it may do an emote instead.
                         var emoteResponse = this.LanguageProcessor.ProcessEmote(character, mobile, message);

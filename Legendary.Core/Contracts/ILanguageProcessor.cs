@@ -9,6 +9,7 @@
 
 namespace Legendary.Core.Contracts
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Models;
@@ -22,11 +23,11 @@ namespace Legendary.Core.Contracts
         /// Gets a message from the bot.
         /// </summary>
         /// <param name="character">The character.</param>
-        /// <param name="mobile">The mobile.</param>
+        /// <param name="mobiles">The mobiles.</param>
         /// <param name="input">The message input.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The result message.</returns>
-        Task<string[]?> Process(Character character, Mobile mobile, string input, CancellationToken cancellationToken = default);
+        Task<(string[]?, Mobile?)> Process(Character character, List<Mobile> mobiles, string input, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// If a mob doesn't perform a verbal response, it may execute an emote.

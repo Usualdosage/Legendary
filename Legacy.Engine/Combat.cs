@@ -575,73 +575,105 @@ namespace Legendary.Engine
             var primaryAction = this.GetCombatAction(character);
             SkillProficiency? primaryWeapon = character.GetSkillProficiency(primaryAction.Name);
 
-            if (primaryWeapon != null && primaryWeapon.Proficiency > 1)
+            try
             {
-                var result = this.random.Next(1, 101);
-                dead = await this.DoDamage(character, target, primaryAction, result >= 100, cancellationToken);
-            }
-            else
-            {
-                await this.communicator.SendToPlayer(character, $"Your {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-
-                if (this.random.Next(1, 100) < 20)
+                if (primaryWeapon != null && primaryWeapon.Proficiency > 1)
                 {
-                    await this.communicator.SendToPlayer(character, $"You're not likely to do much to {target.FirstName} without a weapon or training.", cancellationToken);
+                    var result = this.random.Next(1, 101);
+                    dead = await this.DoDamage(character, target, primaryAction, result >= 100, cancellationToken);
                 }
+                else
+                {
+                    await this.communicator.SendToPlayer(character, $"Your {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+
+                    if (this.random.Next(1, 100) < 20)
+                    {
+                        await this.communicator.SendToPlayer(character, $"You're not likely to do much to {target.FirstName} without a weapon or training.", cancellationToken);
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                this.logger.Error($"ExecuteAttacks->First: {exc}", this.communicator);
+                throw;
             }
 
             // Second attack
             if (!dead)
             {
-                SkillProficiency? secondAttack = character.GetSkillProficiency("second attack");
-
-                if (secondAttack != null && secondAttack.Proficiency > 1)
+                try
                 {
-                    var result = this.random.Next(1, 101);
+                    SkillProficiency? secondAttack = character.GetSkillProficiency("second attack");
 
-                    if (result < secondAttack.Proficiency && result != 1)
+                    if (secondAttack != null && secondAttack.Proficiency > 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
-                    }
+                        var result = this.random.Next(1, 101);
 
-                    SecondAttack skill = new SecondAttack(this.communicator, this.random, this.world, this.logger, this);
-                    await skill.CheckImprove(character, cancellationToken);
+                        if (result < secondAttack.Proficiency && result != 1)
+                        {
+                            dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
+                        }
+
+                        SecondAttack skill = new SecondAttack(this.communicator, this.random, this.world, this.logger, this);
+                        await skill.CheckImprove(character, cancellationToken);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    this.logger.Error($"ExecuteAttacks->Second: {exc}", this.communicator);
+                    throw;
                 }
             }
 
             // Third attack
             if (!dead)
             {
-                SkillProficiency? thirdAttack = character.GetSkillProficiency("third attack");
-
-                if (thirdAttack != null && thirdAttack.Proficiency > 1)
+                try
                 {
-                    var result = this.random.Next(1, 101);
-                    if (result < thirdAttack.Proficiency && result != 1)
-                    {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
-                    }
+                    SkillProficiency? thirdAttack = character.GetSkillProficiency("third attack");
 
-                    ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this.world, this.logger, this);
-                    await skill.CheckImprove(character, cancellationToken);
+                    if (thirdAttack != null && thirdAttack.Proficiency > 1)
+                    {
+                        var result = this.random.Next(1, 101);
+                        if (result < thirdAttack.Proficiency && result != 1)
+                        {
+                            dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
+                        }
+
+                        ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this.world, this.logger, this);
+                        await skill.CheckImprove(character, cancellationToken);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    this.logger.Error($"ExecuteAttacks->Third: {exc}", this.communicator);
+                    throw;
                 }
             }
 
             // Fourth attack
             if (!dead)
             {
-                SkillProficiency? fourthAttack = character.GetSkillProficiency("fourth attack");
-
-                if (fourthAttack != null && fourthAttack.Proficiency > 1)
+                try
                 {
-                    var result = this.random.Next(1, 101);
-                    if (result < fourthAttack.Proficiency && result != 1)
-                    {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
-                    }
+                    SkillProficiency? fourthAttack = character.GetSkillProficiency("fourth attack");
 
-                    FourthAttack skill = new FourthAttack(this.communicator, this.random, this.world, this.logger, this);
-                    await skill.CheckImprove(character, cancellationToken);
+                    if (fourthAttack != null && fourthAttack.Proficiency > 1)
+                    {
+                        var result = this.random.Next(1, 101);
+                        if (result < fourthAttack.Proficiency && result != 1)
+                        {
+                            dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
+                        }
+
+                        FourthAttack skill = new FourthAttack(this.communicator, this.random, this.world, this.logger, this);
+                        await skill.CheckImprove(character, cancellationToken);
+                    }
+                }
+                catch (Exception exc)
+                {
+                    this.logger.Error($"ExecuteAttacks->Fourth: {exc}", this.communicator);
+                    throw;
                 }
             }
         }
@@ -692,33 +724,40 @@ namespace Legendary.Engine
 
                     if (character != null && character.CharacterFlags.Contains(CharacterFlags.Fighting) && target != null)
                     {
-                        await this.ExecuteAttacks(character, target, cancellationToken);
-
-                        // If the target is an NPC, do damage from it to the player (unless it's dead). Otherwise, for PvP, the loop will just pick up the next fighter.
-                        if (target.CharacterFlags.Contains(CharacterFlags.Fighting) && target.IsNPC)
+                        try
                         {
-                            // NPC should only engage the player who is fighting it (e.g. the tank, not the entire group).
-                            if (target.Fighting != null && target.Fighting == character.CharacterId)
+                            await this.ExecuteAttacks(character, target, cancellationToken);
+
+                            // If the target is an NPC, do damage from it to the player (unless it's dead). Otherwise, for PvP, the loop will just pick up the next fighter.
+                            if (target.CharacterFlags.Contains(CharacterFlags.Fighting) && target.IsNPC)
                             {
-                                await this.ExecuteAttacks(target, character, cancellationToken);
+                                // NPC should only engage the player who is fighting it (e.g. the tank, not the entire group).
+                                if (target.Fighting != null && target.Fighting == character.CharacterId)
+                                {
+                                    await this.ExecuteAttacks(target, character, cancellationToken);
+                                }
+                                else if (target.Fighting == null)
+                                {
+                                    // Need to pick a target, because a target is currently kicking the NPC's ass.
+                                    target.Fighting = character.CharacterId;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
-                            else if (target.Fighting == null)
+
+                            // Show the opponent's condition.
+                            string? condition = GetPlayerCondition(target);
+
+                            if (!string.IsNullOrWhiteSpace(condition))
                             {
-                                // Need to pick a target, because a target is currently kicking the NPC's ass.
-                                target.Fighting = character.CharacterId;
-                            }
-                            else
-                            {
-                                continue;
+                                await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
                             }
                         }
-
-                        // Show the opponent's condition.
-                        string? condition = GetPlayerCondition(target);
-
-                        if (!string.IsNullOrWhiteSpace(condition))
+                        catch (Exception exc)
                         {
-                            await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
+                            this.logger.Error($"HandleCombatTick: {exc}", this.communicator);
                         }
                     }
 

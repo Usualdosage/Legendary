@@ -60,6 +60,25 @@ namespace Legendary.Engine.Extensions
         }
 
         /// <summary>
+        /// Converts the first character of a string to lowercase.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>String.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if null is received.</exception>
+        /// <exception cref="ArgumentException">Thrown if empty string is received.</exception>
+        public static string FirstCharToLower(this string input)
+        {
+#pragma warning disable SA1122 // Use string.Empty for empty strings
+            return input switch
+            {
+                null => throw new ArgumentNullException(nameof(input)),
+                "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
+                _ => string.Concat(input[0].ToString().ToLower(), input.AsSpan(1))
+            };
+#pragma warning restore SA1122 // Use string.Empty for empty strings
+        }
+
+        /// <summary>
         /// Get the most likely name from a list of targets for a given input.
         /// </summary>
         /// <param name="targets">The list of targets.</param>

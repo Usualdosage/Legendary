@@ -10,6 +10,7 @@
 namespace Legendary.Data.Contracts
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Threading;
     using System.Threading.Tasks;
@@ -50,6 +51,23 @@ namespace Legendary.Data.Contracts
         /// Gets the messages.
         /// </summary>
         public IMongoCollection<Message> Messages { get; }
+
+        /// <summary>
+        /// Adds a memory to the database for the given character/mobile interaction.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="memory">The memory.</param>
+        /// <returns>Task.</returns>
+        Task AddMemory(Character character, Mobile mobile, string memory);
+
+        /// <summary>
+        /// Gets the last 20 memories associated between a character and a mobile.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <returns>List of memories.</returns>
+        Task<List<string>?> GetMemories(Character character, Mobile mobile);
 
         /// <summary>
         /// Finds a character using the given filter.

@@ -74,6 +74,44 @@ namespace Legendary.Data
         /// </summary>
         public IMongoCollection<Message> Messages { get => this.dbConnection.Database.GetCollection<Message>("Messages"); }
 
+        /// <summary>
+        /// Gets the memories.
+        /// </summary>
+        public IMongoCollection<Memory> Memories { get => this.dbConnection.Database.GetCollection<Memory>("Memory"); }
+
+        /// <inheritdoc/>
+        public async Task AddMemory(Character character, Mobile mobile, string memory)
+        {
+            var memoryObject = await this.Memories.Find(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId).FirstOrDefaultAsync();
+
+            if (memoryObject == null)
+            {
+                memoryObject = new Memory(character.CharacterId, mobile.CharacterId);
+                memoryObject.LastInteraction = DateTime.Now;
+                memoryObject.Memories = new List<string>() { memory };
+
+                await this.Memories.InsertOneAsync(memoryObject);
+            }
+            else
+            {
+                memoryObject.Memories.Add(memory);
+                memoryObject.LastInteraction = DateTime.Now;
+                if (memoryObject.Memories.Count > 20)
+                {
+                    memoryObject.Memories.RemoveAt(0);
+                }
+
+                await this.Memories.ReplaceOneAsync(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId, memoryObject);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<List<string>?> GetMemories(Character character, Mobile mobile)
+        {
+            var memoryObject = await this.Memories.Find(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId).FirstOrDefaultAsync();
+            return memoryObject?.Memories ?? null;
+        }
+
         /// <inheritdoc/>
         public async Task<ReplaceOneResult?> SaveCharacter(Character character, CancellationToken cancellationToken)
         {

@@ -16,6 +16,7 @@ namespace Legendary.Engine.Processors
     using System.Net;
     using System.Net.Http;
     using System.Numerics;
+    using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -26,6 +27,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Data.Contracts;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
@@ -41,7 +43,7 @@ namespace Legendary.Engine.Processors
     /// <summary>
     /// Processes an input, and returns an AI response.
     /// </summary>
-    public class LanguageProcessor : ILanguageProcessor
+    public partial class LanguageProcessor : ILanguageProcessor
     {
         private readonly ILogger logger;
         private readonly IRandom random;
@@ -49,6 +51,7 @@ namespace Legendary.Engine.Processors
         private readonly IServerSettings serverSettings;
         private readonly ILanguageGenerator generator;
         private readonly IEnvironment environment;
+        private readonly IDataService dataService;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
@@ -63,188 +66,25 @@ namespace Legendary.Engine.Processors
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="environment">The environment.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment)
+        /// <param name="dataService">The data service.</param>
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;
-            this.LoadParser();
+            LoadParser();
             this.generator = generator;
             this.random = random;
             this.communicator = communicator;
             this.environment = environment;
+            this.dataService = dataService;
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
             this.processingDictionary = new Dictionary<Mobile, bool>();
         }
 
         /// <summary>
-        /// Parses an AI response into say messages and emotes.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="persona">The mobile persona.</param>
-        /// <param name="mobile">The mobile.</param>
-        /// <returns>Cleaned output message.</returns>
-        public static string[]? CleanOutput(string message, Persona persona, Mobile mobile)
-        {
-            List<string> messages = new List<string>();
-
-            message = message.Trim();
-
-            if (message.Contains('*'))
-            {
-                List<string> sentences = new List<string>();
-                StringBuilder sbFormat = new StringBuilder();
-
-                bool open = true;
-
-                for (int i = 0; i < message.Length; i++)
-                {
-                    if (message[i] == '*')
-                    {
-                        sbFormat.AppendFormat(open ? "[{0}" : "{0}]", message[i]);
-                        open = !open;
-                    }
-                    else
-                    {
-                        sbFormat.Append(message[i]);
-                    }
-                }
-
-                StringBuilder sb = new StringBuilder();
-
-                foreach (char c in sbFormat.ToString())
-                {
-                    if (c == '[')
-                    {
-                        if (sb.Length > 0)
-                        {
-                            sentences.Add(sb.ToString());
-                            sb = new StringBuilder();
-                            sb.Append(c);
-                        }
-                        else
-                        {
-                            sb.Append(c);
-                        }
-                    }
-                    else if (c == ']')
-                    {
-                        sb.Append(c);
-                        sentences.Add(sb.ToString());
-                        sb = new StringBuilder();
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
-                }
-
-                sentences.Add(sb.ToString().Trim());
-
-                foreach (var sentence in sentences)
-                {
-                    if (string.IsNullOrWhiteSpace(sentence))
-                    {
-                        continue;
-                    }
-                    else if (sentence[0] == '[')
-                    {
-                        // This is an emote
-                        var temp = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
-                        temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
-                        messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
-                    }
-                    else
-                    {
-                        // Not an emote with brackets, so clean it up.
-                        if (sentence.StartsWith("EMOTE"))
-                        {
-                            if (!char.IsPunctuation(sentence[0]))
-                            {
-                                var temp = sentence.Replace("EMOTE", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
-                                temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
-                                messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
-                            }
-                            else
-                            {
-                                var temp = sentence.Substring(1, sentence.Length - 1).Replace("EMOTE:", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
-                                temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty).Trim();
-                                messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
-                            }
-                        }
-                        else
-                        {
-                            var temp = sentence.Replace(persona.Name ?? mobile.FirstName, string.Empty).Replace(":", string.Empty).Replace(persona.Name ?? mobile.FirstName, string.Empty).Trim();
-
-                            if (!string.IsNullOrWhiteSpace(temp))
-                            {
-                                if (!char.IsPunctuation(sentence[0]))
-                                {
-                                    messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
-                                }
-                                else
-                                {
-                                    temp = temp.Substring(1, temp.Length - 1).Trim();
-
-                                    if (!string.IsNullOrWhiteSpace(temp))
-                                    {
-                                        messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (message.StartsWith("EMOTE"))
-                {
-                    if (!char.IsPunctuation(message[0]))
-                    {
-                        var temp = message.Replace("EMOTE", string.Empty).Trim();
-                        temp = temp.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty);
-                        messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
-                    }
-                    else
-                    {
-                        var temp = message.Substring(1, message.Length - 1).Replace("EMOTE", string.Empty).Trim();
-
-                        if (!string.IsNullOrWhiteSpace(temp))
-                        {
-                            messages.Add($"{persona.Name ?? mobile.FirstName} {temp}.");
-                        }
-                    }
-                }
-                else
-                {
-                    var temp = message.Replace(persona.Name ?? mobile.FirstName, string.Empty).Replace(":", string.Empty).Trim();
-
-                    if (!string.IsNullOrWhiteSpace(temp))
-                    {
-                        if (!char.IsPunctuation(temp[0]))
-                        {
-                            messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
-                        }
-                        else
-                        {
-                            temp = temp.Substring(1, temp.Length - 1).Trim();
-
-                            if (!string.IsNullOrWhiteSpace(temp))
-                            {
-                                messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{temp}</span>\"");
-                            }
-                        }
-                    }
-                }
-            }
-
-            return messages.ToArray();
-        }
-
-        /// <summary>
         /// Reloads the parser to capture any updates.
         /// </summary>
-        public void LoadParser()
+        public static void LoadParser()
         {
             var parserContent = File.ReadAllText(@"Data/parser.json");
 
@@ -255,101 +95,123 @@ namespace Legendary.Engine.Processors
         /// Processes the message.
         /// </summary>
         /// <param name="character">The character.</param>
-        /// <param name="mobile">The mobile.</param>
+        /// <param name="mobiles">The mobiles.</param>
         /// <param name="input">The input string.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>string.</returns>
-        public async Task<string[]?> Process(Character character, Mobile mobile, string input, CancellationToken cancellationToken = default)
+        /// <returns>A tuple of messages and the mobile generating them.</returns>
+        public async Task<(string[]?, Mobile?)> Process(Character character, List<Mobile> mobiles, string input, CancellationToken cancellationToken = default)
         {
-            if (mobile.UseAI)
+            Mobile? engagedMobile = null;
+            var maxChance = 0;
+
+            // Get the mobile that has the highest chance of engagement.
+            foreach (var mobile in mobiles)
             {
-                if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && mobile != null && !string.IsNullOrWhiteSpace(mobile.FirstName))
+                if (mobile.UseAI)
                 {
-                    if (this.WillEngage(character, mobile, input))
+                    // Result is true/false if the mob will engage, and the % chance.
+                    var engageResult = this.WillEngage(character, mobile, input);
+                    if (engageResult.Item1 && engageResult.Item2 > maxChance)
                     {
-                        var persona = Persona.Load(mobile);
+                        engagedMobile = mobile;
+                        maxChance = engageResult.Item2;
+                    }
+                }
+            }
 
-                        if (persona != null && !string.IsNullOrWhiteSpace(persona.Name))
+            if (engagedMobile != null)
+            {
+                if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && engagedMobile != null && !string.IsNullOrWhiteSpace(engagedMobile.FirstName))
+                {
+                    var persona = Persona.Load(engagedMobile);
+
+                    if (persona != null && !string.IsNullOrWhiteSpace(persona.Name))
+                    {
+                        this.logger.Debug($"{persona.Name ?? engagedMobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
+
+                        // We haven't trained this mobile yet, so train it.
+                        if (!this.mobileTrainingData.ContainsKey(engagedMobile))
                         {
-                            this.logger.Debug($"{persona.Name ?? mobile.FirstName.FirstCharToUpper()} will engage with {character.FirstName}.", this.communicator);
+                            this.mobileTrainingData.Add(engagedMobile, await this.Train(persona, character, engagedMobile));
+                        }
 
-                            // We haven't trained this mobile yet, so train it.
-                            if (!this.mobileTrainingData.ContainsKey(mobile))
-                            {
-                                this.mobileTrainingData.Add(mobile, Train(persona, character, mobile));
-                            }
+                        await this.communicator.SendToPlayer(character, $"<span class='chat-bubble-{engagedMobile.CharacterId}'>{persona.Name ?? engagedMobile.FirstName.FirstCharToUpper()}<img class='typing' src='img/typing.gif'></span>", cancellationToken);
 
-                            await this.communicator.SendToPlayer(character, $"<span class='chat-bubble-{mobile.CharacterId}'>{persona.Name ?? mobile.FirstName.FirstCharToUpper()}<img class='typing' src='img/typing.gif'></span>", cancellationToken);
-
-                            // Keep the AI mobs single-threaded, or things go off the rails fast.
-                            if (!this.processingDictionary.ContainsKey(mobile))
-                            {
-                                this.processingDictionary.Add(mobile, true);
-                            }
-                            else
-                            {
-                                if (this.processingDictionary[mobile] == true)
-                                {
-                                    return null;
-                                }
-
-                                this.processingDictionary[mobile] = true;
-                            }
-
-                            // Chat response for the mobile with the training data.
-                            var message = await this.Chat(character, this.mobileTrainingData[mobile], CleanInput(input, character.FirstName));
-
-                            CheckConvertToXMob(message, mobile);
-
-                            // Parse all of the resulting language.
-                            try
-                            {
-                                await this.communicator.SendToPlayer(character, $"CLEARCHAT:{mobile.CharacterId}", cancellationToken);
-                                return CleanOutput(message, persona, mobile);
-                            }
-                            catch (Exception exc)
-                            {
-                                await this.communicator.SendToPlayer(character, $"{persona.Name ?? mobile.FirstName.FirstCharToUpper()} looks a bit confused.", cancellationToken);
-                                this.logger.Error(exc, this.communicator);
-                                return null;
-                            }
-                            finally
-                            {
-                                this.processingDictionary[mobile] = false;
-                            }
+                        // Keep the AI mobs single-threaded, or things go off the rails fast.
+                        if (!this.processingDictionary.ContainsKey(engagedMobile))
+                        {
+                            this.processingDictionary.Add(engagedMobile, true);
                         }
                         else
                         {
-                            this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} did not have a valid persona file or it could not be loaded.", this.communicator);
-                            return null;
+                            // If the mobile is currently engaged (in the middle of sending an API call) just return null.
+                            if (this.processingDictionary[engagedMobile] == true)
+                            {
+                                return (null, null);
+                            }
+
+                            this.processingDictionary[engagedMobile] = true;
+                        }
+
+                        // Chat response for the mobile with the training data.
+                        var message = await this.Chat(character, this.mobileTrainingData[engagedMobile], CleanInput(input, character.FirstName));
+
+                        // See things are getting...interesting.
+                        await this.CheckConvertToXMob(message, engagedMobile);
+
+                        // Parse all of the resulting language.
+                        try
+                        {
+                            // Send a message to the UI to clear the speec bubble.
+                            await this.communicator.SendToPlayer(character, $"CLEARCHAT:{engagedMobile.CharacterId}", cancellationToken);
+
+                            // Clean and process all of the output from the AI engine.
+                            var result = (ProcessOutput(message, persona, engagedMobile), engagedMobile);
+
+                            if (result.Item1 != null)
+                            {
+                                // Add the input as a memory, only if the mob actually created a response.
+                                try
+                                {
+                                    await this.dataService.AddMemory(character, engagedMobile, $"{input}");
+                                }
+                                catch (Exception exc)
+                                {
+                                    this.logger.Error($"AddMemory: {exc}", this.communicator);
+                                }
+                            }
+
+                            return result;
+                        }
+                        catch (Exception exc)
+                        {
+                            await this.communicator.SendToPlayer(character, $"{persona.Name ?? engagedMobile.FirstName.FirstCharToUpper()} looks a bit confused.", cancellationToken);
+                            this.logger.Error(exc, this.communicator);
+                            return (null, null);
+                        }
+                        finally
+                        {
+                            // No longer processing, so set to false;
+                            this.processingDictionary[engagedMobile] = false;
                         }
                     }
                     else
                     {
-                        // Give it a 10% chance to say something about not wanting to talk right now if it doesn't engage.
-                        var chance = this.random.Next(0, 100);
-                        if (chance < 10)
-                        {
-                            this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} ignored {character.FirstName}.", this.communicator);
-                            return new string[1] { $"{mobile.FirstName.FirstCharToUpper()} says, \"<span class='say'>{Constants.IGNORE_MESSAGE[this.random.Next(0, Constants.IGNORE_MESSAGE.Count - 1)]}</span>\"" };
-                        }
-                        else
-                        {
-                            this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} took no action.", this.communicator);
-                            return null;
-                        }
+                        this.logger.Debug($"{engagedMobile.FirstName.FirstCharToUpper()} did not have a valid persona file or it could not be loaded.", this.communicator);
+                        return (null, null);
                     }
                 }
                 else
                 {
                     this.logger.Debug($"Target or mobile was null.", this.communicator);
-                    return null;
+                    return (null, null);
                 }
             }
             else
             {
-                // Use standard language processor.
-                return null;
+                // Let's just return a random mobile.
+                var randomMobile = mobiles[this.random.Next(0, mobiles.Count - 1)];
+                return (null, randomMobile);
             }
         }
 
@@ -582,31 +444,178 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
-        /// Converts this mobile to "adult" mode.
+        /// Parses an AI response into say messages and emotes.
         /// </summary>
-        /// <param name="message">The message to check for keywords.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="persona">The mobile persona.</param>
         /// <param name="mobile">The mobile.</param>
-        private static void CheckConvertToXMob(string message, Mobile mobile)
+        /// <returns>Cleaned output message.</returns>
+        private static string[]? ProcessOutput(string message, Persona persona, Mobile mobile)
         {
-            if (mobile.UseAI)
+            List<string> messages = new List<string>();
+
+            message = message.Trim();
+
+            if (message.Contains('*'))
             {
-                if (message.Contains("satisfy you", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("sultry", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("please you", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("lust", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("lurid", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("excitement", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("desire", StringComparison.CurrentCultureIgnoreCase)
-                    || message.Contains("pleasure", StringComparison.CurrentCultureIgnoreCase))
+                List<string> sentences = new List<string>();
+                StringBuilder sbFormat = new StringBuilder();
+
+                bool open = true;
+
+                for (int i = 0; i < message.Length; i++)
                 {
-                    mobile.XActive = true;
+                    if (message[i] == '*')
+                    {
+                        sbFormat.AppendFormat(open ? "[{0}" : "{0}]", message[i]);
+                        open = !open;
+                    }
+                    else
+                    {
+                        sbFormat.Append(message[i]);
+                    }
                 }
-                else
+
+                StringBuilder sb = new StringBuilder();
+
+                foreach (char c in sbFormat.ToString())
                 {
-                    mobile.XActive = false;
+                    if (c == '[')
+                    {
+                        if (sb.Length > 0)
+                        {
+                            sentences.Add(sb.ToString());
+                            sb = new StringBuilder();
+                            sb.Append(c);
+                        }
+                        else
+                        {
+                            sb.Append(c);
+                        }
+                    }
+                    else if (c == ']')
+                    {
+                        sb.Append(c);
+                        sentences.Add(sb.ToString());
+                        sb = new StringBuilder();
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+
+                sentences.Add(sb.ToString());
+
+                foreach (var sentence in sentences)
+                {
+                    if (string.IsNullOrWhiteSpace(sentence))
+                    {
+                        continue;
+                    }
+                    else if (sentence[0] == '[')
+                    {
+                        // This is an emote
+                        messages.Add($"{persona.Name?.FirstCharToUpper() ?? mobile.FirstName.FirstCharToUpper()} {CleanSentence(mobile, persona, sentence, true)?.FirstCharToLower()}");
+                    }
+                    else
+                    {
+                        // This is an emote, but not an emote with brackets, so clean it up.
+                        if (sentence.StartsWith("EMOTE"))
+                        {
+                            var cleaned = CleanSentence(mobile, persona, sentence, true);
+
+                            if (!string.IsNullOrWhiteSpace(cleaned))
+                            {
+                                messages.Add($"{persona.Name?.FirstCharToUpper() ?? mobile.FirstName.FirstCharToUpper()} {cleaned}");
+                            }
+                        }
+                        else
+                        {
+                            // This is a sentence (probably).
+                            var cleaned = CleanSentence(mobile, persona, sentence, false)?.FirstCharToUpper();
+
+                            if (!string.IsNullOrWhiteSpace(cleaned))
+                            {
+                                messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{cleaned}</span>\"");
+                            }
+                        }
+                    }
                 }
             }
+            else
+            {
+                var sentence = CleanSentence(mobile, persona, message, false)?.FirstCharToUpper();
+
+                if (!string.IsNullOrWhiteSpace(sentence))
+                {
+                    messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{sentence}</span>\"");
+                }
+            }
+
+            return messages.ToArray();
         }
+
+        private static string? CleanSentence(Mobile mobile, Persona persona, string sentence, bool isEmote)
+        {
+            // TODO: Get a regex to replace the punctuation/characters we don't want.
+            sentence = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
+            sentence = sentence.ReplaceFirst(persona.Name?.FirstCharToLower() ?? mobile.FirstName.FirstCharToLower(), string.Empty);
+            sentence = sentence.ReplaceFirst("She", string.Empty);
+            sentence = sentence.ReplaceFirst("He", string.Empty);
+            sentence = sentence.ReplaceFirst("They", string.Empty);
+            sentence = sentence.Replace("EMOTE", string.Empty);
+            sentence = sentence.Replace("ACTIVATE", string.Empty);
+            sentence = sentence.Replace("DEACTIVATE", string.Empty);
+            sentence = sentence.Replace(":", string.Empty);
+
+            if (isEmote)
+            {
+                sentence = sentence.Replace("my", mobile.Pronoun);
+            }
+
+            sentence = sentence.Trim();
+
+            // Remove leading punctuation if we have it.
+            if (sentence.Length > 0 && char.IsPunctuation(sentence[0]))
+            {
+                sentence = sentence.Substring(1, sentence.Length - 1);
+            }
+
+            sentence = sentence.Trim();
+
+            // Get rid of any instances of the name
+            if (!string.IsNullOrWhiteSpace(persona.Name))
+            {
+                string[] nameParts = persona.Name.Split();
+
+                foreach (var n in nameParts)
+                {
+                    sentence = sentence.Replace(n, string.Empty, StringComparison.CurrentCultureIgnoreCase);
+                }
+            }
+
+            // End with punctuation if we didn't.
+            if (!string.IsNullOrWhiteSpace(sentence) && !char.IsPunctuation(sentence[sentence.Length - 1]))
+            {
+                sentence = sentence + ".";
+            }
+
+            if (!string.IsNullOrWhiteSpace(sentence))
+            {
+                return sentence.FirstCharToUpper().Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        [GeneratedRegex("http[^\\s]+")]
+        private static partial Regex HttpRegex();
+
+        [GeneratedRegex("<.*?>")]
+        private static partial Regex MarkupRegex();
 
         /// <summary>
         /// Remove any HTML or links.
@@ -616,8 +625,8 @@ namespace Legendary.Engine.Processors
         /// <returns>Formatted input.</returns>
         private static string CleanInput(string input, string actor)
         {
-            var cleaned = Regex.Replace(input, @"http[^\s]+", string.Empty);
-            cleaned = Regex.Replace(cleaned, "<.*?>", string.Empty);
+            var cleaned = HttpRegex().Replace(input, string.Empty);
+            cleaned = MarkupRegex().Replace(cleaned, string.Empty);
             cleaned = cleaned.Replace(actor, string.Empty);
             cleaned = HttpUtility.HtmlDecode(cleaned);
             cleaned = cleaned.Replace("says", string.Empty);
@@ -631,7 +640,7 @@ namespace Legendary.Engine.Processors
         /// <param name="persona">The persona.</param>
         /// <param name="character">The character the mob is engaged with.</param>
         /// <param name="mobile">The mobile who is engaged.</param>
-        private static List<dynamic> Train(Persona persona, Character character, Mobile mobile)
+        private async Task<List<dynamic>> Train(Persona persona, Character character, Mobile mobile)
         {
             var trainingInformation = new List<string>
             {
@@ -646,6 +655,15 @@ namespace Legendary.Engine.Processors
                 $"The person you are speaking to has an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
                 $"The person you are speaking to is a {character.Gender} {character.Race}.",
             };
+
+            var memories = await this.dataService.GetMemories(character, mobile);
+
+            if (memories != null)
+            {
+                // TODO: Add date of last interaction to training data.
+                trainingInformation.Add($"You have the following memories of {character.FirstName}:");
+                trainingInformation.AddRange(memories);
+            }
 
             if (persona.Background != null)
             {
@@ -667,6 +685,46 @@ namespace Legendary.Engine.Processors
             };
 
             return messages;
+        }
+
+        /// <summary>
+        /// Converts this mobile to "adult" mode.
+        /// </summary>
+        /// <param name="message">The message to check for keywords.</param>
+        /// <param name="mobile">The mobile.</param>
+        private async Task CheckConvertToXMob(string message, Mobile mobile)
+        {
+            if (mobile.UseAI && !string.IsNullOrWhiteSpace(mobile.XImage))
+            {
+                if (message.Contains("DEACTIVATE"))
+                {
+                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
+                    {
+                        mobile.XActive = false;
+                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} frowns an puts {mobile.Pronoun} clothing back on.");
+                    }
+                    else
+                    {
+                        mobile.XActive = false;
+                    }
+                }
+                else if (message.Contains("ACTIVATE"))
+                {
+                    if (!string.IsNullOrWhiteSpace(mobile.XImage))
+                    {
+                        mobile.XActive = true;
+                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} gently removes {mobile.Pronoun} clothing with a grin.");
+                    }
+                    else
+                    {
+                        mobile.XActive = false;
+                    }
+                }
+                else
+                {
+                    mobile.XActive = false;
+                }
+            }
         }
 
         /// <summary>
@@ -723,7 +781,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private bool WillEngage(Character actor, Mobile target, string message)
+        private (bool, int) WillEngage(Character actor, Mobile target, string message)
         {
             // Base chance is 10%
             bool engage = false;
@@ -736,7 +794,7 @@ namespace Legendary.Engine.Processors
                 {
                     target.PlayerTarget = null;
                     target.XActive = false;
-                    return false;
+                    return (false, 0);
                 }
 
                 // If the player and target are already engaged in conversation, there is a 70-90% chance it will speak.
@@ -759,7 +817,7 @@ namespace Legendary.Engine.Processors
                         {
                             this.logger.Debug($"{target.FirstName.FirstCharToUpper()} decided to engage {actor.FirstName}.", this.communicator);
                             target.XActive = false;
-                            return true;
+                            return (true, chance);
                         }
                     }
                 }
@@ -783,7 +841,7 @@ namespace Legendary.Engine.Processors
                 }
             }
 
-            return engage;
+            return (engage, chance);
         }
     }
 }
