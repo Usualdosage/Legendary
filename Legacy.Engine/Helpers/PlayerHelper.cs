@@ -231,5 +231,26 @@ namespace Legendary.Engine.Helpers
 
             return true;
         }
+
+        /// <summary>
+        /// Given the level, this method will calculate the total experience required for the player to reach it.
+        /// </summary>
+        /// <remarks>This method was created with assistance by ChatGPT-4.</remarks>
+        /// <param name="startingLevel">The starting level.</param>
+        /// <param name="targetLevel">The target level.</param>
+        /// <param name="experiencePenalty">The experience penalty.</param>
+        /// <returns>long.</returns>
+        public static long GetTotalExperienceRequired(int startingLevel, int targetLevel, double experiencePenalty = 0)
+        {
+            int baseExperience = 1500;
+            long totalExperienceRequired = 0;
+
+            for (int i = startingLevel; i < targetLevel; i++)
+            {
+                totalExperienceRequired += (long)((baseExperience * (1 + Math.Log10(i)) * Math.Pow(1.2, i - 1)) + experiencePenalty);
+            }
+
+            return totalExperienceRequired;
+        }
     }
 }

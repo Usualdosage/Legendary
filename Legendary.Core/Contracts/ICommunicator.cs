@@ -472,7 +472,7 @@ namespace Legendary.Core.Contracts
         /// <param name="character">The character.</param>
         /// <param name="log">If true, logs.</param>
         /// <returns>long.</returns>
-        long GetExperienceToLevel(Character character, bool log);
+        long GetTotalExperienceToLevel(Character character, bool log);
 
         /// <summary>
         /// Shows the members of the actor's group to the actor.

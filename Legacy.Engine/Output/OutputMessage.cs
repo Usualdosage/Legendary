@@ -50,6 +50,12 @@ namespace Legendary.Engine.Models.Output
         public string? Title { get; set; }
 
         /// <summary>
+        /// Gets or sets the alignment of the player.
+        /// </summary>
+        [JsonProperty("a")]
+        public string? Alignment { get; set; }
+
+        /// <summary>
         /// Gets or sets the level of the player.
         /// </summary>
         [JsonProperty("l")]

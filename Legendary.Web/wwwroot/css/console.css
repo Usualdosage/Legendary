@@ -459,12 +459,37 @@ h6 {
 {
     margin: 0px !important;
     margin-top: 5px !important;
-    color: red;
 }
 
 #title
 {
     margin: 0px !important;
+}
+
+.align-Good {
+    color: lightblue;
+}
+
+.align-Neutral
+{
+    color: lightyellow;
+}
+
+.align-Evil
+{
+    color: red;
+}
+
+.align-Good-dark {
+    color: darkcyan;
+}
+
+.align-Neutral-dark {
+    color: beige;
+}
+
+.align-Evil-dark {
+    color: maroon;
 }
 
 #banner {

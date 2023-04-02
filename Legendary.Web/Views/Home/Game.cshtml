@@ -97,8 +97,8 @@
 
 <!-- Component Template -->
 <script id="component-template" type="text/x-handlebars-template">
-    <h3 id="username">{{m.f}}</h3>
-    <h4 id="title">{{m.t}}</h4>
+    <h3 id="username" class="align-{{m.a}}">{{m.f}}</h3>
+    <h4 id="title" class="align-{{m.a}}-dark">{{m.t}}</h4>
     <div class="component">
         <div class="progress" data-toggle="tooltip" title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
             <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:{{m.s.hp.p}}%;" aria-valuenow="{{m.s.hp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.hp.p}}%</div>

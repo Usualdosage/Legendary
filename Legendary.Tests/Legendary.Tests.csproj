@@ -37,12 +37,14 @@
   <ItemGroup>
     <None Remove="stylecop.json" />
     <None Remove="ProcessorTests\" />
+    <None Remove="HelperTests\" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ProcessorTests\" />
+    <Folder Include="HelperTests\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Legacy.Engine\Legendary.Engine.csproj" />
