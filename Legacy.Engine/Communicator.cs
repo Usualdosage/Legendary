@@ -994,68 +994,75 @@ namespace Legendary.Engine
 
             if (area != null && room != null)
             {
-                var roomsExplored = actor.Metrics.RoomsExplored.FirstOrDefault(r => r.Key == area.AreaId).Value.ToList();
-                var totalVisited = actor.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count());
+                var roomsExplored = actor.Metrics.RoomsExplored.FirstOrDefault(r => r.Key == area.AreaId).Value?.ToList();
+                var totalVisited = actor.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count);
                 var total = area.Rooms.Count;
                 var explorationPct = (double)((double)totalVisited / (double)total) * 100;
 
-                var outputMessage = new OutputMessage()
+                try
                 {
-                    Message = new Models.Output.Message()
+                    var outputMessage = new OutputMessage()
                     {
-                        FirstName = actor.FirstName,
-                        Level = actor.Level,
-                        Title = actor.Title,
-                        Alignment = actor.Alignment.ToString(),
-                        Condition = Combat.GetPlayerCondition(actor),
-                        Stats = new StatMessage()
+                        Message = new Models.Output.Message()
                         {
-                            Health = new Status()
+                            FirstName = actor.FirstName,
+                            Level = actor.Level,
+                            Title = actor.Title,
+                            Alignment = actor.Alignment.ToString(),
+                            Condition = Combat.GetPlayerCondition(actor),
+                            Stats = new StatMessage()
                             {
-                                Current = actor.Health.Current,
-                                Max = actor.Health.Max,
+                                Health = new Status()
+                                {
+                                    Current = actor.Health.Current,
+                                    Max = actor.Health.Max,
+                                },
+                                Mana = new Status()
+                                {
+                                    Current = actor.Mana.Current,
+                                    Max = actor.Mana.Max,
+                                },
+                                Movement = new Status()
+                                {
+                                    Current = actor.Movement.Current,
+                                    Max = actor.Movement.Max,
+                                },
+                                Experience = new Status()
+                                {
+                                    Current = actor.Experience,
+                                    Max = actor.Level >= 90 ? actor.Experience : this.GetTotalExperienceToLevel(actor, false),
+                                },
                             },
-                            Mana = new Status()
+                            ImageInfo = new ImageInfo()
                             {
-                                Current = actor.Mana.Current,
-                                Max = actor.Mana.Max,
+                                Caption = caption ?? area?.Description,
+                                Image = image ?? actor.LastImage,
                             },
-                            Movement = new Status()
+                            Weather = new Models.Output.Weather()
                             {
-                                Current = actor.Movement.Current,
-                                Max = actor.Movement.Max,
+                                Image = null,
+                                Time = metrics != null ? DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second) : null,
+                                Temp = null,
                             },
-                            Experience = new Status()
+                            Map = new Models.Output.Map()
                             {
-                                Current = actor.Experience,
-                                Max = actor.Level >= 90 ? actor.Experience : this.GetTotalExperienceToLevel(actor, false),
+                                Current = actor.Location.Value,
+                                Rooms = roomsExplored != null ? area?.Rooms.Where(r => roomsExplored.Contains(r.RoomId)).ToArray() : null,
+                                PlayersInArea = this.GetPlayersInArea(area?.AreaId)?.Select(p => new { p.CharacterId, p.FirstName, p.Location.Value })?.ToArray(),
+                                MobsInArea = this.GetMobilesInArea(area?.AreaId)?.Select(m => new { m.CharacterId, m.FirstName, m.Location.Value })?.ToArray(),
+                                PercentageExplored = explorationPct,
                             },
                         },
-                        ImageInfo = new ImageInfo()
-                        {
-                            Caption = caption ?? area?.Description,
-                            Image = image ?? actor.LastImage,
-                        },
-                        Weather = new Models.Output.Weather()
-                        {
-                            Image = null,
-                            Time = metrics != null ? DateTimeHelper.GetDate(metrics.CurrentDay, metrics.CurrentMonth, metrics.CurrentYear, metrics.CurrentHour, DateTime.Now.Minute, DateTime.Now.Second) : null,
-                            Temp = null,
-                        },
-                        Map = new Models.Output.Map()
-                        {
-                            Current = actor.Location.Value,
-                            Rooms = area?.Rooms.Where(r => roomsExplored.Contains(r.RoomId)).ToArray(),
-                            PlayersInArea = this.GetPlayersInArea(area?.AreaId)?.Select(p => new { p.CharacterId, p.FirstName, p.Location.Value })?.ToArray(),
-                            MobsInArea = this.GetMobilesInArea(area?.AreaId)?.Select(m => new { m.CharacterId, m.FirstName, m.Location.Value })?.ToArray(),
-                            PercentageExplored = explorationPct,
-                        },
-                    },
-                };
+                    };
 
-                var output = JsonConvert.SerializeObject(outputMessage);
+                    var output = JsonConvert.SerializeObject(outputMessage);
 
-                await this.SendToPlayer(actor, output, cancellationToken);
+                    await this.SendToPlayer(actor, output, cancellationToken);
+                }
+                catch (Exception exc)
+                {
+                    this.logger.Error(exc, this);
+                }
             }
         }
 

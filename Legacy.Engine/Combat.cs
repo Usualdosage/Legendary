@@ -578,7 +578,16 @@ namespace Legendary.Engine
             if (primaryWeapon != null && primaryWeapon.Proficiency > 1)
             {
                 var result = this.random.Next(1, 101);
-                dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
+                dead = await this.DoDamage(character, target, primaryAction, result >= 100, cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(character, $"Your {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+
+                if (this.random.Next(1, 100) < 20)
+                {
+                    await this.communicator.SendToPlayer(character, $"You're not likely to do much to {target.FirstName} without a weapon or training.", cancellationToken);
+                }
             }
 
             // Second attack
@@ -592,7 +601,7 @@ namespace Legendary.Engine
 
                     if (result < secondAttack.Proficiency && result != 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
                     }
 
                     SecondAttack skill = new SecondAttack(this.communicator, this.random, this.world, this.logger, this);
@@ -610,7 +619,7 @@ namespace Legendary.Engine
                     var result = this.random.Next(1, 101);
                     if (result < thirdAttack.Proficiency && result != 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
                     }
 
                     ThirdAttack skill = new ThirdAttack(this.communicator, this.random, this.world, this.logger, this);
@@ -628,7 +637,7 @@ namespace Legendary.Engine
                     var result = this.random.Next(1, 101);
                     if (result < fourthAttack.Proficiency && result != 1)
                     {
-                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result == 100, cancellationToken);
+                        dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
                     }
 
                     FourthAttack skill = new FourthAttack(this.communicator, this.random, this.world, this.logger, this);
