@@ -1,13 +1,71 @@
-﻿<Properties StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default" GitUserInfo="UsingGIT">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processors/AwardProcessor.cs">
+    <Files>
+      <File FileName="Legacy.Engine/Combat.cs" Line="411" Column="34" />
+      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" Line="148" Column="21" />
+      <File FileName="Legacy.Engine/Helpers/SkillHelper.cs" Line="88" Column="47" />
+      <File FileName="Legacy.Engine/Helpers/SpellHelper.cs" Line="125" Column="1" />
+      <File FileName="Legendary.Core/Contracts/IEnvironment.cs" Line="36" Column="23" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="566" Column="30" />
+      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="720" Column="118" />
+      <File FileName="Legendary.Web/wwwroot/css/console.css" Line="134" Column="5" />
+      <File FileName="Legendary.Web/Data/Personas/Caralee.json" Line="23" Column="84" />
+      <File FileName="Legendary.Web/Data/Personas/Auric.json" Line="1" Column="1" />
+      <File FileName="Legendary.Data/DataService.cs" Line="94" Column="14" />
+      <File FileName="Legendary.Web/Data/Personas/Marleigh.json" Line="24" Column="1" />
+      <File FileName="Legendary.Web/Data/Personas/Marin.json" Line="15" Column="41" />
+      <File FileName="Legendary.Web/Data/Personas/Kalysta.json" Line="23" Column="86" />
+      <File FileName="Legendary.Web/Data/Personas/Amaris.json" Line="23" Column="109" />
+      <File FileName="Legendary.Web/Data/Personas/Beatrix.json" Line="23" Column="2" />
+      <File FileName="Legendary.Core/Models/Award.cs" Line="20" Column="21" />
+      <File FileName="Legacy.Engine/Processors/AwardProcessor.cs" Line="66" Column="18" />
+      <File FileName="Legacy.Engine/Models/Action.cs" Line="153" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Legendary">
+            <Node name="Legendary.Core" expanded="True">
+              <Node name="Contracts" expanded="True" />
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="Legendary.Data">
+              <Node name="Contracts" expanded="True" />
+            </Node>
+            <Node name="Legendary.Engine">
+              <Node name="Extensions" expanded="True" />
+              <Node name="Helpers" expanded="True" />
+              <Node name="Models">
+                <Node name="SkillTrees" expanded="True" />
+              </Node>
+              <Node name="Processors">
+                <Node name="AwardProcessor.cs" selected="True" />
+              </Node>
+              <Node name="Types" expanded="True" />
+            </Node>
+            <Node name="Legendary.Networking" expanded="True" />
+            <Node name="Legendary.Tests" expanded="True">
+              <Node name="HelperTests" expanded="True" />
+              <Node name="ProcessorTests" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="Legendary" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="21" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="17" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Metrics/Program.cs" relfile="Legendary.Metrics/Program.cs" line="26" column="1" />
-      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3407" column="1" />
+      <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Processors/ActionProcessor.cs" relfile="Legacy.Engine/Processors/ActionProcessor.cs" line="3409" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="63" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="97" column="1" />
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legacy.Engine/Models/Skills/Steal.cs" relfile="Legacy.Engine/Models/Skills/Steal.cs" line="90" column="1" />
@@ -19,70 +77,6 @@
       <Breakpoint file="/Users/matthewmartin/Projects/Legendary/Legendary.Web/Controllers/HomeController.cs" relfile="Legendary.Web/Controllers/HomeController.cs" line="412" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Web/Views/Shared/_Layout.cshtml">
-    <Files>
-      <File FileName="Legacy.Engine/Communicator.cs" Line="476" Column="26" />
-      <File FileName="Legendary.Web/wwwroot/js/client.js" Line="147" Column="22" />
-      <File FileName="Legendary.Web/wwwroot/css/console.css" Line="110" Column="39" />
-      <File FileName="Legendary.Web/Program.cs" />
-      <File FileName="Legendary.Core/Models/UserData.cs" Line="6" Column="48" />
-      <File FileName="Legendary.Web/Views/Home/Game.cshtml" Line="30" Column="26" />
-      <File FileName="Legendary.Core/Models/Exit.cs" Line="35" Column="20" />
-      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="265" Column="14" />
-      <File FileName="Legendary.Data/DataService.cs" Line="94" Column="18" />
-      <File FileName="Legendary.Core/Types/Metrics.cs" Line="84" Column="23" />
-      <File FileName="Legendary.Core/Models/Room.cs" Line="21" Column="6" />
-      <File FileName="Legendary.Core/Models/Mobile.cs" Line="49" Column="1" />
-      <File FileName="Legendary.Core/Contracts/ICommunicator.cs" Line="371" Column="53" />
-      <File FileName="Legacy.Engine/World.cs" Line="812" Column="85" />
-      <File FileName="Legendary.Web/Views/Content/Welcome.cshtml" Line="13" Column="5" />
-      <File FileName="Legendary.Web/Views/Home/CreateUser.cshtml" Line="28" Column="399" />
-      <File FileName="Legendary.Web/Views/Home/Index.cshtml" Line="40" Column="391" />
-      <File FileName="Legendary.Web/wwwroot/css/index.css" Line="50" Column="1" />
-      <File FileName="Legacy.Engine/Processors/ActionProcessor2.cs" Line="1936" Column="18" />
-      <File FileName="Legendary.Web/Views/_ViewImports.cshtml" Line="1" Column="1" />
-      <File FileName="Legendary.Web/Views/_ViewStart.cshtml" Line="1" Column="1" />
-      <File FileName="Legendary.Web/Views/Shared/_Layout.cshtml" Line="31" Column="8" />
-    </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State name="__root__">
-          <Node name="Legendary">
-            <Node name="Legendary.Core" expanded="True">
-              <Node name="Contracts" expanded="True" />
-              <Node name="Models" expanded="True" />
-              <Node name="Types" expanded="True" />
-            </Node>
-            <Node name="Legendary.Data" expanded="True" />
-            <Node name="Legendary.Engine" expanded="True">
-              <Node name="Output" expanded="True" />
-              <Node name="Processors" expanded="True" />
-            </Node>
-            <Node name="Legendary.Networking" expanded="True" />
-            <Node name="Legendary.Tests" expanded="True">
-              <Node name="ProcessorTests" expanded="True" />
-            </Node>
-            <Node name="Legendary.Web">
-              <Node name="Views">
-                <Node name="Content" expanded="True" />
-                <Node name="Home" expanded="True" />
-                <Node name="Shared">
-                  <Node name="_Layout.cshtml" selected="True" />
-                </Node>
-              </Node>
-              <Node name="wwwroot">
-                <Node name="css" expanded="True" />
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.UnitTesting.TestPad">
-        <State name="__root__">
-          <Node name="Legendary" expanded="True" />
-        </State>
-      </Pad>
-    </Pads>
-  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.ItemProperties.Legendary.Web PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
