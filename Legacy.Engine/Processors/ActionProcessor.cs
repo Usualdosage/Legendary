@@ -2691,7 +2691,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, actor.Character, player.Value.Character))
                     {
-                        var isPK = PlayerHelper.IsInPK(actor.Character, player.Value.Character) ? " <i class='pk'>&lt;PK&gt;</i> " : string.Empty;
+                        var isPK = PlayerHelper.IsInPK(actor.Character, player.Value.Character) ? " &lt;<i class='pk'>PK</i>&gt; " : string.Empty;
 
                         sb.Append($"<span class='who'>[{player.Value.Character.Level}]{isPK}{player.Value.Character.FirstName}");
 

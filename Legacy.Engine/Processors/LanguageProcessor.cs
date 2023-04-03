@@ -561,9 +561,6 @@ namespace Legendary.Engine.Processors
             // TODO: Get a regex to replace the punctuation/characters we don't want.
             sentence = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
             sentence = sentence.ReplaceFirst(persona.Name?.FirstCharToLower() ?? mobile.FirstName.FirstCharToLower(), string.Empty);
-            sentence = sentence.ReplaceFirst("She", string.Empty);
-            sentence = sentence.ReplaceFirst("He", string.Empty);
-            sentence = sentence.ReplaceFirst("They", string.Empty);
             sentence = sentence.Replace("EMOTE", string.Empty);
             sentence = sentence.Replace("ACTIVATE", string.Empty);
             sentence = sentence.Replace("DEACTIVATE", string.Empty);
@@ -585,8 +582,12 @@ namespace Legendary.Engine.Processors
             sentence = sentence.Trim();
 
             // Get rid of any instances of the name
-            if (!string.IsNullOrWhiteSpace(persona.Name))
+            if (isEmote && !string.IsNullOrWhiteSpace(persona.Name))
             {
+                sentence = sentence.ReplaceFirst("She", string.Empty);
+                sentence = sentence.ReplaceFirst("He", string.Empty);
+                sentence = sentence.ReplaceFirst("They", string.Empty);
+
                 string[] nameParts = persona.Name.Split();
 
                 foreach (var n in nameParts)
@@ -655,6 +656,19 @@ namespace Legendary.Engine.Processors
                 $"The person you are speaking to has an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
                 $"The person you are speaking to is a {character.Gender} {character.Race}.",
             };
+
+            if (character.Level >= 90 && character.Level <= 95)
+            {
+                trainingInformation.Add("This being is a lesser deity.");
+            }
+            else if (character.Level > 95 && character.Level <= 99)
+            {
+                trainingInformation.Add("This being is a greater deity.");
+            }
+            else if (character.Level > 100)
+            {
+                trainingInformation.Add("This being is one of the most powerful deities in the universe.");
+            }
 
             var memories = await this.dataService.GetMemories(character, mobile);
 
