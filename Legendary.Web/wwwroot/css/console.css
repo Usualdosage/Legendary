@@ -128,9 +128,10 @@ h6 {
     margin-bottom: 6px;
 }
 
-.pk
-{
-    color: maroon;
+.pk {
+    color: red;
+    font-weight: bold;
+    font-size: 0.9em;
 }
 
 /* Mini-Map */
