@@ -2687,20 +2687,22 @@ namespace Legendary.Engine.Processors
                 var sb = new StringBuilder();
                 sb.Append("<h4>Online Players</h4>");
 
-                foreach (KeyValuePair<string, UserData>? player in Communicator.Users)
+                foreach (KeyValuePair<string, UserData> player in Communicator.Users)
                 {
-                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, actor.Character, player?.Value.Character))
+                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, actor.Character, player.Value.Character))
                     {
-                        sb.Append($"<span class='who'>[{player?.Value.Character.Level}] {player?.Value.Character.FirstName}");
+                        var isPK = PlayerHelper.IsInPK(actor.Character, player.Value.Character) ? " <i class='pk'>&lt;PK&gt;</i> " : string.Empty;
 
-                        if (!string.IsNullOrWhiteSpace(player?.Value.Character.LastName))
+                        sb.Append($"<span class='who'>[{player.Value.Character.Level}]{isPK}{player.Value.Character.FirstName}");
+
+                        if (!string.IsNullOrWhiteSpace(player.Value.Character.LastName))
                         {
-                            sb.Append($" {player?.Value.Character.LastName}");
+                            sb.Append($" {player.Value.Character.LastName}");
                         }
 
-                        if (!string.IsNullOrWhiteSpace(player?.Value.Character.Title))
+                        if (!string.IsNullOrWhiteSpace(player.Value.Character.Title))
                         {
-                            sb.Append($" {player?.Value.Character.Title}");
+                            sb.Append($" {player.Value.Character.Title}");
                         }
 
                         sb.Append("</span>");

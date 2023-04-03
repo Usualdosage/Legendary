@@ -68,7 +68,7 @@ namespace Legendary.Engine
         private readonly IWebHostEnvironment webHostEnvironment;
         private SkillProcessor? skillProcessor;
         private SpellProcessor? spellProcessor;
-        private ActionProcessor? actionProcessor;
+        private ActionProcessor actionProcessor;
         private ActionHelper actionHelper;
         private AwardProcessor? awardProcessor;
 
@@ -549,6 +549,10 @@ namespace Legendary.Engine
                     {
                         await this.SendToPlayer(user.Connection, $"You can't attack the ghost of {targetChar.FirstName}.", cancellationToken);
                     }
+                    else if (!PlayerHelper.IsInPK(user.Character, targetChar))
+                    {
+                        await this.SendToPlayer(user.Connection, $"{targetChar.FirstName} is protected from you by the Gods.", cancellationToken);
+                    }
                     else
                     {
                         if (user.Character.GroupId.HasValue)
@@ -571,7 +575,8 @@ namespace Legendary.Engine
 
                         if (room != null && room.Terrain == Terrain.City)
                         {
-                            await this.SendToArea(user.Character.Location, string.Empty, $"{targetChar.FirstName.FirstCharToUpper()} yells (in Common) \"<span class='yell'>Help, I'm being attacked by {user.Character.FirstName}!</span>\"", cancellationToken);
+                            string sentence = $"Help, I'm being attacked by {user.Character.FirstName}!";
+                            await this.actionProcessor.DoAction(target.Value.Value, new CommandArgs("yell", sentence, string.Empty), cancellationToken);
                         }
 
                         // Start the fight.

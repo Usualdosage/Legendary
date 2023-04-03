@@ -408,156 +408,165 @@ namespace Legendary.Engine
         /// <returns>True if the target was killed.</returns>
         public async Task<bool> DoDamage(Character actor, Character target, IAction? action, bool isCritical = false, CancellationToken cancellationToken = default)
         {
-            // Get the action the character is using to fight.
-            IAction combatAction = action ?? this.GetCombatAction(actor);
-
-            // Assume no block unless otherwise checked.
-            bool blocked = false;
-
-            // This is an automatic martial skill.
-            if (combatAction.ActionType == ActionType.Skill && !combatAction.CanInvoke)
+            if (!PlayerHelper.IsInPK(actor, target))
             {
-                SkillProficiency? proficiency;
+                // Safety valve. Can't do damage to any player not in PK range.
+                await this.communicator.SendToPlayer(actor, $"{target.FirstName} is protected from you by the Gods.", cancellationToken);
+                return false;
+            }
+            else
+            {
+                // Get the action the character is using to fight.
+                IAction combatAction = action ?? this.GetCombatAction(actor);
 
-                proficiency = actor.GetSkillProficiency(combatAction.Name);
+                // Assume no block unless otherwise checked.
+                bool blocked = false;
 
-                if (proficiency != null && proficiency.Proficiency > 0)
+                // This is an automatic martial skill.
+                if (combatAction.ActionType == ActionType.Skill && !combatAction.CanInvoke)
                 {
-                    if (await combatAction.IsSuccess(proficiency.Proficiency, cancellationToken))
-                    {
-                        // This should be a hit, so check ability to dodge/parry/evade.
-                        blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+                    SkillProficiency? proficiency;
 
-                        // This was a hit, check armor block.
-                        if (!blocked)
+                    proficiency = actor.GetSkillProficiency(combatAction.Name);
+
+                    if (proficiency != null && proficiency.Proficiency > 0)
+                    {
+                        if (await combatAction.IsSuccess(proficiency.Proficiency, cancellationToken))
                         {
-                            blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                            // This should be a hit, so check ability to dodge/parry/evade.
+                            blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+
+                            // This was a hit, check armor block.
+                            if (!blocked)
+                            {
+                                blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                            }
+
+                            await this.communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
+                            await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
+                            await combatAction.PreAction(actor, target, null, cancellationToken);
+                            await combatAction.Act(actor, target, null, cancellationToken);
+                        }
+                        else
+                        {
+                            // This was a total martial combat miss. Show the miss and exit.
+                            await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                         }
 
-                        await this.communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
-                        await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
-                        await combatAction.PreAction(actor, target, null, cancellationToken);
-                        await combatAction.Act(actor, target, null, cancellationToken);
+                        // Run post action to check if the skill improved.
+                        await combatAction.PostAction(actor, target, null, cancellationToken);
                     }
                     else
                     {
-                        // This was a total martial combat miss. Show the miss and exit.
+                        // This was a total miss because the character is not proficient. Don't allow an increase.
                         await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                         await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                     }
-
-                    // Run post action to check if the skill improved.
-                    await combatAction.PostAction(actor, target, null, cancellationToken);
                 }
                 else
                 {
-                    // This was a total miss because the character is not proficient. Don't allow an increase.
-                    await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                    await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                }
-            }
-            else
-            {
-                // This is a spell that automatically hits, but certain spells can be evaded.
-                blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+                    // This is a spell that automatically hits, but certain spells can be evaded.
+                    blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
 
-                // Check if the armor takes the hit.
+                    // Check if the armor takes the hit.
+                    if (!blocked)
+                    {
+                        blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                    }
+                }
+
                 if (!blocked)
                 {
-                    blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
-                }
-            }
+                    // Calculate damage FROM character TO target.
+                    var damage = this.CalculateDamage(actor, target, combatAction);
 
-            if (!blocked)
-            {
-                // Calculate damage FROM character TO target.
-                var damage = this.CalculateDamage(actor, target, combatAction);
-
-                // Double damage for critical strikes.
-                if (isCritical)
-                {
-                    var criticalStrikes = actor.GetSkillProficiency("critical strikes");
-
-                    if (criticalStrikes != null)
+                    // Double damage for critical strikes.
+                    if (isCritical)
                     {
-                        var result = this.random.Next(1, 101);
+                        var criticalStrikes = actor.GetSkillProficiency("critical strikes");
 
-                        if (result < criticalStrikes.Proficiency && result != 1)
+                        if (criticalStrikes != null)
                         {
-                            damage *= 2;
-                            await this.communicator.SendToPlayer(actor, $"You land a CRITICAL HIT on {target.FirstName}!", cancellationToken);
-                            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on you!", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                            var result = this.random.Next(1, 101);
+
+                            if (result < criticalStrikes.Proficiency && result != 1)
+                            {
+                                damage *= 2;
+                                await this.communicator.SendToPlayer(actor, $"You land a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on you!", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(actor, $"You nearly land a critical strike on {target.FirstName}, but miss.", cancellationToken);
+                            }
+                        }
+                    }
+
+                    // Calculate the damage verb.
+                    var damFromVerb = CalculateDamageVerb(damage);
+
+                    await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
+                    await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
+
+                    bool isDead = this.ApplyDamage(target, damage);
+
+                    if (isDead)
+                    {
+                        // Target is dead.
+                        this.StopFighting(target, actor);
+
+                        if (actor.IsNPC && target.IsNPC)
+                        {
+                            // Mob killed mob.
+                            await this.KillMobile(target, actor);
+                        }
+                        else if (target.IsNPC)
+                        {
+                            // Player killed mobile.
+                            await this.KillMobile(target, actor);
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor, $"You nearly land a critical strike on {target.FirstName}, but miss.", cancellationToken);
+                            // Player killed player.
+                            await this.KillPlayer(target, actor, cancellationToken);
                         }
-                    }
-                }
 
-                // Calculate the damage verb.
-                var damFromVerb = CalculateDamageVerb(damage);
-
-                await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
-                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
-                await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
-
-                bool isDead = this.ApplyDamage(target, damage);
-
-                if (isDead)
-                {
-                    // Target is dead.
-                    this.StopFighting(target, actor);
-
-                    if (actor.IsNPC && target.IsNPC)
-                    {
-                        // Mob killed mob.
-                        await this.KillMobile(target, actor);
-                    }
-                    else if (target.IsNPC)
-                    {
-                        // Player killed mobile.
-                        await this.KillMobile(target, actor);
-                    }
-                    else
-                    {
-                        // Player killed player.
-                        await this.KillPlayer(target, actor, cancellationToken);
-                    }
-
-                    if (GroupHelper.IsInGroup(actor.CharacterId))
-                    {
-                        var average = GroupHelper.GetAverageLevelOfGroup(actor.CharacterId);
-
-                        // Calculate the experience.
-                        var experience = this.CalculateExperience(actor, target, average);
-
-                        // Apply experience across the group.
-                        await this.ApplyExperienceToGroup(actor, experience, cancellationToken);
-                    }
-                    else
-                    {
-                        // Add the experience to the player.
-                        var experience = this.CalculateExperience(actor, target, null);
-
-                        await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
-                        actor.Experience += experience;
-
-                        // See if the player advanced a level.
-                        if (experience > 0)
+                        if (GroupHelper.IsInGroup(actor.CharacterId))
                         {
-                            await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                            var average = GroupHelper.GetAverageLevelOfGroup(actor.CharacterId);
+
+                            // Calculate the experience.
+                            var experience = this.CalculateExperience(actor, target, average);
+
+                            // Apply experience across the group.
+                            await this.ApplyExperienceToGroup(actor, experience, cancellationToken);
                         }
+                        else
+                        {
+                            // Add the experience to the player.
+                            var experience = this.CalculateExperience(actor, target, null);
+
+                            await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                            actor.Experience += experience;
+
+                            // See if the player advanced a level.
+                            if (experience > 0)
+                            {
+                                await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+                            }
+                        }
+
+                        return true;
                     }
-
-                    return true;
                 }
-            }
 
-            return false;
+                return false;
+            }
         }
 
         /// <summary>

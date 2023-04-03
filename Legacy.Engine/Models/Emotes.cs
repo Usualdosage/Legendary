@@ -49,6 +49,7 @@ namespace Legendary.Engine.Models
             { "mutter", new Emote("You mutter under your breath.", "{0} mutters under their breath.", "{0} mutters under their breath at {1}.", "You mutter under your breath at {1}.") },
             { "nod", new Emote("You nod.", "{0} nods.", "{0} nods at {1}.", "You nod at {1}.") },
             { "ponder", new Emote("You ponder the idea.", "{0} ponders deeply.", "{0} ponders deeply while looking at {1}.", "You ponder deeply while looking at {1}.") },
+            { "pout", new Emote("You bite your lower lip and pout.", "{0} bites their lower lip and pouts.", "{0} pouts at {1}.", "You pout at {1}.") },
             { "rofl", new Emote("You laugh so hard you almost fall down.", "{0} laughs so hard they almost fall down.", "{0} laughs so hard at {1} they almost fall down.", "You laugh so hard at {1} you almost fall down.") },
             { "shrug", new Emote("You shrug.", "{0} shrugs.", "{0} shrugs at {1}.", "You shrug at {1}.") },
             { "sigh", new Emote("You sigh.", "{0} sighs.", "{0} sighs wistfully at {1}.", "You sigh wistfully at {1}.") },

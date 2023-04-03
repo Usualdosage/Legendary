@@ -27,6 +27,47 @@ namespace Legendary.Engine.Helpers
     public class PlayerHelper
     {
         /// <summary>
+        /// Determines whether or not the target is within the actor's PK range.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>True if the target is in the actor's PK range.</returns>
+        public static bool IsInPK(Character actor, Character? target)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (target.IsNPC)
+                {
+                    return true;
+                }
+
+                if (actor.Level >= 90)
+                {
+                    return true;
+                }
+                else if (target.Level < 10 || actor.Level < 10)
+                {
+                    return false;
+                }
+                else
+                {
+                    double percentVariance = actor.Experience * 0.5;
+
+                    // Calculate the upper and lower bounds based on 5% of the first number
+                    double upperBound = actor.Experience + percentVariance;
+                    double lowerBound = actor.Experience - percentVariance;
+
+                    // Check if the second number is within the upper and lower bounds
+                    return target.Experience >= lowerBound && target.Experience <= upperBound;
+                }
+            }
+        }
+
+        /// <summary>
         /// Determines if a player can see the room or not.
         /// </summary>
         /// <param name="environment">The environment.</param>
