@@ -45,6 +45,7 @@ namespace Legendary.Engine.Models.SpellTrees
             get => new List<IAction>()
             {
                 { new Protection(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Infravision(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
             };
         }
 
