@@ -33,6 +33,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
     using Legendary.Engine.Models.Output;
+    using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Output;
     using Microsoft.AspNetCore.DataProtection.KeyManagement;
     using Newtonsoft.Json;
@@ -52,6 +53,7 @@ namespace Legendary.Engine.Processors
         private readonly ILanguageGenerator generator;
         private readonly IEnvironment environment;
         private readonly IDataService dataService;
+        private readonly AwardProcessor awardProcessor;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
@@ -67,7 +69,8 @@ namespace Legendary.Engine.Processors
         /// <param name="random">The random number generator.</param>
         /// <param name="environment">The environment.</param>
         /// <param name="dataService">The data service.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService)
+        /// <param name="awardProcessor">The award processor.</param>
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService, AwardProcessor awardProcessor)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;
@@ -79,6 +82,7 @@ namespace Legendary.Engine.Processors
             this.dataService = dataService;
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
             this.processingDictionary = new Dictionary<Mobile, bool>();
+            this.awardProcessor = awardProcessor;
         }
 
         /// <summary>
@@ -156,8 +160,8 @@ namespace Legendary.Engine.Processors
                         // Chat response for the mobile with the training data.
                         var message = await this.Chat(character, this.mobileTrainingData[engagedMobile], CleanInput(input, character.FirstName));
 
-                        // See things are getting...interesting.
-                        await this.CheckConvertToXMob(message, engagedMobile);
+                        // See if things are getting...interesting.
+                        await this.CheckConvertToXMob(message, character, engagedMobile, cancellationToken);
 
                         // Parse all of the resulting language.
                         try
@@ -706,7 +710,8 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="message">The message to check for keywords.</param>
         /// <param name="mobile">The mobile.</param>
-        private async Task CheckConvertToXMob(string message, Mobile mobile)
+        /// <param name="cancellationToken">The cancellation token.</param>
+        private async Task CheckConvertToXMob(string message, Character actor, Mobile mobile, CancellationToken cancellationToken)
         {
             if (mobile.UseAI && !string.IsNullOrWhiteSpace(mobile.XImage))
             {
@@ -715,7 +720,7 @@ namespace Legendary.Engine.Processors
                     if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = false;
-                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} frowns an puts {mobile.Pronoun} clothing back on.");
+                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} frowns an puts {mobile.Pronoun} clothing back on.", cancellationToken);
                     }
                     else
                     {
@@ -727,7 +732,8 @@ namespace Legendary.Engine.Processors
                     if (!string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = true;
-                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} gently removes {mobile.Pronoun} clothing with a grin.");
+                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} gently removes {mobile.Pronoun} clothing with a wry grin.", cancellationToken);
+                        await this.awardProcessor.GrantAward(10, actor, $"managed to seduce {mobile.FirstName}", cancellationToken);
                     }
                     else
                     {
