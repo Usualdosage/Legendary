@@ -96,7 +96,7 @@ namespace Legendary.Data
             {
                 memoryObject.Memories.Add(memory);
                 memoryObject.LastInteraction = DateTime.Now;
-                if (memoryObject.Memories.Count > 20)
+                if (memoryObject.Memories.Count > 30)
                 {
                     memoryObject.Memories.RemoveAt(0);
                 }
