@@ -1,60 +1,51 @@
 ﻿<Properties GitUserInfo="UsingGIT" StartupConfiguration="{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}|Default">
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Legacy.Engine/Processors/AwardProcessor.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Legendary.Tests/ProcessorTests/LanguageProcessorTests.cs">
     <Files>
-      <File FileName="Legacy.Engine/Combat.cs" Line="411" Column="34" />
-      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" Line="148" Column="21" />
-      <File FileName="Legacy.Engine/Helpers/SkillHelper.cs" Line="88" Column="47" />
-      <File FileName="Legacy.Engine/Helpers/SpellHelper.cs" Line="125" Column="1" />
-      <File FileName="Legendary.Core/Contracts/IEnvironment.cs" Line="36" Column="23" />
-      <File FileName="Legacy.Engine/Communicator.cs" Line="566" Column="30" />
-      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="720" Column="118" />
-      <File FileName="Legendary.Web/wwwroot/css/console.css" Line="134" Column="5" />
-      <File FileName="Legendary.Web/Data/Personas/Caralee.json" Line="23" Column="84" />
-      <File FileName="Legendary.Web/Data/Personas/Auric.json" Line="1" Column="1" />
-      <File FileName="Legendary.Data/DataService.cs" Line="94" Column="14" />
-      <File FileName="Legendary.Web/Data/Personas/Marleigh.json" Line="24" Column="1" />
-      <File FileName="Legendary.Web/Data/Personas/Marin.json" Line="15" Column="41" />
-      <File FileName="Legendary.Web/Data/Personas/Kalysta.json" Line="23" Column="86" />
-      <File FileName="Legendary.Web/Data/Personas/Amaris.json" Line="23" Column="109" />
-      <File FileName="Legendary.Web/Data/Personas/Beatrix.json" Line="23" Column="2" />
-      <File FileName="Legendary.Core/Models/Award.cs" Line="20" Column="21" />
+      <File FileName="Legacy.Engine/Combat.cs" />
+      <File FileName="Legacy.Engine/Processors/SkillProcessor.cs" />
+      <File FileName="Legacy.Engine/Helpers/SkillHelper.cs" />
+      <File FileName="Legacy.Engine/Helpers/SpellHelper.cs" />
+      <File FileName="Legendary.Core/Contracts/IEnvironment.cs" />
+      <File FileName="Legacy.Engine/Communicator.cs" Line="134" Column="43" />
+      <File FileName="Legacy.Engine/Processors/LanguageProcessor.cs" Line="713" Column="61" />
+      <File FileName="Legendary.Web/wwwroot/css/console.css" />
+      <File FileName="Legendary.Web/Data/Personas/Caralee.json" />
+      <File FileName="Legendary.Web/Data/Personas/Auric.json" />
+      <File FileName="Legendary.Data/DataService.cs" />
+      <File FileName="Legendary.Web/Data/Personas/Marleigh.json" />
+      <File FileName="Legendary.Web/Data/Personas/Marin.json" />
+      <File FileName="Legendary.Web/Data/Personas/Kalysta.json" />
+      <File FileName="Legendary.Web/Data/Personas/Amaris.json" />
+      <File FileName="Legendary.Web/Data/Personas/Beatrix.json" />
+      <File FileName="Legendary.Core/Models/Award.cs" />
       <File FileName="Legacy.Engine/Processors/AwardProcessor.cs" Line="66" Column="18" />
-      <File FileName="Legacy.Engine/Models/Action.cs" Line="153" Column="1" />
+      <File FileName="Legacy.Engine/Models/Action.cs" />
+      <File FileName="Legendary.Tests/ProcessorTests/LanguageProcessorTests.cs" Line="32" Column="43" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="Legendary">
-            <Node name="Legendary.Core" expanded="True">
+            <Node name="Legendary.Core">
               <Node name="Contracts" expanded="True" />
               <Node name="Models" expanded="True" />
             </Node>
-            <Node name="Legendary.Data">
-              <Node name="Contracts" expanded="True" />
-            </Node>
             <Node name="Legendary.Engine">
-              <Node name="Extensions" expanded="True" />
-              <Node name="Helpers" expanded="True" />
-              <Node name="Models">
-                <Node name="SkillTrees" expanded="True" />
-              </Node>
-              <Node name="Processors">
-                <Node name="AwardProcessor.cs" selected="True" />
-              </Node>
               <Node name="Types" expanded="True" />
             </Node>
-            <Node name="Legendary.Networking" expanded="True" />
-            <Node name="Legendary.Tests" expanded="True">
+            <Node name="Legendary.Tests">
               <Node name="HelperTests" expanded="True" />
-              <Node name="ProcessorTests" expanded="True" />
+              <Node name="ProcessorTests" expanded="True">
+                <Node name="LanguageProcessorTests.cs" selected="True" />
+              </Node>
             </Node>
           </Node>
         </State>
       </Pad>
       <Pad Id="MonoDevelop.UnitTesting.TestPad">
         <State name="__root__">
-          <Node name="Legendary" expanded="True" selected="True" />
+          <Node name="Legendary" expanded="True" />
         </State>
       </Pad>
     </Pads>

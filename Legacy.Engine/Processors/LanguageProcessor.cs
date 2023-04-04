@@ -58,6 +58,7 @@ namespace Legendary.Engine.Processors
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
         private Dictionary<Mobile, bool> processingDictionary;
+        private Persona? basePersona;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
@@ -83,6 +84,9 @@ namespace Legendary.Engine.Processors
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
             this.processingDictionary = new Dictionary<Mobile, bool>();
             this.awardProcessor = awardProcessor;
+
+            // Load the base AI persona for ALL AI mobs.
+            this.basePersona = this.dataService.GetBasePersona().Result;
         }
 
         /// <summary>
@@ -125,9 +129,9 @@ namespace Legendary.Engine.Processors
 
             if (engagedMobile != null)
             {
-                if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && engagedMobile != null && !string.IsNullOrWhiteSpace(engagedMobile.FirstName))
+                if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && engagedMobile != null && !string.IsNullOrWhiteSpace(engagedMobile.FirstName) && !string.IsNullOrWhiteSpace(engagedMobile.PersonaFile))
                 {
-                    var persona = Persona.Load(engagedMobile);
+                    var persona = await this.dataService.GetPersona(engagedMobile.PersonaFile);
 
                     if (persona != null && !string.IsNullOrWhiteSpace(persona.Name))
                     {
@@ -566,8 +570,8 @@ namespace Legendary.Engine.Processors
             sentence = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
             sentence = sentence.ReplaceFirst(persona.Name?.FirstCharToLower() ?? mobile.FirstName.FirstCharToLower(), string.Empty);
             sentence = sentence.Replace("EMOTE", string.Empty);
-            sentence = sentence.Replace("ACTIVATE", string.Empty);
             sentence = sentence.Replace("DEACTIVATE", string.Empty);
+            sentence = sentence.Replace("ACTIVATE", string.Empty);
             sentence = sentence.Replace(":", string.Empty);
 
             if (isEmote)
@@ -597,6 +601,22 @@ namespace Legendary.Engine.Processors
                 foreach (var n in nameParts)
                 {
                     sentence = sentence.Replace(n, string.Empty, StringComparison.CurrentCultureIgnoreCase);
+                }
+            }
+            else
+            {
+                // Not an emote, so be sure they don't put their name in.
+                if (!string.IsNullOrWhiteSpace(persona.Name))
+                {
+                    sentence = sentence.Replace(persona.Name, string.Empty);
+                }
+
+                sentence = sentence.Replace(mobile.FirstName, string.Empty);
+
+                // Just got junk here.
+                if (sentence.Length <= 2)
+                {
+                    sentence = string.Empty;
                 }
             }
 
@@ -661,17 +681,24 @@ namespace Legendary.Engine.Processors
                 $"The person you are speaking to is a {character.Gender} {character.Race}.",
             };
 
+            // Add the base behaviors for all AI mobs.
+            if (this.basePersona != null && this.basePersona.Background != null)
+            {
+                trainingInformation.AddRange(this.basePersona.Background);
+            }
+
+            // Mobiles should respect the Gods.
             if (character.Level >= 90 && character.Level <= 95)
             {
-                trainingInformation.Add("This being is a lesser deity.");
+                trainingInformation.Add("Whoa. This being is a lesser deity.");
             }
             else if (character.Level > 95 && character.Level <= 99)
             {
-                trainingInformation.Add("This being is a greater deity.");
+                trainingInformation.Add("WOW. This being is a greater deity.");
             }
             else if (character.Level > 100)
             {
-                trainingInformation.Add("This being is one of the most powerful deities in the universe.");
+                trainingInformation.Add("HOLY CRAP. This being is one of the most powerful deities in the universe.");
             }
 
             var memories = await this.dataService.GetMemories(character, mobile);
@@ -709,8 +736,8 @@ namespace Legendary.Engine.Processors
         /// Converts this mobile to "adult" mode.
         /// </summary>
         /// <param name="message">The message to check for keywords.</param>
-        /// <param name="mobile">The mobile.</param>
         /// <param name="actor">The actor who is the source.</param>
+        /// <param name="mobile">The mobile.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         private async Task CheckConvertToXMob(string message, Character actor, Mobile mobile, CancellationToken cancellationToken)
         {

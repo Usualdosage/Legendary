@@ -87,6 +87,8 @@
             {
                 var mobileId = message.split(":")[1];
                 $(".chat-bubble-" + mobileId).remove();
+                isScrolling = false;
+                $console.prop("scrollTop", $console.prop("scrollHeight"));
             }
             else if (message.startsWith("{"))
             {

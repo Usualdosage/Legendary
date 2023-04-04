@@ -136,6 +136,7 @@ namespace Legendary.Engine.Models
                 message.StartsWith("gtel ") ||
                 message.StartsWith("gtell ") ||
                 message.StartsWith("pray ") ||
+                message.StartsWith("new ") ||
                 message.StartsWith("newbie "))
             {
                 return true;

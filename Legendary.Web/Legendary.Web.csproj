@@ -45,7 +45,6 @@
     <Folder Include="Data\" />
     <Folder Include="wwwroot\img\notifications\" />
     <Folder Include="Types\" />
-    <Folder Include="Data\Personas\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />
@@ -53,7 +52,6 @@
     <None Remove="Contracts\" />
     <None Remove="Data\" />
     <None Remove="Types\" />
-    <None Remove="Data\Personas\" />
     <None Remove="Properties\PublishProfiles\legendary-mud - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>

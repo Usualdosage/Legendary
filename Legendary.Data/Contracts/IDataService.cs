@@ -62,6 +62,19 @@ namespace Legendary.Data.Contracts
         Task AddMemory(Character character, Mobile mobile, string memory);
 
         /// <summary>
+        /// Gets the base person that all AI mobs use. Basic rules.
+        /// </summary>
+        /// <returns>Person?.</returns>
+        Task<Persona?> GetBasePersona();
+
+        /// <summary>
+        /// Gets the person by name or filename.
+        /// </summary>
+        /// <param name="name">The name or filename.</param>
+        /// <returns>Persona?.</returns>
+        Task<Persona?> GetPersona(string name);
+
+        /// <summary>
         /// Gets the last 20 memories associated between a character and a mobile.
         /// </summary>
         /// <param name="character">The character.</param>
