@@ -11,6 +11,7 @@ namespace Legendary.Core.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Cryptography;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
     using MongoDB.Bson.Serialization.IdGenerators;
@@ -29,6 +30,7 @@ namespace Legendary.Core.Models
         {
             this.CharacterId = characterId;
             this.MobileId = mobileId;
+            this.MemoryId = ObjectId.GenerateNewId();
         }
 
         /// <summary>

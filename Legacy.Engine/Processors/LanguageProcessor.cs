@@ -53,12 +53,13 @@ namespace Legendary.Engine.Processors
         private readonly ILanguageGenerator generator;
         private readonly IEnvironment environment;
         private readonly IDataService dataService;
+        private readonly IWorld world;
         private readonly AwardProcessor awardProcessor;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
+        private Persona? basePersona;
         private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
         private Dictionary<Mobile, bool> processingDictionary;
-        private Persona? basePersona;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
@@ -70,8 +71,9 @@ namespace Legendary.Engine.Processors
         /// <param name="random">The random number generator.</param>
         /// <param name="environment">The environment.</param>
         /// <param name="dataService">The data service.</param>
+        /// <param name="world">The world service.</param>
         /// <param name="awardProcessor">The award processor.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService, AwardProcessor awardProcessor)
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService, IWorld world, AwardProcessor awardProcessor)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;
@@ -81,12 +83,10 @@ namespace Legendary.Engine.Processors
             this.communicator = communicator;
             this.environment = environment;
             this.dataService = dataService;
+            this.world = world;
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
             this.processingDictionary = new Dictionary<Mobile, bool>();
             this.awardProcessor = awardProcessor;
-
-            // Load the base AI persona for ALL AI mobs.
-            this.basePersona = this.dataService.GetBasePersona().Result;
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Legendary.Engine.Processors
             {
                 if (character != null && !string.IsNullOrWhiteSpace(character.FirstName) && engagedMobile != null && !string.IsNullOrWhiteSpace(engagedMobile.FirstName) && !string.IsNullOrWhiteSpace(engagedMobile.PersonaFile))
                 {
-                    var persona = await this.dataService.GetPersona(engagedMobile.PersonaFile);
+                    var persona = this.world.Personas.FirstOrDefault(p => p.Name == engagedMobile.PersonaFile.Replace(".json", string.Empty));
 
                     if (persona != null && !string.IsNullOrWhiteSpace(persona.Name))
                     {
@@ -140,7 +140,7 @@ namespace Legendary.Engine.Processors
                         // We haven't trained this mobile yet, so train it.
                         if (!this.mobileTrainingData.ContainsKey(engagedMobile))
                         {
-                            this.mobileTrainingData.Add(engagedMobile, await this.Train(persona, character, engagedMobile));
+                            this.mobileTrainingData.Add(engagedMobile, this.Train(persona, character, engagedMobile));
                         }
 
                         await this.communicator.SendToPlayer(character, $"<span class='chat-bubble-{engagedMobile.CharacterId}'>{persona.Name ?? engagedMobile.FirstName.FirstCharToUpper()}<img class='typing' src='img/typing.gif'></span>", cancellationToken);
@@ -181,7 +181,12 @@ namespace Legendary.Engine.Processors
                                 // Add the input as a memory, only if the mob actually created a response.
                                 try
                                 {
-                                    await this.dataService.AddMemory(character, engagedMobile, $"{input}");
+                                    if (input.Contains(':'))
+                                    {
+                                        input = input.Split(':')[1].Trim();
+                                    }
+
+                                    this.world.AddMemory(character, engagedMobile, $"{input}");
                                 }
                                 catch (Exception exc)
                                 {
@@ -464,6 +469,12 @@ namespace Legendary.Engine.Processors
 
             message = message.Trim();
 
+            // Name:, in Common, 'some sentence.'
+            if (message.Contains(':'))
+            {
+                message = message.Split(':')[1].Trim();
+            }
+
             if (message.Contains('*'))
             {
                 List<string> sentences = new List<string>();
@@ -524,7 +535,7 @@ namespace Legendary.Engine.Processors
                     else if (sentence[0] == '[')
                     {
                         // This is an emote
-                        messages.Add($"{persona.Name?.FirstCharToUpper() ?? mobile.FirstName.FirstCharToUpper()} {CleanSentence(mobile, persona, sentence, true)?.FirstCharToLower()}");
+                        messages.Add($"{CleanSentence(mobile, persona, sentence, true)}");
                     }
                     else
                     {
@@ -535,7 +546,7 @@ namespace Legendary.Engine.Processors
 
                             if (!string.IsNullOrWhiteSpace(cleaned))
                             {
-                                messages.Add($"{persona.Name?.FirstCharToUpper() ?? mobile.FirstName.FirstCharToUpper()} {cleaned}");
+                                messages.Add($"{cleaned}");
                             }
                         }
                         else
@@ -574,10 +585,12 @@ namespace Legendary.Engine.Processors
             sentence = sentence.Replace("ACTIVATE", string.Empty);
             sentence = sentence.Replace(":", string.Empty);
 
+            /*
             if (isEmote)
             {
                 sentence = sentence.Replace("my", mobile.Pronoun);
             }
+            */
 
             sentence = sentence.Trim();
 
@@ -589,21 +602,7 @@ namespace Legendary.Engine.Processors
 
             sentence = sentence.Trim();
 
-            // Get rid of any instances of the name
-            if (isEmote && !string.IsNullOrWhiteSpace(persona.Name))
-            {
-                sentence = sentence.ReplaceFirst("She", string.Empty);
-                sentence = sentence.ReplaceFirst("He", string.Empty);
-                sentence = sentence.ReplaceFirst("They", string.Empty);
-
-                string[] nameParts = persona.Name.Split();
-
-                foreach (var n in nameParts)
-                {
-                    sentence = sentence.Replace(n, string.Empty, StringComparison.CurrentCultureIgnoreCase);
-                }
-            }
-            else
+            if (!isEmote)
             {
                 // Not an emote, so be sure they don't put their name in.
                 if (!string.IsNullOrWhiteSpace(persona.Name))
@@ -665,7 +664,7 @@ namespace Legendary.Engine.Processors
         /// <param name="persona">The persona.</param>
         /// <param name="character">The character the mob is engaged with.</param>
         /// <param name="mobile">The mobile who is engaged.</param>
-        private async Task<List<dynamic>> Train(Persona persona, Character character, Mobile mobile)
+        private List<dynamic> Train(Persona persona, Character character, Mobile mobile)
         {
             var trainingInformation = new List<string>
             {
@@ -677,31 +676,42 @@ namespace Legendary.Engine.Processors
                 $"You are speaking with {character.FirstName} {character.LastName}.",
                 $"Your gender is {mobile.Gender}.",
                 $"Your alignment is {mobile.Alignment}, and your ethos is {mobile.Ethos}.",
-                $"The person you are speaking to has an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
-                $"The person you are speaking to is a {character.Gender} {character.Race}.",
+                $"The person you are speaking to may have an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
+                $"The person you are speaking to appearss to be a {character.Gender} {character.Race}.",
+                $"If speaking, form your sentence as {persona.Name} says: ''",
             };
 
             // Add the base behaviors for all AI mobs.
-            if (this.basePersona != null && this.basePersona.Background != null)
+            if (this.basePersona != null)
             {
                 trainingInformation.AddRange(this.basePersona.Background);
+            }
+            else
+            {
+                // Load the base AI persona for ALL AI mobs.
+                this.basePersona = this.world.Personas.First(p => p.Id == 0);
+
+                if (this.basePersona.Background != null)
+                {
+                    trainingInformation.AddRange(this.basePersona.Background);
+                }
             }
 
             // Mobiles should respect the Gods.
             if (character.Level >= 90 && character.Level <= 95)
             {
-                trainingInformation.Add("Whoa. This being is a lesser deity.");
+                trainingInformation.Add("This being is a lesser deity.");
             }
             else if (character.Level > 95 && character.Level <= 99)
             {
-                trainingInformation.Add("WOW. This being is a greater deity.");
+                trainingInformation.Add("This being is a greater deity!");
             }
             else if (character.Level > 100)
             {
-                trainingInformation.Add("HOLY CRAP. This being is one of the most powerful deities in the universe.");
+                trainingInformation.Add("This being before you is one of the most powerful beings in the universe!");
             }
 
-            var memories = await this.dataService.GetMemories(character, mobile);
+            var memories = this.world.GetMemories(character, mobile);
 
             if (memories != null)
             {
@@ -748,7 +758,6 @@ namespace Legendary.Engine.Processors
                     if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = false;
-                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} frowns an puts {mobile.Pronoun} clothing back on.", cancellationToken);
                     }
                     else
                     {
@@ -760,7 +769,6 @@ namespace Legendary.Engine.Processors
                     if (!string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = true;
-                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} gently removes {mobile.Pronoun} clothing with a wry grin.", cancellationToken);
                         await this.awardProcessor.GrantAward(10, actor, $"managed to seduce {mobile.FirstName}", cancellationToken);
                     }
                     else
@@ -833,7 +841,7 @@ namespace Legendary.Engine.Processors
         {
             // Base chance is 10%
             bool engage = false;
-            int chance = 10;
+            int chance = 20;
 
             if (target != null && !string.IsNullOrWhiteSpace(target.FirstName))
             {
@@ -874,7 +882,7 @@ namespace Legendary.Engine.Processors
                 if (message.Contains(target.FirstName))
                 {
                     this.logger.Debug($"{target.FirstName.FirstCharToUpper()} mentioned by name by {actor.FirstName}. Chance: {chance}.", this.communicator);
-                    chance += this.random.Next(55, 85);
+                    chance += this.random.Next(70, 90);
                 }
 
                 // If we overmax chance, give a 1% rate of failure.

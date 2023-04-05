@@ -53,34 +53,14 @@ namespace Legendary.Data.Contracts
         public IMongoCollection<Message> Messages { get; }
 
         /// <summary>
-        /// Adds a memory to the database for the given character/mobile interaction.
+        /// Gets the personas.
         /// </summary>
-        /// <param name="character">The character.</param>
-        /// <param name="mobile">The mobile.</param>
-        /// <param name="memory">The memory.</param>
-        /// <returns>Task.</returns>
-        Task AddMemory(Character character, Mobile mobile, string memory);
+        public IMongoCollection<Persona> Personas { get; }
 
         /// <summary>
-        /// Gets the base person that all AI mobs use. Basic rules.
+        /// Gets the memories.
         /// </summary>
-        /// <returns>Person?.</returns>
-        Task<Persona?> GetBasePersona();
-
-        /// <summary>
-        /// Gets the person by name or filename.
-        /// </summary>
-        /// <param name="name">The name or filename.</param>
-        /// <returns>Persona?.</returns>
-        Task<Persona?> GetPersona(string name);
-
-        /// <summary>
-        /// Gets the last 20 memories associated between a character and a mobile.
-        /// </summary>
-        /// <param name="character">The character.</param>
-        /// <param name="mobile">The mobile.</param>
-        /// <returns>List of memories.</returns>
-        Task<List<string>?> GetMemories(Character character, Mobile mobile);
+        public IMongoCollection<Memory> Memories { get; }
 
         /// <summary>
         /// Finds a character using the given filter.

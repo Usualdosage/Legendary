@@ -601,6 +601,16 @@ namespace Legendary.Engine.Processors
                     user.Character.Location = new KeyValuePair<long, long>(targetRoom.AreaId, targetRoom.RoomId);
                     await this.communicator.ShowRoomToPlayer(user.Character, cancellationToken);
 
+                    await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} suddenly arrives is a flash of smoke and fire.", cancellationToken);
+
+                    // See if any AI mobs in the room will communicate with the player.
+                    var commsTask = this.communicator.CheckMobCommunication(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} suddenly arrives is a flash of smoke and fire.", cancellationToken);
+
+                    // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    Task.Run(async () => { await commsTask; }, cancellationToken);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
                     // Track exploration for award purposes.
                     if (user.Character.Metrics.RoomsExplored.ContainsKey(user.Character.Location.Key))
                     {

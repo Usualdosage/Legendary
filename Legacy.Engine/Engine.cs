@@ -108,6 +108,8 @@ namespace Legendary.Engine
                         // One "hour" game time, or 30 seconds.
                         if (this.gameTicks == Constants.TICK)
                         {
+                            this.gameTicks = 0;
+
                             this.logger.Debug("TICK.", null);
 
                             this.gameHour++;
@@ -143,7 +145,15 @@ namespace Legendary.Engine
                                 this.gameHour = 0;
                             }
 
-                            this.gameTicks = 0;
+                            try
+                            {
+                                // Save all recently memories to the db.
+                                await this.world.SaveMemories();
+                            }
+                            catch (Exception exc)
+                            {
+                                this.logger.Error($"Error saving memories. {exc}", null);
+                            }
 
                             try
                             {

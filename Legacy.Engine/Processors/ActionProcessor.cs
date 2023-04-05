@@ -2041,7 +2041,7 @@ namespace Legendary.Engine.Processors
 
                 var speakingLang = SkillHelper.ResolveSkill(actor.Character.Speaking, this.communicator, this.random, this.world, this.logger, this.combat);
 
-                await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speakingLang?.Name}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"You say (in {speakingLang?.Name}): \"<span class='say'>{sentence}</span>\"", cancellationToken);
 
                 // Check if the language improves each time it's used.
                 if (speakingLang != null)
@@ -2068,30 +2068,30 @@ namespace Legendary.Engine.Processors
                             {
                                 if (player.HasSkill(speakingLang?.Name) && player.GetSkillProficiency(speakingLang?.Name)?.Proficiency >= skillRoll)
                                 {
-                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speakingLang?.Name}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speakingLang?.Name}): \"<span class='say'>{sentence}</span>\"", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speakingLang?.Name}) \"<span class='say'><span class='{speakingLang?.Name?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} says (in {speakingLang?.Name}): \"<span class='say'><span class='{speakingLang?.Name?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
                                 }
                             }
                             else
                             {
                                 if (player.HasSkill(speakingLang?.Name) && player.GetSkillProficiency(speakingLang?.Name)?.Proficiency >= skillRoll)
                                 {
-                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speakingLang?.Name}) \"<span class='say'>{sentence}</span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speakingLang?.Name}): \"<span class='say'>{sentence}</span>\"", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speakingLang?.Name}) \"<span class='say'><span class='{speakingLang?.Name?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"Someone says (in {speakingLang?.Name}): \"<span class='say'><span class='{speakingLang?.Name?.Replace(" ", string.Empty)}'>{garbled}</span></span>\"", cancellationToken);
                                 }
                             }
                         }
                     }
                 }
 
-                // See if any AI mobs in the room will communicate with the player.
-                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} says, in {speakingLang?.Name}, '{sentence}'.", cancellationToken);
+                // See if any AI mobs in the room will communicate with the player. Will be added as a memory.
+                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} said to you '{sentence}'.", cancellationToken);
 
                 // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -2895,7 +2895,7 @@ namespace Legendary.Engine.Processors
                 var speakingLang = SkillHelper.ResolveSkill("Common", this.communicator, this.random, this.world, this.logger, this.combat);
                 var speaking = actor.Character.Speaking ?? speakingLang?.Name;
                 sentence = char.ToUpper(sentence[0]) + sentence[1..];
-                await this.communicator.SendToPlayer(actor.Connection, $"You yell (in {speaking}) \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
+                await this.communicator.SendToPlayer(actor.Connection, $"You yell (in {speaking}): \"<span class='yell'>{sentence}!</b>\"", cancellationToken);
 
                 // Check if the language improves each time it's used.
                 if (speakingLang != null)
@@ -2922,22 +2922,22 @@ namespace Legendary.Engine.Processors
                             {
                                 if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
                                 {
-                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}): \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} yells (in {speaking}): \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
                                 }
                             }
                             else
                             {
                                 if (player.HasSkill(speaking) && player.GetSkillProficiency(speaking)?.Proficiency >= skillRoll)
                                 {
-                                    await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}): \"<span class='yell'>{sentence}!</span>\"", cancellationToken);
                                 }
                                 else
                                 {
-                                    await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}) \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"Someone yells (in {speaking}): \"<span class='yell'><span class='{speaking?.Replace(" ", string.Empty)}'>{garbled}!</span></span>\"", cancellationToken);
                                 }
                             }
                         }
@@ -2945,7 +2945,7 @@ namespace Legendary.Engine.Processors
                 }
 
                 // See if any AI mobs in the room will communicate with the player.
-                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} yells loudly, in {speakingLang?.Name}, '{sentence}'.", cancellationToken);
+                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} yells loudly, '{sentence}'.", cancellationToken);
 
                 // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed

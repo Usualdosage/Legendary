@@ -43,9 +43,42 @@ namespace Legendary.Core.Contracts
         HashSet<Award> Awards { get; }
 
         /// <summary>
+        /// Gets a hashset of personas currently loaded into memory.
+        /// </summary>
+        HashSet<Persona> Personas { get; }
+
+        /// <summary>
+        /// Gets or sets a hashset of memories currently loaded into memory.
+        /// </summary>
+        HashSet<Memory> Memories { get; set; }
+
+        /// <summary>
         /// Gets the game metrics.
         /// </summary>
         GameMetrics? GameMetrics { get; }
+
+        /// <summary>
+        /// Serializes all of the memories from the hashset into the DB for long term storage.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        Task SaveMemories(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Adds a memory to the hashset.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="memory">The memory.</param>
+        void AddMemory(Character character, Mobile mobile, string memory);
+
+        /// <summary>
+        /// Gets the memories from the hashset in memory.
+        /// </summary>
+        /// <param name="character">The character.</param>
+        /// <param name="mobile">The mobile.</param>
+        /// <returns>List of memories.</returns>
+        List<string>? GetMemories(Character character, Mobile mobile);
 
         /// <summary>
         /// Updates the game metrics.

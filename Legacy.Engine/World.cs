@@ -37,6 +37,7 @@ namespace Legendary.Engine
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
         private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private DateTime? lastMemoryDate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="World"/> class.
@@ -64,6 +65,12 @@ namespace Legendary.Engine
 
         /// <inheritdoc/>
         public HashSet<Award> Awards { get; private set; } = new HashSet<Award>();
+
+        /// <inheritdoc/>
+        public HashSet<Persona> Personas { get; private set; } = new HashSet<Persona>();
+
+        /// <inheritdoc/>
+        public HashSet<Memory> Memories { get; set; } = new HashSet<Memory>();
 
         /// <inheritdoc/>
         public GameMetrics? GameMetrics { get; internal set; } = null;
@@ -151,12 +158,54 @@ namespace Legendary.Engine
             var items = await this.dataService.Items.Find(Builders<Item>.Filter.Empty).ToListAsync();
             var mobiles = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
             var awards = await this.dataService.Awards.Find(Builders<Award>.Filter.Empty).ToListAsync();
+            var personas = await this.dataService.Personas.Find(Builders<Persona>.Filter.Empty).ToListAsync();
+            var memories = await this.dataService.Memories.Find(Builders<Memory>.Filter.Empty).ToListAsync();
 
             // Cache common lookups as hash sets for faster reads.
             this.Areas = new HashSet<Area>(areas);
             this.Items = new HashSet<Item>(items);
             this.Mobiles = new HashSet<Mobile>(mobiles);
             this.Awards = new HashSet<Award>(awards);
+            this.Personas = new HashSet<Persona>(personas);
+            this.Memories = new HashSet<Memory>(memories);
+
+            // Set the last memory date. Any new memories that come in will be serialized each tick.
+            this.lastMemoryDate = memories.Max(m => m.LastInteraction);
+        }
+
+        /// <inheritdoc/>
+        public async Task SaveMemories(CancellationToken cancellationToken)
+        {
+            if (this.lastMemoryDate.HasValue)
+            {
+                var newMemories = this.Memories.Where(m => m.LastInteraction >= this.lastMemoryDate).ToList();
+
+                if (newMemories != null && newMemories.Any())
+                {
+                    this.lastMemoryDate = DateTime.UtcNow;
+
+                    foreach (var memory in newMemories)
+                    {
+                        // It may not exist yet. If not, insert it.
+                        var existingCursor = await this.dataService.Memories.FindAsync(m => m.CharacterId == memory.CharacterId && m.MobileId == memory.MobileId, cancellationToken: cancellationToken);
+                        var existing = await existingCursor.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+                        if (existing != null)
+                        {
+                            memory.MemoryId = existing.MemoryId;
+                            await this.dataService.Memories.ReplaceOneAsync(e => e.CharacterId == existing.CharacterId && e.MobileId == existing.MobileId, memory, cancellationToken: cancellationToken);
+                        }
+                        else
+                        {
+                            await this.dataService.Memories.InsertOneAsync(memory, new InsertOneOptions(), cancellationToken);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                this.lastMemoryDate = DateTime.UtcNow;
+            }
         }
 
         /// <inheritdoc/>
@@ -239,6 +288,46 @@ namespace Legendary.Engine
                     }
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public void AddMemory(Character character, Mobile mobile, string memory)
+        {
+            var memoryObject = this.Memories.FirstOrDefault(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId);
+
+            if (memoryObject == null)
+            {
+                memoryObject = new Memory(character.CharacterId, mobile.CharacterId);
+                memoryObject.LastInteraction = DateTime.UtcNow;
+                memoryObject.Memories = new List<string>() { memory };
+
+                this.Memories.Add(memoryObject);
+            }
+            else
+            {
+                var newMemory = new Memory(memoryObject.CharacterId, memoryObject.MobileId)
+                {
+                    LastInteraction = DateTime.UtcNow,
+                };
+
+                newMemory.Memories.AddRange(memoryObject.Memories);
+                newMemory.Memories.Add(memory);
+
+                if (newMemory.Memories.Count > 30)
+                {
+                    newMemory.Memories.RemoveAt(0);
+                }
+
+                this.Memories.Remove(memoryObject);
+                this.Memories.Add(newMemory);
+            }
+        }
+
+        /// <inheritdoc/>
+        public List<string>? GetMemories(Character character, Mobile mobile)
+        {
+            var memoryObject = this.Memories.FirstOrDefault(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId);
+            return memoryObject?.Memories.Take(20).ToList() ?? null;
         }
 
         /// <inheritdoc/>

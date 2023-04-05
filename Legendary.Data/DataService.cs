@@ -86,59 +86,6 @@ namespace Legendary.Data
         public IMongoCollection<Persona> Personas { get => this.dbConnection.Database.GetCollection<Persona>("Personas"); }
 
         /// <inheritdoc/>
-        public async Task AddMemory(Character character, Mobile mobile, string memory)
-        {
-            var memoryObject = await this.Memories.Find(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId).FirstOrDefaultAsync();
-
-            if (memoryObject == null)
-            {
-                memoryObject = new Memory(character.CharacterId, mobile.CharacterId);
-                memoryObject.LastInteraction = DateTime.Now;
-                memoryObject.Memories = new List<string>() { memory };
-
-                await this.Memories.InsertOneAsync(memoryObject);
-            }
-            else
-            {
-                memoryObject.Memories.Add(memory);
-                memoryObject.LastInteraction = DateTime.Now;
-                if (memoryObject.Memories.Count > 30)
-                {
-                    memoryObject.Memories.RemoveAt(0);
-                }
-
-                await this.Memories.ReplaceOneAsync(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId, memoryObject);
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<List<string>?> GetMemories(Character character, Mobile mobile)
-        {
-            var memoryObject = await this.Memories.Find(m => m.CharacterId == character.CharacterId && m.MobileId == mobile.CharacterId).FirstOrDefaultAsync();
-            return memoryObject?.Memories ?? null;
-        }
-
-        /// <inheritdoc/>
-        public async Task<Persona?> GetBasePersona()
-        {
-            var persona = await this.Personas.Find(p => p.Id == 0).FirstOrDefaultAsync();
-            return persona ?? null;
-        }
-
-        /// <inheritdoc/>
-        public async Task<Persona?> GetPersona(string name)
-        {
-            // Legacy file support.
-            if (name.ToLower().Contains(".json"))
-            {
-                name = name.Replace(".json", string.Empty);
-            }
-
-            var persona = await this.Personas.Find(p => p.Name != null && p.Name == name).FirstOrDefaultAsync();
-            return persona ?? null;
-        }
-
-        /// <inheritdoc/>
         public async Task<ReplaceOneResult?> SaveCharacter(Character character, CancellationToken cancellationToken)
         {
             try

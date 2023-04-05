@@ -129,7 +129,7 @@ namespace Legendary.Engine
             this.awardProcessor = new AwardProcessor(this, this.world, this.logger, this.random, this.combat);
 
             // Create the language processor.
-            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService, this.awardProcessor);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService, this.world, this.awardProcessor);
 
             // Create the title generator.
             this.titleGenerator = new TitleGenerator(this, this.random, this.world, this.logger, this.combat);
