@@ -801,8 +801,14 @@ namespace Legendary.Engine.Processors
                 var sentence = string.Join(' ', new string?[2] { args.Method, args.Target });
                 if (!string.IsNullOrWhiteSpace(sentence))
                 {
-                    sentence = sentence.ToLower();
-                    await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+                    if (!char.IsPunctuation(sentence[sentence.Length - 1]))
+                    {
+                        sentence = sentence + ".";
+                    }
+
+                    await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+
+                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, sentence, cancellationToken);
 
                     var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
 
@@ -814,7 +820,7 @@ namespace Legendary.Engine.Processors
                             {
                                 if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
                                 {
-                                    await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+                                    await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
                                 }
                             }
                         }

@@ -113,9 +113,6 @@
 
                     // Generate the mini-map.
                     renderMiniMap(context.m.m);
-
-                    // Bind the tooltips.
-                    $('[data-toggle="tooltip"]').tooltip({ boundary: 'window', placement: 'left' });
                 }
                 else if (context.type === "score") {
                     // Get the template.

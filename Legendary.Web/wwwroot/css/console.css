@@ -134,9 +134,43 @@ h6 {
     font-size: 0.9em;
 }
 
-/* Mini-Map */
-#mini-map
+#toast {
+    position: absolute;
+    background-color: beige;
+    color: #222;
+    width: 275px;
+    height: 86px;
+    bottom: 50px;
+    right: 270px;
+    border: solid 1px #000;
+    border-radius: 5px;
+    overflow: auto;
+    font-size: .7em;
+    padding: 5px;
+    font-style: italic;
+    font-weight: bold;
+    opacity: .7;
+    cursor:help;
+}
+
+.toast-min {
+    position: absolute;
+    background-color: beige;
+    color: #222;
+    width: 24px !important;
+    height: 24px !important;    
+    bottom: 50px;
+    right: 270px;
+    transition: ease;
+}
+
+[data-bs-toggle="tooltip"]
 {
+    cursor: help;
+}
+
+/* Mini-Map */
+#mini-map {
     width: 216px;
     height: 212px;
     background-color: #222;
@@ -613,6 +647,15 @@ button {
     /* Firefox */
     scrollbar-width: thin; /* "auto" or "thin" */
     scrollbar-color: #333 #888; /* scroll thumb and track */
+}
+
+.image-container {
+    height: 240px !important;
+}
+
+.image-content
+{
+    height: 230px !important;
 }
 
 /* Chrome */

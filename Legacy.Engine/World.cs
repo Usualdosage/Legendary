@@ -192,8 +192,15 @@ namespace Legendary.Engine
 
                         if (existing != null)
                         {
-                            memory.MemoryId = existing.MemoryId;
-                            await this.dataService.Memories.ReplaceOneAsync(e => e.CharacterId == existing.CharacterId && e.MobileId == existing.MobileId, memory, cancellationToken: cancellationToken);
+                            existing.Memories = new List<string>(memory.Memories);
+                            try
+                            {
+                                await this.dataService.Memories.ReplaceOneAsync(e => e.CharacterId == existing.CharacterId && e.MobileId == existing.MobileId, existing, cancellationToken: cancellationToken);
+                            }
+                            catch (Exception exc)
+                            {
+                                this.logger.Error(exc, this.communicator);
+                            }
                         }
                         else
                         {

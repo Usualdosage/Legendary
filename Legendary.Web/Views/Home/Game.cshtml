@@ -21,7 +21,7 @@
                 <!-- This is rendered dynamically -->
             </div>
             <div class="component" style="position: relative">
-                <canvas id="mini-map">
+                <canvas id="mini-map" data-bs-toggle="tooltip" title="This is your overhead mini-map. White dots are NPCs, red dots are other players. You are located in the blue rectangle. This will only show rooms you have explored.">
                 </canvas>
                 <div id="explored">
                     <div class="ribbon-row"><div class="ribbon-block"><h1><span>Area <b id="span_explored">0</b>% Explored</span></h1></div></div>
@@ -58,6 +58,9 @@
     <audio id="channel5"></audio>
     <audio id="channel6"></audio>
     <audio id="channel7"></audio>
+</div>
+<div id="toast">
+
 </div>
 
 <!-- Modal for messages -->
@@ -100,16 +103,16 @@
     <h3 id="username" class="align-{{m.a}}">{{m.f}}</h3>
     <h4 id="title" class="align-{{m.a}}-dark">{{m.t}}</h4>
     <div class="component">
-        <div class="progress" data-toggle="tooltip" title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
+        <div class="progress" data-bs-toggle="tooltip" data-bs-placement='left' title="Health: {{m.s.hp.c}}/{{m.s.hp.m}}">
             <div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:{{m.s.hp.p}}%;" aria-valuenow="{{m.s.hp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.hp.p}}%</div>
         </div>
-        <div class="progress" data-toggle="tooltip" title="Mana: {{m.s.mm.c}}/{{m.s.mm.m}}">
+        <div class="progress" data-bs-toggle="tooltip" data-bs-placement='left' title="Mana: {{m.s.mm.c}}/{{m.s.mm.m}}">
             <div class="progress-bar progress-bar-striped" role="progressbar" style="width:{{m.s.mm.p}}%;" aria-valuenow="{{m.s.mm.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.mm.p}}%</div>
         </div>
-        <div class="progress" data-toggle="tooltip" title="Movement: {{m.s.mv.c}}/{{m.s.mv.m}}">
+        <div class="progress" data-bs-toggle="tooltip" data-bs-placement='left' title="Movement: {{m.s.mv.c}}/{{m.s.mv.m}}">
             <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:{{m.s.mv.p}}%;" aria-valuenow="{{m.s.mv.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.mv.p}}%</div>
         </div>
-        <div class="progress" data-toggle="tooltip" title="Experience: {{m.s.exp.c}}/{{m.s.exp.m}}">
+        <div class="progress" data-bs-toggle="tooltip" data-bs-placement='left' title="Experience: {{m.s.exp.c}}/{{m.s.exp.m}}">
             <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width:{{m.s.exp.p}}%;" aria-valuenow="{{m.s.exp.p}}" aria-valuemin="0" aria-valuemax="100">{{m.s.exp.p}}%</div>
         </div>
     </div>
@@ -379,6 +382,10 @@
                 client.Connect();
                 $("#inputField").focus();
                 this.client = client;
+
+                $("#toast").on("click", function (e) {
+                    $(e.currentTarget).toggleClass("toast-min");
+                });
             });
 
             const image_error = function (e) {

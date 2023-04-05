@@ -556,7 +556,11 @@ namespace Legendary.Engine.Processors
 
                             if (!string.IsNullOrWhiteSpace(cleaned))
                             {
-                                messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{cleaned}</span>\"");
+                                // I'm not sure why this happens, but it does.
+                                if (cleaned.ToLower() != "says.")
+                                {
+                                    messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{cleaned}</span>\"");
+                                }
                             }
                         }
                     }
@@ -753,7 +757,29 @@ namespace Legendary.Engine.Processors
         {
             if (mobile.UseAI && !string.IsNullOrWhiteSpace(mobile.XImage))
             {
-                if (message.Contains("DEACTIVATE"))
+                if (message.Contains($"removes {mobile.Pronoun} clothes") || message.Contains($"takes off {mobile.Pronoun}"))
+                {
+                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
+                    {
+                        mobile.XActive = true;
+                    }
+                    else
+                    {
+                        mobile.XActive = true;
+                    }
+                }
+                else if (message.Contains($"puts {mobile.Pronoun} clothes on") || message.Contains($"puts {mobile.Pronoun} clothes back on"))
+                {
+                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
+                    {
+                        mobile.XActive = false;
+                    }
+                    else
+                    {
+                        mobile.XActive = false;
+                    }
+                }
+                else if (message.Contains("DEACTIVATE"))
                 {
                     if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
                     {
@@ -769,7 +795,7 @@ namespace Legendary.Engine.Processors
                     if (!string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = true;
-                        await this.awardProcessor.GrantAward(10, actor, $"managed to seduce {mobile.FirstName}", cancellationToken);
+                        await this.awardProcessor.GrantAward(10, actor, $"managed to see {mobile.FirstName} nude.", cancellationToken);
                     }
                     else
                     {

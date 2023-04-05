@@ -35,6 +35,7 @@ namespace Legendary.Engine.Processors
         /// </summary>
         private void ConfigureWizActions()
         {
+            this.wizActions.Add("echo", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoEcho)));
             this.wizActions.Add("goto", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGoTo)));
             this.wizActions.Add("grant", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoGrant)));
             this.wizActions.Add("load", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoLoad)));
@@ -52,6 +53,37 @@ namespace Legendary.Engine.Processors
         }
 
         [MinimumLevel(90)]
+        [HelpText("Echoes a sentence to the current area.")]
+        private async Task DoAEcho(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Area echo what?", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You echo '{args.Method}' to the entire area.", cancellationToken);
+                await this.communicator.SendToArea(actor.Character.Location, actor.ConnectionId, args.Method, cancellationToken);
+            }
+        }
+
+        [MinimumLevel(90)]
+        [HelpText("Echoes a sentence to the current room.")]
+        private async Task DoEcho(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Echo what?", cancellationToken);
+            }
+            else
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"You echo '{args.Method}' to the room.", cancellationToken);
+                await this.communicator.SendToRoom(actor.Character, actor.Character.Location, args.Method, cancellationToken);
+            }
+        }
+
+        [MinimumLevel(90)]
+        [HelpText("Goes to the specified room, mobile, or target character.")]
         private async Task DoGoTo(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method))

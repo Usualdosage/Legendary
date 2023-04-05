@@ -83,7 +83,7 @@ namespace Legendary.Engine.Models
                     var method = words[1].Value.Replace("\"", string.Empty);
                     return new CommandArgs(words[0].Value, method, null, 0);
                 }
-                else if (words.Count == 3 && words[0].Value.ToLower() != "emote")
+                else if (words.Count == 3 && words[0].Value.ToLower() != "emote" && words[0].Value.ToLower() != "echo" && words[0].Value.ToLower() != "aecho")
                 {
                     if (int.TryParse(words[1].Value, out int index))
                     {
@@ -98,7 +98,7 @@ namespace Legendary.Engine.Models
                         return new CommandArgs(words[0].Value, method, words[2].Value, 0);
                     }
                 }
-                else if (words.Count == 4 && words[0].Value.ToLower() != "emote")
+                else if (words.Count == 4 && words[0].Value.ToLower() != "emote" && words[0].Value.ToLower() != "echo" && words[0].Value.ToLower() != "aecho")
                 {
                     // get 2.dagger backpack
                     if (int.TryParse(words[1].Value, out int index))
@@ -114,8 +114,8 @@ namespace Legendary.Engine.Models
                 }
                 else
                 {
-                    var emote = words.Skip(1).Take(words.Count - 1).Select(w => w.Value).ToArray();
-                    return new CommandArgs(words[0].Value, string.Join(' ', emote), string.Empty);
+                    // TODO: Revisit this, I don't like how this is working.
+                    return new CommandArgs(words[0].Value, input.Replace("emote", string.Empty).Replace("echo", string.Empty).Replace("aecho", string.Empty), string.Empty);
                 }
             }
         }

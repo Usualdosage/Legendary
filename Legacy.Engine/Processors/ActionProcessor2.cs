@@ -173,7 +173,17 @@ namespace Legendary.Engine.Processors
                             break;
                     }
 
-                    sb.Append("<div class='award'>");
+                    // Build the tooltip for the award.
+                    StringBuilder sbMeta = new StringBuilder();
+                    if (award.Metadata != null && award.Metadata.Count > 0)
+                    {
+                        foreach (var meta in award.Metadata)
+                        {
+                            sbMeta.Append($"You have {meta}.<br/>");
+                        }
+                    }
+
+                    sb.Append($"<div class='award' data-bs-html='true' data-bs-placement='top' data-bs-toggle='tooltip' title='{sbMeta}'>");
                     if (award.AwardLevel <= 3)
                     {
                         sb.Append($"<div class='quiz-medal'><div class='quiz-medal-circle quiz-medal-circle-{color}'><span><i class='fa-solid {award.Image}'></i></span></div><div class='quiz-medal-ribbon quiz-medal-ribbon-left'></div><div class='quiz-medal-ribbon quiz-medal-ribbon-right'></div></div>");
@@ -239,6 +249,8 @@ namespace Legendary.Engine.Processors
                                                 await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} intimidates {merchant.FirstName.FirstCharToUpper()} into giving {actor.Character.Pronoun} {item.Name} for free.", cancellationToken);
                                                 actor.Character.Inventory.Add(item.DeepCopy());
 
+                                                await this.awardProcessor.GrantAward(4, actor.Character, $"managed to extort a shop keeper.", cancellationToken);
+
                                                 if (mastery)
                                                 {
                                                     await this.awardProcessor.GrantAward(8, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
@@ -264,6 +276,8 @@ namespace Legendary.Engine.Processors
 
                                                 actor.Character.Inventory.Add(item.DeepCopy());
 
+                                                await this.awardProcessor.GrantAward(4, actor.Character, $"managed to haggle with a shop keeper.", cancellationToken);
+
                                                 if (mastery)
                                                 {
                                                     await this.awardProcessor.GrantAward(8, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
@@ -279,6 +293,7 @@ namespace Legendary.Engine.Processors
                                         actor.Character.Currency -= price;
                                         actor.Character.Inventory.Add(item.DeepCopy());
                                         await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
+                                        await this.awardProcessor.GrantAward(4, actor.Character, $"purchased an item from a shop keeper.", cancellationToken);
                                     }
                                     else
                                     {
