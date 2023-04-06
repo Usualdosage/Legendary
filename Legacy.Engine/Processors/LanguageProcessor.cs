@@ -164,13 +164,31 @@ namespace Legendary.Engine.Processors
                         // Chat response for the mobile with the training data.
                         var message = await this.Chat(character, this.mobileTrainingData[engagedMobile], CleanInput(input, character.FirstName));
 
+                        // We can get some weird messaging back from the AI, so we need to process that.
+                        if (message.Contains("non-explicit") || message.ToLower().Contains("that line of interaction"))
+                        {
+                            // Went too far, AI is pissed now. Just send a message to the player because the AI is being prude.No need to embarass them.
+                            if (engagedMobile.XActive.HasValue && engagedMobile.XActive.Value)
+                            {
+                                await this.communicator.SendToPlayer(character, $"{engagedMobile.FirstName.FirstCharToUpper()} sadly moves away from you, and gets dressed.", cancellationToken);
+                            }
+                            else
+                            {
+                                await this.communicator.SendToPlayer(character, $"{engagedMobile.FirstName.FirstCharToUpper()} sadly walks away from you.", cancellationToken);
+                            }
+
+                            engagedMobile.XActive = false;
+
+                            return (null, null);
+                        }
+
                         // See if things are getting...interesting.
                         await this.CheckConvertToXMob(message, character, engagedMobile, cancellationToken);
 
                         // Parse all of the resulting language.
                         try
                         {
-                            // Send a message to the UI to clear the speec bubble.
+                            // Send a message to the UI to clear the speech bubble.
                             await this.communicator.SendToPlayer(character, $"CLEARCHAT:{engagedMobile.CharacterId}", cancellationToken);
 
                             // Clean and process all of the output from the AI engine.
@@ -757,15 +775,23 @@ namespace Legendary.Engine.Processors
         {
             if (mobile.UseAI && !string.IsNullOrWhiteSpace(mobile.XImage))
             {
-                if (message.Contains($"removes {mobile.Pronoun} clothes") || message.Contains($"takes off {mobile.Pronoun}"))
+                if (message.Contains($"removes {mobile.Pronoun} clothes") || message.Contains($"takes off {mobile.Pronoun}") || message.Contains($"removes {mobile.Pronoun} shirt") || message.Contains($"removes {mobile.Pronoun} top") || message.Contains($"removes {mobile.Pronoun} pants") || message.Contains($"removes {mobile.Pronoun} panties"))
                 {
                     if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
                     {
-                        mobile.XActive = true;
+                        if (!string.IsNullOrWhiteSpace(mobile.XImage))
+                        {
+                            mobile.XActive = true;
+                            await this.awardProcessor.GrantAward(10, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
+                        }
+                        else
+                        {
+                            mobile.XActive = false;
+                        }
                     }
                     else
                     {
-                        mobile.XActive = true;
+                        mobile.XActive = false;
                     }
                 }
                 else if (message.Contains($"puts {mobile.Pronoun} clothes on") || message.Contains($"puts {mobile.Pronoun} clothes back on"))
@@ -795,7 +821,7 @@ namespace Legendary.Engine.Processors
                     if (!string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = true;
-                        await this.awardProcessor.GrantAward(10, actor, $"managed to see {mobile.FirstName} nude.", cancellationToken);
+                        await this.awardProcessor.GrantAward(10, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                     }
                     else
                     {

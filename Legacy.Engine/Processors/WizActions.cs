@@ -127,6 +127,7 @@ namespace Legendary.Engine.Processors
         }
 
         [MinimumLevel(95)]
+        [HelpText("<p>Grants a skill or spell to a player.</p><ul><li>grant all <em>player</em></li><li>grant skill <em>player</em></li><li>grant spell <em>player</em></li></ul>")]
         private async Task DoGrant(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
@@ -188,6 +189,7 @@ namespace Legendary.Engine.Processors
         }
 
         [MinimumLevel(95)]
+        [HelpText("<p>Loads a mobile into the room or an item into your inventory.</p><ul><li>load mobile <em>1234</em></li><li>load item <em>1234</em></li></ul>")]
         private async Task DoLoad(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(args.Method) || string.IsNullOrWhiteSpace(args.Target))
@@ -315,6 +317,7 @@ namespace Legendary.Engine.Processors
         }
 
         [MinimumLevel(90)]
+        [HelpText("Stops all fighting in the room.")]
         private async Task DoPeace(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             if (Communicator.Users != null)
@@ -346,6 +349,7 @@ namespace Legendary.Engine.Processors
         }
 
         [MinimumLevel(100)]
+        [HelpText("Reloads the world from the database. Note: Does not reload new code.")]
         private async Task DoReload(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
