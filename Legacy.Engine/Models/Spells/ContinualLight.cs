@@ -18,6 +18,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the continual light spell.
@@ -32,7 +33,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public ContinualLight(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public ContinualLight(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Continual Light";
@@ -62,7 +63,7 @@ namespace Legendary.Engine.Models.Spells
 
         private Item CreateFoodItem()
         {
-            List<string> adjectives = new List<string>()
+            List<string> adjectives = new ()
             {
                 "glowing",
                 "bright",
@@ -73,7 +74,7 @@ namespace Legendary.Engine.Models.Spells
                 string.Empty,
             };
 
-            List<string> lightNouns = new List<string>()
+            List<string> lightNouns = new ()
             {
                 "candle",
                 "lantern",

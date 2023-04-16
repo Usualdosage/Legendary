@@ -16,6 +16,7 @@ namespace Legendary.Engine.Helpers
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models;
     using Legendary.Engine.Processors;
@@ -35,7 +36,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>Action.</returns>
-        public static Spell? ResolveSpell(string spellName, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static Spell? ResolveSpell(string spellName, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var engine = Assembly.Load("Legendary.Engine");
 
@@ -109,7 +110,7 @@ namespace Legendary.Engine.Helpers
                     {
                         await communicator.SendToPlayer(actor, $"You have now mastered [{spellName}]!", cancellationToken);
                         actor.Experience += random.Next(1000, 2000);
-                        await awardProcessor.GrantAward(8, actor, $"mastered {spellName}", cancellationToken);
+                        await awardProcessor.GrantAward((int)AwardType.Adept, actor, $"mastered {spellName}", cancellationToken);
                         await communicator.SaveCharacter(actor);
                         return true;
                     }

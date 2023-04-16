@@ -16,6 +16,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Recalls the player to their hometown recall point.
@@ -30,7 +31,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Recall(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Recall(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Recall";

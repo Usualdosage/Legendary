@@ -210,21 +210,21 @@ namespace Legendary.Web.Controllers
                         {
                             case Alignment.Good:
                                 {
-                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
+                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIREAREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
                                     character.Location = character.Home;
                                     break;
                                 }
 
                             case Alignment.Evil:
                                 {
-                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
+                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIREAREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
                                     character.Location = character.Home;
                                     break;
                                 }
 
                             case Alignment.Neutral:
                                 {
-                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
+                                    character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIREAREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
                                     character.Location = character.Home;
                                     break;
                                 }
@@ -373,7 +373,7 @@ namespace Legendary.Web.Controllers
             {
                 var maxMessages = await this.dataService.Messages.CountDocumentsAsync(_ => true) + 2;
 
-                List<Command> jsonCommands = new List<Command>();
+                List<Command> jsonCommands = new ();
 
                 foreach (var playerName in data.ToAddresses)
                 {
@@ -433,7 +433,7 @@ namespace Legendary.Web.Controllers
         {
             var random = new Legendary.Engine.Random();
 
-            StatModel statModel = new StatModel();
+            StatModel statModel = new ();
 
             if (!string.IsNullOrWhiteSpace(race))
             {

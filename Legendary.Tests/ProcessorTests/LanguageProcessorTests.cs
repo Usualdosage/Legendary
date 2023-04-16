@@ -41,11 +41,10 @@ namespace Legendary.Tests.ProcessorTests
             var persona = new Persona() { Name = "Testmobile" };
             var mobile = new Mobile() { FirstName = "Testmobile", LastName = "Testerson" };
 
-            //var messages = LanguageProcessor.CleanOutput(aiResponseMessage, persona, mobile);
-
+            // var messages = LanguageProcessor.CleanOutput(aiResponseMessage, persona, mobile);
             // TODO: Fix this.
 
-            List<string> messages = new List<string>();
+            List<string> messages = new ();
 
             Assert.NotNull(messages);
             Assert.NotEmpty(messages);

@@ -17,6 +17,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the identify spell.
@@ -31,7 +32,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Identify(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Identify(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Identify";
@@ -55,7 +56,7 @@ namespace Legendary.Engine.Models.Spells
                 await this.Communicator.SendToPlayer(actor, $"You glean all of the information you can from {targetItem.Name}.", cancellationToken);
                 await this.Communicator.SendToRoom(actor, actor.Location, $"{actor.FirstName} peers intently at {targetItem.Name}.", cancellationToken);
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
 
                 sb.Append($"<h5>{targetItem.Name.FirstCharToUpper()}</h5>");
                 sb.Append($"Item is of type {targetItem.ItemType}, and has an approximate value of {targetItem.Value} gold.<br/>");

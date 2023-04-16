@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.SkillTrees
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Spells available in the weapon group.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public WeaponGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public WeaponGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }
@@ -42,46 +43,46 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new EdgedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new BluntWeapons(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new PiercingWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new EdgedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
+                { new BluntWeapons(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new PiercingWeapons(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group2
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Polearms(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Flails(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Whips(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Staffs(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Polearms(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
+                { new Flails(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
+                { new Whips(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
+                { new Staffs(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group3
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new TwoHandedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new Disarm(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new TwoHandedWeapons(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
+                { new Disarm(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group4
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Exotics(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Exotics(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group5 { get => new List<IAction>(); }
+        public override List<IAction> Group5 { get => new (); }
     }
 }

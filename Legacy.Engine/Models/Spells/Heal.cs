@@ -17,6 +17,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the heal spell.
@@ -31,7 +32,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Heal(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Heal(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Heal";

@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.SkillTrees
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Skills available in the language group.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public LanguageGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public LanguageGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }
@@ -42,54 +43,54 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Common(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new StoneGiant(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new FireGiant(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new StormGiant(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Common(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new StoneGiant(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new FireGiant(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new StormGiant(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group2
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new HalfElf(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new Dwarf(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new Duergar(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new HalfElf(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new Dwarf(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new Duergar(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group3
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new HalfOrc(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new Elf(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new Drow(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new HalfOrc(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new Elf(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new Drow(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group4
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Avian(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new Halfling(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Avian(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new Halfling(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group5
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Gnome(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
-                { new Faerie(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Gnome(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
+                { new Faerie(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
             };
         }
     }

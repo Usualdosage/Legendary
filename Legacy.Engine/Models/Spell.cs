@@ -18,6 +18,7 @@ namespace Legendary.Engine.Models
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.
@@ -32,7 +33,7 @@ namespace Legendary.Engine.Models
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        protected Spell(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        protected Spell(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }
@@ -73,8 +74,8 @@ namespace Legendary.Engine.Models
                 await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName.FirstCharToUpper()} yells \"<span class='yell'>Die, {actor.FirstName}, you sorcerous dog!</span>\"", cancellationToken);
             }
 
-            await this.Combat.StartFighting(actor, target, cancellationToken);
-            await this.Combat.DoDamage(actor, target, this, false, cancellationToken);
+            await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
+            await this.CombatProcessor.DoDamage(actor, target, this, false, cancellationToken);
         }
 
         /// <summary>
@@ -93,8 +94,8 @@ namespace Legendary.Engine.Models
                     {
                         if (!GroupHelper.IsGroupedWith(actor.CharacterId, user.Value.Character.CharacterId))
                         {
-                            await this.Combat.StartFighting(actor, user.Value.Character, cancellationToken);
-                            await this.Combat.DoDamage(actor, user.Value.Character, this, false, cancellationToken);
+                            await this.CombatProcessor.StartFighting(actor, user.Value.Character, cancellationToken);
+                            await this.CombatProcessor.DoDamage(actor, user.Value.Character, this, false, cancellationToken);
                         }
                     }
                 }
@@ -107,8 +108,8 @@ namespace Legendary.Engine.Models
             {
                 foreach (var mobile in mobiles)
                 {
-                    await this.Combat.StartFighting(actor, mobile, cancellationToken);
-                    await this.Combat.DoDamage(actor, mobile, this, false, cancellationToken);
+                    await this.CombatProcessor.StartFighting(actor, mobile, cancellationToken);
+                    await this.CombatProcessor.DoDamage(actor, mobile, this, false, cancellationToken);
                 }
             }
         }

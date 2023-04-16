@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Staffs skill.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Staffs(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Staffs(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Staffs";

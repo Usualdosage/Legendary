@@ -88,5 +88,10 @@ namespace Legendary.Core.Types
         /// Caves.
         /// </summary>
         Caves = 14,
+
+        /// <summary>
+        /// Underwater.
+        /// </summary>
+        Underwater = 15,
     }
 }

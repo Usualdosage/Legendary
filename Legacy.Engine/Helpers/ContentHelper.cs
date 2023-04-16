@@ -51,7 +51,7 @@ namespace Legendary.Engine.Helpers
                         return $"<h1>A view with the name {viewName} could not be found.</h1>";
                     }
 
-                    ViewContext viewContext = new ViewContext(
+                    ViewContext viewContext = new (
                         controller.ControllerContext,
                         viewResult.View,
                         controller.ViewData,

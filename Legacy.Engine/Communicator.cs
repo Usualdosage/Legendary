@@ -54,7 +54,7 @@ namespace Legendary.Engine
     {
         private readonly RequestDelegate requestDelegate;
         private readonly TitleGenerator titleGenerator;
-        private readonly Combat combat;
+        private readonly CombatProcessor combat;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ILogger logger;
         private readonly IApiClient apiClient;
@@ -66,11 +66,11 @@ namespace Legendary.Engine
         private readonly IEnvironment environment;
         private readonly IServerSettings serverSettings;
         private readonly IWebHostEnvironment webHostEnvironment;
-        private SkillProcessor? skillProcessor;
-        private SpellProcessor? spellProcessor;
-        private ActionProcessor actionProcessor;
-        private ActionHelper actionHelper;
-        private AwardProcessor? awardProcessor;
+        private readonly SkillProcessor? skillProcessor;
+        private readonly SpellProcessor? spellProcessor;
+        private readonly ActionProcessor actionProcessor;
+        private readonly ActionHelper actionHelper;
+        private readonly AwardProcessor? awardProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -117,7 +117,7 @@ namespace Legendary.Engine
             this.messageProcessor = new MessageProcessor(this, this.world, this.dataService, this.logger);
 
             // Create the combat processor.
-            this.combat = new Combat(this, this.world, this.environment, this.random, this.logger, this.messageProcessor, this.dataService);
+            this.combat = new CombatProcessor(this, this.world, this.environment, this.random, this.logger, this.messageProcessor, this.dataService);
 
             // Create the language generator.
             this.LanguageGenerator = new LanguageGenerator(this.random);
@@ -655,7 +655,7 @@ namespace Legendary.Engine
 
                                         await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
 
-                                        Peek skill = new Peek(this, this.random, this.world, this.logger, this.combat);
+                                        Peek skill = new (this, this.random, this.world, this.logger, this.combat);
                                         await skill.CheckImprove(actor, cancellationToken);
                                     }
                                 }
@@ -722,7 +722,7 @@ namespace Legendary.Engine
 
                                     await this.SendToPlayer(actor, sb.ToString(), cancellationToken);
 
-                                    Peek skill = new Peek(this, this.random, this.world, this.logger, this.combat);
+                                    Peek skill = new (this, this.random, this.world, this.logger, this.combat);
                                     await skill.CheckImprove(actor, cancellationToken);
                                 }
                             }
@@ -744,7 +744,7 @@ namespace Legendary.Engine
         {
             await this.SendToPlayer(actor, $"You examine {item.Name}.", cancellationToken);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             // Update the player info
             this.SendGameUpdate(actor, item.ShortDescription, item.Image).Wait();
@@ -784,7 +784,7 @@ namespace Legendary.Engine
                 return;
             }
 
-            var terrainClass = room?.Terrain?.ToString().ToLower() ?? "city";
+            var terrainClass = room?.Terrain.ToString().ToLower() ?? "city";
 
             sb.Append($"<span class='room-title {terrainClass}'>{room?.Name}</span> <span class='roomNum'>[{room?.RoomId}]</span><br/>");
 
@@ -968,14 +968,14 @@ namespace Legendary.Engine
             if (room != null)
             {
                 var soundIndex = this.random.Next(0, 7);
-                await this.PlaySound(actor, AudioChannel.Background, $"https://legendaryweb.file.core.windows.net/audio/music/{room.Terrain?.ToString().ToLower()}{soundIndex}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
+                await this.PlaySound(actor, AudioChannel.Background, $"https://legendaryweb.file.core.windows.net/audio/music/{room.Terrain.ToString().ToLower()}{soundIndex}.mp3" + Sounds.SASTOKEN, cancellationToken);
 
                 // 40% chance to play the terrain SFX (e.g. forest, city)
                 var randomSfx = this.random.Next(0, 10);
 
                 if (randomSfx <= 4)
                 {
-                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"https://legendaryweb.file.core.windows.net/audio/soundfx/{room.Terrain?.ToString().ToLower()}.mp3" + Sounds.SAS_TOKEN, cancellationToken);
+                    await this.PlaySound(actor, AudioChannel.BackgroundSFX, $"https://legendaryweb.file.core.windows.net/audio/soundfx/{room.Terrain.ToString().ToLower()}.mp3" + Sounds.SASTOKEN, cancellationToken);
                 }
 
                 // Check aggro
@@ -1013,7 +1013,7 @@ namespace Legendary.Engine
             {
                 var roomsExplored = actor.Metrics.RoomsExplored.FirstOrDefault(r => r.Key == area.AreaId).Value?.ToList();
                 var totalVisited = actor.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count);
-                var total = area.Rooms.Count;
+                var total = area.Rooms?.Count ?? 0;
                 var explorationPct = (double)((double)totalVisited / (double)total) * 100;
 
                 try
@@ -1026,7 +1026,7 @@ namespace Legendary.Engine
                             Level = actor.Level,
                             Title = actor.Title,
                             Alignment = actor.Alignment.ToString(),
-                            Condition = Combat.GetPlayerCondition(actor),
+                            Condition = CombatProcessor.GetPlayerCondition(actor),
                             Stats = new StatMessage()
                             {
                                 Health = new Status()
@@ -1064,7 +1064,7 @@ namespace Legendary.Engine
                             Map = new Models.Output.Map()
                             {
                                 Current = actor.Location.Value,
-                                Rooms = roomsExplored != null ? area?.Rooms.Where(r => roomsExplored.Contains(r.RoomId)).ToArray() : null,
+                                Rooms = roomsExplored != null ? area?.Rooms?.Where(r => roomsExplored.Contains(r.RoomId)).ToArray() : null,
                                 PlayersInArea = this.GetPlayersInArea(area?.AreaId)?.Select(p => new { p.CharacterId, p.FirstName, p.Location.Value })?.ToArray(),
                                 MobsInArea = this.GetMobilesInArea(area?.AreaId)?.Select(m => new { m.CharacterId, m.FirstName, m.Location.Value })?.ToArray(),
                                 PercentageExplored = explorationPct,
@@ -1303,13 +1303,16 @@ namespace Legendary.Engine
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                List<Mobile> matching = new List<Mobile>();
+                List<Mobile> matching = new ();
                 foreach (var area in this.world.Areas)
                 {
-                    foreach (var room in area.Rooms)
+                    if (area.Rooms != null)
                     {
-                        var mobs = room.Mobiles.Where(m => m.FirstName.ToLower().Contains(name.ToLower())).ToList();
-                        matching.AddRange(mobs);
+                        foreach (var room in area.Rooms)
+                        {
+                            var mobs = room.Mobiles.Where(m => m.FirstName.ToLower().Contains(name.ToLower())).ToList();
+                            matching.AddRange(mobs);
+                        }
                     }
                 }
 
@@ -1335,13 +1338,16 @@ namespace Legendary.Engine
             {
                 foreach (var area in this.world.Areas)
                 {
-                    foreach (var room in area.Rooms)
+                    if (area.Rooms != null)
                     {
-                        var mob = room.Mobiles.FirstOrDefault(m => m.CharacterId == characterId);
-
-                        if (mob != null)
+                        foreach (var room in area.Rooms)
                         {
-                            return mob;
+                            var mob = room.Mobiles.FirstOrDefault(m => m.CharacterId == characterId);
+
+                            if (mob != null)
+                            {
+                                return mob;
+                            }
                         }
                     }
                 }
@@ -1355,13 +1361,16 @@ namespace Legendary.Engine
         {
             foreach (var area in this.world.Areas)
             {
-                foreach (var room in area.Rooms)
+                if (area.Rooms != null)
                 {
-                    var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().Contains(name.ToLower()));
-
-                    if (mob != null)
+                    foreach (var room in area.Rooms)
                     {
-                        return new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                        var mob = room.Mobiles.FirstOrDefault(m => m.FirstName.ToLower().Contains(name.ToLower()));
+
+                        if (mob != null)
+                        {
+                            return new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                        }
                     }
                 }
             }
@@ -1434,7 +1443,7 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public Room? ResolveRoom(KeyValuePair<long, long> location)
         {
-            return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key)?.Rooms.SingleOrDefault(r => r.RoomId == location.Value);
+            return this.world.Areas.SingleOrDefault(a => a.AreaId == location.Key)?.Rooms?.SingleOrDefault(r => r.RoomId == location.Value);
         }
 
         /// <inheritdoc/>
@@ -1595,11 +1604,11 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public List<Mobile>? GetMobilesInArea(long? areaId)
         {
-            List<Mobile> mobiles = new List<Mobile>();
+            List<Mobile>? mobiles = new ();
             var area = this.world.Areas.FirstOrDefault(a => a.AreaId == areaId);
             if (area != null)
             {
-                mobiles = area.Rooms.SelectMany(r => r.Mobiles).ToList();
+                mobiles = area?.Rooms?.SelectMany(r => r.Mobiles).ToList();
             }
 
             return mobiles;
@@ -1780,7 +1789,7 @@ namespace Legendary.Engine
 
                     if (owner != null)
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
                         sb.Append("<span class='group-info'>");
                         sb.Append($"<span class='group-name'>{owner.Character.FirstName}'s Group:</span>");
 
@@ -2004,7 +2013,7 @@ namespace Legendary.Engine
         /// <returns>string.</returns>
         private string GetEffects(Character actor)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             if (actor.IsAffectedBy(nameof(PassDoor)) || actor.CharacterFlags.Contains(CharacterFlags.Ghost))
             {
@@ -2045,21 +2054,21 @@ namespace Legendary.Engine
                     case Alignment.Good:
                         {
                             character.Deity = Deities.Atrina;
-                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
+                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIREAREA, Constants.GRIFFONSHIRE_LIGHT_TEMPLE);
                             break;
                         }
 
                     case Alignment.Evil:
                         {
                             character.Deity = Deities.Saurath;
-                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
+                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIREAREA, Constants.GRIFFONSHIRE_DARK_TEMPLE);
                             break;
                         }
 
                     case Alignment.Neutral:
                         {
                             character.Deity = Deities.Khoda;
-                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIRE_AREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
+                            character.Home = new KeyValuePair<long, long>(Constants.GRIFFONSHIREAREA, Constants.GRIFFONSHIRE_NEUTRAL_TEMPLE);
                             break;
                         }
                 }
@@ -2176,7 +2185,7 @@ namespace Legendary.Engine
 
             if (character.Level % 10 == 0 && this.awardProcessor != null)
             {
-                await this.awardProcessor.GrantAward(6, character, $"advanced to level {character.Level}", cancellationToken);
+                await this.awardProcessor.GrantAward((int)AwardType.Challenger, character, $"advanced to level {character.Level}", cancellationToken);
             }
 
             // Save all the changes.
@@ -2206,7 +2215,7 @@ namespace Legendary.Engine
             sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
 
             // How beat up they are.
-            sb.Append(Combat.GetPlayerCondition(target));
+            sb.Append(CombatProcessor.GetPlayerCondition(target));
 
             // Worn items.
             if (target.IsNPC)
@@ -2551,7 +2560,7 @@ namespace Legendary.Engine
         /// </summary>
         private void CleanupGroups()
         {
-            List<long> groupsToRemove = new List<long>();
+            List<long> groupsToRemove = new ();
 
             foreach (var group in Groups)
             {

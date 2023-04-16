@@ -96,7 +96,7 @@ namespace Legendary.Engine.Extensions
                 {
                     var target = targetGroup.First();
 
-                    List<string> allTokens = new List<string>();
+                    List<string> allTokens = new ();
                     var firstNameTokens = target.FirstName?.ToLower().Split(' ').ToList();
                     var lastNameTokens = target.LastName?.ToLower().Split(' ').ToList();
 
@@ -162,7 +162,7 @@ namespace Legendary.Engine.Extensions
                 {
                     var target = targetGroup.First();
 
-                    List<string> allTokens = new List<string>();
+                    List<string> allTokens = new ();
                     var nameTokens = target.Name?.ToLower().Split(' ').ToList();
                     var descriptionTokens = target.ShortDescription?.ToLower().Split(' ').ToList();
 
@@ -237,7 +237,7 @@ namespace Legendary.Engine.Extensions
             {
                 foreach (var target in targetGroup)
                 {
-                    List<string> allTokens = new List<string>();
+                    List<string> allTokens = new ();
                     var nameTokens = target.Name?.ToLower().Split(' ').ToList();
                     var descriptionTokens = target.ShortDescription?.ToLower().Split(' ').ToList();
 

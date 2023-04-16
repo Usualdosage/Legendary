@@ -18,6 +18,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the teleport spell.
@@ -32,7 +33,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Teleport(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Teleport(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Teleport";
@@ -54,7 +55,7 @@ namespace Legendary.Engine.Models.Spells
                     // Only teleport in the same area if they are in combat.
                     var area = this.Communicator.ResolveArea(actor.Location.Key);
 
-                    if (area != null)
+                    if (area != null && area.Rooms != null)
                     {
                         rooms.AddRange(area.Rooms.ToList());
                     }
@@ -65,7 +66,7 @@ namespace Legendary.Engine.Models.Spells
                 }
                 else
                 {
-                    rooms.AddRange(this.World.Areas.SelectMany(a => a.Rooms.ToList()).ToList());
+                    rooms.AddRange(this.World.Areas.SelectMany(a => a.Rooms != null ? a.Rooms.ToList() : new List<Room>()).ToList());
                 }
 
                 var randomRoomIndex = this.Random.Next(0, rooms.Count - 1);

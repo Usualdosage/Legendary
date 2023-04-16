@@ -11,6 +11,7 @@ namespace Legendary.Engine.Models.Skills
 {
     using Legendary.Core.Contracts;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Boosts mana recovery of players.
@@ -25,7 +26,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Trance(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Trance(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Trance";

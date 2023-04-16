@@ -34,7 +34,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public SmashDoor(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public SmashDoor(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Smash Door";
@@ -102,7 +102,7 @@ namespace Legendary.Engine.Models.Skills
                             var damage = this.Random.Next(10, 50);
                             lockedExit.IsLocked = false;
                             lockedExit.IsClosed = false;
-                            var damageVerb = Combat.CalculateDamageVerb(damage);
+                            var damageVerb = CombatProcessor.CalculateDamageVerb(damage);
                             await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} smashes into the {lockedExit.DoorName ?? "door"} and knocks it off the hinges!", cancellationToken);
                             await this.Communicator.SendToPlayer(actor, $"Smashing open the {lockedExit.DoorName ?? "door"} {damageVerb} you!", cancellationToken);
                             await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s smash door {damageVerb} {actor.Pronoun}!", cancellationToken);
@@ -128,7 +128,7 @@ namespace Legendary.Engine.Models.Skills
 
                             await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} smashes into the {lockedExit.DoorName ?? "door"} and bounces completely off!", cancellationToken);
 
-                            var damageVerb = Combat.CalculateDamageVerb(damage);
+                            var damageVerb = CombatProcessor.CalculateDamageVerb(damage);
 
                             await this.Communicator.SendToPlayer(actor, $"Your smash attempt {damageVerb} you!", cancellationToken);
                             await this.Communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s smash door {damageVerb} {actor.Pronoun}!", cancellationToken);

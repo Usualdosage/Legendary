@@ -16,6 +16,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the poison spell.
@@ -30,7 +31,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Poison(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Poison(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Poison";
@@ -66,7 +67,7 @@ namespace Legendary.Engine.Models.Spells
                         return;
                     }
 
-                    if (this.Combat.DidSave(target, this))
+                    if (this.CombatProcessor.DidSave(target, this))
                     {
                         await base.Act(actor, target, itemTarget, cancellationToken);
                         await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} looks queasy for a moment, but it passes.", cancellationToken);
@@ -91,7 +92,7 @@ namespace Legendary.Engine.Models.Spells
 
                         if (target != null)
                         {
-                            await this.Combat.StartFighting(actor, target, cancellationToken);
+                            await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
                         }
                     }
                 }
@@ -105,22 +106,22 @@ namespace Legendary.Engine.Models.Spells
             {
                 if (effect.Effector != null)
                 {
-                    var damage = this.Combat.CalculateDamage(effect.Effector, actor, effect.Action);
-                    var damageVerb = Combat.CalculateDamageVerb(damage);
+                    var damage = this.CombatProcessor.CalculateDamage(effect.Effector, actor, effect.Action);
+                    var damageVerb = CombatProcessor.CalculateDamageVerb(damage);
 
                     await this.Communicator.SendToPlayer(actor, $"{effect.Effector.FirstName.FirstCharToUpper()}'s {effect.Action.DamageNoun} {damageVerb} you.", cancellationToken);
                     await this.Communicator.SendToPlayer(effect.Effector, $"Your {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
                     await this.Communicator.SendToRoom(actor.Location, actor, effect.Effector, $"{effect.Effector.FirstName.FirstCharToUpper()}'s {effect.Action.DamageNoun} {damageVerb} {actor.FirstName}.", cancellationToken);
 
-                    if (this.Combat.ApplyDamage(actor, damage))
+                    if (this.CombatProcessor.ApplyDamage(actor, damage))
                     {
                         if (actor.IsNPC)
                         {
-                            await this.Combat.KillMobile(actor, effect.Effector, cancellationToken);
+                            await this.CombatProcessor.KillMobile(actor, effect.Effector, cancellationToken);
                         }
                         else
                         {
-                            await this.Combat.KillPlayer(actor, effect.Effector, cancellationToken);
+                            await this.CombatProcessor.KillPlayer(actor, effect.Effector, cancellationToken);
                         }
                     }
                 }

@@ -18,6 +18,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the summon spell.
@@ -32,7 +33,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Summon(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Summon(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Summon";
@@ -62,7 +63,7 @@ namespace Legendary.Engine.Models.Spells
                             await base.Act(actor, target, itemTarget, cancellationToken);
                             await this.Communicator.SendToPlayer(actor, $"You failed to summon {target.FirstName}.", cancellationToken);
                         }
-                        else if (!this.Combat.DidSave(target, this))
+                        else if (!this.CombatProcessor.DidSave(target, this))
                         {
                             // Player gets a save vs. spell
                             player.Character.Location = actor.Location;
@@ -116,7 +117,7 @@ namespace Legendary.Engine.Models.Spells
                         {
                             await this.Communicator.SendToPlayer(actor, $"You failed to summon {target.FirstName}.", cancellationToken);
                         }
-                        else if (!this.Combat.DidSave(mobile, this))
+                        else if (!this.CombatProcessor.DidSave(mobile, this))
                         {
                             var oldRoom = this.Communicator.ResolveRoom(mobile.Location);
                             var newRoom = this.Communicator.ResolveRoom(actor.Location);

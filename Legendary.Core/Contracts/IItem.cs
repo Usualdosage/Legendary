@@ -11,6 +11,7 @@ namespace Legendary.Core.Contracts
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using Legendary.Core.Types;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
@@ -144,6 +145,8 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets a value indicating whether the item is locked (if container).
         /// </summary>
+        [Category("Containers")]
+        [Description("Indicates if the container is locked.")]
         public bool IsLocked { get; set; }
 
         /// <summary>

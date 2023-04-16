@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.SpellTrees
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Spells;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Spells available in the healing group.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.SpellTrees
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public HealingGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public HealingGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }
@@ -42,53 +43,53 @@ namespace Legendary.Engine.Models.SpellTrees
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Armor(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
-                { new CureLight(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new CauseLight(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Armor(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
+                { new CureLight(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new CauseLight(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group2
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new CureSerious(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new CauseSerious(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new CureBlindness(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new Blindness(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new CureSerious(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new CauseSerious(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new CureBlindness(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new Blindness(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group3
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new CureCritical(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new Harm(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new CureCritical(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new Harm(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group4
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Poison(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new Sanctuary(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Poison(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new Sanctuary(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group5
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Heal(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
-                { new RestoreMana(this.Communicator, this.Random, this.World, this.Logger, this.Combat) },
+                { new Heal(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
+                { new RestoreMana(this.Communicator, this.Random, this.World, this.Logger, this.CombatProcessor) },
             };
         }
     }

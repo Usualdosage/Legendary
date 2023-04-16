@@ -15,6 +15,7 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Abstract implementation of an ISkill contract.
@@ -29,7 +30,7 @@ namespace Legendary.Engine.Models
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        protected Skill(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        protected Skill(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }

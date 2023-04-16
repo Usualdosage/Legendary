@@ -36,7 +36,7 @@ namespace Legendary.Engine
         private readonly IDataService dataService;
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim semaphore = new (1, 1);
         private DateTime? lastMemoryDate;
 
         /// <summary>
@@ -218,79 +218,82 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public void RepopulateItems(Area area)
         {
-            var resets = area.Rooms.SelectMany(r => r.ItemResets);
+            var resets = area.Rooms?.SelectMany(r => r.ItemResets);
 
-            var resetGroups = resets.GroupBy(g => g);
+            var resetGroups = resets?.GroupBy(g => g);
 
-            foreach (var resetGroup in resetGroups)
+            if (resetGroups != null)
             {
-                var itemId = resetGroup.Key;
-                var maxItems = resetGroup.Count();
-                var currentItems = area.Rooms.Sum(r => r.Items?.Where(i => i.ItemId == itemId).Count());
-                var mobsInArea = this.communicator.GetMobilesInArea(area.AreaId);
-
-                // Scavenging mobs will pickup items. We don't want an eternal repop, so include those in the counts.
-                if (mobsInArea != null)
+                foreach (var resetGroup in resetGroups)
                 {
-                    var mobInventoryItems = mobsInArea.Sum(m => m.Inventory.Where(i => i.ItemId == itemId).Count());
-                    var mobEquipmentItems = mobsInArea.Sum(m => m.Equipment.Where(e => e.Value.ItemId == itemId).Count());
-                    currentItems = currentItems + mobInventoryItems + mobEquipmentItems;
-                }
+                    var itemId = resetGroup.Key;
+                    var maxItems = resetGroup.Count();
+                    var currentItems = area.Rooms?.Sum(r => r.Items?.Where(i => i.ItemId == itemId).Count());
+                    var mobsInArea = this.communicator.GetMobilesInArea(area.AreaId);
 
-                if (maxItems == currentItems)
-                {
-                    // All good, we are balanced.
-                    continue;
-                }
-                else if (currentItems < maxItems)
-                {
-                    // We are short some mobs, so repop.
-                    var diff = maxItems - currentItems;
-
-                    this.logger.Info($"Repop: Area {area.AreaId} is under by {diff} items of ID {itemId}. Adding more.", this.communicator);
-
-                    // Get all the possible rooms the item could repop in.
-                    var repopRooms = area.Rooms.Where(r => r.ItemResets.Contains(itemId)).ToList();
-
-                    for (int x = 0; x < diff; x++)
+                    // Scavenging mobs will pickup items. We don't want an eternal repop, so include those in the counts.
+                    if (mobsInArea != null)
                     {
-                        // Get one of the rooms it normally would populate in at random.
-                        var room = repopRooms[this.random.Next(0, repopRooms.Count - 1)];
+                        var mobInventoryItems = mobsInArea.Sum(m => m.Inventory.Where(i => i.ItemId == itemId).Count());
+                        var mobEquipmentItems = mobsInArea.Sum(m => m.Equipment.Where(e => e.Value.ItemId == itemId).Count());
+                        currentItems = currentItems + mobInventoryItems + mobEquipmentItems;
+                    }
 
-                        var item = this.Items.FirstOrDefault(i => i.ItemId == itemId);
+                    if (maxItems == currentItems)
+                    {
+                        // All good, we are balanced.
+                        continue;
+                    }
+                    else if (currentItems < maxItems)
+                    {
+                        // We are short some mobs, so repop.
+                        var diff = maxItems - currentItems;
 
-                        // Get the item.
-                        if (item != null)
+                        this.logger.Info($"Repop: Area {area.AreaId} is under by {diff} items of ID {itemId}. Adding more.", this.communicator);
+
+                        // Get all the possible rooms the item could repop in.
+                        var repopRooms = area.Rooms?.Where(r => r.ItemResets.Contains(itemId)).ToList();
+
+                        for (int x = 0; x < diff; x++)
                         {
-                            // Create a copy.
-                            var clone = item.DeepCopy();
+                            // Get one of the rooms it normally would populate in at random.
+                            var room = repopRooms?[this.random.Next(0, repopRooms.Count - 1)];
 
-                            clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
+                            var item = this.Items.FirstOrDefault(i => i.ItemId == itemId);
 
-                            // Add the item to the room.
-                            room.Items?.Add(clone);
+                            // Get the item.
+                            if (item != null && room != null)
+                            {
+                                // Create a copy.
+                                var clone = item.DeepCopy();
+
+                                clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
+
+                                // Add the item to the room.
+                                room.Items?.Add(clone);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    // We have too many mobs in this area.
-                    var diff = currentItems - maxItems;
-
-                    this.logger.Info($"Repop: Area {area.AreaId} is over by {diff} items of ID {itemId}. Removing excess.", this.communicator);
-
-                    var removalRooms = area.Rooms.Where(r => r.Items.Any(i => i.ItemId == itemId)).ToList();
-
-                    for (int x = 0; x < diff; x++)
+                    else
                     {
-                        var room = removalRooms[this.random.Next(0, removalRooms.Count - 1)];
+                        // We have too many mobs in this area.
+                        var diff = currentItems - maxItems;
 
-                        // Get the first item in the room that matches our key.
-                        var item = room.Items?.FirstOrDefault(r => r.ItemId == itemId);
+                        this.logger.Info($"Repop: Area {area.AreaId} is over by {diff} items of ID {itemId}. Removing excess.", this.communicator);
 
-                        if (item != null)
+                        var removalRooms = area.Rooms?.Where(r => r.Items.Any(i => i.ItemId == itemId)).ToList();
+
+                        for (int x = 0; x < diff; x++)
                         {
-                            room.Items?.Remove(item);
+                            var room = removalRooms?[this.random.Next(0, removalRooms.Count - 1)];
+
+                            // Get the first item in the room that matches our key.
+                            var item = room?.Items?.FirstOrDefault(r => r.ItemId == itemId);
+
+                            if (item != null)
+                            {
+                                room?.Items?.Remove(item);
+                            }
                         }
                     }
                 }
@@ -304,9 +307,11 @@ namespace Legendary.Engine
 
             if (memoryObject == null)
             {
-                memoryObject = new Memory(character.CharacterId, mobile.CharacterId);
-                memoryObject.LastInteraction = DateTime.UtcNow;
-                memoryObject.Memories = new List<string>() { memory };
+                memoryObject = new Memory(character.CharacterId, mobile.CharacterId)
+                {
+                    LastInteraction = DateTime.UtcNow,
+                    Memories = new List<string>() { memory },
+                };
 
                 this.Memories.Add(memoryObject);
             }
@@ -340,86 +345,89 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async void RepopulateMobiles(Area area)
         {
-            var resets = area.Rooms.SelectMany(r => r.MobileResets);
+            var resets = area.Rooms?.SelectMany(r => r.MobileResets);
 
-            var resetGroups = resets.GroupBy(g => g);
+            var resetGroups = resets?.GroupBy(g => g);
 
-            foreach (var resetGroup in resetGroups)
+            if (resetGroups != null)
             {
-                var mobCharacterId = resetGroup.Key;
-                var maxMobs = resetGroup.Count();
-                var currentMobs = area.Rooms.Sum(r => r.Mobiles?.Where(m => m.CharacterId == mobCharacterId).Count());
-
-                if (maxMobs == currentMobs)
+                foreach (var resetGroup in resetGroups)
                 {
-                    // All good, we are balanced.
-                    continue;
-                }
-                else if (currentMobs < maxMobs)
-                {
-                    // We are short some mobs, so repop.
-                    var diff = maxMobs - currentMobs;
+                    var mobCharacterId = resetGroup.Key;
+                    var maxMobs = resetGroup.Count();
+                    var currentMobs = area.Rooms?.Sum(r => r.Mobiles?.Where(m => m.CharacterId == mobCharacterId).Count());
 
-                    this.logger.Info($"Repop: Area {area.AreaId} is under by {diff} mobiles of ID {mobCharacterId}. Adding more.", this.communicator);
-
-                    // Get all the possible rooms they could repop in.
-                    var repopRooms = area.Rooms.Where(r => r.MobileResets.Contains(mobCharacterId)).ToList();
-
-                    for (int x = 0; x < diff; x++)
+                    if (maxMobs == currentMobs)
                     {
-                        // Get one of the rooms they normally would populate in at random.
-                        var room = repopRooms[this.random.Next(0, repopRooms.Count - 1)];
+                        // All good, we are balanced.
+                        continue;
+                    }
+                    else if (currentMobs < maxMobs)
+                    {
+                        // We are short some mobs, so repop.
+                        var diff = maxMobs - currentMobs;
 
-                        var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == mobCharacterId);
+                        this.logger.Info($"Repop: Area {area.AreaId} is under by {diff} mobiles of ID {mobCharacterId}. Adding more.", this.communicator);
 
-                        // Get the mobile.
-                        if (mobile != null)
+                        // Get all the possible rooms they could repop in.
+                        var repopRooms = area.Rooms?.Where(r => r.MobileResets.Contains(mobCharacterId)).ToList();
+
+                        for (int x = 0; x < diff; x++)
                         {
-                            // Create a copy.
-                            var clone = mobile.DeepCopy();
+                            // Get one of the rooms they normally would populate in at random.
+                            var room = repopRooms?[this.random.Next(0, repopRooms.Count - 1)];
 
-                            clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
+                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == mobCharacterId);
 
-                            // Equip the mobile.
-                            foreach (var itemReset in clone.EquipmentResets)
+                            // Get the mobile.
+                            if (mobile != null && room != null)
                             {
-                                var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+                                // Create a copy.
+                                var clone = mobile.DeepCopy();
 
-                                if (item != null)
+                                clone.Location = new KeyValuePair<long, long>(room.AreaId, room.RoomId);
+
+                                // Equip the mobile.
+                                foreach (var itemReset in clone.EquipmentResets)
                                 {
-                                    var itemClone = item.DeepCopy();
+                                    var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
 
-                                    await this.EquipMob(clone, itemClone);
+                                    if (item != null)
+                                    {
+                                        var itemClone = item.DeepCopy();
+
+                                        await this.EquipMob(clone, itemClone);
+                                    }
                                 }
+
+                                // Apply skills.
+                                ApplyMobileSkills(clone);
+
+                                // Add the mobile to the room.
+                                room.Mobiles?.Add(clone);
                             }
-
-                            // Apply skills.
-                            ApplyMobileSkills(clone);
-
-                            // Add the mobile to the room.
-                            room.Mobiles?.Add(clone);
                         }
                     }
-                }
-                else
-                {
-                    // We have too many mobs in this area.
-                    var diff = currentMobs - maxMobs;
-
-                    this.logger.Info($"Repop: Area {area.AreaId} is over by {diff} mobs of ID {mobCharacterId}. Removing excess.", this.communicator);
-
-                    var removalRooms = area.Rooms.Where(r => r.Mobiles.Any(m => m.CharacterId == mobCharacterId)).ToList();
-
-                    for (int x = 0; x < diff; x++)
+                    else
                     {
-                        var room = removalRooms[this.random.Next(0, removalRooms.Count - 1)];
+                        // We have too many mobs in this area.
+                        var diff = currentMobs - maxMobs;
 
-                        // Get the first mob in the room that matches our key and isn't fighting.
-                        var mobile = room.Mobiles?.FirstOrDefault(r => r.CharacterId == mobCharacterId && !r.CharacterFlags.Contains(CharacterFlags.Fighting));
+                        this.logger.Info($"Repop: Area {area.AreaId} is over by {diff} mobs of ID {mobCharacterId}. Removing excess.", this.communicator);
 
-                        if (mobile != null)
+                        var removalRooms = area.Rooms?.Where(r => r.Mobiles.Any(m => m.CharacterId == mobCharacterId)).ToList();
+
+                        for (int x = 0; x < diff; x++)
                         {
-                            room.Mobiles?.Remove(mobile);
+                            var room = removalRooms?[this.random.Next(0, removalRooms.Count - 1)];
+
+                            // Get the first mob in the room that matches our key and isn't fighting.
+                            var mobile = room?.Mobiles?.FirstOrDefault(r => r.CharacterId == mobCharacterId && !r.CharacterFlags.Contains(CharacterFlags.Fighting));
+
+                            if (mobile != null && room != null)
+                            {
+                                room.Mobiles?.Remove(mobile);
+                            }
                         }
                     }
                 }
@@ -431,67 +439,70 @@ namespace Legendary.Engine
         {
             foreach (var area in this.Areas)
             {
-                foreach (var room in area.Rooms)
+                if (area.Rooms != null)
                 {
-                    // Populate items from resets
-                    foreach (var reset in room.ItemResets)
+                    foreach (var room in area.Rooms)
                     {
-                        var item = this.Items.FirstOrDefault(i => i.ItemId == reset);
-
-                        if (item != null)
+                        // Populate items from resets
+                        foreach (var reset in room.ItemResets)
                         {
-                            var clone = item.DeepCopy();
-                            clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                            var item = this.Items.FirstOrDefault(i => i.ItemId == reset);
 
-                            if (clone.ItemResets != null)
+                            if (item != null)
                             {
-                                foreach (var itemReset in clone.ItemResets)
+                                var clone = item.DeepCopy();
+                                clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                                if (clone.ItemResets != null)
                                 {
-                                    var itemInItem = this.Items.FirstOrDefault(i => i.ItemId == itemReset);
-
-                                    if (itemInItem != null)
+                                    foreach (var itemReset in clone.ItemResets)
                                     {
-                                        var itemInItemClone = itemInItem.DeepCopy();
+                                        var itemInItem = this.Items.FirstOrDefault(i => i.ItemId == itemReset);
 
-                                        if (clone.Contains == null)
+                                        if (itemInItem != null)
                                         {
-                                            clone.Contains = new List<IItem>();
-                                        }
+                                            var itemInItemClone = itemInItem.DeepCopy();
 
-                                        clone.Contains.Add(itemInItemClone);
+                                            if (clone.Contains == null)
+                                            {
+                                                clone.Contains = new List<IItem>();
+                                            }
+
+                                            clone.Contains.Add(itemInItemClone);
+                                        }
                                     }
                                 }
-                            }
 
-                            room.Items?.Add(clone);
+                                room.Items?.Add(clone);
+                            }
                         }
-                    }
 
-                    // Populate mobs from resets
-                    foreach (var reset in room.MobileResets)
-                    {
-                        var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
-
-                        if (mobile != null)
+                        // Populate mobs from resets
+                        foreach (var reset in room.MobileResets)
                         {
-                            var clone = mobile.DeepCopy();
-                            clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
 
-                            // Add items to mobs.
-                            foreach (var itemReset in clone.EquipmentResets)
+                            if (mobile != null)
                             {
-                                var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+                                var clone = mobile.DeepCopy();
+                                clone.Location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
 
-                                if (item != null)
+                                // Add items to mobs.
+                                foreach (var itemReset in clone.EquipmentResets)
                                 {
-                                    var itemClone = item.DeepCopy();
-                                    await this.EquipMob(clone, itemClone);
+                                    var item = this.Items.FirstOrDefault(i => i.ItemId == itemReset.ItemId);
+
+                                    if (item != null)
+                                    {
+                                        var itemClone = item.DeepCopy();
+                                        await this.EquipMob(clone, itemClone);
+                                    }
                                 }
+
+                                ApplyMobileSkills(clone);
+
+                                room.Mobiles?.Add(clone);
                             }
-
-                            ApplyMobileSkills(clone);
-
-                            room.Mobiles?.Add(clone);
                         }
                     }
                 }
@@ -519,27 +530,33 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task CleanupMobiles(Area area)
         {
-            await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
+            if (area.Rooms != null)
             {
-                await Task.Run(
-                    () =>
-                    {
-                        room.Mobiles?.RemoveAll(m => m.Location.Value != room.RoomId && !m.CharacterFlags.Contains(CharacterFlags.Fighting));
-                    }, cancellationToken);
-            });
+                await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
+                {
+                    await Task.Run(
+                        () =>
+                        {
+                            room.Mobiles?.RemoveAll(m => m.Location.Value != room.RoomId && !m.CharacterFlags.Contains(CharacterFlags.Fighting));
+                        }, cancellationToken);
+                });
+            }
         }
 
         /// <inheritdoc/>
         public async Task CleanupItems(Area area)
         {
-            await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
+            if (area.Rooms != null)
             {
-                await Task.Run(
-                    () =>
-                    {
-                        room.Items?.RemoveAll(i => i.RotTimer == 0);
-                    }, cancellationToken);
-            });
+                await Parallel.ForEachAsync(area.Rooms, async (room, cancellationToken) =>
+                {
+                    await Task.Run(
+                        () =>
+                        {
+                            room.Items?.RemoveAll(i => i.RotTimer == 0);
+                        }, cancellationToken);
+                });
+            }
         }
 
         /// <inheritdoc/>
@@ -549,10 +566,7 @@ namespace Legendary.Engine
             {
                 var metrics = await this.dataService.GetGameMetrics();
 
-                if (metrics == null)
-                {
-                    metrics = new GameMetrics();
-                }
+                metrics ??= new GameMetrics();
 
                 // Update hour, day, month, and year.
                 metrics.CurrentHour++;
@@ -582,7 +596,7 @@ namespace Legendary.Engine
                 metrics.TotalAreas = this.Areas.Count;
                 metrics.TotalMobiles = this.Mobiles.Count;
                 metrics.TotalItems = this.Items.Count;
-                metrics.TotalRooms = this.Areas.Sum(a => a.Rooms.Count);
+                metrics.TotalRooms = this.Areas.Sum(a => a.Rooms != null ? a.Rooms.Count : 0);
 
                 // Update the local cached version.
                 this.GameMetrics = metrics;
@@ -615,50 +629,53 @@ namespace Legendary.Engine
             {
                 foreach (var area in this.Areas)
                 {
-                    foreach (var room in area.Rooms)
+                    if (area.Rooms != null)
                     {
-                        // Decompose items.
-                        var items = room.Items?.Where(i => i.RotTimer == 0);
-
-                        var location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
-
-                        if (items != null)
+                        foreach (var room in area.Rooms)
                         {
-                            foreach (var item in items)
-                            {
-                                if (item.ItemId == Constants.ITEM_SPRING)
-                                {
-                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
-                                }
-                                else if (item.ItemId == Constants.ITEM_LIGHT)
-                                {
-                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
-                                }
-                                else if (item.ItemId == Constants.ITEM_FOOD)
-                                {
-                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
-                                }
-                                else if (item.ItemId == Constants.ITEM_CORPSE)
-                                {
-                                    if (!item.IsNPCCorpse)
-                                    {
-                                        // TODO: Move PC inventory to a pit
-                                    }
+                            // Decompose items.
+                            var items = room.Items?.Where(i => i.RotTimer == 0);
 
-                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} decomposes into dust.", cancellationToken);
-                                }
-                                else
+                            var location = new KeyValuePair<long, long>(area.AreaId, room.RoomId);
+
+                            if (items != null)
+                            {
+                                foreach (var item in items)
                                 {
-                                    await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
+                                    if (item.ItemId == Constants.ITEM_SPRING)
+                                    {
+                                        await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
+                                    }
+                                    else if (item.ItemId == Constants.ITEM_LIGHT)
+                                    {
+                                        await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
+                                    }
+                                    else if (item.ItemId == Constants.ITEM_FOOD)
+                                    {
+                                        await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
+                                    }
+                                    else if (item.ItemId == Constants.ITEM_CORPSE)
+                                    {
+                                        if (!item.IsNPCCorpse)
+                                        {
+                                            // TODO: Move PC inventory to a pit
+                                        }
+
+                                        await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} decomposes into dust.", cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToRoom(location, $"{item.Name.FirstCharToUpper()} disintegrates.", cancellationToken);
+                                    }
                                 }
                             }
+
+                            // Apply affects to mobiles.
+                            await ProcessMobileAffects(room, cancellationToken);
+
+                            // Move mobiles who wander.
+                            await this.ProcessMobileWander(room, cancellationToken);
                         }
-
-                        // Apply affects to mobiles.
-                        await ProcessMobileAffects(room, cancellationToken);
-
-                        // Move mobiles who wander.
-                        await this.ProcessMobileWander(room, cancellationToken);
                     }
                 }
 
@@ -883,7 +900,7 @@ namespace Legendary.Engine
 
         private async Task DoMobileWander(Room room, CancellationToken cancellationToken)
         {
-            List<Mobile> removeMobiles = new List<Mobile>();
+            List<Mobile> removeMobiles = new ();
 
             await this.semaphore.WaitAsync(cancellationToken);
 
@@ -1028,7 +1045,7 @@ namespace Legendary.Engine
 
         private async Task DoMobileScavenge(Room room, CancellationToken cancellationToken)
         {
-            List<Item> itemsToRemove = new List<Item>();
+            List<Item> itemsToRemove = new ();
 
             // Have wandering mobiles pick up stuff.
             foreach (var mobile in room.Mobiles)

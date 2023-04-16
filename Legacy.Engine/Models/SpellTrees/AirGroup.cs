@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.SpellTrees
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Spells;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Spells available in the air group.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.SpellTrees
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public AirGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public AirGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }
@@ -40,30 +41,30 @@ namespace Legendary.Engine.Models.SpellTrees
         public override SchoolType SchoolType => SchoolType.Magic;
 
         /// <inheritdoc/>
-        public override List<IAction> Group1 { get => new List<IAction>(); }
+        public override List<IAction> Group1 { get => new (); }
 
         /// <inheritdoc/>
         public override List<IAction> Group2
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new LightningBolt(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new LightningBolt(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group3
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Fly(this.Communicator, this.Random, this.World, this.Logger,  this.Combat) },
+                { new Fly(this.Communicator, this.Random, this.World, this.Logger,  this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
-        public override List<IAction> Group4 { get => new List<IAction>(); }
+        public override List<IAction> Group4 { get => new (); }
 
         /// <inheritdoc/>
-        public override List<IAction> Group5 { get => new List<IAction>(); }
+        public override List<IAction> Group5 { get => new (); }
     }
 }

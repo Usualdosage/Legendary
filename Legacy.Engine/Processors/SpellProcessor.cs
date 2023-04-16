@@ -37,7 +37,7 @@ namespace Legendary.Engine.Processors
         /// <param name="world">The world.</param>
         /// <param name="combat">The combat generator.</param>
         /// <param name="logger">The logger.</param>
-        public SpellProcessor(ICommunicator communicator, IRandom random, IWorld world, Combat combat, ILogger logger)
+        public SpellProcessor(ICommunicator communicator, IRandom random, IWorld world, CombatProcessor combat, ILogger logger)
         {
             this.communicator = communicator;
             this.actionHelper = new ActionHelper(communicator, random, world, logger, combat);

@@ -38,7 +38,7 @@ namespace Legendary.Engine
         private readonly ILogger logger;
         private int dayWeatherIndex = 0;
 
-        private List<Weather> dayWeatherForward = new List<Weather>()
+        private List<Weather> dayWeatherForward = new ()
         {
             new Weather(0, "The sun shines in a nearly cloudless sky.", string.Empty, "It is sunny with a clear, blue sky overhead.", 0),
             new Weather(1, "Some small clouds form in the sky.", string.Empty, "There are some small clouds in the sky, but it is mostly sunny.", 0),
@@ -56,7 +56,7 @@ namespace Legendary.Engine
             new Weather(13, "The {precipitate} is coming down in buckets all around you.", Sounds.HEAVYRAIN, "It's hard to look at the sky as the rain is coming down heavily. Black clouds fill the sky.", 0),
         };
 
-        private List<Weather> dayWeatherBackward = new List<Weather>()
+        private List<Weather> dayWeatherBackward = new ()
         {
             new Weather(0, "The small clouds dissipate.", string.Empty, "It is sunny with a clear, blue sky overhead.", 0),
             new Weather(1, "The thicker clouds get smaller as the wind blows them away.", string.Empty, "There are some small clouds in the sky, but it is mostly sunny.", 0),
@@ -107,22 +107,25 @@ namespace Legendary.Engine
 
             foreach (var area in areas)
             {
-                // Grab the first non-indoor room.
-                var defaultRoom = area.Rooms.FirstOrDefault(r => r.Flags != null && !r.Flags.Contains(Core.Types.RoomFlags.Indoors));
-
-                if (defaultRoom != null)
+                if (area.Rooms != null)
                 {
-                    var weatherMessage = this.GenerateRandomWeather(defaultRoom);
+                    // Grab the first non-indoor room.
+                    var defaultRoom = area.Rooms.FirstOrDefault(r => r.Flags != null && !r.Flags.Contains(Core.Types.RoomFlags.Indoors));
 
-                    if (weatherMessage != null)
+                    if (defaultRoom != null)
                     {
-                        if (CurrentWeather.ContainsKey(defaultRoom.AreaId))
+                        var weatherMessage = this.GenerateRandomWeather(defaultRoom);
+
+                        if (weatherMessage != null)
                         {
-                            CurrentWeather[defaultRoom.AreaId] = weatherMessage;
-                        }
-                        else
-                        {
-                            CurrentWeather.Add(defaultRoom.AreaId, weatherMessage);
+                            if (CurrentWeather.ContainsKey(defaultRoom.AreaId))
+                            {
+                                CurrentWeather[defaultRoom.AreaId] = weatherMessage;
+                            }
+                            else
+                            {
+                                CurrentWeather.Add(defaultRoom.AreaId, weatherMessage);
+                            }
                         }
                     }
                 }
@@ -159,22 +162,25 @@ namespace Legendary.Engine
 
             foreach (var area in areas)
             {
-                foreach (var room in area.Rooms)
+                if (area.Rooms != null)
                 {
-                    foreach (var mobile in room.Mobiles)
+                    foreach (var room in area.Rooms)
                     {
-                        foreach (var effect in mobile.AffectedBy)
+                        foreach (var mobile in room.Mobiles)
                         {
-                            if (effect != null)
+                            foreach (var effect in mobile.AffectedBy)
                             {
-                                effect.Duration -= 1;
-
-                                if (effect.Duration < 0)
+                                if (effect != null)
                                 {
-                                    if (mobile.IsAffectedBy(nameof(Sleep)))
+                                    effect.Duration -= 1;
+
+                                    if (effect.Duration < 0)
                                     {
-                                        mobile.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
-                                        await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wakes and stands up.", cancellationToken);
+                                        if (mobile.IsAffectedBy(nameof(Sleep)))
+                                        {
+                                            mobile.CharacterFlags.Remove(Core.Types.CharacterFlags.Sleeping);
+                                            await this.communicator.SendToRoom(mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wakes and stands up.", cancellationToken);
+                                        }
                                     }
                                 }
                             }
@@ -184,7 +190,7 @@ namespace Legendary.Engine
             }
 
             // These rooms will autospawn mobs if there are players in them.
-            var autoSpawnRooms = this.world.Areas.SelectMany(a => a.Rooms.Where(r => r.MaxAutospawn.HasValue && r.MaxAutospawn > 0)).ToList();
+            var autoSpawnRooms = this.world.Areas.SelectMany(a => a.Rooms != null ? a.Rooms.Where(r => r.MaxAutospawn.HasValue && r.MaxAutospawn > 0) : new List<Room>()).ToList();
 
             foreach (var asRoom in autoSpawnRooms)
             {
@@ -215,7 +221,7 @@ namespace Legendary.Engine
 
                                 if (area != null)
                                 {
-                                    var randomRoom = area.Rooms[this.random.Next(0, area.Rooms.Count)];
+                                    var randomRoom = area.Rooms?[this.random.Next(0, area.Rooms.Count)];
 
                                     if (randomRoom != null && mobile != null)
                                     {

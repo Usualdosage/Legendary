@@ -33,7 +33,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Steal(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Steal(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Steal";
@@ -100,7 +100,7 @@ namespace Legendary.Engine.Models.Skills
                     await this.Communicator.SendToArea(actor.Location, string.Empty, $"{target.FirstName.FirstCharToUpper()} yells \"<span class='yell'>{actor.FirstName.FirstCharToUpper()}, just tried to steal from me!</span>\"", cancellationToken);
 
                     // And start fighting.
-                    await this.Combat.StartFighting(actor, target, cancellationToken);
+                    await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
                 }
             }
         }

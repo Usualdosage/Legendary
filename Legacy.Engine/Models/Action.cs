@@ -32,12 +32,12 @@ namespace Legendary.Engine.Models
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Action(ICommunicator communicator, IRandom random, IWorld world, ILogger logger,  Combat combat)
+        public Action(ICommunicator communicator, IRandom random, IWorld world, ILogger logger,  CombatProcessor combat)
         {
             this.Communicator = communicator;
             this.Random = random;
             this.LanguageGenerator = new LanguageGenerator(random);
-            this.Combat = combat;
+            this.CombatProcessor = combat;
             this.World = world;
             this.AwardProcessor = new AwardProcessor(communicator, world, logger, random, combat);
         }
@@ -88,7 +88,7 @@ namespace Legendary.Engine.Models
         /// <summary>
         /// Gets the combat generator.
         /// </summary>
-        public Combat Combat { get; private set; }
+        public CombatProcessor CombatProcessor { get; private set; }
 
         /// <summary>
         /// Gets the random number generator.
@@ -143,7 +143,7 @@ namespace Legendary.Engine.Models
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
                             actor.Experience += this.Random.Next(1000, 2000);
-                            await this.AwardProcessor.GrantAward(8, actor, $"mastered {this.Name}", cancellationToken);
+                            await this.AwardProcessor.GrantAward((int)AwardType.Trainer, actor, $"mastered {this.Name}", cancellationToken);
                         }
                         else
                         {
@@ -178,7 +178,7 @@ namespace Legendary.Engine.Models
                         {
                             await this.Communicator.SendToPlayer(actor, $"You have now mastered [{this.Name}]!", cancellationToken);
                             actor.Experience += this.Random.Next(1000, 2000);
-                            await this.AwardProcessor.GrantAward(9, actor, $"mastered {this.Name}", cancellationToken);
+                            await this.AwardProcessor.GrantAward((int)AwardType.Adept, actor, $"mastered {this.Name}", cancellationToken);
                         }
                         else
                         {

@@ -11,7 +11,6 @@ namespace Legendary.Engine.Processors
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Numerics;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -28,7 +27,7 @@ namespace Legendary.Engine.Processors
         private readonly IWorld world;
         private readonly ILogger logger;
         private readonly IRandom random;
-        private readonly Combat combat;
+        private readonly CombatProcessor combat;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AwardProcessor"/> class.
@@ -38,7 +37,7 @@ namespace Legendary.Engine.Processors
         /// <param name="logger">The logger.</param>
         /// <param name="random">The random generator.</param>
         /// <param name="combat">The combat engine.</param>
-        public AwardProcessor(ICommunicator communicator, IWorld world, ILogger logger, IRandom random, Combat combat)
+        public AwardProcessor(ICommunicator communicator, IWorld world, ILogger logger, IRandom random, CombatProcessor combat)
         {
             this.communicator = communicator;
             this.world = world;
@@ -112,7 +111,7 @@ namespace Legendary.Engine.Processors
 
             if (area != null)
             {
-                var roomsInArea = area.Rooms.Count();
+                var roomsInArea = area.Rooms?.Count;
 
                 var areaExplored = actor.Metrics.RoomsExplored[area.AreaId];
 
@@ -120,7 +119,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (areaExplored.Count == roomsInArea)
                     {
-                        await this.GrantAward(7, actor, $"explored all rooms in {area.Name}", cancellationToken);
+                        await this.GrantAward((int)AwardType.Voyager, actor, $"explored all rooms in {area.Name}", cancellationToken);
                     }
                 }
             }

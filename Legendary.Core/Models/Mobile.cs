@@ -25,22 +25,22 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets flags applied to the mobile.
         /// </summary>
-        public IList<MobileFlags>? MobileFlags { get; set; }
+        public virtual List<MobileFlags>? MobileFlags { get; set; }
 
         /// <summary>
         /// Gets or sets the personality of the mobile.
         /// </summary>
-        public Emotion? Emotion { get; set; }
+        public virtual Emotion? Emotion { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether or not this mobile should use the AI language processor.
         /// </summary>
-        public bool UseAI { get; set; } = true;
+        public virtual bool UseAI { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the persona file to consume if this mbile uses AI.
         /// </summary>
-        public string? PersonaFile { get; set; }
+        public virtual string? PersonaFile { get; set; }
 
         /// <summary>
         /// Gets or sets the handle which player the mob is speaking with, tracking, and fighting.
@@ -50,12 +50,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the equipment resets for the mobile.
         /// </summary>
-        public List<EquipmentReset> EquipmentResets { get; set; } = new List<EquipmentReset>();
+        public virtual List<EquipmentReset> EquipmentResets { get; set; } = new List<EquipmentReset>();
 
         /// <summary>
         /// Gets or sets the school type if this mob is a teacher.
         /// </summary>
-        public SchoolType? SchoolType { get; set; }
+        public virtual SchoolType? SchoolType { get; set; }
 
         /// <summary>
         /// Gets or sets the hit dice.
@@ -76,5 +76,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the XActive.
         /// </summary>
         public bool? XActive { get; set; }
+
+        /// <summary>
+        /// Gets or sets the program.
+        /// </summary>
+        public string? Program { get; set; }
     }
 }

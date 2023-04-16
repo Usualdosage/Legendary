@@ -11,6 +11,7 @@ namespace Legendary.Core.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
     using MongoDB.Bson;
@@ -161,6 +162,8 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets a value indicating whether the item is locked (if container).
         /// </summary>
+        [Category("Containers")]
+        [Description("Indicates if the container is locked.")]
         public bool IsLocked { get; set; }
 
         /// <summary>
@@ -257,5 +260,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the save afflictive modifier.
         /// </summary>
         public int? SaveAfflictive { get; set; }
+
+        /// <summary>
+        /// Gets or sets the program.
+        /// </summary>
+        public string? Program { get; set; }
     }
 }

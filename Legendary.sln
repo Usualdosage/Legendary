@@ -1,24 +1,26 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.810.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Web", "Legendary.Web\Legendary.Web.csproj", "{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Web", "Legendary.Web\Legendary.Web.csproj", "{01A81E7E-AD62-4EB6-B01F-A644D0497AC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Core", "Legendary.Core\Legendary.Core.csproj", "{63B060DB-3F91-4643-955D-0DE28646AF20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Core", "Legendary.Core\Legendary.Core.csproj", "{63B060DB-3F91-4643-955D-0DE28646AF20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Data", "Legendary.Data\Legendary.Data.csproj", "{4ECBD85C-BC01-426F-A7B2-612943CBDE64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Data", "Legendary.Data\Legendary.Data.csproj", "{4ECBD85C-BC01-426F-A7B2-612943CBDE64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Networking", "Legendary.Networking\Legendary.Networking.csproj", "{B57CE6D0-2292-4C96-9B62-1D270D19F3B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Networking", "Legendary.Networking\Legendary.Networking.csproj", "{B57CE6D0-2292-4C96-9B62-1D270D19F3B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Engine", "Legacy.Engine\Legendary.Engine.csproj", "{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Engine", "Legacy.Engine\Legendary.Engine.csproj", "{39A1B242-3E4A-42DD-88DF-F473E55B6AF7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{026E9A6D-8CF2-481C-A453-B67DC0821A51}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Legendary.Tests", "Legendary.Tests\Legendary.Tests.csproj", "{C1809E57-2077-43C2-AD53-1C113BA71643}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Tests", "Legendary.Tests\Legendary.Tests.csproj", "{C1809E57-2077-43C2-AD53-1C113BA71643}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.AreaBuilder", "..\Legendary.AreaBuilder\Playground.WinForms\Legendary.AreaBuilder.csproj", "{5933E550-18DC-498E-A8BD-E9204122F52D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{C1809E57-2077-43C2-AD53-1C113BA71643}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1809E57-2077-43C2-AD53-1C113BA71643}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1809E57-2077-43C2-AD53-1C113BA71643}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5933E550-18DC-498E-A8BD-E9204122F52D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5933E550-18DC-498E-A8BD-E9204122F52D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5933E550-18DC-498E-A8BD-E9204122F52D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5933E550-18DC-498E-A8BD-E9204122F52D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,6 +10,7 @@
 namespace Legendary.Core.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
 
@@ -27,7 +28,7 @@ namespace Legendary.Core.Models
         /// <param name="author">The author.</param>
         /// <param name="description">The description.</param>
         /// <param name="rooms">The room list.</param>
-        public Area(int areaId, string name, string author, string description, IList<Room> rooms)
+        public Area(int areaId, string? name, string? author, string? description, List<Room> rooms)
         {
             this.AreaId = areaId;
             this.Name = name;
@@ -52,16 +53,17 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the area author.
         /// </summary>
-        public string Author { get; set; }
+        public string? Author { get; set; }
 
         /// <summary>
         /// Gets or sets the area description.
         /// </summary>
-        public string Description { get; set; }
+        public virtual string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets rooms within the area.
         /// </summary>
-        public IList<Room> Rooms { get; set; }
+        [Browsable(false)]
+        public virtual List<Room> Rooms { get; set; } = new List<Room>();
     }
 }

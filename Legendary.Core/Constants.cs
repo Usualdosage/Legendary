@@ -29,7 +29,7 @@ namespace Legendary.Core
         /// <summary>
         /// The Area ID for Griffonshire, the hometown.
         /// </summary>
-        public const long GRIFFONSHIRE_AREA = 6828;
+        public const long GRIFFONSHIREAREA = 6828;
 
         /// <summary>
         /// The light temple in Griffonshire for recall purposes.
@@ -144,7 +144,7 @@ namespace Legendary.Core
         /// <summary>
         /// What mobiles will say when they have a connection error to the AI server.
         /// </summary>
-        public static readonly List<string> CONNECTION_ERROR = new List<string>()
+        public static readonly List<string> CONNECTION_ERROR = new ()
         {
             "I'm sorry, I didn't understand that.",
             "I'm not sure what to say.",
@@ -158,7 +158,7 @@ namespace Legendary.Core
         /// <summary>
         /// What mobiles will say when they are ignoring a user.
         /// </summary>
-        public static readonly List<string> IGNORE_MESSAGE = new List<string>()
+        public static readonly List<string> IGNORE_MESSAGE = new ()
         {
             "I don't feel like talking right now.",
             "Ahem.",
@@ -170,7 +170,7 @@ namespace Legendary.Core
         /// <summary>
         /// What happy mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
         /// </summary>
-        public static readonly List<string> EMOTE_ACTION_HAPPY = new List<string>()
+        public static readonly List<string> EMOTE_ACTION_HAPPY = new ()
         {
             "{0} looks around with a smile.",
             "{0} smiles happily.",
@@ -190,7 +190,7 @@ namespace Legendary.Core
         /// <summary>
         /// What angry mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
         /// </summary>
-        public static readonly List<string> EMOTE_ACTION_ANGRY = new List<string>()
+        public static readonly List<string> EMOTE_ACTION_ANGRY = new ()
         {
             "{0} looks around angrily.",
             "{0} shrugs, shaking {1} head.",
@@ -208,7 +208,7 @@ namespace Legendary.Core
         /// <summary>
         /// What neutral mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
         /// </summary>
-        public static readonly List<string> EMOTE_ACTION_NEUTRAL = new List<string>()
+        public static readonly List<string> EMOTE_ACTION_NEUTRAL = new ()
         {
             "{0} looks around idly.",
             "{0} shrugs.",
@@ -224,7 +224,7 @@ namespace Legendary.Core
         /// <summary>
         /// What sad mobiles will do when they are not talking to a user. {0} is name, {1} is pronoun.
         /// </summary>
-        public static readonly List<string> EMOTE_ACTION_SAD = new List<string>()
+        public static readonly List<string> EMOTE_ACTION_SAD = new ()
         {
             "{0} looks around in sorrow.",
             "{0} wipes some tears from {1} eyes.",
@@ -242,7 +242,7 @@ namespace Legendary.Core
         /// <summary>
         /// What animal mobiles will do. {0} is name, {1} is pronoun.
         /// </summary>
-        public static readonly List<string> EMOTE_ANIMAL_ACTION = new List<string>()
+        public static readonly List<string> EMOTE_ANIMAL_ACTION = new ()
         {
             "{0} scurries about.",
             "{0} sniffs the air.",

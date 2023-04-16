@@ -30,19 +30,19 @@ namespace Legendary.Core.Models
         }
 
         /// <summary>
-        /// Gets the direction of this exit.
+        /// Gets or sets the direction of this exit.
         /// </summary>
-        public Direction Direction { get; private set; }
+        public Direction Direction { get; set; }
 
         /// <summary>
-        /// Gets the area this exit goes to.
+        /// Gets or sets the area this exit goes to.
         /// </summary>
-        public int ToArea { get; private set; }
+        public int ToArea { get; set; }
 
         /// <summary>
-        /// Gets the room this exit goes to.
+        /// Gets or sets the room this exit goes to.
         /// </summary>
-        public long ToRoom { get; private set; }
+        public long ToRoom { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this is a door.

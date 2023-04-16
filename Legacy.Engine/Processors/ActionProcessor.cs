@@ -52,7 +52,7 @@ namespace Legendary.Engine.Processors
         private readonly ActionHelper actionHelper;
         private readonly AwardProcessor awardProcessor;
         private readonly IRandom random;
-        private readonly Combat combat;
+        private readonly CombatProcessor combat;
         private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
         private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
 
@@ -67,7 +67,7 @@ namespace Legendary.Engine.Processors
         /// <param name="combat">The combat class.</param>
         /// <param name="messageProcessor">The message processor.</param>
         /// <param name="dataService">The data service.</param>
-        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, Combat combat, IMessageProcessor messageProcessor, IDataService dataService)
+        public ActionProcessor(ICommunicator communicator, IEnvironment environment, IWorld world, ILogger logger, IRandom random, CombatProcessor combat, IMessageProcessor messageProcessor, IDataService dataService)
         {
             this.communicator = communicator;
             this.world = world;
@@ -239,7 +239,7 @@ namespace Legendary.Engine.Processors
             {
                 if (container.Contains != null && container.Contains.Count > 0)
                 {
-                    List<IItem> itemsToRemove = new List<IItem>();
+                    List<IItem> itemsToRemove = new ();
 
                     foreach (var item in container.Contains)
                     {
@@ -300,7 +300,7 @@ namespace Legendary.Engine.Processors
             {
                 if (corpse.Contains != null && corpse.Contains.Count > 0)
                 {
-                    List<IItem> itemsToRemove = new List<IItem>();
+                    List<IItem> itemsToRemove = new ();
                     var room = this.communicator.ResolveRoom(actor.Location);
 
                     foreach (var item in corpse.Contains)
@@ -439,7 +439,7 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Displays a list of things your player is currently affected by.</p><ul><li>affects</li></ul>")]
         private async Task DoAffects(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             if (actor.Character.AffectedBy.Count > 0)
             {
@@ -603,7 +603,7 @@ namespace Legendary.Engine.Processors
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Available Commands:<br/>", cancellationToken);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             var commands = this.actions.OrderBy(a => a.Key);
 
@@ -633,8 +633,8 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        StringBuilder sbToPlayer = new StringBuilder();
-                        StringBuilder sbToRoom = new StringBuilder();
+                        StringBuilder sbToPlayer = new ();
+                        StringBuilder sbToRoom = new ();
 
                         sbToPlayer.Append($"You roll {numDice} six-sided dice.<br/>");
                         sbToRoom.Append($"{actor.Character.FirstName.FirstCharToUpper()} rolls {numDice} six-sided dice.<br/>");
@@ -842,7 +842,7 @@ namespace Legendary.Engine.Processors
         {
             await this.communicator.SendToPlayer(actor.Connection, $"Available Emotes:<br/>", cancellationToken);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             var commands = Emotes.Actions.OrderBy(a => a.Key);
 
@@ -1206,7 +1206,7 @@ namespace Legendary.Engine.Processors
                     await this.communicator.SendToPlayer(actor.Connection, $"You examine {item.Name}.", cancellationToken);
                     await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} examines {item.Name}.", cancellationToken);
 
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new ();
 
                     // Update the player info
                     this.communicator.SendGameUpdate(actor.Character, item.ShortDescription, item.Image).Wait();
@@ -1545,7 +1545,7 @@ namespace Legendary.Engine.Processors
 
                         if (area != null)
                         {
-                            StringBuilder sb = new StringBuilder();
+                            StringBuilder sb = new ();
                             sb.Append($"Looking at the sky, you seem to be in the vicinity of {area.Name}. ");
 
                             if (Legendary.Engine.Environment.CurrentWeather.ContainsKey(area.AreaId))
@@ -1938,7 +1938,7 @@ namespace Legendary.Engine.Processors
 
                 if (itemName == "all")
                 {
-                    Dictionary<WearLocation, Item> itemsToRemove = new Dictionary<WearLocation, Item>();
+                    Dictionary<WearLocation, Item> itemsToRemove = new ();
 
                     foreach (var target in actor.Character.Equipment)
                     {
@@ -2126,7 +2126,7 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, $"You scan in all directions.", cancellationToken);
             await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} scans all around.", cancellationToken);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             foreach (var exit in room.Exits)
             {
@@ -2755,7 +2755,7 @@ namespace Legendary.Engine.Processors
                     found = true;
                 }
 
-                List<Character> playersInArea = new List<Character>();
+                List<Character> playersInArea = new ();
 
                 if (Communicator.Users != null)
                 {
@@ -3254,7 +3254,7 @@ namespace Legendary.Engine.Processors
 
             if (itemsInRoom != null && itemsInRoom.Count > 0)
             {
-                List<Item> itemsToRemove = new List<Item>();
+                List<Item> itemsToRemove = new ();
 
                 foreach (var item in itemsInRoom)
                 {
@@ -3327,7 +3327,7 @@ namespace Legendary.Engine.Processors
 
             if (itemsInRoom != null)
             {
-                List<Item> itemsToRemove = new List<Item>();
+                List<Item> itemsToRemove = new ();
 
                 var item = itemsInRoom.ParseTargetName(args.Method);
 

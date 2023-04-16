@@ -193,7 +193,7 @@ namespace Legendary.Engine.Processors
 
                 if (toPlayer != null)
                 {
-                    StringBuilder speech = new StringBuilder();
+                    StringBuilder speech = new ();
 
                     if (message.From == message.To)
                     {
@@ -231,7 +231,7 @@ namespace Legendary.Engine.Processors
         /// <inheritdoc/>
         public async Task ShowMessageToPlayer(Message message, Character character, CancellationToken cancellationToken = default)
         {
-            StringBuilder messageContent = new StringBuilder();
+            StringBuilder messageContent = new ();
 
             messageContent.Append("<div class='game-message'>");
             messageContent.Append("<div class='game-message-head'></div>");

@@ -36,7 +36,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>Action.</returns>
-        public static Skill? ResolveSkill(string skillName, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static Skill? ResolveSkill(string skillName, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var engine = Assembly.Load("Legendary.Engine");
 

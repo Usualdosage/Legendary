@@ -19,6 +19,7 @@ namespace Legendary.Engine.Helpers
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Models;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Helper class for handling skill and spell tree progression.
@@ -38,7 +39,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>True if the player can learn the group.</returns>
-        public static bool CanLearnGroup(UserData actor, string groupName, string groupNumeral, Mobile teacher, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static bool CanLearnGroup(UserData actor, string groupName, string groupNumeral, Mobile teacher, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var skillTrees = GetSkillTrees(communicator, random, world, logger, combat);
 
@@ -90,7 +91,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>List of actions.</returns>
-        public static List<IAction>? GetSkills(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static List<IAction>? GetSkills(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var groupNumber = groupNumeral.FromRomanNumeral();
             var trees = GetSkillTrees(communicator, random, world, logger, combat);
@@ -143,7 +144,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>List of actions.</returns>
-        public static List<IAction>? GetSpells(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static List<IAction>? GetSpells(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var groupNumber = groupNumeral.FromRomanNumeral();
             var trees = GetSpellTrees(communicator, random, world, logger, combat);
@@ -196,7 +197,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>string.</returns>
-        public static string GetSkillsInGroup(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static string GetSkillsInGroup(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var groupNumber = groupNumeral.FromRomanNumeral();
             var trees = GetSkillTrees(communicator, random, world, logger, combat);
@@ -242,7 +243,7 @@ namespace Legendary.Engine.Helpers
 
                     if (skills != null)
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
                         sb.Append($"<h6>The following skills are available in {groupName} group {groupNumeral}:</h6>");
                         sb.Append("<ul>");
 
@@ -275,7 +276,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>string.</returns>
-        public static string GetSpellsInGroup(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static string GetSpellsInGroup(string groupName, string groupNumeral, ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var groupNumber = groupNumeral.FromRomanNumeral();
             var trees = GetSpellTrees(communicator, random, world, logger, combat);
@@ -321,7 +322,7 @@ namespace Legendary.Engine.Helpers
 
                     if (spells != null)
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
                         sb.Append($"<h6>The following spells are available in {groupName} group {groupNumeral}:</h6>");
                         sb.Append("<ul>");
 
@@ -353,7 +354,7 @@ namespace Legendary.Engine.Helpers
         public static string GetLearnableSkillTrees(UserData actor, List<ActionTree> skillTrees, out bool canLearn)
         {
             canLearn = false;
-            StringBuilder sbSkills = new StringBuilder();
+            StringBuilder sbSkills = new ();
 
             sbSkills.Append("<h5>Available Skill Trees</h5>");
             sbSkills.Append("<ul>");
@@ -385,7 +386,7 @@ namespace Legendary.Engine.Helpers
         public static string GetLearnableSpellTrees(UserData actor, List<ActionTree> spellTrees, out bool canLearn)
         {
             canLearn = false;
-            StringBuilder sbSpells = new StringBuilder();
+            StringBuilder sbSpells = new ();
 
             sbSpells.Append("<h5>Available Spell Trees</h5>");
             sbSpells.Append("<ul>");
@@ -416,13 +417,13 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>List of action trees.</returns>
-        public static List<ActionTree> GetSkillTrees(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static List<ActionTree> GetSkillTrees(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var engine = Assembly.Load("Legendary.Engine");
 
             var skillTreesRef = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SkillTrees");
 
-            List<ActionTree> skillTrees = new List<ActionTree>();
+            List<ActionTree> skillTrees = new ();
 
             foreach (var tree in skillTreesRef)
             {
@@ -446,13 +447,13 @@ namespace Legendary.Engine.Helpers
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
         /// <returns>List of action trees.</returns>
-        public static List<ActionTree> GetSpellTrees(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public static List<ActionTree> GetSpellTrees(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             var engine = Assembly.Load("Legendary.Engine");
 
             var spellTreesRef = engine.GetTypes().Where(t => t.Namespace == "Legendary.Engine.Models.SpellTrees");
 
-            List<ActionTree> spellTrees = new List<ActionTree>();
+            List<ActionTree> spellTrees = new ();
 
             foreach (var tree in spellTreesRef)
             {

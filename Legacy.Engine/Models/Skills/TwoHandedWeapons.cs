@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Recalls the player to their hometown recall point.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public TwoHandedWeapons(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public TwoHandedWeapons(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Two Handed Weapons";

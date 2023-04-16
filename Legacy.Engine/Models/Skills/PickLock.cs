@@ -32,7 +32,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public PickLock(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public PickLock(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Pick Lock";

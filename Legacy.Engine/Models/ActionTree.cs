@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models
     using Legendary.Core.Contracts;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Abstract implementation of IActionTree contract.
@@ -28,11 +29,11 @@ namespace Legendary.Engine.Models
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public ActionTree(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public ActionTree(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             this.Communicator = communicator;
             this.Random = random;
-            this.Combat = combat;
+            this.CombatProcessor = combat;
             this.World = world;
             this.Logger = logger;
         }
@@ -71,7 +72,7 @@ namespace Legendary.Engine.Models
         /// <summary>
         /// Gets the combat engine.
         /// </summary>
-        protected Combat Combat { get; private set; }
+        protected CombatProcessor CombatProcessor { get; private set; }
 
         /// <summary>
         /// Gets the world.

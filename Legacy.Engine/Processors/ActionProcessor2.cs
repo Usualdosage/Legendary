@@ -45,19 +45,19 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>List all of the areas, their information, and the author.</p>")]
         private async Task DoAreas(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             foreach (var area in this.world.Areas)
             {
-                sb.Append($"<div class='player-section'>{area.Name}</div>");
-                sb.Append($"<span>{area.Description}</span><br/>");
-                sb.Append($"<span><em>Created by {area.Author} ({area.Rooms.Count} rooms)</em></span><br/>");
+                sb.Append($"<div class='player-section'>{area?.Name}</div>");
+                sb.Append($"<span>{area?.Description}</span><br/>");
+                sb.Append($"<span><em>Created by {area?.Author} ({area?.Rooms?.Count} rooms)</em></span><br/>");
                 sb.Append($"<br/>");
             }
 
-            var explored = (double)((double)actor.Character.Metrics.RoomsExplored.Sum(s => s.Value.Count) / (double)this.world.Areas.Sum(a => a.Rooms.Count)) * 100;
+            var explored = (double)(actor.Character.Metrics.RoomsExplored.Sum(s => s.Value.Count) / this.world.Areas.Sum(a => a.Rooms != null ? a.Rooms.Count : 0)) * 100;
 
-            sb.Append($"There are {this.world.Areas.Count} areas in Legendary, with a total of {this.world.Areas.Sum(a => a.Rooms.Count)} rooms. You have explored {(int)explored}% of the entire world.");
+            sb.Append($"There are {this.world.Areas.Count} areas in Legendary, with a total of {this.world.Areas.Sum(a => a.Rooms?.Count)} rooms. You have explored {(int)explored}% of the entire world.");
 
             await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
         }
@@ -65,19 +65,19 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Information about the current area your are in.</p>")]
         private async Task DoArea(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             var area = this.communicator.ResolveArea(actor.Character.Location);
 
             if (area != null)
             {
                 var totalVisited = actor.Character.Metrics.RoomsExplored.Where(a => a.Key == area.AreaId).Sum(r => r.Value.Count());
-                var total = area.Rooms.Count;
-                var explorationPct = (double)((double)totalVisited / (double)total) * 100;
+                var total = area.Rooms != null ? area.Rooms.Count : 1;
+                var explorationPct = (double)(totalVisited / total) * 100;
 
                 sb.Append($"<div class='player-section'>{area.Name}</div>");
                 sb.Append($"<span>{area.Description}</span><br/>");
-                sb.Append($"<span><em>Created by {area.Author} ({area.Rooms.Count} rooms)</em></span><br/>");
+                sb.Append($"<span><em>Created by {area.Author} ({area.Rooms?.Count} rooms)</em></span><br/>");
                 sb.Append($"<span>You have explored {(int)explorationPct}% of this area.</span><br/>");
                 sb.Append($"<br/>");
 
@@ -120,7 +120,7 @@ namespace Legendary.Engine.Processors
         {
             if (actor.Character.Awards.Count > 0)
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
                 sb.Append("<div class='award-container'>");
 
                 foreach (var award in actor.Character.Awards)
@@ -174,7 +174,7 @@ namespace Legendary.Engine.Processors
                     }
 
                     // Build the tooltip for the award.
-                    StringBuilder sbMeta = new StringBuilder();
+                    StringBuilder sbMeta = new ();
                     if (award.Metadata != null && award.Metadata.Count > 0)
                     {
                         foreach (var meta in award.Metadata)
@@ -249,11 +249,11 @@ namespace Legendary.Engine.Processors
                                                 await this.communicator.SendToRoom(actor.Character.Location, actor.Character, merchant, $"{actor.Character.FirstName.FirstCharToUpper()} intimidates {merchant.FirstName.FirstCharToUpper()} into giving {actor.Character.Pronoun} {item.Name} for free.", cancellationToken);
                                                 actor.Character.Inventory.Add(item.DeepCopy());
 
-                                                await this.awardProcessor.GrantAward(4, actor.Character, $"managed to extort a shop keeper.", cancellationToken);
+                                                await this.awardProcessor.GrantAward((int)AwardType.Seeker, actor.Character, $"managed to extort a shop keeper.", cancellationToken);
 
                                                 if (mastery)
                                                 {
-                                                    await this.awardProcessor.GrantAward(8, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
+                                                    await this.awardProcessor.GrantAward((int)AwardType.Trainer, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
                                                 }
 
                                                 return;
@@ -276,11 +276,11 @@ namespace Legendary.Engine.Processors
 
                                                 actor.Character.Inventory.Add(item.DeepCopy());
 
-                                                await this.awardProcessor.GrantAward(4, actor.Character, $"managed to haggle with a shop keeper.", cancellationToken);
+                                                await this.awardProcessor.GrantAward((int)AwardType.Seeker, actor.Character, $"managed to haggle with a shop keeper.", cancellationToken);
 
                                                 if (mastery)
                                                 {
-                                                    await this.awardProcessor.GrantAward(8, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
+                                                    await this.awardProcessor.GrantAward((int)AwardType.Trainer, actor.Character, $"mastered {nameof(Extort)}", cancellationToken);
                                                 }
 
                                                 await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
@@ -293,7 +293,7 @@ namespace Legendary.Engine.Processors
                                         actor.Character.Currency -= price;
                                         actor.Character.Inventory.Add(item.DeepCopy());
                                         await this.communicator.PlaySound(actor.Character, Core.Types.AudioChannel.BackgroundSFX2, Sounds.COINS_BUY, cancellationToken);
-                                        await this.awardProcessor.GrantAward(4, actor.Character, $"purchased an item from a shop keeper.", cancellationToken);
+                                        await this.awardProcessor.GrantAward((int)AwardType.Seeker, actor.Character, $"purchased an item from a shop keeper.", cancellationToken);
                                     }
                                     else
                                     {
@@ -615,7 +615,7 @@ namespace Legendary.Engine.Processors
                                 var skillsToAdd = TreeHelper.GetSkills(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
                                 var spellsToAdd = TreeHelper.GetSpells(groupName, groupNum, this.communicator, this.random, this.world, this.logger, this.combat);
 
-                                StringBuilder sb = new StringBuilder();
+                                StringBuilder sb = new ();
 
                                 // We will teach skills or spells, but not both.
                                 if (skillsToAdd != null && skillsToAdd.Count > 0)
@@ -672,7 +672,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new ();
 
                     if (merchant.Inventory != null && merchant.Inventory.Count > 0)
                     {
@@ -822,7 +822,7 @@ namespace Legendary.Engine.Processors
         {
             var messages = await this.messageProcessor.GetAllMessagesForPlayer(actor.Character, cancellationToken);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
             sb.Append("<h3>Messages</h3><ol>");
 
             var newCount = messages.Count(m => m.ReadDate == null);
@@ -850,7 +850,7 @@ namespace Legendary.Engine.Processors
             {
                 var head = actor.Character.Equipment.FirstOrDefault(f => f.Value.WearLocation.Contains(WearLocation.Head)).Value;
 
-                List<Item> itemsToEquip = new List<Item>();
+                List<Item> itemsToEquip = new ();
 
                 if (head == null)
                 {
@@ -937,7 +937,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (string.IsNullOrWhiteSpace(args.Method))
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
 
                         if (actor.Character.Practices > 0)
                         {
@@ -956,7 +956,7 @@ namespace Legendary.Engine.Processors
                                 {
                                     var groupProps = tree.GetProperties();
 
-                                    StringBuilder sbTree = new StringBuilder();
+                                    StringBuilder sbTree = new ();
 
                                     bool hasSkillInGroup = false;
 
@@ -1007,7 +1007,7 @@ namespace Legendary.Engine.Processors
 
                                 if (treeInstance != null && treeInstance is IActionTree instance)
                                 {
-                                    StringBuilder sbTree = new StringBuilder();
+                                    StringBuilder sbTree = new ();
 
                                     var groupProps = tree.GetProperties();
 
@@ -1071,7 +1071,7 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
 
                         if (actor.Character.Practices > 0)
                         {
@@ -1093,7 +1093,7 @@ namespace Legendary.Engine.Processors
                                         actor.Character.Practices -= 1;
 
                                         await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {skillProf.SkillName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
-                                        await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
+                                        await this.awardProcessor.GrantAward((int)AwardType.Seeker, actor.Character, "met a guildmaster", cancellationToken);
                                     }
                                 }
                                 else
@@ -1119,7 +1119,7 @@ namespace Legendary.Engine.Processors
                                         actor.Character.Practices -= 1;
 
                                         await this.communicator.SendToPlayer(actor.Character, $"{gm.FirstName.FirstCharToUpper()} helps you practice {spellProf.SpellName.FirstCharToUpper()}, and your proficiency increases!", cancellationToken);
-                                        await this.awardProcessor.GrantAward(4, actor.Character, "met a guildmaster", cancellationToken);
+                                        await this.awardProcessor.GrantAward((int)AwardType.Seeker, actor.Character, "met a guildmaster", cancellationToken);
                                     }
                                 }
                                 else
@@ -1307,7 +1307,7 @@ namespace Legendary.Engine.Processors
                     {
                         if (string.IsNullOrWhiteSpace(args.Method))
                         {
-                            StringBuilder sb = new StringBuilder();
+                            StringBuilder sb = new ();
                             sb.Append($"{sk.FirstName.FirstCharToUpper()} says, \"<span class='say'>It will cost you the following to get your items repaired:</span>\"<br/><ul>");
                             var total = 0m;
 
@@ -1405,7 +1405,7 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Reports your current health, mana, and movement levels out loud.</p>")]
         private async Task DoReport(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             var healthPct = actor.Character.Health.GetPercentage();
 
@@ -1588,7 +1588,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (string.IsNullOrWhiteSpace(args.Method))
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
 
                         if (actor.Character.Trains > 0)
                         {
@@ -1636,7 +1636,7 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        StringBuilder sb = new StringBuilder();
+                        StringBuilder sb = new ();
 
                         if (actor.Character.Trains > 0)
                         {
@@ -1727,7 +1727,7 @@ namespace Legendary.Engine.Processors
                                     break;
                             }
 
-                            await this.awardProcessor.GrantAward(4, actor.Character, "met a trainer", cancellationToken);
+                            await this.awardProcessor.GrantAward((int)AwardType.Seeker, actor.Character, "met a trainer", cancellationToken);
                         }
                         else
                         {
@@ -1758,7 +1758,7 @@ namespace Legendary.Engine.Processors
                         // If the group belongs to the player, disband the whole group.
                         if (GroupHelper.IsGroupOwner(actor.Character.CharacterId))
                         {
-                            List<long> playersToRemove = new List<long>();
+                            List<long> playersToRemove = new ();
 
                             // Send a disbanding message to each member of the group, then remove them and save.
                             foreach (var characterId in group.Value.Value)
@@ -1999,7 +1999,7 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Sets your wimpy to a percentage of your health. If you fall below that percentage, you will flee automatically.</p>")]
         private async Task DoWimpy(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             if (string.IsNullOrEmpty(args.Method))
             {
@@ -2023,7 +2023,7 @@ namespace Legendary.Engine.Processors
         [HelpText("<p>Shows your current worth in gold, silver, and copper.</p>")]
         private async Task DoWorth(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             var currency = actor.Character.Currency.GetCurrency();
 
@@ -2057,7 +2057,7 @@ namespace Legendary.Engine.Processors
             string availableSkills = TreeHelper.GetLearnableSkillTrees(actor, skillTrees, out canLearnSkills);
             string availableSpells = TreeHelper.GetLearnableSpellTrees(actor, spellTrees, out canLearnSpells);
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
             sb.Append($"You have {actor.Character.Learns} learning sessions available.<br/>");
 
             if (canLearnSkills)

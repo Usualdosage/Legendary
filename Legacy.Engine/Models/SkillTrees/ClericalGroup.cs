@@ -14,6 +14,7 @@ namespace Legendary.Engine.Models.SkillTrees
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.Skills;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Spells available in the clerical group.
@@ -28,7 +29,7 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public ClericalGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public ClericalGroup(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
         }
@@ -42,16 +43,16 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <inheritdoc/>
         public override List<IAction> Group1
         {
-            get => new List<IAction>()
+            get => new ()
             {
-                { new Trance(this.Communicator, this.Random,  this.World, this.Logger, this.Combat) },
+                { new Trance(this.Communicator, this.Random,  this.World, this.Logger, this.CombatProcessor) },
             };
         }
 
         /// <inheritdoc/>
         public override List<IAction> Group2
         {
-            get => new List<IAction>()
+            get => new ()
             {
             };
         }
@@ -59,7 +60,7 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <inheritdoc/>
         public override List<IAction> Group3
         {
-            get => new List<IAction>()
+            get => new ()
             {
             };
         }
@@ -67,7 +68,7 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <inheritdoc/>
         public override List<IAction> Group4
         {
-            get => new List<IAction>()
+            get => new ()
             {
             };
         }
@@ -75,7 +76,7 @@ namespace Legendary.Engine.Models.SkillTrees
         /// <inheritdoc/>
         public override List<IAction> Group5
         {
-            get => new List<IAction>()
+            get => new ()
             {
             };
         }

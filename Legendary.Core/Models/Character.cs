@@ -26,12 +26,12 @@ namespace Legendary.Core.Models
     [BsonIgnoreExtraElements]
     public partial class Character
     {
-        private MaxCurrent str = new MaxCurrent(10, 10);
-        private MaxCurrent intg = new MaxCurrent(10, 10);
-        private MaxCurrent wis = new MaxCurrent(10, 10);
-        private MaxCurrent dex = new MaxCurrent(10, 10);
-        private MaxCurrent con = new MaxCurrent(10, 10);
-        private MaxCurrent carryWeight = new MaxCurrent(80, 80);
+        private MaxCurrent str = new (10, 10);
+        private MaxCurrent intg = new (10, 10);
+        private MaxCurrent wis = new (10, 10);
+        private MaxCurrent dex = new (10, 10);
+        private MaxCurrent con = new (10, 10);
+        private MaxCurrent carryWeight = new (80, 80);
 
         private int defaultAge = 18;
         private int saveDeath = 8;
@@ -58,32 +58,32 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
-        public string FirstName { get; set; } = string.Empty;
+        public virtual string FirstName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the middle name.
         /// </summary>
-        public string? MiddleName { get; set; }
+        public virtual string? MiddleName { get; set; }
 
         /// <summary>
         /// Gets or sets the last name.
         /// </summary>
-        public string? LastName { get; set; }
+        public virtual string? LastName { get; set; }
 
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
-        public string? Title { get; set; }
+        public virtual string? Title { get; set; }
 
         /// <summary>
         /// Gets the player's age.
         /// </summary>
-        public int Age => this.defaultAge + (this.Metrics.GameHoursPlayed / 8760);
+        public virtual int Age => this.defaultAge + (this.Metrics.GameHoursPlayed / 8760);
 
         /// <summary>
         /// Gets or sets the level.
         /// </summary>
-        public int Level { get; set; } = 1;
+        public virtual int Level { get; set; } = 1;
 
         /// <summary>
         /// Gets or sets the experience.
@@ -93,7 +93,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the currency.
         /// </summary>
-        public decimal Currency { get; set; } = 0m;
+        public virtual decimal Currency { get; set; } = 0m;
 
         /// <summary>
         /// Gets or sets the player's divine favor.
@@ -113,12 +113,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the short description.
         /// </summary>
-        public string? ShortDescription { get; set; }
+        public virtual string? ShortDescription { get; set; }
 
         /// <summary>
         /// Gets or sets the long description.
         /// </summary>
-        public string? LongDescription { get; set; }
+        public virtual string? LongDescription { get; set; }
 
         /// <summary>
         /// Gets or sets the language the character is currently speaking.
@@ -163,17 +163,17 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the health.
         /// </summary>
-        public MaxCurrent Health { get; set; } = new MaxCurrent(0, 0);
+        public virtual MaxCurrent Health { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
         /// Gets or sets the mana.
         /// </summary>
-        public MaxCurrent Mana { get; set; } = new MaxCurrent(0, 0);
+        public virtual MaxCurrent Mana { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
         /// Gets or sets the movement.
         /// </summary>
-        public MaxCurrent Movement { get; set; } = new MaxCurrent(0, 0);
+        public virtual MaxCurrent Movement { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
         /// Gets or sets the carry weight of the player.
@@ -224,7 +224,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's strength.
         /// </summary>
-        public MaxCurrent Str
+        public virtual MaxCurrent Str
         {
             get
             {
@@ -240,7 +240,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's strength.
         /// </summary>
-        public MaxCurrent Int
+        public virtual MaxCurrent Int
         {
             get
             {
@@ -256,7 +256,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's wisdom.
         /// </summary>
-        public MaxCurrent Wis
+        public virtual MaxCurrent Wis
         {
             get
             {
@@ -272,7 +272,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's dexterity.
         /// </summary>
-        public MaxCurrent Dex
+        public virtual MaxCurrent Dex
         {
             get
             {
@@ -288,7 +288,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's constitution.
         /// </summary>
-        public MaxCurrent Con
+        public virtual MaxCurrent Con
         {
             get
             {
@@ -304,7 +304,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the alignment.
         /// </summary>
-        public Alignment Alignment { get; set; } = Alignment.Neutral;
+        public virtual Alignment Alignment { get; set; } = Alignment.Neutral;
 
         /// <summary>
         /// Gets or sets the deity.
@@ -368,12 +368,12 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the ethos.
         /// </summary>
-        public Ethos Ethos { get; set; } = Ethos.Neutral;
+        public virtual Ethos Ethos { get; set; } = Ethos.Neutral;
 
         /// <summary>
         /// Gets or sets the gender.
         /// </summary>
-        public Gender Gender { get; set; } = Gender.Other;
+        public virtual Gender Gender { get; set; } = Gender.Other;
 
         /// <summary>
         /// Gets the pronoun associated with the character's gender.
@@ -432,7 +432,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the race.
         /// </summary>
-        public Race Race { get; set; } = Race.Human;
+        public virtual Race Race { get; set; } = Race.Human;
 
         /// <summary>
         /// Gets or sets the player's skills.
@@ -476,7 +476,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the save vs. spell.
         /// </summary>
-        public int SaveSpell
+        public virtual int SaveSpell
         {
             get
             {
@@ -492,7 +492,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the save vs. negative.
         /// </summary>
-        public int SaveNegative
+        public virtual int SaveNegative
         {
             get
             {
@@ -508,7 +508,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the save vs. maledictive.
         /// </summary>
-        public int SaveMaledictive
+        public virtual int SaveMaledictive
         {
             get
             {
@@ -524,7 +524,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the save vs. afflictive.
         /// </summary>
-        public int SaveAfflictive
+        public virtual int SaveAfflictive
         {
             get
             {
@@ -540,7 +540,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the save vs. death.
         /// </summary>
-        public int SaveDeath
+        public virtual int SaveDeath
         {
             get
             {
@@ -561,7 +561,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the base-64 image for this character.
         /// </summary>
-        public string? Image { get; set; }
+        public virtual string? Image { get; set; }
 
         /// <summary>
         /// Gets or sets the player's rewards.

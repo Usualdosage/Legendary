@@ -342,7 +342,7 @@ namespace Legendary.Engine.Helpers
                 else
                 {
                     // Get all members, including the owner.
-                    List<long> allMembers = new List<long>();
+                    List<long> allMembers = new ();
                     allMembers.AddRange(group.Value);
                     allMembers.Add(group.Key);
                     return allMembers;

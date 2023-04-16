@@ -20,7 +20,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Definition of race data (lookup table).
         /// </summary>
-        private static Dictionary<Race, RaceStats> raceData = new Dictionary<Race, RaceStats>()
+        private static Dictionary<Race, RaceStats> raceData = new ()
         {
             {
                 Race.Avian, new RaceStats()

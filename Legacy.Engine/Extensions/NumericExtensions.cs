@@ -106,7 +106,7 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
 
                 if (gold > 0)
                 {
@@ -215,7 +215,7 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
 
                 if (gold > 0)
                 {
@@ -294,7 +294,7 @@ namespace Legendary.Engine.Extensions
                     }
                 }
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
 
                 if (gold > 0)
                 {
@@ -747,7 +747,7 @@ namespace Legendary.Engine.Extensions
                 }
             }
 
-            List<Item> items = new List<Item>();
+            List<Item> items = new ();
 
             if (gold > 0)
             {

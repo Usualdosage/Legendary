@@ -45,10 +45,10 @@
   <ItemGroup>
     <Folder Include="Contracts\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Types\" />
+    <Folder Include="Programs\Items\" />
+    <Folder Include="Programs\Rooms\" />
     <Folder Include="Models\Skills\" />
     <Folder Include="Models\Spells\" />
-    <Folder Include="Processors\" />
     <Folder Include="Extensions\" />
     <Folder Include="Models\SpellTrees\" />
     <Folder Include="Models\SkillTrees\" />

@@ -16,6 +16,7 @@ namespace Legendary.Engine.Models.Spells
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Casts the silence spell.
@@ -30,7 +31,7 @@ namespace Legendary.Engine.Models.Spells
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public Silence(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public Silence(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Silence";
@@ -61,7 +62,7 @@ namespace Legendary.Engine.Models.Spells
                         return;
                     }
 
-                    if (this.Combat.DidSave(target, this))
+                    if (this.CombatProcessor.DidSave(target, this))
                     {
                         await base.Act(actor, target, itemTarget, cancellationToken);
 
@@ -70,7 +71,7 @@ namespace Legendary.Engine.Models.Spells
 
                         if (target != null)
                         {
-                            await this.Combat.StartFighting(actor, target, cancellationToken);
+                            await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
                         }
                     }
                     else
@@ -93,7 +94,7 @@ namespace Legendary.Engine.Models.Spells
 
                         if (target != null)
                         {
-                            await this.Combat.StartFighting(actor, target, cancellationToken);
+                            await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
                         }
                     }
                 }

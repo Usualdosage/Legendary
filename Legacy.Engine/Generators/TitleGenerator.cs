@@ -17,6 +17,7 @@ namespace Legendary.Engine.Generators
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Models.SkillTrees;
     using Legendary.Engine.Models.SpellTrees;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Generates custom titles for characters based on their levels and skill/spell trees.
@@ -27,9 +28,9 @@ namespace Legendary.Engine.Generators
         private readonly ICommunicator communicator;
         private readonly IWorld world;
         private readonly ILogger logger;
-        private readonly Combat combat;
+        private readonly CombatProcessor combat;
 
-        private readonly Dictionary<int, string> genericTitles = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> genericTitles = new ()
         {
             { 1, "Adventurer" },
             { 2, "Explorer" },
@@ -38,7 +39,7 @@ namespace Legendary.Engine.Generators
             { 5, "Voyager" },
         };
 
-        private readonly Dictionary<int, string> warriorTitles = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> warriorTitles = new ()
         {
             { 6, "Combatant" },
             { 7, "Brawler" },
@@ -62,7 +63,7 @@ namespace Legendary.Engine.Generators
             { 25, "Warlord" },
         };
 
-        private readonly Dictionary<int, string> mageTitles = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> mageTitles = new ()
         {
             { 6, "Dilettante" },
             { 7, "Apprentice" },
@@ -86,7 +87,7 @@ namespace Legendary.Engine.Generators
             { 25, "Master of the Arcane" },
         };
 
-        private readonly Dictionary<int, string> clericTitles = new Dictionary<int, string>()
+        private readonly Dictionary<int, string> clericTitles = new ()
         {
             { 6, "Faithful" },
             { 7, "Diligent" },
@@ -118,7 +119,7 @@ namespace Legendary.Engine.Generators
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
-        public TitleGenerator(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public TitleGenerator(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             this.random = random;
             this.communicator = communicator;
@@ -150,7 +151,7 @@ namespace Legendary.Engine.Generators
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
                 sb.Append("the ");
 
                 if (character.Level <= 5)
@@ -173,7 +174,7 @@ namespace Legendary.Engine.Generators
         private string CalculateTitle(Character character)
         {
             // Use this to see which class basic the character is leaning toward.
-            Dictionary<ClassBasis, int> classBalance = new Dictionary<ClassBasis, int>()
+            Dictionary<ClassBasis, int> classBalance = new ()
             {
                 { ClassBasis.Warrior, 0 },
                 { ClassBasis.Mage, 0 },

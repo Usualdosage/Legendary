@@ -29,7 +29,7 @@ namespace Legendary.Engine.Extensions
         /// <returns>List of resolved items.</returns>
         public static List<Item> ResolveItems(this List<long> input, ICommunicator communicator)
         {
-            List<Item> items = new List<Item>();
+            List<Item> items = new ();
 
             input.ForEach(i =>
             {

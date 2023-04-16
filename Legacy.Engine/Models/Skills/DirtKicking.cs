@@ -16,6 +16,7 @@ namespace Legendary.Engine.Models.Skills
     using Legendary.Core.Models;
     using Legendary.Engine.Contracts;
     using Legendary.Engine.Extensions;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Dirt kicking skill.
@@ -30,7 +31,7 @@ namespace Legendary.Engine.Models.Skills
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat engine.</param>
-        public DirtKicking(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public DirtKicking(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
             : base(communicator, random, world, logger, combat)
         {
             this.Name = "Dirt Kicking";
@@ -78,7 +79,7 @@ namespace Legendary.Engine.Models.Skills
                             return;
                         }
 
-                        if (this.Combat.DidSave(target, this))
+                        if (this.CombatProcessor.DidSave(target, this))
                         {
                             if (target != null)
                             {
@@ -87,7 +88,7 @@ namespace Legendary.Engine.Models.Skills
                                 await this.Communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} avoids your kicked dirt.", cancellationToken);
                                 await this.Communicator.SendToPlayer(target, $"You avoid {actor.FirstName.FirstCharToUpper()}'s kicked dirt.", cancellationToken);
 
-                                await this.Combat.StartFighting(actor, target, cancellationToken);
+                                await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
                             }
                         }
                         else
@@ -114,7 +115,7 @@ namespace Legendary.Engine.Models.Skills
 
                                 target.AffectedBy.AddIfNotAffected(effect);
 
-                                await this.Combat.StartFighting(actor, target, cancellationToken);
+                                await this.CombatProcessor.StartFighting(actor, target, cancellationToken);
                             }
                         }
                     }

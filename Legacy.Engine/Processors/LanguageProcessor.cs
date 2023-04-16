@@ -483,7 +483,7 @@ namespace Legendary.Engine.Processors
         /// <returns>Cleaned output message.</returns>
         private static string[]? ProcessOutput(string message, Persona persona, Mobile mobile)
         {
-            List<string> messages = new List<string>();
+            List<string> messages = new ();
 
             message = message.Trim();
 
@@ -495,8 +495,8 @@ namespace Legendary.Engine.Processors
 
             if (message.Contains('*'))
             {
-                List<string> sentences = new List<string>();
-                StringBuilder sbFormat = new StringBuilder();
+                List<string> sentences = new ();
+                StringBuilder sbFormat = new ();
 
                 bool open = true;
 
@@ -513,7 +513,7 @@ namespace Legendary.Engine.Processors
                     }
                 }
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
 
                 foreach (char c in sbFormat.ToString())
                 {
@@ -782,7 +782,7 @@ namespace Legendary.Engine.Processors
                         if (!string.IsNullOrWhiteSpace(mobile.XImage))
                         {
                             mobile.XActive = true;
-                            await this.awardProcessor.GrantAward(10, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
+                            await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                         }
                         else
                         {
@@ -821,7 +821,7 @@ namespace Legendary.Engine.Processors
                     if (!string.IsNullOrWhiteSpace(mobile.XImage))
                     {
                         mobile.XActive = true;
-                        await this.awardProcessor.GrantAward(10, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                     }
                     else
                     {
@@ -852,7 +852,7 @@ namespace Legendary.Engine.Processors
                     // Name of the share, directory, and file we'll create
                     string shareName = "avatars";
                     string fileName = $"{character.FirstName}{character.LastName}.png";
-                    ShareClient share = new ShareClient(connectionString, shareName);
+                    ShareClient share = new (connectionString, shareName);
                     share.CreateIfNotExists();
 
                     ShareDirectoryClient directory = share.GetDirectoryClient("/");

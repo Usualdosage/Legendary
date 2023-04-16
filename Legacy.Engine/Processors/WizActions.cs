@@ -625,7 +625,7 @@ namespace Legendary.Engine.Processors
         {
             foreach (var area in this.world.Areas)
             {
-                var targetRoom = area.Rooms.FirstOrDefault(r => r.RoomId == room);
+                var targetRoom = area.Rooms?.FirstOrDefault(r => r.RoomId == room);
                 if (targetRoom == null)
                 {
                     continue;

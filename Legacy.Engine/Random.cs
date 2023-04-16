@@ -52,7 +52,7 @@ namespace Legendary.Engine
                 scale = 28;
             }
 
-            decimal r = new decimal(this.random.Next(), this.random.Next(), this.random.Next(), false, scale);
+            decimal r = new (this.random.Next(), this.random.Next(), this.random.Next(), false, scale);
             if (Math.Sign(from) == Math.Sign(to) || from == 0 || to == 0)
             {
                 return decimal.Remainder(r, to - from) + from;

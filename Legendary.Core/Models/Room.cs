@@ -10,6 +10,7 @@
 namespace Legendary.Core.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using Legendary.Core.Types;
     using MongoDB.Bson.Serialization.Attributes;
 
@@ -86,7 +87,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the room's terrain.
         /// </summary>
-        public Terrain? Terrain { get; set; }
+        public Terrain Terrain { get; set; } = Terrain.City;
 
         /// <summary>
         /// Gets or sets the items in the room.
@@ -107,6 +108,11 @@ namespace Legendary.Core.Models
         /// Gets or sets the mobiles reset in the room.
         /// </summary>
         public List<long> MobileResets { get; set; } = new List<long>();
+
+        /// <summary>
+        /// Gets or sets the program.
+        /// </summary>
+        public string? Program { get; set; }
 
         /// <summary>
         /// Determines whether one room is equal to another matching on area and room IDs.

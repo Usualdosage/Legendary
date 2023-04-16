@@ -17,6 +17,7 @@ namespace Legendary.Engine.Helpers
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Contracts;
+    using Legendary.Engine.Processors;
 
     /// <summary>
     /// Helper for creating instances of skills and spells by reflection.
@@ -27,7 +28,7 @@ namespace Legendary.Engine.Helpers
         private readonly IRandom random;
         private readonly IWorld world;
         private readonly ILogger logger;
-        private readonly Combat combat;
+        private readonly CombatProcessor combat;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionHelper"/> class.
@@ -37,7 +38,7 @@ namespace Legendary.Engine.Helpers
         /// <param name="world">The world.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="combat">The combat generator.</param>
-        public ActionHelper(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, Combat combat)
+        public ActionHelper(ICommunicator communicator, IRandom random, IWorld world, ILogger logger, CombatProcessor combat)
         {
             this.communicator = communicator;
             this.random = random;
@@ -210,7 +211,7 @@ namespace Legendary.Engine.Helpers
                 return null;
             }
 
-            StringBuilder sbItem = new StringBuilder();
+            StringBuilder sbItem = new ();
 
             if (item.ItemFlags.Contains(ItemFlags.Glowing))
             {
@@ -269,7 +270,7 @@ namespace Legendary.Engine.Helpers
         /// <returns>String.</returns>
         public static string GetEquipment(Character actor)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             // Worn items.
             var wearLocations = Enum.GetNames<WearLocation>();
@@ -311,7 +312,7 @@ namespace Legendary.Engine.Helpers
         /// <returns>String.</returns>
         public static string GetOnlyEquipment(Character actor)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
 
             // Worn items.
             var wearLocations = Enum.GetNames<WearLocation>();

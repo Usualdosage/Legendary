@@ -30,7 +30,7 @@ namespace Legendary.Engine.Helpers
         /// <returns>Item.</returns>
         public static Item CreatePracticeWeapon(IRandom random)
         {
-            List<string> weaponAdjectives = new List<string>()
+            List<string> weaponAdjectives = new ()
             {
                 "steel",
                 "wooden",
@@ -47,7 +47,7 @@ namespace Legendary.Engine.Helpers
 
             var adj = weaponAdjectives[random.Next(0, weaponAdjectives.Count - 1)];
 
-            List<Tuple<string, DamageType>> weaponNouns = new List<Tuple<string, DamageType>>()
+            List<Tuple<string, DamageType>> weaponNouns = new ()
             {
                 new Tuple<string, DamageType>($"a {adj} mace", DamageType.Blunt),
                 new Tuple<string, DamageType>($"a {adj} sword", DamageType.Slash),
@@ -114,7 +114,7 @@ namespace Legendary.Engine.Helpers
         /// <returns>Item.</returns>
         public static Item CreatePracticeGear(IRandom random, WearLocation wearLocation)
         {
-            List<string> gearAdjectives = new List<string>()
+            List<string> gearAdjectives = new ()
             {
                 "leather",
                 "padded",
@@ -135,7 +135,7 @@ namespace Legendary.Engine.Helpers
 
             var adj = gearAdjectives[random.Next(0, gearAdjectives.Count - 1)];
 
-            List<string> gearNouns = new List<string>();
+            List<string> gearNouns = new ();
 
             switch (wearLocation)
             {
@@ -248,7 +248,7 @@ namespace Legendary.Engine.Helpers
         /// <returns>Item.</returns>
         public static Item CreateLight(IRandom random)
         {
-            List<string> lampAdjectives = new List<string>()
+            List<string> lampAdjectives = new ()
             {
                 "copper",
                 "brass",
@@ -261,7 +261,7 @@ namespace Legendary.Engine.Helpers
 
             var adj = lampAdjectives[random.Next(0, lampAdjectives.Count - 1)];
 
-            List<string> lampNouns = new List<string>()
+            List<string> lampNouns = new ()
             {
                 $"a {adj} lamp",
                 $"a {adj} lantern",
@@ -319,7 +319,7 @@ namespace Legendary.Engine.Helpers
                 return null;
             }
 
-            List<string> gearAdjectives = new List<string>()
+            List<string> gearAdjectives = new ()
             {
                 "Leather",
                 "Padded",
@@ -348,7 +348,7 @@ namespace Legendary.Engine.Helpers
 
             var adj = gearAdjectives[random.Next(0, gearAdjectives.Count - 1)];
 
-            List<string> gearNouns = new List<string>();
+            List<string> gearNouns = new ();
 
             switch (wearLocation)
             {
