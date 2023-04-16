@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.Tests", "Legendary.Tests\Legendary.Tests.csproj", "{C1809E57-2077-43C2-AD53-1C113BA71643}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.AreaBuilder", "..\Legendary.AreaBuilder\Playground.WinForms\Legendary.AreaBuilder.csproj", "{5933E550-18DC-498E-A8BD-E9204122F52D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Legendary.AreaBuilder", "Legendary.AreaBuilder\Legendary.AreaBuilder.csproj", "{5933E550-18DC-498E-A8BD-E9204122F52D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
