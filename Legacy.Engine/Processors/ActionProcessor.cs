@@ -1724,6 +1724,8 @@ namespace Legendary.Engine.Processors
                                 await this.awardProcessor.CheckVoyagerAward(exit.ToArea, actor.Character, cancellationToken);
                             }
 
+                            await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
+
                             if (!actor.Character.IsAffectedBy(nameof(Sneak)))
                             {
                                 if (isGhost)
@@ -1741,16 +1743,32 @@ namespace Legendary.Engine.Processors
                                     await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters.", cancellationToken);
                                 }
 
-                                // See if any AI mobs in the room will communicate with the player.
-                                var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters the room.", cancellationToken);
+                                var mobsWithProgsInRoom = this.communicator.GetMobilesInRoom(actor.Character.Location)?.Where(m => !string.IsNullOrWhiteSpace(m.Program));
 
-                               // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+                                if (mobsWithProgsInRoom != null)
+                                {
+                                    // We will prefer mob programs over AI comms.
+                                    foreach (var programmedMob in mobsWithProgsInRoom)
+                                    {
+                                        var program = this.communicator.MIRPProcessor.CreateProgramInstance(programmedMob);
+
+                                        if (program != null && program is MIRP mirp)
+                                        {
+                                            await mirp.OnPlayerEnter(programmedMob, new Types.MIRPEventArgs() { Mobile = programmedMob, Player = actor.Character }, cancellationToken);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    // See if any AI mobs in the room will communicate with the player.
+                                    var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} enters the room.", cancellationToken);
+
+                                    // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                                Task.Run(async () => { await commsTask; }, cancellationToken);
+                                    Task.Run(async () => { await commsTask; }, cancellationToken);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                                }
                             }
-
-                            await this.communicator.ShowRoomToPlayer(actor.Character, cancellationToken);
                         }
                     }
                     else

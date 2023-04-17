@@ -91,7 +91,7 @@ namespace Legendary.Web
 
             if (accessor != null)
             {
-                services.AddSingleton<IHttpContextAccessor>((IHttpContextAccessor)accessor);
+                services.AddSingleton((IHttpContextAccessor)accessor);
             }
         }
 

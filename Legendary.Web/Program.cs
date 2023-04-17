@@ -40,6 +40,8 @@ namespace Legendary.Web
                 {
                     webBuilder.ConfigureAppConfiguration(config =>
                     {
+                        // Warning: If you don't have the proper connection string set in your local environment, this will fail fast.
+
                         // Get the connection string from an environment variable.
                         string connectionString = Environment.GetEnvironmentVariable("AZUREAPPSETTINGSCONNECTIONSTRING") ??
                             throw new Exception("Unable to load app config from Azure App Settings.");

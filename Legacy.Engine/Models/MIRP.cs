@@ -1,4 +1,4 @@
-﻿// <copyright file="BaseMIRP.cs" company="Legendary™">
+﻿// <copyright file="MIRP.cs" company="Legendary™">
 //  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
 //  Use, reuse, and/or modification of this software requires
 //  adherence to the included license file at
@@ -9,7 +9,6 @@
 
 namespace Legendary.Engine.Models
 {
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Legendary.Core.Contracts;
@@ -20,10 +19,10 @@ namespace Legendary.Engine.Models
     /// <summary>
     /// Base class for implementing a Mob-Item-Room program.
     /// </summary>
-    public abstract class BaseMIRP
+    public abstract class MIRP
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseMIRP"/> class.
+        /// Initializes a new instance of the <see cref="MIRP"/> class.
         /// </summary>
         /// <param name="communicator">The communicator.</param>
         /// <param name="world">The world.</param>
@@ -32,7 +31,7 @@ namespace Legendary.Engine.Models
         /// <param name="awardProcessor">The award processor.</param>
         /// <param name="skillProcessor">The skill processor.</param>
         /// <param name="spellProcessor">The spell processor.</param>
-        public BaseMIRP(ICommunicator communicator, IWorld world, ActionProcessor actionProcessor, CombatProcessor combatProcessor, AwardProcessor awardProcessor, SkillProcessor skillProcessor, SpellProcessor spellProcessor)
+        public MIRP(ICommunicator communicator, IWorld world, ActionProcessor actionProcessor, CombatProcessor combatProcessor, AwardProcessor awardProcessor, SkillProcessor skillProcessor, SpellProcessor spellProcessor)
         {
             this.Communicator = communicator;
             this.World = world;
@@ -142,7 +141,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnMobEnter(Mobile mobile, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnMobEnter(Mobile mobile, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.MobEnter?.Invoke(mobile, args), cancellationToken);
         }
@@ -154,7 +153,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnMobLeave(Mobile mobile, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnMobLeave(Mobile mobile, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.MobLeave?.Invoke(mobile, args), cancellationToken);
         }
@@ -166,7 +165,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnPlayerEnter(Character player, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnPlayerEnter(Character player, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.PlayerEnter?.Invoke(player, args), cancellationToken);
         }
@@ -178,7 +177,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnPlayerLeave(Character player, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnPlayerLeave(Character player, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.PlayerLeave?.Invoke(player, args), cancellationToken);
         }
@@ -190,7 +189,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnPlayerComm(Character player, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnPlayerComm(Character player, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.PlayerComm?.Invoke(player, args), cancellationToken);
         }
@@ -202,7 +201,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnItemGet(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnItemGet(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.ItemGet?.Invoke(item, args), cancellationToken);
         }
@@ -214,7 +213,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnItemDrop(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnItemDrop(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.ItemDrop?.Invoke(item, args), cancellationToken);
         }
@@ -226,7 +225,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnItemWear(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnItemWear(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.ItemWear?.Invoke(item, args), cancellationToken);
         }
@@ -238,7 +237,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnItemWield(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnItemWield(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.ItemWield?.Invoke(item, args), cancellationToken);
         }
@@ -250,7 +249,7 @@ namespace Legendary.Engine.Models
         /// <param name="args">The event args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        protected virtual async Task OnTick(object sender, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        public virtual async Task OnTick(object sender, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.Tick?.Invoke(sender, args), cancellationToken);
         }

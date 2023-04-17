@@ -12,14 +12,9 @@ namespace Legendary.Engine
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Dynamic;
     using System.IO;
     using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Net.Mail;
     using System.Net.WebSockets;
-    using System.Security.Claims;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -45,7 +40,6 @@ namespace Legendary.Engine
     using Microsoft.AspNetCore.Http;
     using Microsoft.CodeAnalysis;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Handles communication between the engine and connected sockets.
@@ -66,11 +60,12 @@ namespace Legendary.Engine
         private readonly IEnvironment environment;
         private readonly IServerSettings serverSettings;
         private readonly IWebHostEnvironment webHostEnvironment;
-        private readonly SkillProcessor? skillProcessor;
-        private readonly SpellProcessor? spellProcessor;
+        private readonly SkillProcessor skillProcessor;
+        private readonly SpellProcessor spellProcessor;
         private readonly ActionProcessor actionProcessor;
         private readonly ActionHelper actionHelper;
-        private readonly AwardProcessor? awardProcessor;
+        private readonly AwardProcessor awardProcessor;
+        private readonly IMIRPProcessor mIRPProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Communicator"/> class.
@@ -138,6 +133,9 @@ namespace Legendary.Engine
             this.skillProcessor = new SkillProcessor(this, this.random, this.world, this.combat, this.logger);
             this.spellProcessor = new SpellProcessor(this, this.random, this.world, this.combat, this.logger);
             this.actionProcessor = new ActionProcessor(this, this.environment, this.world, this.logger, this.random, this.combat, this.messageProcessor, this.dataService);
+
+            // Create the mob-item-room processor instance.
+            this.mIRPProcessor = new MIRPProcessor(this, this.world, this.actionProcessor, this.combat, this.awardProcessor, this.skillProcessor, this.spellProcessor);
         }
 
         /// <summary>
@@ -164,6 +162,11 @@ namespace Legendary.Engine
         /// Gets the language processor.
         /// </summary>
         public ILanguageProcessor LanguageProcessor { get; private set; }
+
+        /// <summary>
+        /// Gets the instance of the MIRPProcessor.
+        /// </summary>
+        public IMIRPProcessor MIRPProcessor => this.mIRPProcessor;
 
         /// <summary>
         /// Gets the language generator.

@@ -39,6 +39,11 @@ namespace Legendary.Core.Contracts
         ILanguageGenerator LanguageGenerator { get; }
 
         /// <summary>
+        /// Gets the MIRP Processor.
+        /// </summary>
+        IMIRPProcessor MIRPProcessor { get; }
+
+        /// <summary>
         /// When invoked, handles adding/removing sockets.
         /// </summary>
         /// <param name="context">The HttpContext.</param>

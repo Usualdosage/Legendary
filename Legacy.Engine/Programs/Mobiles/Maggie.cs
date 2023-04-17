@@ -17,7 +17,7 @@ namespace Legendary.Engine.Programs.Mobiles
     /// <summary>
     /// MIRP script for Maggie (mobile).
     /// </summary>
-    public class Maggie : BaseMIRP
+    public class Maggie : MIRP
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Maggie"/> class.
@@ -42,7 +42,7 @@ namespace Legendary.Engine.Programs.Mobiles
             {
                 if (e.Player != null)
                 {
-                    this.Communicator.SendToRoom(mobile.Location, $"Hello, {e.Player.FirstName}, welcome to the Red Dragon Inn!");
+                    this.Communicator.SendToRoom(mobile.Location, $"{mobile.FirstName} says, \"<span class='say'>Hello, {e.Player.FirstName}, welcome to the Red Dragon Inn! What can I get ye?</span>\"");
                 }
             }
         }
