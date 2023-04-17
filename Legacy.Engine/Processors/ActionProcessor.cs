@@ -409,6 +409,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("score", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoScore)));
             this.actions.Add("skills", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(8, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSkills)));
             this.actions.Add("sleep", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(9, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSleep)));
+            this.actions.Add("smote", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSmote)));
             this.actions.Add("south", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("se", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("sw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
@@ -803,7 +804,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (!char.IsPunctuation(sentence[sentence.Length - 1]))
                     {
-                        sentence = sentence + ".";
+                        sentence += ".";
                     }
 
                     await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
@@ -2308,6 +2309,64 @@ namespace Legendary.Engine.Processors
             }
         }
 
+        [HelpText("<p>Lets your player perform a custom action in which you also provide a SAY command. See also: HELP EMOTES</p><ul><li>smote <em>smote nods and says Hello</em></li></ul>")]
+        private async Task DoSmote(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Smote what?", cancellationToken);
+            }
+            else
+            {
+                var sentence = string.Join(' ', new string?[2] { args.Method, args.Target }).Trim();
+                if (!string.IsNullOrWhiteSpace(sentence))
+                {
+                    if (sentence.Contains("says"))
+                    {
+                        // [smote] [nods and says Hello there]
+                        var chunks = sentence.Split("says", StringSplitOptions.RemoveEmptyEntries);
+
+                        // [nods and] [Hello there]
+                        var say = $"says \"<span class='say'>{chunks[1].Trim()}</span>\"".Trim();
+
+                        sentence = $"{chunks[0].Replace("smote", string.Empty)} {say}";
+
+                        await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+
+                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, sentence, cancellationToken);
+
+                        var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
+
+                        if (players != null)
+                        {
+                            foreach (var player in players)
+                            {
+                                if (player != actor.Character)
+                                {
+                                    if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
+                                    {
+                                        await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+                                    }
+                                }
+                            }
+                        }
+
+                        // See if any AI mobs in the room will communicate with the player.
+                        var commsTask = this.communicator.CheckMobCommunication(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}.", cancellationToken);
+
+                        // Run this task on a separate, synchronous thread, so we don't block. This is fire and forget.
+    #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                        Task.Run(async () => { await commsTask; }, cancellationToken);
+    #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"Your SMOTE command should contain a SAYS within it.", cancellationToken);
+                    }
+                }
+            }
+        }
+
         [HelpText("<p>Displays all current spell groups, spells, and spell progressions. Can also be used to see spells within a spell tree group.</p><ul><li>spells</li><li>spells conjuring group II</li></ul>")]
         private async Task DoSpells(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -3013,6 +3072,23 @@ namespace Legendary.Engine.Processors
 
                 await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name} {wearDescription?.WearAction}.", cancellationToken);
                 await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+
+                if (!string.IsNullOrWhiteSpace(item.Program))
+                {
+                    var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                    if (program != null && program is MIRP mirp)
+                    {
+                        if (verb.ToLower() == "wield")
+                        {
+                            await mirp.OnItemWield(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                        }
+                        else
+                        {
+                            await mirp.OnItemWear(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                        }
+                    }
+                }
             }
             else if (usedLocations.Count > 0 && usedLocations.Count < item.WearLocation.Count)
             {
@@ -3026,6 +3102,20 @@ namespace Legendary.Engine.Processors
 
                 await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name} {wearDescription?.WearAction}.", cancellationToken);
                 await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+
+                var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                if (program != null && program is MIRP mirp)
+                {
+                    if (verb.ToLower() == "wield")
+                    {
+                        await mirp.OnItemWield(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                    }
+                    else
+                    {
+                        await mirp.OnItemWear(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                    }
+                }
             }
             else
             {
@@ -3048,12 +3138,40 @@ namespace Legendary.Engine.Processors
                         actor.Character.Equipment.Remove(firstUsedLocation.Key);
                         actor.Character.Inventory.Add(firstUsedLocation.Value);
 
+                        var program1 = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                        if (program1 != null && program1 is MIRP mirp1)
+                        {
+                            if (verb.ToLower() == "wield")
+                            {
+                                await mirp1.OnItemRemove(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                            }
+                            else
+                            {
+                                await mirp1.OnItemRemove(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                            }
+                        }
+
                         // Add to the equipment.
                         actor.Character.Equipment.Add(firstUsedLocation.Key, item);
                         actor.Character.Inventory.Remove(item);
 
                         await this.communicator.SendToPlayer(actor.Connection, $"You {verb} {item.Name} {wearDescription?.WearAction}.", cancellationToken);
                         await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} {verb}s {item.Name}.", cancellationToken);
+
+                        var program2 = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                        if (program2 != null && program2 is MIRP mirp2)
+                        {
+                            if (verb.ToLower() == "wield")
+                            {
+                                await mirp2.OnItemWield(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                            }
+                            else
+                            {
+                                await mirp2.OnItemWear(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                            }
+                        }
                     }
                 }
             }
@@ -3288,13 +3406,23 @@ namespace Legendary.Engine.Processors
                     }
                     else
                     {
-                        await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
-
                         if (ItemHelper.CanCarry(actor.Character, item))
                         {
+                            await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
+
                             actor.Character.Inventory.Add(item);
                             itemsToRemove.Add(item);
+
+                            if (!string.IsNullOrWhiteSpace(item.Program))
+                            {
+                                var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                                if (program != null && program is MIRP mirp)
+                                {
+                                    await mirp.OnItemGet(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                                }
+                            }
                         }
                         else
                         {
@@ -3362,13 +3490,23 @@ namespace Legendary.Engine.Processors
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
-                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
-
                             if (ItemHelper.CanCarry(actor.Character, item))
                             {
+                                await this.communicator.SendToPlayer(actor.Connection, $"You get {item.Name}.", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, null, $"{actor.Character.FirstName.FirstCharToUpper()} gets {item.Name}.", cancellationToken);
+
                                 actor.Character.Inventory.Add(item);
                                 room.Items.Remove(item);
+
+                                if (!string.IsNullOrWhiteSpace(item.Program))
+                                {
+                                    var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                                    if (program != null && program is MIRP mirp)
+                                    {
+                                        await mirp.OnItemGet(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                                    }
+                                }
                             }
                             else
                             {
@@ -3394,6 +3532,16 @@ namespace Legendary.Engine.Processors
 
                                 actor.Character.Inventory.Add(targetItem);
                                 room.Items.Remove(targetItem);
+
+                                if (!string.IsNullOrWhiteSpace(item.Program))
+                                {
+                                    var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                                    if (program != null && program is MIRP mirp)
+                                    {
+                                        await mirp.OnItemGet(item, new Types.MIRPEventArgs() { Item = item, Player = actor.Character }, cancellationToken);
+                                    }
+                                }
                             }
                             else
                             {
@@ -3454,6 +3602,16 @@ namespace Legendary.Engine.Processors
                                 var itemClone = (Item)item;
                                 actor.Character.Inventory.Add(itemClone.DeepCopy());
                                 container.Contains.Remove(item);
+
+                                if (!string.IsNullOrWhiteSpace(itemClone.Program))
+                                {
+                                    var program = this.communicator.MIRPProcessor.CreateProgramInstance(itemClone);
+
+                                    if (program != null && program is MIRP mirp)
+                                    {
+                                        await mirp.OnItemGet(itemClone, new Types.MIRPEventArgs() { Item = itemClone, Player = actor.Character }, cancellationToken);
+                                    }
+                                }
                             }
                             else
                             {
@@ -3473,6 +3631,16 @@ namespace Legendary.Engine.Processors
                                 var targetItemClone = (Item)targetItem;
                                 actor.Character.Inventory.Add(targetItemClone.DeepCopy());
                                 container.Contains.Remove(targetItemClone);
+
+                                if (!string.IsNullOrWhiteSpace(targetItemClone.Program))
+                                {
+                                    var program = this.communicator.MIRPProcessor.CreateProgramInstance(targetItemClone);
+
+                                    if (program != null && program is MIRP mirp)
+                                    {
+                                        await mirp.OnItemGet(targetItemClone, new Types.MIRPEventArgs() { Item = targetItemClone, Player = actor.Character }, cancellationToken);
+                                    }
+                                }
                             }
                             else
                             {
@@ -3609,6 +3777,16 @@ namespace Legendary.Engine.Processors
                                 await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
                                 await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
                                 itemsToRemove.Add(item);
+
+                                if (!string.IsNullOrWhiteSpace(item.Program))
+                                {
+                                    var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                                    if (program != null && program is MIRP mirp)
+                                    {
+                                        await mirp.OnItemDrop(item, new Types.MIRPEventArgs() { Item = item, Player = user.Character }, cancellationToken);
+                                    }
+                                }
                             }
                             else
                             {
@@ -3641,6 +3819,16 @@ namespace Legendary.Engine.Processors
                         await this.communicator.SendToPlayer(user.Connection, $"You drop {item.Name}.", cancellationToken);
                         await this.communicator.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} drops {item.Name}.", cancellationToken);
                         itemsToRemove.Add(item);
+
+                        if (!string.IsNullOrWhiteSpace(item.Program))
+                        {
+                            var program = this.communicator.MIRPProcessor.CreateProgramInstance(item);
+
+                            if (program != null && program is MIRP mirp)
+                            {
+                                await mirp.OnItemDrop(item, new Types.MIRPEventArgs() { Item = item, Player = user.Character }, cancellationToken);
+                            }
+                        }
                     }
                     else
                     {

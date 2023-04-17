@@ -53,7 +53,7 @@ namespace Legendary.Engine.Programs.Mobiles
             {
                 if (e.Player != null)
                 {
-                    this.Communicator.SendToRoom(mobile.Location, $"Catch ya later, {e.Player.FirstName}!");
+                    this.Communicator.SendToRoom(mobile.Location, $"{mobile.FirstName} says, \"<span class='say'>Catch ye later, {e.Player.FirstName}!</span>\"");
                 }
             }
         }

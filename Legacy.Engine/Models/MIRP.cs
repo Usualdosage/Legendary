@@ -95,6 +95,11 @@ namespace Legendary.Engine.Models
         public event MIRPEventHandler? ItemWear;
 
         /// <summary>
+        /// Fires when an item is removed.
+        /// </summary>
+        public event MIRPEventHandler? ItemRemove;
+
+        /// <summary>
         /// Fires each tick.
         /// </summary>
         public event MIRPEventHandler? Tick;
@@ -216,6 +221,18 @@ namespace Legendary.Engine.Models
         public virtual async Task OnItemDrop(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
         {
             await Task.Run(() => this.ItemDrop?.Invoke(item, args), cancellationToken);
+        }
+
+        /// <summary>
+        /// Event handler for item remove.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <param name="args">The event args.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public virtual async Task OnItemRemove(Item item, MIRPEventArgs args, CancellationToken cancellationToken = default)
+        {
+            await Task.Run(() => this.ItemRemove?.Invoke(item, args), cancellationToken);
         }
 
         /// <summary>
