@@ -302,5 +302,15 @@ namespace Legendary.AreaBuilder.Types
         [Category("General")]
         [Description("The amount of time before this item disintegrates/rots.")]
         public int RotTimer { get; set; }
+
+        /// <inheritdoc/>
+        [Category("General")]
+        [Description("The item program file.")]
+        public string Program { get; set; }
+
+        /// <inheritdoc/>
+        [Category("Containers")]
+        [Description("Indicates if the container is trapped.")]
+        public bool IsTrapped { get; set; } = false;
     }
 }

@@ -125,7 +125,7 @@ namespace Legendary.Engine
             this.awardProcessor = new AwardProcessor(this, this.world, this.logger, this.random, this.combat);
 
             // Create the quest processor.
-            this.questProcessor = new QuestProcessor(this.awardProcessor);
+            this.questProcessor = new QuestProcessor(this.logger, this, this.awardProcessor);
 
             // Create the language processor.
             this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService, this.world, this.awardProcessor, this.questProcessor);

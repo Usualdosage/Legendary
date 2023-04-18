@@ -228,7 +228,7 @@ namespace Legendary.Engine.Processors
                                         if (item != null)
                                         {
                                             var itemClone = item.DeepCopy();
-                                            await this.world.EquipMob(clone, itemClone, cancellationToken);
+                                            await this.world.EquipMob(clone, itemClone, false, cancellationToken);
                                         }
                                     }
 
@@ -265,7 +265,7 @@ namespace Legendary.Engine.Processors
                                         if (item != null)
                                         {
                                             var itemClone = item.DeepCopy();
-                                            await this.world.EquipMob(clone, itemClone, cancellationToken);
+                                            await this.world.EquipMob(clone, itemClone, false, cancellationToken);
                                         }
                                     }
 

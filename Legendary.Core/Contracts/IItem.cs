@@ -183,5 +183,15 @@ namespace Legendary.Core.Contracts
         /// Gets or sets the current and max number of drinks of the drink.
         /// </summary>
         public MaxCurrent? Drinks { get; set; }
+
+        /// <summary>
+        /// Gets or sets the program file.
+        /// </summary>
+        public string Program { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the container is trapped.
+        /// </summary>
+        public bool IsTrapped { get; set; }
     }
 }

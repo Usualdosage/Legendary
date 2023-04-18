@@ -147,15 +147,21 @@ namespace Legendary.Core.Types
         Shield = 21,
 
         /// <summary>
-        /// Shield.
+        /// Body.
         /// </summary>
         [WearDescription("Worn about the body", "about your body", "from about your body")]
         Body = 22,
 
         /// <summary>
-        /// Shield.
+        /// Light.
         /// </summary>
         [WearDescription("Used as a light", "as a light", "as your light")]
         Light = 23,
+
+        /// <summary>
+        /// Tattoo (special).
+        /// </summary>
+        [WearDescription("Tattooed", "as a tattoo", "from your body")]
+        Tattoo = 24,
     }
 }

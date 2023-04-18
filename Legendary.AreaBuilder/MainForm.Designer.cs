@@ -107,20 +107,20 @@
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(statusStrip1);
             splitContainer1.Panel1.Controls.Add(tableLayoutPanel1);
+            splitContainer1.Panel1.Controls.Add(statusStrip1);
             // 
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(splitContainer2);
-            splitContainer1.Size = new Size(1135, 626);
+            splitContainer1.Size = new Size(1135, 696);
             splitContainer1.SplitterDistance = 899;
             splitContainer1.TabIndex = 0;
             // 
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 604);
+            statusStrip1.Location = new Point(0, 674);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(899, 22);
             statusStrip1.TabIndex = 2;
@@ -181,7 +181,7 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
-            tableLayoutPanel1.Size = new Size(899, 626);
+            tableLayoutPanel1.Size = new Size(899, 674);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // splitContainer2
@@ -199,8 +199,8 @@
             // splitContainer2.Panel2
             // 
             splitContainer2.Panel2.Controls.Add(splitContainer3);
-            splitContainer2.Size = new Size(232, 626);
-            splitContainer2.SplitterDistance = 205;
+            splitContainer2.Size = new Size(232, 696);
+            splitContainer2.SplitterDistance = 227;
             splitContainer2.TabIndex = 0;
             // 
             // pgArea
@@ -208,7 +208,7 @@
             pgArea.Dock = DockStyle.Fill;
             pgArea.Location = new Point(0, 0);
             pgArea.Name = "pgArea";
-            pgArea.Size = new Size(232, 205);
+            pgArea.Size = new Size(232, 227);
             pgArea.TabIndex = 0;
             pgArea.SelectedObjectsChanged += PgArea_SelectedObjectsChanged;
             // 
@@ -227,8 +227,8 @@
             // splitContainer3.Panel2
             // 
             splitContainer3.Panel2.Controls.Add(pbRoomImage);
-            splitContainer3.Size = new Size(232, 417);
-            splitContainer3.SplitterDistance = 175;
+            splitContainer3.Size = new Size(232, 465);
+            splitContainer3.SplitterDistance = 223;
             splitContainer3.TabIndex = 1;
             // 
             // pgRoom
@@ -236,7 +236,7 @@
             pgRoom.Dock = DockStyle.Fill;
             pgRoom.Location = new Point(0, 0);
             pgRoom.Name = "pgRoom";
-            pgRoom.Size = new Size(232, 175);
+            pgRoom.Size = new Size(232, 223);
             pgRoom.TabIndex = 0;
             // 
             // pbRoomImage
@@ -322,28 +322,28 @@
             // mobEditorToolStripMenuItem
             // 
             mobEditorToolStripMenuItem.Name = "mobEditorToolStripMenuItem";
-            mobEditorToolStripMenuItem.Size = new Size(180, 22);
+            mobEditorToolStripMenuItem.Size = new Size(150, 22);
             mobEditorToolStripMenuItem.Text = "Mob Editor";
             mobEditorToolStripMenuItem.Click += MobEditorToolStripMenuItem_Click;
             // 
             // itemEditorToolStripMenuItem
             // 
             itemEditorToolStripMenuItem.Name = "itemEditorToolStripMenuItem";
-            itemEditorToolStripMenuItem.Size = new Size(180, 22);
+            itemEditorToolStripMenuItem.Size = new Size(150, 22);
             itemEditorToolStripMenuItem.Text = "Item Editor";
             itemEditorToolStripMenuItem.Click += ItemEditorToolStripMenuItem_Click;
             // 
             // awardEditorToolStripMenuItem
             // 
             awardEditorToolStripMenuItem.Name = "awardEditorToolStripMenuItem";
-            awardEditorToolStripMenuItem.Size = new Size(180, 22);
+            awardEditorToolStripMenuItem.Size = new Size(150, 22);
             awardEditorToolStripMenuItem.Text = "Award Editor";
             awardEditorToolStripMenuItem.Click += AwardEditorToolStripMenuItem_Click;
             // 
             // personaEditorToolStripMenuItem
             // 
             personaEditorToolStripMenuItem.Name = "personaEditorToolStripMenuItem";
-            personaEditorToolStripMenuItem.Size = new Size(180, 22);
+            personaEditorToolStripMenuItem.Size = new Size(150, 22);
             personaEditorToolStripMenuItem.Text = "Persona Editor";
             personaEditorToolStripMenuItem.Click += PersonaEditorToolStripMenuItem_Click;
             // 
@@ -554,12 +554,13 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1135, 650);
+            ClientSize = new Size(1135, 720);
             Controls.Add(splitContainer1);
             Controls.Add(menuStrip1);
             KeyPreview = true;
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Area Grid";
             WindowState = FormWindowState.Maximized;
             splitContainer1.Panel1.ResumeLayout(false);

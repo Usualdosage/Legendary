@@ -10,6 +10,7 @@
 namespace Legendary.Core.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using Legendary.Core.Types;
     using MongoDB.Bson.Serialization.Attributes;
 
@@ -20,6 +21,7 @@ namespace Legendary.Core.Models
     public class Mobile : Character
     {
         /// <inheritdoc/>
+        [Browsable(false)]
         public override bool IsNPC { get => true; set => base.IsNPC = true; }
 
         /// <summary>
@@ -45,6 +47,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the handle which player the mob is speaking with, tracking, and fighting.
         /// </summary>
+        [Browsable(false)]
         public string? PlayerTarget { get; set; }
 
         /// <summary>

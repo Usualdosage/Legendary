@@ -12,6 +12,7 @@ namespace Legendary.AreaBuilder
     using System.Net;
     using Azure;
     using Azure.Storage.Files.Shares;
+    using Legendary.AreaBuilder.Extensions;
     using Legendary.AreaBuilder.Services;
     using Legendary.AreaBuilder.Types;
     using MongoDB.Driver;
@@ -106,6 +107,11 @@ namespace Legendary.AreaBuilder
             }
 
             this.listBox1.SelectedIndex = 0;
+
+            var items = this.mongo.Items.Find(_ => true).ToList();
+
+            this.lstItems.DataSource = items;
+            this.lstItems.DisplayMember = "Name";
         }
 
         // Cancel
@@ -264,6 +270,32 @@ namespace Legendary.AreaBuilder
         private void BtnUploadXImage_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void BtnAddReset_Click(object sender, EventArgs e)
+        {
+            if (this.lstItems.SelectedItem != null && this.lstItems.SelectedItem is Item item && this.propertyGrid1.SelectedObject is Mobile mobile)
+            {
+                mobile.Inventory.Add(item.ToDomainModel());
+                this.toolStripStatusLabel1.Text = "Item added to inventory.";
+            }
+        }
+
+        private void BtnWield_Click(object sender, EventArgs e)
+        {
+            if (this.lstItems.SelectedItem != null && this.lstItems.SelectedItem is Item item && this.propertyGrid1.SelectedObject is Mobile mobile)
+            {
+                if (!item.WearLocation.Contains(Core.Types.WearLocation.InventoryOnly) && !item.WearLocation.Contains(Core.Types.WearLocation.None))
+                {
+                    var wearLoc = item.WearLocation.FirstOrDefault();
+                    mobile.EquipmentResets.Add(new Core.Types.EquipmentReset() { ItemId = item.ItemId, WearLocation = wearLoc });
+                    this.toolStripStatusLabel1.Text = "Item equipped.";
+                }
+                else
+                {
+                    this.toolStripStatusLabel1.Text = "Item could not be equipped. No valid wear location.";
+                }
+            }
         }
     }
 }

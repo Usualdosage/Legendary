@@ -396,7 +396,7 @@ namespace Legendary.Engine
                                     {
                                         var itemClone = item.DeepCopy();
 
-                                        await this.EquipMob(clone, itemClone);
+                                        await this.EquipMob(clone, itemClone, false);
                                     }
                                 }
 
@@ -495,7 +495,7 @@ namespace Legendary.Engine
                                     if (item != null)
                                     {
                                         var itemClone = item.DeepCopy();
-                                        await this.EquipMob(clone, itemClone);
+                                        await this.EquipMob(clone, itemClone, false);
                                     }
                                 }
 
@@ -824,7 +824,7 @@ namespace Legendary.Engine
         /// <param name="item">The item.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task EquipMob(Mobile mobile, Item item, CancellationToken cancellationToken = default)
+        public async Task EquipMob(Mobile mobile, Item item, bool broadcast, CancellationToken cancellationToken = default)
         {
             // Get the first open wear location in a character's equipment that matches a wear location of the item.
             var openSlot = mobile.Equipment.FirstOrDefault(e => item.WearLocation.Contains(e.Key));
@@ -835,26 +835,32 @@ namespace Legendary.Engine
                 {
                     mobile.Equipment.Add(item.WearLocation.First(), item);
 
-                    if (item.ItemType == ItemType.Weapon)
+                    if (broadcast)
                     {
-                        await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wields {item.Name}.", cancellationToken);
-                    }
-                    else
-                    {
-                        await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wears {item.Name}.", cancellationToken);
-                    }
+                        if (item.ItemType == ItemType.Weapon)
+                        {
+                            await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wields {item.Name}.", cancellationToken);
+                        }
+                        else
+                        {
+                            await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} wears {item.Name}.", cancellationToken);
+                        }
 
-                    this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and is wearing it now.", this.communicator);
+                        this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and is wearing it now.", this.communicator);
+                    }
                 }
             }
             else
             {
-                await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {item.Name}.", cancellationToken);
+                if (broadcast)
+                {
+                    await this.communicator.SendToRoom(mobile, mobile.Location, $"{mobile.FirstName.FirstCharToUpper()} picks up {item.Name}.", cancellationToken);
 
-                this.logger.Info($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and added it to their inventory.", this.communicator);
+                    this.logger.Debug($"{mobile.FirstName.FirstCharToUpper()} found a {item.Name} and added it to their inventory.", this.communicator);
 
-                // Just add to inventory.
-                mobile.Inventory.Add(item);
+                    // Just add to inventory.
+                    mobile.Inventory.Add(item);
+                }
             }
         }
 
@@ -1077,7 +1083,7 @@ namespace Legendary.Engine
                                         {
                                             var clonedItem = itemToGet.DeepCopy();
 
-                                            await this.EquipMob(mobile, clonedItem, cancellationToken);
+                                            await this.EquipMob(mobile, clonedItem, true, cancellationToken);
 
                                             itemsToRemove.Add(itemToGet);
                                         }

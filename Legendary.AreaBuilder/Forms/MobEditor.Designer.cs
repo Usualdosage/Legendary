@@ -39,6 +39,9 @@
             button5 = new Button();
             pictureBox1 = new PictureBox();
             btnUploadImage = new Button();
+            lstItems = new ListBox();
+            btnAddReset = new Button();
+            BtnWield = new Button();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -47,12 +50,12 @@
             // 
             propertyGrid1.Location = new Point(282, 12);
             propertyGrid1.Name = "propertyGrid1";
-            propertyGrid1.Size = new Size(598, 429);
+            propertyGrid1.Size = new Size(598, 382);
             propertyGrid1.TabIndex = 0;
             // 
             // button1
             // 
-            button1.Location = new Point(1067, 462);
+            button1.Location = new Point(1067, 451);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 1;
@@ -62,7 +65,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(986, 462);
+            button2.Location = new Point(986, 451);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 2;
@@ -77,14 +80,14 @@
             listBox1.ItemHeight = 15;
             listBox1.Location = new Point(12, 16);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(264, 454);
+            listBox1.Size = new Size(264, 379);
             listBox1.TabIndex = 3;
             listBox1.SelectedIndexChanged += ListBox1_SelectedIndexChanged;
             // 
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 500);
+            statusStrip1.Location = new Point(0, 485);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(1154, 22);
             statusStrip1.TabIndex = 4;
@@ -98,7 +101,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(282, 447);
+            button3.Location = new Point(282, 400);
             button3.Name = "button3";
             button3.Size = new Size(105, 23);
             button3.TabIndex = 5;
@@ -108,7 +111,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(613, 447);
+            button4.Location = new Point(504, 400);
             button4.Name = "button4";
             button4.Size = new Size(156, 23);
             button4.TabIndex = 12;
@@ -118,7 +121,7 @@
             // 
             // button5
             // 
-            button5.Location = new Point(775, 447);
+            button5.Location = new Point(666, 400);
             button5.Name = "button5";
             button5.Size = new Size(105, 23);
             button5.TabIndex = 13;
@@ -138,7 +141,7 @@
             // 
             // btnUploadImage
             // 
-            btnUploadImage.Location = new Point(393, 447);
+            btnUploadImage.Location = new Point(393, 400);
             btnUploadImage.Name = "btnUploadImage";
             btnUploadImage.Size = new Size(105, 23);
             btnUploadImage.TabIndex = 15;
@@ -146,11 +149,43 @@
             btnUploadImage.UseVisualStyleBackColor = true;
             btnUploadImage.Click += BtnUploadImage_Click;
             // 
+            // lstItems
+            // 
+            lstItems.FormattingEnabled = true;
+            lstItems.ItemHeight = 15;
+            lstItems.Location = new Point(886, 300);
+            lstItems.Name = "lstItems";
+            lstItems.Size = new Size(256, 94);
+            lstItems.TabIndex = 16;
+            // 
+            // btnAddReset
+            // 
+            btnAddReset.Location = new Point(1057, 400);
+            btnAddReset.Name = "btnAddReset";
+            btnAddReset.Size = new Size(85, 23);
+            btnAddReset.TabIndex = 17;
+            btnAddReset.Text = "Inventory";
+            btnAddReset.UseVisualStyleBackColor = true;
+            btnAddReset.Click += BtnAddReset_Click;
+            // 
+            // BtnWield
+            // 
+            BtnWield.Location = new Point(974, 400);
+            BtnWield.Name = "BtnWield";
+            BtnWield.Size = new Size(77, 23);
+            BtnWield.TabIndex = 19;
+            BtnWield.Text = "Equip";
+            BtnWield.UseVisualStyleBackColor = true;
+            BtnWield.Click += BtnWield_Click;
+            // 
             // MobEditor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1154, 522);
+            ClientSize = new Size(1154, 507);
+            Controls.Add(BtnWield);
+            Controls.Add(btnAddReset);
+            Controls.Add(lstItems);
             Controls.Add(btnUploadImage);
             Controls.Add(pictureBox1);
             Controls.Add(button5);
@@ -185,5 +220,8 @@
         private Button button5;
         private PictureBox pictureBox1;
         private Button btnUploadImage;
+        private ListBox lstItems;
+        private Button btnAddReset;
+        private Button BtnWield;
     }
 }

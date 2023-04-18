@@ -284,8 +284,9 @@ namespace Legendary.Core.Contracts
         /// </summary>
         /// <param name="mobile">The mobile.</param>
         /// <param name="item">The item.</param>
+        /// <param name="broadcast">If true, will broacast the equip message to the room.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        Task EquipMob(Mobile mobile, Item item, CancellationToken cancellationToken = default);
+        Task EquipMob(Mobile mobile, Item item, bool broadcast, CancellationToken cancellationToken = default);
     }
 }

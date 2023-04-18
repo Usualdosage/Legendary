@@ -284,51 +284,79 @@ namespace Legendary.AreaBuilder
 
         private void RenumberRoomsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Random random = new();
-            int areaId = random.Next(1000, 100000);
-            MainForm.AreaId = areaId;
-
-            var area = (Area)this.pgArea.SelectedObject;
-            var lastAreaId = area.AreaId;
-            area.AreaId = areaId;
-
-            area.Rooms = new List<Room>();
-
-            long panelIndex = areaId;
-
-            var offset = area.AreaId - lastAreaId;
-
-            foreach (var control in this.tableLayoutPanel1.Controls)
+            if (MessageBox.Show("WARNING: Renumbering rooms is a destructive operation. Are you sure you wish to continue") == DialogResult.OK)
             {
-                var panel = (Panel)control;
+                Random random = new();
+                int areaId = random.Next(1000, 100000);
+                MainForm.AreaId = areaId;
 
-                panel.Tag = panelIndex++;
+                var area = (Area)this.pgArea.SelectedObject;
+                var lastAreaId = area.AreaId;
+                area.AreaId = areaId;
 
-                if (panel.Controls.Count > 0 && panel.Controls[0] is RoomContainer container && container.SelectedRoom != null)
+                area.Rooms = new List<Room>();
+
+                int panelIndex = areaId;
+
+                var offset = area.AreaId - lastAreaId;
+
+                foreach (var control in this.tableLayoutPanel1.Controls)
                 {
-                    if (panel.Tag is int i)
+                    var panel = (Panel)control;
+
+                    panel.Tag = panelIndex++;
+
+                    if (panel.Controls.Count > 0 && panel.Controls[0] is RoomContainer container && container.SelectedRoom != null)
                     {
-                        var newRoomId = i;
+                        if (panel.Tag is int i)
+                        {
+                            var newRoomId = i;
 
-                        container.SelectedRoom.AreaId = areaId;
-                        container.SelectedRoom.RoomId = newRoomId;
+                            container.SelectedRoom.AreaId = areaId;
+                            container.SelectedRoom.RoomId = newRoomId;
 
-                        area.Rooms.Add(container.SelectedRoom);
+                            container.UpdateControl();
+
+                            area.Rooms.Add(container.SelectedRoom);
+                        }
                     }
                 }
-            }
 
-            // Fix all the exits
-            foreach (var room in area.Rooms)
-            {
-                foreach (var exit in room.Exits)
+                // Fix all the exits
+                foreach (var room in area.Rooms)
                 {
-                    if (exit.ToArea == lastAreaId)
+                    foreach (var exit in room.Exits)
                     {
-                        exit.ToArea = areaId;
-                        exit.ToRoom += offset;
+                        if (exit.ToArea == lastAreaId)
+                        {
+                            exit.ToArea = areaId;
+                            exit.ToRoom += offset;
+                        }
                     }
                 }
+
+                // Refresh all the room numbers
+                foreach (var control in this.tableLayoutPanel1.Controls)
+                {
+                    var panel = (Panel)control;
+
+                    if (panel.Controls.Count > 0 && panel.Controls[0] is RoomContainer container && container.SelectedRoom != null)
+                    {
+                        container.UpdateControl();
+                    }
+                }
+
+                this.pgArea.SelectedObject = area;
+
+                // Delete the last area
+                this.mongo.Areas.DeleteOne(a => a.AreaId == lastAreaId);
+
+                this.isNew = true;
+
+                // Save the updated area
+                this.SaveArea();
+
+                this.toolStripStatusLabel1.Text = "Area and rooms renumbered. New area saved and prior one deleted.";
             }
         }
 
@@ -1026,6 +1054,8 @@ namespace Legendary.AreaBuilder
         {
             if (this.pgArea.SelectedObject is Area area && this.pgRoom.SelectedObject is Room room)
             {
+                this.toolStripStatusLabel1.Text = "Loading resets...";
+                this.Cursor = Cursors.WaitCursor;
                 var frm = new RoomResetsForm(this.mongo, area, room);
                 frm.ShowDialog();
             }

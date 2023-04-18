@@ -11,6 +11,7 @@ namespace Legendary.Core.Models
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text.RegularExpressions;
     using Legendary.Core.Contracts;
@@ -48,11 +49,13 @@ namespace Legendary.Core.Models
         [BsonId]
         [BsonRepresentation(BsonType.Int64)]
         [BsonElement("_id")]
+        [Browsable(false)]
         public long CharacterId { get; set; }
 
         /// <summary>
         /// Gets the unique ID of this character for generating a unique character ID.
         /// </summary>
+        [Browsable(false)]
         public Guid UniqueId { get => Guid.NewGuid(); }
 
         /// <summary>
@@ -78,6 +81,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the player's age.
         /// </summary>
+        [Browsable(false)]
         public virtual int Age => this.defaultAge + (this.Metrics.GameHoursPlayed / 8760);
 
         /// <summary>
@@ -88,6 +92,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the experience.
         /// </summary>
+        [Browsable(false)]
         public long Experience { get; set; } = 0;
 
         /// <summary>
@@ -98,16 +103,19 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's divine favor.
         /// </summary>
+        [Browsable(false)]
         public int DivineFavor { get; set; }
 
         /// <summary>
         /// Gets or sets the most recent image the player observed.
         /// </summary>
+        [Browsable(false)]
         public string? LastImage { get; set; }
 
         /// <summary>
         /// Gets or sets the password (hash).
         /// </summary>
+        [Browsable(false)]
         public string? Password { get; set; }
 
         /// <summary>
@@ -123,41 +131,49 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the language the character is currently speaking.
         /// </summary>
+        [Browsable(false)]
         public string Speaking { get; set; } = "Common";
 
         /// <summary>
         /// Gets or sets the location.
         /// </summary>
+        [Browsable(false)]
         public KeyValuePair<long, long> Location { get; set; } = new KeyValuePair<long, long>(1, 1);
 
         /// <summary>
         /// Gets or sets a value indicating whether this is an NPC.
         /// </summary>
+        [Browsable(false)]
         public virtual bool IsNPC { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the number of practice sessions.
         /// </summary>
+        [Browsable(false)]
         public int Practices { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets number of training sessions.
         /// </summary>
+        [Browsable(false)]
         public int Trains { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets number of learning sessions.
         /// </summary>
+        [Browsable(false)]
         public int Learns { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the character flags.
         /// </summary>
+        [Browsable(false)]
         public IList<CharacterFlags> CharacterFlags { get; set; } = new List<CharacterFlags>();
 
         /// <summary>
         /// Gets or sets the chararacter the player last spoke to.
         /// </summary>
+        [Browsable(false)]
         public string? LastComm { get; set; }
 
         /// <summary>
@@ -168,16 +184,19 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the mana.
         /// </summary>
+        [Browsable(false)]
         public virtual MaxCurrent Mana { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
         /// Gets or sets the movement.
         /// </summary>
+        [Browsable(false)]
         public virtual MaxCurrent Movement { get; set; } = new MaxCurrent(0, 0);
 
         /// <summary>
         /// Gets or sets the carry weight of the player.
         /// </summary>
+        [Browsable(false)]
         public MaxCurrent CarryWeight
         {
             get
@@ -204,16 +223,19 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's hunger counter.
         /// </summary>
+        [Browsable(false)]
         public MaxCurrent Hunger { get; set; } = new MaxCurrent(96, 0);
 
         /// <summary>
         /// Gets or sets the player's thirst counter.
         /// </summary>
+        [Browsable(false)]
         public MaxCurrent Thirst { get; set; } = new MaxCurrent(72, 0);
 
         /// <summary>
         /// Gets or sets the character's home room (recall point).
         /// </summary>
+        [Browsable(false)]
         public KeyValuePair<long, long> Home { get; set; } = new KeyValuePair<long, long>(1, 1);
 
         /// <summary>
@@ -378,6 +400,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the pronoun associated with the character's gender.
         /// </summary>
+        [Browsable(false)]
         public string Pronoun
         {
             get
@@ -405,6 +428,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the pronoun associated with the character's gender.
         /// </summary>
+        [Browsable(false)]
         public string PronounSubjective
         {
             get
@@ -437,16 +461,19 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's skills.
         /// </summary>
+        [Browsable(false)]
         public IList<SkillProficiency> Skills { get; set; } = new List<SkillProficiency>();
 
         /// <summary>
         /// Gets or sets the player's spells.
         /// </summary>
+        [Browsable(false)]
         public IList<SpellProficiency> Spells { get; set; } = new List<SpellProficiency>();
 
         /// <summary>
         /// Gets or sets the player's metrics.
         /// </summary>
+        [Browsable(false)]
         public Metrics Metrics { get; set; } = new Metrics();
 
         /// <summary>
@@ -461,16 +488,19 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's followers.
         /// </summary>
+        [Browsable(false)]
         public IList<long> Followers { get; set; } = new List<long>();
 
         /// <summary>
         /// Gets or sets the character the player is following.
         /// </summary>
+        [Browsable(false)]
         public long? Following { get; set; }
 
         /// <summary>
         /// Gets or sets the skills or spells the player is affected by, and the remaining duration.
         /// </summary>
+        [Browsable(false)]
         public List<Effect> AffectedBy { get; set; } = new List<Effect>();
 
         /// <summary>
@@ -556,6 +586,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the character this character (or mob) is currently fighting.
         /// </summary>
+        [Browsable(false)]
         public long? Fighting { get; set; }
 
         /// <summary>
@@ -566,11 +597,13 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets or sets the player's rewards.
         /// </summary>
+        [Browsable(false)]
         public List<Award> Awards { get; set; } = new List<Award>();
 
         /// <summary>
         /// Gets or sets the player's group.
         /// </summary>
+        [Browsable(false)]
         public long? GroupId { get; set; }
 
         /// <summary>
@@ -581,6 +614,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the race abbreviation.
         /// </summary>
+        [Browsable(false)]
         public string RaceAbbrev
         {
             get => this.Race.ToString()[..3];

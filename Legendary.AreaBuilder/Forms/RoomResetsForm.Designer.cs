@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RoomResetsForm));
             groupBox1 = new GroupBox();
             lstMobiles = new ListBox();
             groupBox2 = new GroupBox();
@@ -36,9 +38,13 @@
             btnAddItem = new Button();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
+            groupBox3 = new GroupBox();
+            ListViewCurrent = new ListView();
+            imageList1 = new ImageList(components);
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             statusStrip1.SuspendLayout();
+            groupBox3.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -104,7 +110,7 @@
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 468);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(714, 22);
+            statusStrip1.Size = new Size(1072, 22);
             statusStrip1.TabIndex = 4;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -114,11 +120,40 @@
             toolStripStatusLabel1.Size = new Size(42, 17);
             toolStripStatusLabel1.Text = "Ready.";
             // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(ListViewCurrent);
+            groupBox3.Location = new Point(715, 12);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(335, 402);
+            groupBox3.TabIndex = 2;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Current";
+            // 
+            // ListViewCurrent
+            // 
+            ListViewCurrent.LargeImageList = imageList1;
+            ListViewCurrent.Location = new Point(15, 22);
+            ListViewCurrent.Name = "ListViewCurrent";
+            ListViewCurrent.Size = new Size(303, 364);
+            ListViewCurrent.TabIndex = 0;
+            ListViewCurrent.UseCompatibleStateImageBehavior = false;
+            ListViewCurrent.KeyDown += ListViewCurrent_KeyDown;
+            // 
+            // imageList1
+            // 
+            imageList1.ColorDepth = ColorDepth.Depth8Bit;
+            imageList1.ImageStream = (ImageListStreamer)resources.GetObject("imageList1.ImageStream");
+            imageList1.TransparentColor = Color.Transparent;
+            imageList1.Images.SetKeyName(0, "mobile.png");
+            imageList1.Images.SetKeyName(1, "object.png");
+            // 
             // RoomResetsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(714, 490);
+            ClientSize = new Size(1072, 490);
+            Controls.Add(groupBox3);
             Controls.Add(statusStrip1);
             Controls.Add(btnAddItem);
             Controls.Add(btnAddMobile);
@@ -133,6 +168,7 @@
             groupBox2.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            groupBox3.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -147,5 +183,8 @@
         private ListBox lstItems;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
+        private GroupBox groupBox3;
+        private ListView ListViewCurrent;
+        private ImageList imageList1;
     }
 }

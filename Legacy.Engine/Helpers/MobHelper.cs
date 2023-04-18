@@ -11,15 +11,13 @@ namespace Legendary.Engine.Helpers
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection.PortableExecutable;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Legendary.Core;
     using Legendary.Core.Contracts;
     using Legendary.Core.Models;
     using Legendary.Core.Types;
     using Legendary.Engine.Extensions;
-    using Legendary.Engine.Models.Skills;
-    using Legendary.Engine.Models.Spells;
 
     /// <summary>
     /// Helper for mobs.
@@ -148,6 +146,19 @@ namespace Legendary.Engine.Helpers
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Send a "say" to the room from a mobile.
+        /// </summary>
+        /// <param name="actor">The mobile.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="communicator">The communicator.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public static async Task SayToRoom(Character actor, string message, ICommunicator communicator, CancellationToken cancellationToken)
+        {
+            await communicator.SendToRoom(actor, actor.Location, message, cancellationToken);
         }
     }
 }

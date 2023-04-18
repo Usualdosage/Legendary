@@ -11,21 +11,29 @@ namespace Legendary.Engine.Processors
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Legendary.Core.Contracts;
     using Legendary.Core.Models;
+    using Legendary.Engine.Contracts;
 
     /// <summary>
     /// Handles processing of awards (quests) based on mobile output.
     /// </summary>
     public class QuestProcessor
     {
+        private readonly ICommunicator communicator;
+        private readonly ILogger logger;
         private readonly AwardProcessor awardProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuestProcessor"/> class.
         /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="communicator">The communicator.</param>
         /// <param name="awardProcessor">The award processor.</param>
-        public QuestProcessor(AwardProcessor awardProcessor)
+        public QuestProcessor(ILogger logger, ICommunicator communicator, AwardProcessor awardProcessor)
         {
+            this.logger = logger;
+            this.communicator = communicator;
             this.awardProcessor = awardProcessor;
         }
 
@@ -61,6 +69,7 @@ namespace Legendary.Engine.Processors
                     {
                         if (!string.IsNullOrWhiteSpace(mobile.XImage))
                         {
+                            this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
                             mobile.XActive = true;
                             await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                         }
@@ -78,6 +87,7 @@ namespace Legendary.Engine.Processors
                 {
                     if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
                     {
+                        this.logger.Info($"{actor.FirstName} has deactivated {mobile.FirstName}.", this.communicator);
                         mobile.XActive = false;
                     }
                     else
@@ -85,10 +95,11 @@ namespace Legendary.Engine.Processors
                         mobile.XActive = false;
                     }
                 }
-                else if (message.Contains("CASSANOVA-DEACTIVATE"))
+                else if (message.Contains("cassanova-deactivate"))
                 {
                     if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
                     {
+                        this.logger.Info($"{actor.FirstName} has deactivated {mobile.FirstName}.", this.communicator);
                         mobile.XActive = false;
                     }
                     else
@@ -96,10 +107,11 @@ namespace Legendary.Engine.Processors
                         mobile.XActive = false;
                     }
                 }
-                else if (message.Contains("CASSANOVA-ACTIVATE"))
+                else if (message.Contains("cassanova-activate"))
                 {
                     if (!string.IsNullOrWhiteSpace(mobile.XImage))
                     {
+                        this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
                         mobile.XActive = true;
                         await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                     }
