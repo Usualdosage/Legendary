@@ -43,7 +43,6 @@ namespace Legendary.Tests.ProcessorTests
 
             // var messages = LanguageProcessor.CleanOutput(aiResponseMessage, persona, mobile);
             // TODO: Fix this.
-
             List<string> messages = new ();
 
             Assert.NotNull(messages);

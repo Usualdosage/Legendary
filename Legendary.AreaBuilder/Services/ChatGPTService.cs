@@ -53,7 +53,7 @@ namespace Legendary.AreaBuilder.Services
         /// Initializes a new instance of the <see cref="ChatGPTService"/> class.
         /// </summary>
         /// <param name="apiKey">The API key.</param>
-        public ChatGPTService(string apiKey = "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")
+        public ChatGPTService(string apiKey = "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")
         {
             this.apiKey = apiKey;
         }
@@ -103,7 +103,6 @@ namespace Legendary.AreaBuilder.Services
                     Console.WriteLine($"CANCELED: Did you update the subscription info?");
                 }
             }
-
         }
 
         /// <summary>
@@ -132,7 +131,7 @@ namespace Legendary.AreaBuilder.Services
                 new
                 {
                     role = "assistant",
-                    content = prompt,
+                    content = prompt.ToLower(),
                 },
             };
 
@@ -140,7 +139,7 @@ namespace Legendary.AreaBuilder.Services
             var request = new
             {
                 messages,
-                model = "gpt-3.5-turbo",
+                model = "gpt-4",
                 max_tokens = 1024,
             };
 
@@ -179,7 +178,6 @@ namespace Legendary.AreaBuilder.Services
                         {
                             // HOLY CRAP THIS WORKS
                             // this.TextToSpeech(messageObject.content);
-
                             return Markup.Escape(messageObject.content);
                         }
                         else
@@ -217,7 +215,7 @@ namespace Legendary.AreaBuilder.Services
             var request = new
             {
                 messages = this.trainingData,
-                model = "gpt-3.5-turbo",
+                model = "gpt-4",
                 max_tokens = 1024,
             };
 
@@ -274,13 +272,18 @@ namespace Legendary.AreaBuilder.Services
             }
         }
 
+        /// <summary>
+        /// Generates an AI image using DALL-E from a prompt.
+        /// </summary>
+        /// <param name="prompt">The prompt.</param>
+        /// <returns>URL.</returns>
         public string? Image(string prompt)
         {
             try
             {
                 var request = new
                 {
-                    prompt,
+                    prompt = FormatPrompt(prompt),
                     n = 1,
                     size = "512x512",
                 };
@@ -308,12 +311,17 @@ namespace Legendary.AreaBuilder.Services
 
                 return responseObject?.data[0]?.url;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
                 throw;
             }
         }
 
+        /// <summary>
+        /// Gets a random TTS voice.
+        /// </summary>
+        /// <param name="gender">The gender.</param>
+        /// <returns>String.</returns>
         public string GetRandomVoice(SynthesisVoiceGender gender)
         {
             Random rand = new ();
@@ -325,11 +333,16 @@ namespace Legendary.AreaBuilder.Services
             };
         }
 
+        /// <summary>
+        /// Returns 8 images from a prompt using AI.
+        /// </summary>
+        /// <param name="prompt">The prompt.</param>
+        /// <returns>List of URLs.</returns>
         public List<string>? Images(string prompt)
         {
             var request = new
             {
-                prompt,
+                prompt = FormatPrompt(prompt),
                 n = 8,
                 size = "512x512",
             };
@@ -353,6 +366,10 @@ namespace Legendary.AreaBuilder.Services
             return responseObject?.data?.Select(d => d.url).ToList();
         }
 
+        /// <summary>
+        /// Trains the AI on a given persona.
+        /// </summary>
+        /// <param name="persona">The persona.</param>
         public void Train(Persona persona)
         {
             var trainingInformation = new List<string>
@@ -386,6 +403,35 @@ namespace Legendary.AreaBuilder.Services
             this.trainingData = messages;
 
             this.modelTrained = true;
+        }
+
+        private static string FormatPrompt(string prompt)
+        {
+            if (prompt.Length < 400)
+            {
+                return prompt;
+            }
+            else
+            {
+                var promptParts = prompt.Split('.');
+
+                StringBuilder sbFormatted = new StringBuilder();
+
+                foreach (var part in promptParts)
+                {
+                    var max = sbFormatted.Length + part.Length;
+                    if (max < 400)
+                    {
+                        sbFormatted.Append($"{part} ");
+                    }
+                    else
+                    {
+                        return sbFormatted.ToString();
+                    }
+                }
+
+                return sbFormatted.ToString();
+            }
         }
     }
 }

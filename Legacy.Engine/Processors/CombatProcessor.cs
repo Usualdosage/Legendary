@@ -63,8 +63,8 @@ namespace Legendary.Engine.Processors
             this.messageProcessor = messageProcessor;
             this.dataService = dataService;
 
-            awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
-            actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this, messageProcessor, dataService);
+            this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
+            this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this, messageProcessor, dataService);
         }
 
         /// <summary>
@@ -131,6 +131,26 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
+        /// Absolutely determines if a player is dead.
+        /// </summary>
+        /// <param name="character">The character or mob.</param>
+        /// <returns>True, if dead.</returns>
+        public static bool IsDead(Character character)
+        {
+            if (character.CharacterFlags != null && character.CharacterFlags.Contains(CharacterFlags.Ghost))
+            {
+                return true;
+            }
+
+            if (character.Health.Current <= 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Stops combat between two characters.
         /// </summary>
         /// <param name="victim">The victim.</param>
@@ -156,7 +176,7 @@ namespace Legendary.Engine.Processors
 
                         if (remainingMembers.Count > 0)
                         {
-                            var nextOnDeck = random.Next(0, remainingMembers.Count);
+                            var nextOnDeck = this.random.Next(0, remainingMembers.Count);
 
                             // Retarget the attacks of the killer and their group.
                             var killerGroup = GroupHelper.GetAllGroupMembers(killer.CharacterId);
@@ -165,7 +185,7 @@ namespace Legendary.Engine.Processors
                             {
                                 foreach (var attacker in killerGroup)
                                 {
-                                    var charInGroup = communicator.ResolveCharacter(attacker);
+                                    var charInGroup = this.communicator.ResolveCharacter(attacker);
 
                                     if (charInGroup != null)
                                     {
@@ -185,7 +205,7 @@ namespace Legendary.Engine.Processors
                             {
                                 foreach (var attacker in killerGroup)
                                 {
-                                    var charInGroup = communicator.ResolveCharacter(attacker);
+                                    var charInGroup = this.communicator.ResolveCharacter(attacker);
 
                                     if (charInGroup != null)
                                     {
@@ -228,7 +248,7 @@ namespace Legendary.Engine.Processors
                 {
                     var userData = Communicator.Users.FirstOrDefault(u => u.Value.Character.CharacterId == target.CharacterId);
                     var commandArgs = new CommandArgs("flee", null, null, 0);
-                    actionProcessor.DoAction(userData.Value, commandArgs).Wait();
+                    this.actionProcessor.DoAction(userData.Value, commandArgs).Wait();
                 }
             }
 
@@ -247,18 +267,18 @@ namespace Legendary.Engine.Processors
             if (!actor.IsNPC && !target.IsNPC && actor.CharacterFlags.Contains(CharacterFlags.Ghost))
             {
                 // PVP, where actor is a ghost.
-                await communicator.SendToPlayer(actor, $"You can't attack {target.FirstName} while you're a ghost.", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"You can't attack {target.FirstName} while you're a ghost.", cancellationToken);
             }
             else if (!target.IsNPC && target.CharacterFlags.Contains(CharacterFlags.Ghost))
             {
                 // PVP, where target is a ghost.
-                await communicator.SendToPlayer(actor, $"You can't attack {target.FirstName} because they are a ghost.", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"You can't attack {target.FirstName} because they are a ghost.", cancellationToken);
             }
             else
             {
                 if (!target.IsNPC)
                 {
-                    await communicator.SendToPlayer(target, $"[NOTIFICATION]|../img/notifications/attack.png|{actor.FirstName} has attacked you!", cancellationToken);
+                    await this.communicator.SendToPlayer(target, $"[NOTIFICATION]|../img/notifications/attack.png|{actor.FirstName} has attacked you!", cancellationToken);
                 }
 
                 // Start the fight between the two characters.
@@ -279,7 +299,7 @@ namespace Legendary.Engine.Processors
 
                         foreach (var other in otherMembers)
                         {
-                            var member = communicator.ResolveCharacter(other);
+                            var member = this.communicator.ResolveCharacter(other);
 
                             if (member != null)
                             {
@@ -307,7 +327,7 @@ namespace Legendary.Engine.Processors
 
                         foreach (var other in otherMembers)
                         {
-                            var member = communicator.ResolveCharacter(other);
+                            var member = this.communicator.ResolveCharacter(other);
 
                             if (member != null)
                             {
@@ -341,60 +361,60 @@ namespace Legendary.Engine.Processors
                 {
                     default:
                         {
-                            return new HandToHand(communicator, random, world, logger, this);
+                            return new HandToHand(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Axe:
                     case WeaponType.Sword:
                         {
-                            return new EdgedWeapons(communicator, random, world, logger, this);
+                            return new EdgedWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Spear:
                     case WeaponType.Dagger:
                         {
-                            return new PiercingWeapons(communicator, random, world, logger, this);
+                            return new PiercingWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Mace:
                     case WeaponType.Club:
                         {
-                            return new BluntWeapons(communicator, random, world, logger, this);
+                            return new BluntWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Flail:
                         {
-                            return new Flails(communicator, random, world, logger, this);
+                            return new Flails(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Whip:
                         {
-                            return new Whips(communicator, random, world, logger, this);
+                            return new Whips(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Polearm:
                         {
-                            return new Polearms(communicator, random, world, logger, this);
+                            return new Polearms(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Staff:
                         {
-                            return new Staffs(communicator, random, world, logger, this);
+                            return new Staffs(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.Exotic:
                         {
-                            return new Exotics(communicator, random, world, logger, this);
+                            return new Exotics(this.communicator, this.random, this.world, this.logger, this);
                         }
 
                     case WeaponType.TwoHanded:
                         {
-                            return new TwoHandedWeapons(communicator, random, world, logger, this);
+                            return new TwoHandedWeapons(this.communicator, this.random, this.world, this.logger, this);
                         }
                 }
             }
 
-            return new HandToHand(communicator, random, world, logger, this);
+            return new HandToHand(this.communicator, this.random, this.world, this.logger, this);
         }
 
         /// <summary>
@@ -411,13 +431,13 @@ namespace Legendary.Engine.Processors
             if (!PlayerHelper.IsInPK(actor, target))
             {
                 // Safety valve. Can't do damage to any player not in PK range.
-                await communicator.SendToPlayer(actor, $"{target.FirstName} is protected from you by the Gods.", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"{target.FirstName} is protected from you by the Gods.", cancellationToken);
                 return false;
             }
             else
             {
                 // Get the action the character is using to fight.
-                IAction combatAction = action ?? GetCombatAction(actor);
+                IAction combatAction = action ?? this.GetCombatAction(actor);
 
                 // Assume no block unless otherwise checked.
                 bool blocked = false;
@@ -434,25 +454,25 @@ namespace Legendary.Engine.Processors
                         if (await combatAction.IsSuccess(proficiency.Proficiency, cancellationToken))
                         {
                             // This should be a hit, so check ability to dodge/parry/evade.
-                            blocked = await CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+                            blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
 
                             // This was a hit, check armor block.
                             if (!blocked)
                             {
-                                blocked = await CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                                blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
                             }
 
-                            await communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
-                            await communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
+                            await this.communicator.PlaySound(actor, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
+                            await this.communicator.PlaySound(target, AudioChannel.Martial, GetSoundEffect(combatAction.DamageNoun), cancellationToken);
                             await combatAction.PreAction(actor, target, null, cancellationToken);
                             await combatAction.Act(actor, target, null, cancellationToken);
                         }
                         else
                         {
                             // This was a total martial combat miss. Show the miss and exit.
-                            await communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                            await communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                            await communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                         }
 
                         // Run post action to check if the skill improved.
@@ -461,27 +481,27 @@ namespace Legendary.Engine.Processors
                     else
                     {
                         // This was a total miss because the character is not proficient. Don't allow an increase.
-                        await communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
-                        await communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
-                        await communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                        await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                        await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses you.", cancellationToken);
+                        await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
                     }
                 }
                 else
                 {
                     // This is a spell that automatically hits, but certain spells can be evaded.
-                    blocked = await CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
+                    blocked = await this.CheckDefensiveSkills(actor, target, combatAction, cancellationToken);
 
                     // Check if the armor takes the hit.
                     if (!blocked)
                     {
-                        blocked = await CheckArmorBlock(actor, target, combatAction, cancellationToken);
+                        blocked = await this.CheckArmorBlock(actor, target, combatAction, cancellationToken);
                     }
                 }
 
                 if (!blocked)
                 {
                     // Calculate damage FROM character TO target.
-                    var damage = CalculateDamage(actor, target, combatAction);
+                    var damage = this.CalculateDamage(actor, target, combatAction);
 
                     // Double damage for critical strikes.
                     if (isCritical)
@@ -490,18 +510,18 @@ namespace Legendary.Engine.Processors
 
                         if (criticalStrikes != null)
                         {
-                            var result = random.Next(1, 101);
+                            var result = this.random.Next(1, 101);
 
                             if (result < criticalStrikes.Proficiency && result != 1)
                             {
                                 damage *= 2;
-                                await communicator.SendToPlayer(actor, $"You land a CRITICAL HIT on {target.FirstName}!", cancellationToken);
-                                await communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on you!", cancellationToken);
-                                await communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                                await this.communicator.SendToPlayer(actor, $"You land a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on you!", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on {target.FirstName}!", cancellationToken);
                             }
                             else
                             {
-                                await communicator.SendToPlayer(actor, $"You nearly land a critical strike on {target.FirstName}, but miss.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor, $"You nearly land a critical strike on {target.FirstName}, but miss.", cancellationToken);
                             }
                         }
                     }
@@ -509,31 +529,31 @@ namespace Legendary.Engine.Processors
                     // Calculate the damage verb.
                     var damFromVerb = CalculateDamageVerb(damage);
 
-                    await communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
-                    await communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
-                    await communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
+                    await this.communicator.SendToPlayer(actor, $"Your {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
+                    await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} you!", cancellationToken);
+                    await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()}'s {combatAction.DamageNoun} {damFromVerb} {target.FirstName}!", cancellationToken);
 
-                    bool isDead = ApplyDamage(target, damage);
+                    bool isDead = this.ApplyDamage(target, damage);
 
                     if (isDead)
                     {
                         // Target is dead.
-                        StopFighting(target, actor);
+                        this.StopFighting(target, actor);
 
                         if (actor.IsNPC && target.IsNPC)
                         {
                             // Mob killed mob.
-                            await KillMobile(target, actor);
+                            await this.KillMobile(target, actor, cancellationToken);
                         }
                         else if (target.IsNPC)
                         {
                             // Player killed mobile.
-                            await KillMobile(target, actor);
+                            await this.KillMobile(target, actor, cancellationToken);
                         }
                         else
                         {
                             // Player killed player.
-                            await KillPlayer(target, actor, cancellationToken);
+                            await this.KillPlayer(target, actor, cancellationToken);
                         }
 
                         if (GroupHelper.IsInGroup(actor.CharacterId))
@@ -541,23 +561,23 @@ namespace Legendary.Engine.Processors
                             var average = GroupHelper.GetAverageLevelOfGroup(actor.CharacterId);
 
                             // Calculate the experience.
-                            var experience = CalculateExperience(actor, target, average);
+                            var experience = this.CalculateExperience(actor, target, average);
 
                             // Apply experience across the group.
-                            await ApplyExperienceToGroup(actor, experience, cancellationToken);
+                            await this.ApplyExperienceToGroup(actor, experience, cancellationToken);
                         }
                         else
                         {
                             // Add the experience to the player.
-                            var experience = CalculateExperience(actor, target, null);
+                            var experience = this.CalculateExperience(actor, target, null);
 
-                            await communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
                             actor.Experience += experience;
 
                             // See if the player advanced a level.
                             if (experience > 0)
                             {
-                                await communicator.CheckLevelAdvance(actor, cancellationToken);
+                                await this.communicator.CheckLevelAdvance(actor, cancellationToken);
                             }
                         }
 
@@ -581,29 +601,29 @@ namespace Legendary.Engine.Processors
             bool dead = false;
 
             // First attack
-            var primaryAction = GetCombatAction(character);
+            var primaryAction = this.GetCombatAction(character);
             SkillProficiency? primaryWeapon = character.GetSkillProficiency(primaryAction.Name);
 
             try
             {
                 if (primaryWeapon != null && primaryWeapon.Proficiency > 1)
                 {
-                    var result = random.Next(1, 101);
-                    dead = await DoDamage(character, target, primaryAction, result >= 100, cancellationToken);
+                    var result = this.random.Next(1, 101);
+                    dead = await this.DoDamage(character, target, primaryAction, result >= 100, cancellationToken);
                 }
                 else
                 {
-                    await communicator.SendToPlayer(character, $"Your {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                    await this.communicator.SendToPlayer(character, $"Your {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
 
-                    if (random.Next(1, 100) < 20)
+                    if (this.random.Next(1, 100) < 20)
                     {
-                        await communicator.SendToPlayer(character, $"You're not likely to do much to {target.FirstName} without a weapon or training.", cancellationToken);
+                        await this.communicator.SendToPlayer(character, $"You're not likely to do much to {target.FirstName} without a weapon or training.", cancellationToken);
                     }
                 }
             }
             catch (Exception exc)
             {
-                logger.Error($"ExecuteAttacks->First: {exc}", communicator);
+                this.logger.Error($"ExecuteAttacks->First: {exc}", this.communicator);
                 throw;
             }
 
@@ -616,20 +636,20 @@ namespace Legendary.Engine.Processors
 
                     if (secondAttack != null && secondAttack.Proficiency > 1)
                     {
-                        var result = random.Next(1, 101);
+                        var result = this.random.Next(1, 101);
 
                         if (result < secondAttack.Proficiency && result != 1)
                         {
-                            dead = await DoDamage(character, target, GetCombatAction(character), result >= 100, cancellationToken);
+                            dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
                         }
 
-                        SecondAttack skill = new(communicator, random, world, logger, this);
+                        SecondAttack skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(character, cancellationToken);
                     }
                 }
                 catch (Exception exc)
                 {
-                    logger.Error($"ExecuteAttacks->Second: {exc}", communicator);
+                    this.logger.Error($"ExecuteAttacks->Second: {exc}", this.communicator);
                     throw;
                 }
             }
@@ -643,19 +663,19 @@ namespace Legendary.Engine.Processors
 
                     if (thirdAttack != null && thirdAttack.Proficiency > 1)
                     {
-                        var result = random.Next(1, 101);
+                        var result = this.random.Next(1, 101);
                         if (result < thirdAttack.Proficiency && result != 1)
                         {
-                            dead = await DoDamage(character, target, GetCombatAction(character), result >= 100, cancellationToken);
+                            dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
                         }
 
-                        ThirdAttack skill = new(communicator, random, world, logger, this);
+                        ThirdAttack skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(character, cancellationToken);
                     }
                 }
                 catch (Exception exc)
                 {
-                    logger.Error($"ExecuteAttacks->Third: {exc}", communicator);
+                    this.logger.Error($"ExecuteAttacks->Third: {exc}", this.communicator);
                     throw;
                 }
             }
@@ -669,42 +689,22 @@ namespace Legendary.Engine.Processors
 
                     if (fourthAttack != null && fourthAttack.Proficiency > 1)
                     {
-                        var result = random.Next(1, 101);
+                        var result = this.random.Next(1, 101);
                         if (result < fourthAttack.Proficiency && result != 1)
                         {
-                            dead = await DoDamage(character, target, GetCombatAction(character), result >= 100, cancellationToken);
+                            dead = await this.DoDamage(character, target, this.GetCombatAction(character), result >= 100, cancellationToken);
                         }
 
-                        FourthAttack skill = new(communicator, random, world, logger, this);
+                        FourthAttack skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(character, cancellationToken);
                     }
                 }
                 catch (Exception exc)
                 {
-                    logger.Error($"ExecuteAttacks->Fourth: {exc}", communicator);
+                    this.logger.Error($"ExecuteAttacks->Fourth: {exc}", this.communicator);
                     throw;
                 }
             }
-        }
-
-        /// <summary>
-        /// Absolutely determines if a player is dead.
-        /// </summary>
-        /// <param name="character">The character or mob.</param>
-        /// <returns>True, if dead.</returns>
-        public bool IsDead(Character character)
-        {
-            if (character.CharacterFlags != null && character.CharacterFlags.Contains(CharacterFlags.Ghost))
-            {
-                return true;
-            }
-
-            if (character.Health.Current <= 0)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -719,7 +719,7 @@ namespace Legendary.Engine.Processors
                 foreach (var user in Communicator.Users)
                 {
                     var character = user.Value.Character;
-                    var target = communicator.ResolveFightingCharacter(character);
+                    var target = this.communicator.ResolveFightingCharacter(character);
 
                     if (IsDead(character))
                     {
@@ -735,7 +735,7 @@ namespace Legendary.Engine.Processors
                     {
                         try
                         {
-                            await ExecuteAttacks(character, target, cancellationToken);
+                            await this.ExecuteAttacks(character, target, cancellationToken);
 
                             // If the target is an NPC, do damage from it to the player (unless it's dead). Otherwise, for PvP, the loop will just pick up the next fighter.
                             if (target.CharacterFlags.Contains(CharacterFlags.Fighting) && target.IsNPC)
@@ -743,7 +743,7 @@ namespace Legendary.Engine.Processors
                                 // NPC should only engage the player who is fighting it (e.g. the tank, not the entire group).
                                 if (target.Fighting != null && target.Fighting == character.CharacterId)
                                 {
-                                    await ExecuteAttacks(target, character, cancellationToken);
+                                    await this.ExecuteAttacks(target, character, cancellationToken);
                                 }
                                 else if (target.Fighting == null)
                                 {
@@ -761,17 +761,17 @@ namespace Legendary.Engine.Processors
 
                             if (!string.IsNullOrWhiteSpace(condition))
                             {
-                                await communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
+                                await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
                             }
                         }
                         catch (Exception exc)
                         {
-                            logger.Error($"HandleCombatTick: {exc}", communicator);
+                            this.logger.Error($"HandleCombatTick: {exc}", this.communicator);
                         }
                     }
 
                     // Update the player info.
-                    await communicator.SendGameUpdate(user.Value.Character, null, null, cancellationToken);
+                    await this.communicator.SendGameUpdate(user.Value.Character, null, null, cancellationToken);
                 }
             }
         }
@@ -813,7 +813,7 @@ namespace Legendary.Engine.Processors
             var damage = 0;
             for (var x = 0; x < hitDice; x++)
             {
-                damage += random.Next(1, damDice + 1);
+                damage += this.random.Next(1, damDice + 1);
             }
 
             if (target.IsAffectedBy(EffectName.SANCTUARY))
@@ -821,7 +821,7 @@ namespace Legendary.Engine.Processors
                 // Reduce by half.
                 return (int)((damage + adjust) / 2);
             }
-            else if (DidSave(target, action))
+            else if (this.DidSave(target, action))
             {
                 // Save for half damage.
                 return (int)((damage + adjust) / 2);
@@ -844,13 +844,13 @@ namespace Legendary.Engine.Processors
         {
             if (!averageLevel.HasValue)
             {
-                int baseExperience = target.Level * 5 + random.Next(1, 201);
+                int baseExperience = (target.Level * 5) + this.random.Next(1, 201);
 
                 if (actor.Level <= target.Level)
                 {
                     double levelDiff = target.Level - actor.Level;
                     double experienceResult = baseExperience * Math.Max(1, levelDiff - 2);
-                    var modified = experienceResult * GetModifier(actor, target);
+                    var modified = experienceResult * this.GetModifier(actor, target);
                     return (int)modified;
                 }
                 else
@@ -866,20 +866,20 @@ namespace Legendary.Engine.Processors
                     {
                         double levelModifier = 1d / (actor.Level - target.Level);
                         double experienceResult = baseExperience * levelModifier;
-                        var modified = experienceResult * GetModifier(actor, target);
+                        var modified = experienceResult * this.GetModifier(actor, target);
                         return (int)modified;
                     }
                 }
             }
             else
             {
-                int baseExperience = target.Level * 5 + random.Next(1, 201);
+                int baseExperience = (target.Level * 5) + this.random.Next(1, 201);
 
                 if (averageLevel.Value <= target.Level)
                 {
                     double levelDiff = target.Level - averageLevel.Value;
                     double experienceResult = baseExperience * Math.Max(1, levelDiff - 2);
-                    var modified = experienceResult * GetModifier(actor, target);
+                    var modified = experienceResult * this.GetModifier(actor, target);
                     return (int)modified;
                 }
                 else
@@ -895,7 +895,7 @@ namespace Legendary.Engine.Processors
                     {
                         double levelModifier = 1d / (averageLevel.Value - target.Level);
                         double experienceResult = baseExperience * levelModifier;
-                        var modified = experienceResult * GetModifier(actor, target);
+                        var modified = experienceResult * this.GetModifier(actor, target);
                         return (int)modified;
                     }
                 }
@@ -911,10 +911,10 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         public async Task KillMobile(Character target, Character killer, CancellationToken cancellationToken = default)
         {
-            StopFighting(target, killer);
+            this.StopFighting(target, killer);
 
-            await communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
-            await communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
+            await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
+            await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
 
             killer.Metrics.MobKills += 1;
 
@@ -925,29 +925,29 @@ namespace Legendary.Engine.Processors
                 default:
                     break;
                 case 10:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
                 case 100:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
                 case 500:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
                 case 1000:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
                 case 2000:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
                 case 5000:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
                 case 10000:
-                    await awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
+                    await this.awardProcessor.GrantAward((int)AwardType.CombatProcessor, killer, $"killed {mobKills} creatures", cancellationToken);
                     break;
             }
 
-            var room = communicator.ResolveRoom(killer.Location);
+            var room = this.communicator.ResolveRoom(killer.Location);
 
             if (room != null)
             {
@@ -960,26 +960,26 @@ namespace Legendary.Engine.Processors
                         room.Mobiles.Remove(mobile);
                     }
 
-                    var corpse = GenerateCorpse(killer.Location, target, killer.Level);
+                    var corpse = this.GenerateCorpse(killer.Location, target, killer.Level);
 
                     if (killer.CharacterFlags.Contains(CharacterFlags.Autoloot))
                     {
-                        await actionProcessor.ItemsFromContainer(killer, corpse, cancellationToken);
+                        await this.actionProcessor.ItemsFromContainer(killer, corpse, cancellationToken);
                     }
 
                     if (killer.CharacterFlags.Contains(CharacterFlags.Autosac))
                     {
                         if (corpse != null && corpse.IsPlayerCorpse)
                         {
-                            await communicator.SendToPlayer(killer, $"You can't sacrifice {corpse.Name} to {killer.Deity}.", cancellationToken);
+                            await this.communicator.SendToPlayer(killer, $"You can't sacrifice {corpse.Name} to {killer.Deity}.", cancellationToken);
                         }
                         else if (corpse != null && corpse.IsNPCCorpse)
                         {
-                            actionProcessor.ItemsFromCorpseToRoom(killer, corpse);
+                            this.actionProcessor.ItemsFromCorpseToRoom(killer, corpse);
 
                             killer.DivineFavor += 1;
-                            await communicator.SendToPlayer(killer, $"You sacrifice {corpse.Name} to {killer.Deity} for some divine favor.", cancellationToken);
-                            await communicator.SendToRoom(killer, killer.Location, $"{killer.FirstName.FirstCharToUpper()} sacrifices {corpse.Name} to their deity.", cancellationToken);
+                            await this.communicator.SendToPlayer(killer, $"You sacrifice {corpse.Name} to {killer.Deity} for some divine favor.", cancellationToken);
+                            await this.communicator.SendToRoom(killer, killer.Location, $"{killer.FirstName.FirstCharToUpper()} sacrifices {corpse.Name} to their deity.", cancellationToken);
                             room.Items.Remove(corpse);
                         }
                     }
@@ -998,16 +998,16 @@ namespace Legendary.Engine.Processors
         {
             if (actor != null)
             {
-                StopFighting(actor, killer);
+                this.StopFighting(actor, killer);
 
-                await communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
-                await communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
+                await this.communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
 
-                await communicator.SendToPlayer(actor, $"[NOTIFICATION]|../img/notifications/death.png|{killer.FirstName} has killed you.", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"[NOTIFICATION]|../img/notifications/death.png|{killer.FirstName} has killed you.", cancellationToken);
 
-                await communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName.FirstCharToUpper()} is DEAD!");
+                await this.communicator.SendToRoom(killer.Location, killer, actor, $"{actor.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
 
-                await communicator.PlaySound(actor, AudioChannel.Actor, Sounds.DEATH, cancellationToken);
+                await this.communicator.PlaySound(actor, AudioChannel.Actor, Sounds.DEATH, cancellationToken);
 
                 killer.Metrics.PlayerKills += 1;
 
@@ -1018,54 +1018,54 @@ namespace Legendary.Engine.Processors
                     default:
                         break;
                     case 1:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 5:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 10:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 25:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 50:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 100:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 250:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 500:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 1000:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 2000:
-                        await awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward((int)AwardType.Hunter, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                     case 5000:
-                        await awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
+                        await this.awardProcessor.GrantAward(5, killer, $"killed {playerKills} people", cancellationToken);
                         break;
                 }
 
                 // Make a ghost and add effects
                 actor.CharacterFlags?.AddIfNotExists(CharacterFlags.Ghost);
                 actor.AffectedBy.Add(new Effect() { Name = "Ghost", Duration = 6 });
-                await communicator.SendToPlayer(actor, $"You have been turned into a ghost for a few hours, unless you attack something.", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"You have been turned into a ghost for a few hours, unless you attack something.", cancellationToken);
 
-                var room = communicator.ResolveRoom(killer.Location);
+                var room = this.communicator.ResolveRoom(killer.Location);
                 Item? corpse = null;
 
                 if (room != null)
                 {
-                    logger.Info($"{killer.FirstName.FirstCharToUpper()} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", communicator);
+                    this.logger.Info($"{killer.FirstName.FirstCharToUpper()} has killed {actor.FirstName} in room {room.RoomId}, area {room.AreaId}!", this.communicator);
 
                     // Generate the corpse.
-                    corpse = GenerateCorpse(killer.Location, actor, killer.Level);
+                    corpse = this.GenerateCorpse(killer.Location, actor, killer.Level);
                 }
 
                 // Remove all equipment, currency, and inventory.
@@ -1091,19 +1091,19 @@ namespace Legendary.Engine.Processors
                 {
                     actor.Con.Max -= 1;
                     actor.Con.Current = Math.Min(actor.Con.Current, actor.Con.Max);
-                    await communicator.SendToPlayer(actor, "You feel less healthy.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor, "You feel less healthy.", cancellationToken);
                 }
 
                 if (killer.CharacterFlags.Contains(CharacterFlags.Autoloot))
                 {
-                    await actionProcessor.ItemsFromContainer(killer, corpse, cancellationToken);
+                    await this.actionProcessor.ItemsFromContainer(killer, corpse, cancellationToken);
                 }
 
                 if (killer.CharacterFlags.Contains(CharacterFlags.Autosac))
                 {
                     if (corpse != null && corpse.IsPlayerCorpse)
                     {
-                        await communicator.SendToPlayer(killer, $"You can't sacrifice {corpse.Name} to {killer.Deity}.", cancellationToken);
+                        await this.communicator.SendToPlayer(killer, $"You can't sacrifice {corpse.Name} to {killer.Deity}.", cancellationToken);
                     }
                 }
 
@@ -1111,13 +1111,13 @@ namespace Legendary.Engine.Processors
                 actor.Health.Current = 1;
 
                 // Save changes.
-                await communicator.SaveCharacter(actor);
+                await this.communicator.SaveCharacter(actor);
 
                 // Show player info.
-                await communicator.SendGameUpdate(actor, null, null, cancellationToken);
+                await this.communicator.SendGameUpdate(actor, null, null, cancellationToken);
 
                 // Show the player their new surroundings.
-                await communicator.ShowRoomToPlayer(actor, cancellationToken);
+                await this.communicator.ShowRoomToPlayer(actor, cancellationToken);
             }
         }
 
@@ -1140,17 +1140,17 @@ namespace Legendary.Engine.Processors
             {
                 if (dodge != null)
                 {
-                    dodge.Proficiency = random.Next(1, 10);
+                    dodge.Proficiency = this.random.Next(1, 10);
                 }
 
                 if (parry != null)
                 {
-                    parry.Proficiency = random.Next(1, 10);
+                    parry.Proficiency = this.random.Next(1, 10);
                 }
 
                 if (evasive != null)
                 {
-                    evasive.Proficiency = random.Next(1, 10);
+                    evasive.Proficiency = this.random.Next(1, 10);
                 }
             }
 
@@ -1164,16 +1164,16 @@ namespace Legendary.Engine.Processors
                     if (dodge != null && dodge.Proficiency > 1)
                     {
                         var dodged = false;
-                        var dodgeResult = random.Next(1, 101);
+                        var dodgeResult = this.random.Next(1, 101);
                         if (dodgeResult < dodge.Proficiency)
                         {
-                            await communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} dodges your attack!", cancellationToken);
-                            await communicator.SendToPlayer(target, $"You dodge {actor.FirstName}'s attack!", cancellationToken);
-                            await communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} dodges {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} dodges your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You dodge {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} dodges {actor.FirstName}'s attack!", cancellationToken);
                             dodged = true;
                         }
 
-                        Dodge skill = new(communicator, random, world, logger, this);
+                        Dodge skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return dodged;
@@ -1183,16 +1183,16 @@ namespace Legendary.Engine.Processors
                     if (parry != null && parry.Proficiency > 1 && target.Equipment.Any(e => e.Key == WearLocation.Wielded))
                     {
                         var parried = false;
-                        var parryResult = random.Next(1, 101);
+                        var parryResult = this.random.Next(1, 101);
                         if (parryResult < parry.Proficiency)
                         {
-                            await communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} parries your attack!", cancellationToken);
-                            await communicator.SendToPlayer(target, $"You parry {actor.FirstName}'s attack!", cancellationToken);
-                            await communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} parries {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} parries your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You parry {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} parries {actor.FirstName}'s attack!", cancellationToken);
                             parried = true;
                         }
 
-                        Parry skill = new(communicator, random, world, logger, this);
+                        Parry skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return parried;
@@ -1201,15 +1201,15 @@ namespace Legendary.Engine.Processors
                     if (evasive != null && evasive.Proficiency > 1)
                     {
                         bool evaded = false;
-                        var evadeResult = random.Next(1, 101);
+                        var evadeResult = this.random.Next(1, 101);
                         if (evadeResult < evasive.Proficiency)
                         {
-                            await communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} cleverly evades your attack!", cancellationToken);
-                            await communicator.SendToPlayer(target, $"You cleverly evade {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} cleverly evades your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You cleverly evade {actor.FirstName}'s attack!", cancellationToken);
                             evaded = true;
                         }
 
-                        EvasiveManeuvers skill = new(communicator, random, world, logger, this);
+                        EvasiveManeuvers skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return evaded;
@@ -1221,16 +1221,16 @@ namespace Legendary.Engine.Processors
                     if (evasive != null && evasive.Proficiency > 1)
                     {
                         bool evaded = false;
-                        var evadeResult = random.Next(1, 101);
+                        var evadeResult = this.random.Next(1, 101);
                         if (evadeResult < evasive.Proficiency)
                         {
-                            await communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} deftly evades your attack!", cancellationToken);
-                            await communicator.SendToPlayer(target, $"You deftly evade {actor.FirstName}'s attack!", cancellationToken);
-                            await communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} deftly evades {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} deftly evades your attack!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You deftly evade {actor.FirstName}'s attack!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{target.FirstName.FirstCharToUpper()} deftly evades {actor.FirstName}'s attack!", cancellationToken);
                             evaded = true;
                         }
 
-                        EvasiveManeuvers skill = new(communicator, random, world, logger, this);
+                        EvasiveManeuvers skill = new (this.communicator, this.random, this.world, this.logger, this);
                         await skill.CheckImprove(target, cancellationToken);
 
                         return evaded;
@@ -1258,7 +1258,7 @@ namespace Legendary.Engine.Processors
             }
 
             bool blocked = false;
-            var armorSavePct = random.Next(1, 101);
+            var armorSavePct = this.random.Next(1, 101);
 
             switch (action.DamageType)
             {
@@ -1309,21 +1309,21 @@ namespace Legendary.Engine.Processors
 
                     if (allArmor.Count > 0)
                     {
-                        var armorIndex = random.Next(0, allArmor.Count);
+                        var armorIndex = this.random.Next(0, allArmor.Count);
                         var randomGear = allArmor[armorIndex];
 
                         if (randomGear.Value != null)
                         {
-                            await communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} blocks your attack with their armor!", cancellationToken);
-                            await communicator.SendToPlayer(target, $"You absorb {actor.FirstName}'s attack with {randomGear.Value.Name}!", cancellationToken);
+                            await this.communicator.SendToPlayer(actor, $"{target.FirstName.FirstCharToUpper()} blocks your attack with their armor!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"You absorb {actor.FirstName}'s attack with {randomGear.Value.Name}!", cancellationToken);
 
                             randomGear.Value.Durability.Current -= 1;
 
                             if (randomGear.Value.Durability.Current <= 0)
                             {
                                 // It's destroyed.
-                                await communicator.SendToPlayer(actor, $"You destroy {randomGear.Value.Name}!", cancellationToken);
-                                await communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Value.Name}!", cancellationToken);
+                                await this.communicator.SendToPlayer(actor, $"You destroy {randomGear.Value.Name}!", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} destroys {randomGear.Value.Name}!", cancellationToken);
 
                                 target.Equipment.Remove(randomGear.Key);
                             }
@@ -1332,7 +1332,7 @@ namespace Legendary.Engine.Processors
                 }
                 catch (Exception exc)
                 {
-                    logger.Error(exc, communicator);
+                    this.logger.Error(exc, this.communicator);
                 }
             }
 
@@ -1347,7 +1347,7 @@ namespace Legendary.Engine.Processors
         /// <returns>True if the target saved.</returns>
         public bool DidSave(Character target, IAction action)
         {
-            var saveThrow = random.Next(1, 101);
+            var saveThrow = this.random.Next(1, 101);
 
             // Critical failure.
             if (saveThrow == 1)
@@ -1395,18 +1395,13 @@ namespace Legendary.Engine.Processors
         /// <returns>URL to audio.</returns>
         private static string GetSoundEffect(string? damageNoun)
         {
-            switch (damageNoun?.ToLower())
+            return damageNoun?.ToLower() switch
             {
-                default:
-                case "punch":
-                    return Sounds.PUNCH;
-                case "slash":
-                    return Sounds.SLASH;
-                case "pound":
-                    return Sounds.BLUNT;
-                case "pierce":
-                    return Sounds.PIERCE;
-            }
+                "slash" => Sounds.SLASH,
+                "pound" => Sounds.BLUNT,
+                "pierce" => Sounds.PIERCE,
+                _ => Sounds.PUNCH,
+            };
         }
 
         /// <summary>
@@ -1426,7 +1421,7 @@ namespace Legendary.Engine.Processors
                 double adjusted = 0d;
                 double expPerPlayer = 0d;
 
-                var playersInRoom = communicator.GetPlayersInRoom(actor.Location);
+                var playersInRoom = this.communicator.GetPlayersInRoom(actor.Location);
 
                 if (playersInRoom != null)
                 {
@@ -1455,22 +1450,22 @@ namespace Legendary.Engine.Processors
                         expPerPlayer = adjusted / group.Count;
                     }
 
-                    logger.Info($"{actor.FirstName}'s group received {experience} total experience. There were {playersInGroupInRoomCount} players in the group (in the room). Adjusted was {adjusted}. Experience per player was {expPerPlayer}.", communicator);
+                    this.logger.Info($"{actor.FirstName}'s group received {experience} total experience. There were {playersInGroupInRoomCount} players in the group (in the room). Adjusted was {adjusted}. Experience per player was {expPerPlayer}.", this.communicator);
 
                     foreach (var member in playersInGroupInRoom)
                     {
-                        var player = communicator.ResolveCharacter(member);
+                        var player = this.communicator.ResolveCharacter(member);
 
                         if (player != null)
                         {
                             // Group was null or empty, so apply only to player.
-                            await communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
+                            await this.communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
                             player.Character.Experience += (int)expPerPlayer;
 
                             // See if the player advanced a level.
                             if (expPerPlayer > 0)
                             {
-                                await communicator.CheckLevelAdvance(player.Character, cancellationToken);
+                                await this.communicator.CheckLevelAdvance(player.Character, cancellationToken);
                             }
                         }
                     }
@@ -1478,19 +1473,19 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     // Not sure what the hell happened here, but there were no players in the group in the room.
-                    logger.Error("Attempted to apply experience to a group with no players in the same room.", communicator);
+                    this.logger.Error("Attempted to apply experience to a group with no players in the same room.", this.communicator);
                 }
             }
             else
             {
                 // Group was null or empty, so apply only to player.
-                await communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+                await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
                 actor.Experience += experience;
 
                 // See if the player advanced a level.
                 if (experience > 0)
                 {
-                    await communicator.CheckLevelAdvance(actor, cancellationToken);
+                    await this.communicator.CheckLevelAdvance(actor, cancellationToken);
                 }
             }
         }
@@ -1577,17 +1572,6 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
-        /// Gets the skill proficiency of basic hand to hand based on the mob and the target.
-        /// </summary>
-        /// <param name="mobile">The mobile.</param>
-        /// <param name="target">The target.</param>
-        /// <returns>Skill proficiency.</returns>
-        private SkillProficiency GetDefaultMobileProficiency(Character mobile, Character target)
-        {
-            return new SkillProficiency("hand to hand", Math.Min(mobile.Level + 50, 99));
-        }
-
-        /// <summary>
         /// Generates a corpse of the victim and places it in the room.
         /// </summary>
         /// <param name="location">The room to generate the corpse in.</param>
@@ -1616,7 +1600,7 @@ namespace Legendary.Engine.Processors
                 };
 
                 // If the victim was a mob, randomize the currency a little bit. If not, just use the full value.
-                var currency = victim.IsNPC && victim.Currency > 0 ? random.Next(victim.Currency - 1, victim.Currency + 1) : victim.Currency;
+                var currency = victim.IsNPC && victim.Currency > 0 ? this.random.Next(victim.Currency - 1, victim.Currency + 1) : victim.Currency;
 
                 // If the player had any money, add it to the corpse.
                 if (currency > 0)
@@ -1638,9 +1622,9 @@ namespace Legendary.Engine.Processors
                 }
 
                 // Add any random loot drops
-                if (victim.IsNPC && random.Next(1, 101) < 50)
+                if (victim.IsNPC && this.random.Next(1, 101) < 50)
                 {
-                    var item = ItemHelper.CreateRandomArmor(victim.Level, actorLevel, random);
+                    var item = ItemHelper.CreateRandomArmor(victim.Level, actorLevel, this.random);
 
                     if (item != null)
                     {
@@ -1649,18 +1633,15 @@ namespace Legendary.Engine.Processors
                 }
 
                 // Add the corpse to the room.
-                var room = communicator.ResolveRoom(location);
+                var room = this.communicator.ResolveRoom(location);
 
-                if (room != null)
-                {
-                    room.Items.Add(corpse);
-                }
+                room?.Items.Add(corpse);
 
                 return corpse;
             }
             catch (Exception exc)
             {
-                logger.Error(exc, communicator);
+                this.logger.Error(exc, this.communicator);
                 return null;
             }
         }

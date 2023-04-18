@@ -52,7 +52,6 @@ namespace Legendary.Engine.Processors
         /// Creates an instance of a BaseMIRP derived type based on the type name. Used to load program files.
         /// </summary>
         /// <param name="source">The source object invoking the program.</param>
-        /// <typeparam name="T">The type of program to generate (Mobile, Item, or Room).</typeparam>
         /// <returns>Instance of a BaseMIRP derived type.</returns>
         public object? CreateProgramInstance(object source)
         {

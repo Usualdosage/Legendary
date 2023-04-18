@@ -11,27 +11,34 @@ namespace Legendary.AreaBuilder
 {
     using Legendary.Core.Types;
 
+    /// <summary>
+    /// Editor for the MaxCurrent object.
+    /// </summary>
     public partial class MaxCurrentEditorForm : Form
     {
-        public MaxCurrent Value
-        {
-            get
-            {
-                return new MaxCurrent((int)this.numericUpDown2.Value, (int)this.numericUpDown1.Value);
-            }
-            set
-            {
-                this.numericUpDown1.Value = (int)value.Current;
-                this.numericUpDown2.Value = (int)value.Max;
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MaxCurrentEditorForm"/> class.
         /// </summary>
         public MaxCurrentEditorForm()
         {
             this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Gets or sets the value.
+        /// </summary>
+        public MaxCurrent Value
+        {
+            get
+            {
+                return new MaxCurrent((int)this.numericUpDown2.Value, (int)this.numericUpDown1.Value);
+            }
+
+            set
+            {
+                this.numericUpDown1.Value = (int)value.Current;
+                this.numericUpDown2.Value = (int)value.Max;
+            }
         }
     }
 }

@@ -19,6 +19,13 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Exit"/> class.
         /// </summary>
+        public Exit()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Exit"/> class.
+        /// </summary>
         /// <param name="direction">The direction.</param>
         /// <param name="toArea">To area.</param>
         /// <param name="toRoom">To room.</param>

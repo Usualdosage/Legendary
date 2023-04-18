@@ -9,8 +9,8 @@
 
 namespace Legendary.AreaBuilder
 {
-    using Legendary.Core.Types;
     using Legendary.Core.Models;
+    using Legendary.Core.Types;
 
     /// <summary>
     /// UI representation of a single room.
@@ -80,6 +80,24 @@ namespace Legendary.AreaBuilder
             this.Update();
         }
 
+        /// <summary>
+        /// Highlights the room.
+        /// </summary>
+        /// <param name="highlight">If true, highlights, otherwise de-highlights.</param>
+        public void Highlight(bool highlight)
+        {
+            if (highlight)
+            {
+                this.BackColor = Color.Yellow;
+                this.lblRoomId.BackColor = Color.Yellow;
+            }
+            else
+            {
+                this.BackColor = Color.Transparent;
+                this.lblRoomId.BackColor = Color.Transparent;
+            }
+        }
+
         private void LblRoomId_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -107,6 +125,13 @@ namespace Legendary.AreaBuilder
                         if (grid != null && grid is PropertyGrid pgRoom)
                         {
                             pgRoom.SelectedObject = this.SelectedRoom;
+                        }
+
+                        var image = form.Controls.Find("pbRoomImage", true).FirstOrDefault();
+
+                        if (image != null && image is PictureBox pbRoomImage)
+                        {
+                            pbRoomImage.ImageLocation = this.SelectedRoom?.Image;
                         }
                     }
 

@@ -18,7 +18,6 @@ namespace Legendary.Core.Contracts
         /// Creates an instance of a MIRP derived type based on the type name. Used to load program files.
         /// </summary>
         /// <param name="source">The source object invoking the program.</param>
-        /// <typeparam name="T">The type of program to generate (Mobile, Item, or Room).</typeparam>
         /// <returns>Instance of a MIRP derived type.</returns>
         object? CreateProgramInstance(object source);
     }

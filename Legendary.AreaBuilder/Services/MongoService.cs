@@ -34,6 +34,7 @@ namespace Legendary.AreaBuilder.Services
                 this.Areas = database.GetCollection<Area>("Areas");
                 this.Items = database.GetCollection<Item>("Items");
                 this.Memory = database.GetCollection<Memory>("Memory");
+                this.Personas = database.GetCollection<Persona>("Personas");
             }
             catch
             {
@@ -60,5 +61,10 @@ namespace Legendary.AreaBuilder.Services
         /// Gets the memory collection.
         /// </summary>
         public IMongoCollection<Memory> Memory { get; private set; }
+
+        /// <summary>
+        /// Gets the persona collection.
+        /// </summary>
+        public IMongoCollection<Persona> Personas { get; private set; }
     }
 }

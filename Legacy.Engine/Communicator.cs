@@ -65,6 +65,7 @@ namespace Legendary.Engine
         private readonly ActionProcessor actionProcessor;
         private readonly ActionHelper actionHelper;
         private readonly AwardProcessor awardProcessor;
+        private readonly QuestProcessor questProcessor;
         private readonly IMIRPProcessor mIRPProcessor;
 
         /// <summary>
@@ -123,8 +124,11 @@ namespace Legendary.Engine
             // Create the award processor.
             this.awardProcessor = new AwardProcessor(this, this.world, this.logger, this.random, this.combat);
 
+            // Create the quest processor.
+            this.questProcessor = new QuestProcessor(this.awardProcessor);
+
             // Create the language processor.
-            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService, this.world, this.awardProcessor);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService, this.world, this.awardProcessor, this.questProcessor);
 
             // Create the title generator.
             this.titleGenerator = new TitleGenerator(this, this.random, this.world, this.logger, this.combat);

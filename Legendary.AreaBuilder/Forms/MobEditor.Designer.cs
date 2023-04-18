@@ -28,138 +28,148 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
+            propertyGrid1 = new PropertyGrid();
+            button1 = new Button();
+            button2 = new Button();
+            listBox1 = new ListBox();
+            statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            button3 = new Button();
+            button4 = new Button();
+            button5 = new Button();
+            pictureBox1 = new PictureBox();
+            btnUploadImage = new Button();
+            statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
             // 
             // propertyGrid1
             // 
-            this.propertyGrid1.Location = new System.Drawing.Point(282, 12);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(510, 429);
-            this.propertyGrid1.TabIndex = 0;
+            propertyGrid1.Location = new Point(282, 12);
+            propertyGrid1.Name = "propertyGrid1";
+            propertyGrid1.Size = new Size(598, 429);
+            propertyGrid1.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(985, 447);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Save";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            button1.Location = new Point(1067, 462);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 1;
+            button1.Text = "Save";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += Button1_Click;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(904, 447);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            button2.Location = new Point(986, 462);
+            button2.Name = "button2";
+            button2.Size = new Size(75, 23);
+            button2.TabIndex = 2;
+            button2.Text = "Cancel";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += Button2_Click;
             // 
             // listBox1
             // 
-            this.listBox1.DisplayMember = "FirstName";
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(12, 16);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(264, 454);
-            this.listBox1.TabIndex = 3;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            listBox1.DisplayMember = "FirstName";
+            listBox1.FormattingEnabled = true;
+            listBox1.ItemHeight = 15;
+            listBox1.Location = new Point(12, 16);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(264, 454);
+            listBox1.TabIndex = 3;
+            listBox1.SelectedIndexChanged += ListBox1_SelectedIndexChanged;
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 482);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1066, 22);
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Location = new Point(0, 500);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(1154, 22);
+            statusStrip1.TabIndex = 4;
+            statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(42, 17);
-            this.toolStripStatusLabel1.Text = "Ready.";
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(42, 17);
+            toolStripStatusLabel1.Text = "Ready.";
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(282, 447);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(105, 23);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "Find Image";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            button3.Location = new Point(282, 447);
+            button3.Name = "button3";
+            button3.Size = new Size(105, 23);
+            button3.TabIndex = 5;
+            button3.Text = "Find Image";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += Button3_Click;
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(393, 447);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(156, 23);
-            this.button4.TabIndex = 12;
-            this.button4.Text = "Generate Description";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            button4.Location = new Point(613, 447);
+            button4.Name = "button4";
+            button4.Size = new Size(156, 23);
+            button4.TabIndex = 12;
+            button4.Text = "Generate Description";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += Button4_Click;
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(555, 447);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(105, 23);
-            this.button5.TabIndex = 13;
-            this.button5.Text = "Create Clone";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            button5.Location = new Point(775, 447);
+            button5.Name = "button5";
+            button5.Size = new Size(105, 23);
+            button5.TabIndex = 13;
+            button5.Text = "Create Clone";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += Button5_Click;
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(800, 37);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(256, 256);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 14;
-            this.pictureBox1.TabStop = false;
+            pictureBox1.BorderStyle = BorderStyle.FixedSingle;
+            pictureBox1.Location = new Point(886, 38);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(256, 256);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 14;
+            pictureBox1.TabStop = false;
+            // 
+            // btnUploadImage
+            // 
+            btnUploadImage.Location = new Point(393, 447);
+            btnUploadImage.Name = "btnUploadImage";
+            btnUploadImage.Size = new Size(105, 23);
+            btnUploadImage.TabIndex = 15;
+            btnUploadImage.Text = "Upload Image";
+            btnUploadImage.UseVisualStyleBackColor = true;
+            btnUploadImage.Click += BtnUploadImage_Click;
             // 
             // MobEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1066, 504);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.propertyGrid1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Name = "MobEditor";
-            this.Text = "MobEditor";
-            this.Load += new System.EventHandler(this.MobEditor_Load);
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1154, 522);
+            Controls.Add(btnUploadImage);
+            Controls.Add(pictureBox1);
+            Controls.Add(button5);
+            Controls.Add(button4);
+            Controls.Add(button3);
+            Controls.Add(statusStrip1);
+            Controls.Add(listBox1);
+            Controls.Add(button2);
+            Controls.Add(button1);
+            Controls.Add(propertyGrid1);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            Name = "MobEditor";
+            Text = "MobEditor";
+            Load += MobEditor_Load;
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -174,5 +184,6 @@
         private Button button4;
         private Button button5;
         private PictureBox pictureBox1;
+        private Button btnUploadImage;
     }
 }

@@ -93,5 +93,10 @@ namespace Legendary.Core.Types
         /// Underwater.
         /// </summary>
         Underwater = 15,
+
+        /// <summary>
+        /// Aboard some kind of vessel.
+        /// </summary>
+        Ship = 16,
     }
 }

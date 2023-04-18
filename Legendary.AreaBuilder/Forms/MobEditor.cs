@@ -34,8 +34,34 @@ namespace Legendary.AreaBuilder
             this.mongo = mongo;
         }
 
+        private static string? GenerateDescription(Mobile mobile)
+        {
+            try
+            {
+                string prompt = $"Using a second person narrative voice, in a medieval fantasy setting, describe what I see when I'm looking at {mobile.FirstName}. ";
+
+                prompt += $"{mobile.FirstName} is a {mobile.Race} {mobile.Gender} who is around {mobile.Age} years old. ";
+
+                prompt += $"{mobile.FirstName} can generally be described as {mobile.LongDescription}. ";
+
+                if (!string.IsNullOrWhiteSpace(mobile.LastName))
+                {
+                    prompt += $"{mobile.FirstName}'s last name is {mobile.LastName}. ";
+                }
+
+                var chatGPT = new ChatGPTService();
+
+                return chatGPT.Describe(prompt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return null;
+            }
+        }
+
         // Save
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             this.Cursor = Cursors.WaitCursor;
 
@@ -83,12 +109,12 @@ namespace Legendary.AreaBuilder
         }
 
         // Cancel
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.listBox1.SelectedIndex > 0)
             {
@@ -106,7 +132,7 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             if (this.propertyGrid1.SelectedObject is Mobile mobile)
             {
@@ -122,12 +148,12 @@ namespace Legendary.AreaBuilder
 
                 if (!string.IsNullOrWhiteSpace(image))
                 {
-                    WebClient client = new ();
-                    Stream stream = client.OpenRead(image);
+                    HttpClient client = new();
+                    Stream stream = client.GetStreamAsync(image).Result;
 
                     Image img = Image.FromStream(stream);
 
-                    MemoryStream mstream = new ();
+                    MemoryStream mstream = new();
                     img.Save(mstream, System.Drawing.Imaging.ImageFormat.Png);
                     mstream.Position = 0;
 
@@ -142,14 +168,14 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private bool UploadMobileImage(Mobile mobile, Stream stream)
+        private bool UploadMobileImage(Mobile mobile, Stream stream, string extension = ".png")
         {
             string connectionString = "DefaultEndpointsProtocol=https;AccountName=legendaryweb;AccountKey=SZ7oVHyhh/QghSiA+XL4xqwGxszmBcHgzOYQbYbdAS/3m2SqvXhdg7Tafgew9X/DDidE93Q9TuNq+AStP6A66Q==;EndpointSuffix=core.windows.net";
 
             // Name of the share, directory, and file we'll create
             string shareName = "images";
-            string fileName = $"{mobile.CharacterId}.png";
-            ShareClient share = new (connectionString, shareName);
+            string fileName = $"{mobile.CharacterId}{extension}";
+            ShareClient share = new(connectionString, shareName);
             ShareDirectoryClient directory = share.GetDirectoryClient("/mobiles");
 
             try
@@ -157,7 +183,7 @@ namespace Legendary.AreaBuilder
                 // Get a reference to a file and upload it
                 ShareFileClient file = directory.GetFileClient(fileName);
 
-                string imageUrl = $"https://legendaryweb.file.core.windows.net/images/mobiles/{mobile.CharacterId}.png?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                string imageUrl = $"https://legendaryweb.file.core.windows.net/images/mobiles/{mobile.CharacterId}{extension}?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
 
                 var response = file.Create(stream.Length);
 
@@ -170,7 +196,7 @@ namespace Legendary.AreaBuilder
                 this.pictureBox1.ImageLocation = imageUrl;
                 this.pictureBox1.Update();
 
-                this.toolStripStatusLabel1.Text = $"Uploaded OpenAI image for {mobile.FirstName}: {imageUrl}!";
+                this.toolStripStatusLabel1.Text = $"Uploaded image for {mobile.FirstName}: {imageUrl}!";
 
                 return true;
             }
@@ -185,9 +211,7 @@ namespace Legendary.AreaBuilder
         /// <summary>
         /// Generate desc.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button4_Click(object sender, EventArgs e)
+        private void Button4_Click(object sender, EventArgs e)
         {
             this.toolStripStatusLabel1.Text = $"Generating description...";
             if (this.propertyGrid1.SelectedObject is Mobile mobile)
@@ -197,33 +221,7 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private static string? GenerateDescription(Mobile mobile)
-        {
-            try
-            {
-                string prompt = $"Using a second person narrative voice, in a medieval fantasy setting, describe what I see when I'm looking at {mobile.FirstName}. ";
-
-                prompt += $"{mobile.FirstName} is a {mobile.Race} {mobile.Gender} who is around {mobile.Age} years old. ";
-
-                prompt += $"{mobile.FirstName} can generally be described as {mobile.LongDescription}. ";
-
-                if (!string.IsNullOrWhiteSpace(mobile.LastName))
-                {
-                    prompt += $"{mobile.FirstName}'s last name is {mobile.LastName}. ";
-                }
-
-                var chatGPT = new ChatGPTService();
-
-                return chatGPT.Describe(prompt);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                return null;
-            }
-        }
-
-        private void button5_Click(object sender, EventArgs e)
+        private void Button5_Click(object sender, EventArgs e)
         {
             if (this.listBox1.SelectedIndex != 0)
             {
@@ -243,6 +241,29 @@ namespace Legendary.AreaBuilder
                     this.Cursor = Cursors.Default;
                 }
             }
+        }
+
+        private void BtnUploadImage_Click(object sender, EventArgs e)
+        {
+            var openDlg = new OpenFileDialog()
+            {
+                Title = "Add Image File",
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;",
+            };
+
+            if (openDlg.ShowDialog() == DialogResult.OK)
+            {
+                if (this.propertyGrid1.SelectedObject is Mobile mobile)
+                {
+                    var stream = File.OpenRead(openDlg.FileName);
+                    this.UploadMobileImage(mobile, stream, Path.GetExtension(openDlg.FileName));
+                }
+            }
+        }
+
+        private void BtnUploadXImage_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

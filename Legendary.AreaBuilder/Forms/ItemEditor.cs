@@ -73,7 +73,7 @@ namespace Legendary.AreaBuilder
         }
 
         // Save
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             this.Cursor = Cursors.WaitCursor;
 
@@ -121,12 +121,12 @@ namespace Legendary.AreaBuilder
         }
 
         // Cancel
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.listBox1.SelectedIndex > 0)
             {
@@ -140,11 +140,11 @@ namespace Legendary.AreaBuilder
             }
             else
             {
-                this.propertyGrid1.SelectedObject = new Item() {  ItemId = this.listBox1.Items.Count + 1};
+                this.propertyGrid1.SelectedObject = new Item() { ItemId = this.listBox1.Items.Count + 1 };
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             if (this.propertyGrid1.SelectedObject is Item item)
             {
@@ -176,8 +176,9 @@ namespace Legendary.AreaBuilder
 
                 if (!string.IsNullOrWhiteSpace(image))
                 {
-                    WebClient client = new ();
-                    Stream stream = client.OpenRead(image);
+                    HttpClient client = new ();
+
+                    Stream stream = client.GetStreamAsync(image).Result;
 
                     Image img = Image.FromStream(stream);
 
@@ -193,7 +194,6 @@ namespace Legendary.AreaBuilder
                 }
 
                 this.Cursor = Cursors.Default;
-
             }
         }
 
@@ -240,29 +240,33 @@ namespace Legendary.AreaBuilder
         /// <summary>
         /// Generate desc.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button4_Click(object sender, EventArgs e)
+        private void Button4_Click(object sender, EventArgs e)
         {
             this.toolStripStatusLabel1.Text = $"Generating description...";
-            var item = this.propertyGrid1.SelectedObject as Item;
-            item.LongDescription = GenerateDescription(item);
+
+            if (this.propertyGrid1.SelectedObject is Item item)
+            {
+                item.LongDescription = GenerateDescription(item);
+            }
+
             this.toolStripStatusLabel1.Text = $"Description created.";
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void Button5_Click(object sender, EventArgs e)
         {
             if (this.listBox1.SelectedIndex != 0)
             {
                 this.Cursor = Cursors.WaitCursor;
 
-                var item = this.propertyGrid1.SelectedObject as Item;
-                item.ItemId = this.listBox1.Items.Count + 1;
-                item.Name = "CLONE of " + item.Name;
-                item.Image = string.Empty;
-                item.LongDescription = string.Empty;
-                this.mongo.Items.InsertOne(item);
-                this.toolStripStatusLabel1.Text = "Item cloned.";
+                if (this.propertyGrid1.SelectedObject is Item item)
+                {
+                    item.ItemId = this.listBox1.Items.Count + 1;
+                    item.Name = "CLONE of " + item.Name;
+                    item.Image = string.Empty;
+                    item.LongDescription = string.Empty;
+                    this.mongo.Items.InsertOne(item);
+                    this.toolStripStatusLabel1.Text = "Item cloned.";
+                }
 
                 this.LoadListBox();
 
@@ -270,7 +274,7 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void PropertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
         }
     }

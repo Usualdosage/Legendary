@@ -55,6 +55,7 @@ namespace Legendary.Engine.Processors
         private readonly IDataService dataService;
         private readonly IWorld world;
         private readonly AwardProcessor awardProcessor;
+        private readonly QuestProcessor questProcessor;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
         private Persona? basePersona;
@@ -73,7 +74,8 @@ namespace Legendary.Engine.Processors
         /// <param name="dataService">The data service.</param>
         /// <param name="world">The world service.</param>
         /// <param name="awardProcessor">The award processor.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService, IWorld world, AwardProcessor awardProcessor)
+        /// <param name="questProcessor">The quest processor.</param>
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService, IWorld world, AwardProcessor awardProcessor, QuestProcessor questProcessor)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;
@@ -87,6 +89,7 @@ namespace Legendary.Engine.Processors
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
             this.processingDictionary = new Dictionary<Mobile, bool>();
             this.awardProcessor = awardProcessor;
+            this.questProcessor = questProcessor;
         }
 
         /// <summary>
@@ -182,8 +185,8 @@ namespace Legendary.Engine.Processors
                             return (null, null);
                         }
 
-                        // See if things are getting...interesting.
-                        await this.CheckConvertToXMob(message, character, engagedMobile, cancellationToken);
+                        // See if any parts of the message complete a quest.
+                        await this.questProcessor.CheckQuest(message, character, engagedMobile, cancellationToken);
 
                         // Parse all of the resulting language.
                         try
@@ -603,8 +606,8 @@ namespace Legendary.Engine.Processors
             sentence = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
             sentence = sentence.ReplaceFirst(persona.Name?.FirstCharToLower() ?? mobile.FirstName.FirstCharToLower(), string.Empty);
             sentence = sentence.Replace("EMOTE", string.Empty);
-            sentence = sentence.Replace("DEACTIVATE", string.Empty);
-            sentence = sentence.Replace("ACTIVATE", string.Empty);
+            sentence = sentence.Replace("CASSANOVA-DEACTIVATE", string.Empty);
+            sentence = sentence.Replace("CASSANOVA-ACTIVATE", string.Empty);
             sentence = sentence.Replace(":", string.Empty);
 
             /*
@@ -619,7 +622,7 @@ namespace Legendary.Engine.Processors
             // Remove leading punctuation if we have it.
             if (sentence.Length > 0 && char.IsPunctuation(sentence[0]))
             {
-                sentence = sentence.Substring(1, sentence.Length - 1);
+                sentence = sentence[1..];
             }
 
             sentence = sentence.Trim();
@@ -642,9 +645,9 @@ namespace Legendary.Engine.Processors
             }
 
             // End with punctuation if we didn't.
-            if (!string.IsNullOrWhiteSpace(sentence) && !char.IsPunctuation(sentence[sentence.Length - 1]))
+            if (!string.IsNullOrWhiteSpace(sentence) && !char.IsPunctuation(sentence[^1]))
             {
-                sentence = sentence + ".";
+                sentence += ".";
             }
 
             if (!string.IsNullOrWhiteSpace(sentence))
@@ -762,77 +765,6 @@ namespace Legendary.Engine.Processors
             };
 
             return messages;
-        }
-
-        /// <summary>
-        /// Converts this mobile to "adult" mode.
-        /// </summary>
-        /// <param name="message">The message to check for keywords.</param>
-        /// <param name="actor">The actor who is the source.</param>
-        /// <param name="mobile">The mobile.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        private async Task CheckConvertToXMob(string message, Character actor, Mobile mobile, CancellationToken cancellationToken)
-        {
-            if (mobile.UseAI && !string.IsNullOrWhiteSpace(mobile.XImage))
-            {
-                if (message.Contains($"removes {mobile.Pronoun} clothes") || message.Contains($"takes off {mobile.Pronoun}") || message.Contains($"removes {mobile.Pronoun} shirt") || message.Contains($"removes {mobile.Pronoun} top") || message.Contains($"removes {mobile.Pronoun} pants") || message.Contains($"removes {mobile.Pronoun} panties"))
-                {
-                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
-                    {
-                        if (!string.IsNullOrWhiteSpace(mobile.XImage))
-                        {
-                            mobile.XActive = true;
-                            await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
-                        }
-                        else
-                        {
-                            mobile.XActive = false;
-                        }
-                    }
-                    else
-                    {
-                        mobile.XActive = false;
-                    }
-                }
-                else if (message.Contains($"puts {mobile.Pronoun} clothes on") || message.Contains($"puts {mobile.Pronoun} clothes back on"))
-                {
-                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
-                    {
-                        mobile.XActive = false;
-                    }
-                    else
-                    {
-                        mobile.XActive = false;
-                    }
-                }
-                else if (message.Contains("DEACTIVATE"))
-                {
-                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
-                    {
-                        mobile.XActive = false;
-                    }
-                    else
-                    {
-                        mobile.XActive = false;
-                    }
-                }
-                else if (message.Contains("ACTIVATE"))
-                {
-                    if (!string.IsNullOrWhiteSpace(mobile.XImage))
-                    {
-                        mobile.XActive = true;
-                        await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
-                    }
-                    else
-                    {
-                        mobile.XActive = false;
-                    }
-                }
-                else
-                {
-                    mobile.XActive = false;
-                }
-            }
         }
 
         /// <summary>
