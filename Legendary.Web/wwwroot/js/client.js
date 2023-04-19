@@ -26,7 +26,8 @@
         };
 
         socket.onclose = function (e) {
-            console.log("Disconnected.", e);
+            console.log("Disconnected. Reconnecting in 2 seconds...", e);
+            setTimeout(Connect(), 2000);
         };
 
         socket.onerror = function (e) {
