@@ -61,7 +61,17 @@ async function sendChatMessage(message) {
     // Append the response.
     
     let div = document.createElement("div");
-    div.append(result);
+
+    if (result.startsWith("IMAGE:")) {
+        var imageUrl = result.split("IMAGE:")[1];
+        let img = document.createElement("img");
+        img.src = imageUrl;
+        img.className = "attachment";
+        div.append(img);
+    }
+    else {
+        div.append(result);
+    }
     div.className = "in-message";
     messages.append(div);
 

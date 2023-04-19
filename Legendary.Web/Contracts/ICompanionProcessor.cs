@@ -9,6 +9,8 @@
 
 namespace Legendary.Web.Contracts
 {
+    using Legendary.Web.Models;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -24,5 +26,18 @@ namespace Legendary.Web.Contracts
         /// <param name="message">The input.</param>
         /// <returns>Output from AI.</returns>
         Task<string> ProcessChat(string userName, string persona, string message);
+
+        /// <summary>
+        /// Gets a list of all personas for list binding.
+        /// </summary>
+        /// <returns>List of strings.</returns>
+        Task<List<string>> GetPersonas();
+
+        /// <summary>
+        /// Gets the persona by name.
+        /// </summary>
+        /// <param name="persona">The persona.</param>
+        /// <returns>Persona.</returns>
+        Task<Persona> GetPersona(string persona);
     }
 }

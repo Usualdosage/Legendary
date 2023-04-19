@@ -4,7 +4,7 @@
     padding: 0px;
     margin: 0px;
     overflow: hidden;
-    font-family: 'Microsoft Sans Serif'
+    font-family: Helvetica, sans-serif
 }
 
 #container {
@@ -71,6 +71,7 @@
     border-radius: 10px;
     margin: 10px 10px 10px 25px;
     max-width: 40%;
+    word-wrap: break-word;
 }
 
     .in-message::before {
@@ -97,6 +98,7 @@
     clear: both;
     border-radius: 10px;
     max-width: 40%;
+    word-wrap: break-word;
 }
 
     .out-message::before {
@@ -138,4 +140,10 @@
     transform: scaleY(-1);
     margin-left: 10px;
     clear: both;
+}
+
+.attachment
+{
+    width: 256px;
+    border-radius: 10px
 }

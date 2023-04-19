@@ -27,7 +27,7 @@ namespace Legendary.Web.Models
         /// <summary>
         /// Gets or sets the URL to the persona's avatar.
         /// </summary>
-        public string AvatarUrl { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the input message.

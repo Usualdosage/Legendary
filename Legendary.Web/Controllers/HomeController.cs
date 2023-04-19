@@ -433,9 +433,10 @@ namespace Legendary.Web.Controllers
         /// <returns>IActionResult.</returns>
         [HttpGet]
         [Route("/Companion")]
-        public IActionResult Companion()
+        public async Task<IActionResult> Companion()
         {
-            return this.View("CompanionLogin");
+            var personas = await this.companionProcessor.GetPersonas();
+            return this.View("CompanionLogin", personas);
         }
 
         /// <summary>
@@ -445,10 +446,10 @@ namespace Legendary.Web.Controllers
         /// <returns>IActionResult.</returns>
         [HttpPost]
         [Route("/Companion")]
-        public IActionResult Companion(CompanionModel model)
+        public async Task<IActionResult> Companion(CompanionModel model)
         {
-            // Fix to load from personas (later).
-            model.AvatarUrl = $"https://legendaryweb.file.core.windows.net/companions/{model.Persona}/avatar.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            var persona = await this.companionProcessor.GetPersona(model.Persona);
+            model.AvatarUrl = persona?.AvatarUrl;
             return this.View("Companion", model);
         }
 

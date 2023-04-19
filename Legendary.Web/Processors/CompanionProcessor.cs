@@ -51,6 +51,26 @@ namespace Legendary.Web.Processors
         }
 
         /// <summary>
+        /// Gets all available personas for list binding.
+        /// </summary>
+        /// <returns>List of personas.</returns>
+        public async Task<List<string>> GetPersonas()
+        {
+            var allPersonas = await this.personas.Find(_ => true).ToListAsync();
+            return allPersonas.Where(a => a.Id > 1).Select(a => a.Name).ToList();
+        }
+
+        /// <summary>
+        /// Gets the persona by name.
+        /// </summary>
+        /// <param name="persona">The persona.</param>
+        /// <returns>Persona.</returns>
+        public async Task<Persona> GetPersona(string persona)
+        {
+            return await this.personas.Find(p => p.Name == persona).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
         /// Executes a request against ChatGPT to process an input.
         /// </summary>
         /// <param name="userName">The username.</param>
@@ -71,16 +91,74 @@ namespace Legendary.Web.Processors
                 if (!string.IsNullOrWhiteSpace(response))
                 {
                     await this.AddMemory(userName, persona, message);
-                    return response;
+
+                    var imageResult = this.ProcessImage(persona, response);
+
+                    if (string.IsNullOrWhiteSpace(imageResult))
+                    {
+                        return response;
+                    }
+                    else
+                    {
+                        await this.AddMemory(userName, persona, $"You sent {userName} a photo.");
+                        return $"IMAGE:{imageResult}";
+                    }
                 }
                 else
                 {
                     return "Sorry, I'm not available to chat right now.";
                 }
+
             }
             catch
             {
                 return "Sorry, I'm not available to chat right now.";
+            }
+        }
+
+        private string? ProcessImage(string persona, string response)
+        {
+            var random = new Random();
+
+            var imageSendChance = random.Next(1, 100);
+
+            if (imageSendChance >= 70)
+            {
+
+                var fileNumber = random.Next(1, 2);
+
+                if (response.Contains("ARTSY"))
+                {
+                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/art_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+                else if (response.Contains("PROFESSIONAL"))
+                {
+                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/pro_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+                else if (response.Contains("SEXY"))
+                {
+                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/sexy_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+                else if (response.Contains("XRATED"))
+                {
+                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/x_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+                else if (response.Contains("FUN"))
+                {
+                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/fun_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+                else if (response.Contains("FLIRTY"))
+                {
+                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/flirt_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
             }
         }
 

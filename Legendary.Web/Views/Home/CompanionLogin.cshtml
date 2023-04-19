@@ -1,7 +1,13 @@
-﻿<h1>Companion Tester</h1>
+﻿@model List<string>
 <link href="~/css/companion.css" rel="stylesheet" />
+<h1>Companion Test Platform</h1>
 <form action="@Url.Action("Companion")" method="post">
     <input type="text" placeholder="Enter your name" name="Username" />
-    <input type="text" placeholder="Enter the companion name" name="Persona" />
-    <input type="submit" value="Eńter" />
+    <select name="Persona">
+        @foreach (var persona in Model)
+        {
+            <option>@persona</option>
+        }
+    </select>
+    <input type="submit" value="Message" />
 </form>

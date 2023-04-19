@@ -43,7 +43,6 @@
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="Data\" />
     <Folder Include="wwwroot\img\notifications\" />
-    <Folder Include="Types\" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Content\" />
