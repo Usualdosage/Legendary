@@ -120,41 +120,31 @@ namespace Legendary.Web.Processors
         {
             var random = new Random();
 
-            var imageSendChance = random.Next(1, 100);
+            var fileNumber = random.Next(1, 2);
 
-            if (imageSendChance >= 70)
+            if (response.Contains("ARTSY"))
             {
-
-                var fileNumber = random.Next(1, 2);
-
-                if (response.Contains("ARTSY"))
-                {
-                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/art_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
-                }
-                else if (response.Contains("PROFESSIONAL"))
-                {
-                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/pro_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
-                }
-                else if (response.Contains("SEXY"))
-                {
-                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/sexy_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
-                }
-                else if (response.Contains("XRATED"))
-                {
-                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/x_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
-                }
-                else if (response.Contains("FUN"))
-                {
-                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/fun_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
-                }
-                else if (response.Contains("FLIRTY"))
-                {
-                    return $"https://legendaryweb.file.core.windows.net/companions/{persona}/flirt_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
-                }
-                else
-                {
-                    return null;
-                }
+                return $"https://legendaryweb.file.core.windows.net/companions/{persona}/art_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            }
+            else if (response.Contains("PROFESSIONAL"))
+            {
+                return $"https://legendaryweb.file.core.windows.net/companions/{persona}/pro_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            }
+            else if (response.Contains("SEXY"))
+            {
+                return $"https://legendaryweb.file.core.windows.net/companions/{persona}/sexy_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            }
+            else if (response.Contains("XRATED"))
+            {
+                return $"https://legendaryweb.file.core.windows.net/companions/{persona}/x_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            }
+            else if (response.Contains("FUN"))
+            {
+                return $"https://legendaryweb.file.core.windows.net/companions/{persona}/fun_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            }
+            else if (response.Contains("FLIRTY"))
+            {
+                return $"https://legendaryweb.file.core.windows.net/companions/{persona}/flirt_{fileNumber}.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
             }
             else
             {
@@ -284,8 +274,10 @@ namespace Legendary.Web.Processors
 
                 if (memoryObject == null)
                 {
+                    var docCount = await this.memories.EstimatedDocumentCountAsync();
                     memoryObject = new PersonaMemory()
                     {
+                        Id = (int)docCount + 5,
                         PersonaId = personaObject.Id,
                         Username = userName,
                         LastInteraction = DateTime.UtcNow,
@@ -298,6 +290,7 @@ namespace Legendary.Web.Processors
                 {
                     var newMemory = new PersonaMemory()
                     {
+                        Id = (int)memoryObject.Id,
                         PersonaId = personaObject.Id,
                         Username = userName,
                         LastInteraction = DateTime.UtcNow,
