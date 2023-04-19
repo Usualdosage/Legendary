@@ -822,6 +822,7 @@ namespace Legendary.Engine
         /// </summary>
         /// <param name="mobile">The mobile.</param>
         /// <param name="item">The item.</param>
+        /// <param name="broadcast">If true, will broadcast this event to the room and logs.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
         public async Task EquipMob(Mobile mobile, Item item, bool broadcast, CancellationToken cancellationToken = default)

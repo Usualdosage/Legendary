@@ -311,7 +311,7 @@ namespace Legendary.AreaBuilder.Services
 
                 return responseObject?.data[0]?.url;
             }
-            catch (Exception exc)
+            catch
             {
                 throw;
             }

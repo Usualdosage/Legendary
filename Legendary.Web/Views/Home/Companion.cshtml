@@ -1,0 +1,17 @@
+﻿@model CompanionModel
+<link href="~/css/companion.css" rel="stylesheet" />
+<script src="~/js/companion.js"></script>
+<input type="hidden" id="usernameInput" name="Username" value="@Model.Username" />
+<input type="hidden" id="personaInput" name="Persona" value="@Model.Persona"/>
+<div id="container">
+    <div id="header">
+        <div id="avatar"><img src="@Model.AvatarUrl" /></div>
+        <div id="persona">@Model.Persona</div>
+    </div>
+    <div id="messages">
+        
+    </div>
+    <div id="input">
+        <input id="messageField" type="text" placeholder="Message" />
+    </div>
+</div>

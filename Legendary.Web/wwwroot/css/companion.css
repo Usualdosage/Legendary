@@ -1,0 +1,141 @@
+﻿body {
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+    font-family: 'Microsoft Sans Serif'
+}
+
+#container {
+    height: 100vh;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+#header
+{
+    height: 100px;
+    width: 100%;
+    background-color: #444;
+    position: relative;
+    padding: 10px;
+}
+
+#header #avatar
+{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    clear:both;
+}
+
+#avatar img {
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+}
+
+    #header #persona {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0px;
+        height: 30px;
+        width: 300px;
+        color: #aaa;
+        text-align: center;
+    }
+
+#messages {
+    background-color: #222;
+    top: 100px;
+    overflow-y: scroll;
+    width: 100%;
+    bottom: 40px;
+    position: absolute;
+}
+
+.in-message {
+    float: left;
+    position: relative;
+    background-color: #555;
+    color: #eee;
+    padding: 12px;
+    margin: 10px;
+    clear: both;
+    border-radius: 10px;
+    margin: 10px 10px 10px 25px;
+    max-width: 40%;
+}
+
+    .in-message::before {
+        content: "";
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        border-right: 10px solid #555;
+        border-left: 10px solid transparent;
+        border-top: 10px solid #555;
+        border-bottom: 10px solid transparent;
+        left: -12px;
+        top: 0px;
+    }
+
+.out-message {
+    max-width: 40%;
+    position: relative;
+    background-color: cornflowerblue;
+    color: #eee;
+    float: right;
+    padding: 12px;
+    margin: 10px 25px 10px 10px;
+    clear: both;
+    border-radius: 10px;
+    max-width: 40%;
+}
+
+    .out-message::before {
+        content: "";
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        border-left: 10px solid cornflowerblue;
+        border-right: 10px solid transparent;
+        border-top: 10px solid cornflowerblue;
+        border-bottom: 10px solid transparent;
+        right: -12px;
+        top: 0px;
+    }
+
+#input {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    padding: 5px;
+    background-color: #222;
+}
+
+    #input input {
+        width: 100%;
+        border-radius: 15px;
+        border: solid 1px #666;
+        float: right;
+        background-color: #222;
+        color: #aaa;
+        padding:4px;
+        text-indent: 10px;
+    }
+
+.typing {
+    width: 60px;
+    float: left;
+    transform: scaleY(-1);
+    margin-left: 10px;
+    clear: both;
+}

@@ -19,6 +19,7 @@ namespace Legendary.Web
     using Legendary.Networking.Models;
     using Legendary.Web.Contracts;
     using Legendary.Web.Models;
+    using Legendary.Web.Processors;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -75,6 +76,7 @@ namespace Legendary.Web
             services.AddSingleton<IApiClient, ApiClient>();
             services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
             services.AddSingleton<IMailService, MailService>();
+            services.AddSingleton<ICompanionProcessor, CompanionProcessor>();
 
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

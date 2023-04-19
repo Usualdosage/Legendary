@@ -40,7 +40,6 @@
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\img\rooms\" />
     <Folder Include="Views\Content\" />
-    <Folder Include="Contracts\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="Data\" />
     <Folder Include="wwwroot\img\notifications\" />

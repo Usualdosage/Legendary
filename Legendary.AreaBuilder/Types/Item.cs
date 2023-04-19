@@ -306,7 +306,7 @@ namespace Legendary.AreaBuilder.Types
         /// <inheritdoc/>
         [Category("General")]
         [Description("The item program file.")]
-        public string Program { get; set; }
+        public string Program { get; set; } = string.Empty;
 
         /// <inheritdoc/>
         [Category("Containers")]

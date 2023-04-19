@@ -43,6 +43,7 @@ namespace Legendary.Web.Controllers
         private readonly IBuildSettings buildSettings;
         private readonly IServerSettings serverSettings;
         private readonly IMailService mailService;
+        private readonly ICompanionProcessor companionProcessor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
@@ -52,13 +53,15 @@ namespace Legendary.Web.Controllers
         /// <param name="buildSettings">The build settings.</param>
         /// <param name="serverSettings">The server settings.</param>
         /// <param name="mailService">The mail service.</param>
-        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings, IServerSettings serverSettings, IMailService mailService)
+        /// <param name="companionProcessor">The companion processor.</param>
+        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings, IServerSettings serverSettings, IMailService mailService, ICompanionProcessor companionProcessor)
         {
             this.logger = logger;
             this.dataService = dataService;
             this.buildSettings = buildSettings;
             this.serverSettings = serverSettings;
             this.mailService = mailService;
+            this.companionProcessor = companionProcessor;
         }
 
         /// <summary>
@@ -340,7 +343,7 @@ namespace Legendary.Web.Controllers
         /// <returns>JsonResult.</returns>
         [HttpPost]
         [Route("/Message")]
-        public async Task<JsonResult> Message([FromBody]MessageModel data)
+        public async Task<JsonResult> Message([FromBody] MessageModel data)
         {
             if (string.IsNullOrEmpty(data.FromAddress))
             {
@@ -422,6 +425,46 @@ namespace Legendary.Web.Controllers
         public IActionResult Error()
         {
             return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
+        }
+
+        /// <summary>
+        /// Persona tester.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
+        [HttpGet]
+        [Route("/Companion")]
+        public IActionResult Companion()
+        {
+            return this.View("CompanionLogin");
+        }
+
+        /// <summary>
+        /// Persona tester.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>IActionResult.</returns>
+        [HttpPost]
+        [Route("/Companion")]
+        public IActionResult Companion(CompanionModel model)
+        {
+            // Fix to load from personas (later).
+            model.AvatarUrl = $"https://legendaryweb.file.core.windows.net/companions/{model.Persona}/avatar.jpg?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+            return this.View("Companion", model);
+        }
+
+        /// <summary>
+        /// Executes a chat with the given persona.
+        /// </summary>
+        /// <param name="userName">The user.</param>
+        /// <param name="persona">The persona.</param>
+        /// <param name="message">The chat message.</param>
+        /// <returns>Json.</returns>
+        [HttpGet]
+        [Route("/Chat")]
+        public async Task<JsonResult> Chat(string userName, string persona, string message)
+        {
+            var response = await this.companionProcessor.ProcessChat(userName, persona, message);
+            return this.Json(response);
         }
 
         /// <summary>
