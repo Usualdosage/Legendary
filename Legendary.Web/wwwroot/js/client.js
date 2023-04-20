@@ -7,7 +7,7 @@
     Connect() {
         var protocol = location.protocol === "https:" ? "wss:" : "ws:";
         var wsUri = protocol + "//" + window.location.host;
-        let socket = new WebSocket(wsUri);
+        var socket = new WebSocket(wsUri);
         let commandIndex = 0;
         let commands = [];
         const $console = $("#console");
