@@ -70,7 +70,7 @@ namespace Legendary.Web
 
             // Apply necessary DI containers for fully independent services.
             services.AddSingleton<ILogger, Logger>();
-            services.AddSingleton<IRandom, Random>();
+            services.AddSingleton<IRandom, Legendary.Engine.Random>();
             services.AddSingleton<IServerSettings>(sp => sp.GetRequiredService<IOptions<ServerSettings>>().Value);
             services.AddSingleton<IDBConnection, MongoConnection>();
             services.AddTransient<IDataService, DataService>();
