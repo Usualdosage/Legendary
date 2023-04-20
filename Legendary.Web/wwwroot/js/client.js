@@ -7,7 +7,7 @@
     Connect() {
         var protocol = location.protocol === "https:" ? "wss:" : "ws:";
         var wsUri = protocol + "//" + window.location.host;
-        const socket = new WebSocket(wsUri);
+        let socket = new WebSocket(wsUri);
         let commandIndex = 0;
         let commands = [];
         const $console = $("#console");
@@ -27,10 +27,8 @@
 
         socket.onclose = function (e) {
             console.log("Disconnected. Reconnecting in 2 seconds...", e);
-            setTimeout(
-                function () { 
-                    const client = new LegendaryClient();
-                    client.Connect();
+            setTimeout(function() {
+                socket = new WebSocket(wsUri);
                 }, 2000);
         };
 
