@@ -9,6 +9,7 @@
 
 namespace Legendary.Web
 {
+    using System;
     using System.Linq;
     using Legendary.Core.Contracts;
     using Legendary.Data;
@@ -122,7 +123,9 @@ namespace Legendary.Web
                 MinimumSameSitePolicy = SameSiteMode.Strict,
             });
 
-            app.UseWebSockets();
+            // https://stackoverflow.com/questions/40502921/net-websockets-forcibly-closed-despite-keep-alive-and-activity-on-the-connectio
+            System.Net.ServicePointManager.MaxServicePointIdleTime = int.MaxValue;
+            app.UseWebSockets(new WebSocketOptions() { KeepAliveInterval = TimeSpan.FromSeconds(90) });
 
             // Start up the comms to handle websocket requests.
             app.UseMiddleware<Communicator>();

@@ -22,14 +22,11 @@
         }
 
         socket.onopen = e => {
-            console.log("Created a secure connection to Legendary.", e);
+            console.log("Creating a secure connection to Legendary...", e);
         };
 
         socket.onclose = function (e) {
-            console.log("Disconnected. Reconnecting in 2 seconds...", e);
-            setTimeout(function() {
-                socket = new WebSocket(wsUri);
-                }, 2000);
+            console.log("Disconnected from Legendary.", e);
         };
 
         socket.onerror = function (e) {
