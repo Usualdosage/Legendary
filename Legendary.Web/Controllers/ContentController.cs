@@ -9,10 +9,9 @@
 
 namespace Legendary.Web.Controllers
 {
-    using System;
     using System.Threading.Tasks;
     using Legendary.Engine.Helpers;
-    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     /// <summary>
@@ -22,23 +21,13 @@ namespace Legendary.Web.Controllers
     [ApiController]
     public class ContentController : Controller
     {
-        private readonly IWebHostEnvironment webHostEnvironment;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContentController"/> class.
-        /// </summary>
-        /// <param name="webHostEnvironment">The hosting environment.</param>
-        public ContentController(IWebHostEnvironment webHostEnvironment)
-        {
-            this.webHostEnvironment = webHostEnvironment;
-        }
-
         /// <summary>
         /// Displays the welcome message.
         /// </summary>
         /// <param name="playerName">The name of the player.</param>
         /// <returns>HTML string.</returns>
         [HttpGet]
+        [AllowAnonymous]
         [Route("welcome")]
         public async Task<string> Welcome(string playerName)
         {

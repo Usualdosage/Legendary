@@ -125,7 +125,18 @@ namespace Legendary.Web
 
             // https://stackoverflow.com/questions/40502921/net-websockets-forcibly-closed-despite-keep-alive-and-activity-on-the-connectio
             System.Net.ServicePointManager.MaxServicePointIdleTime = int.MaxValue;
-            app.UseWebSockets(new WebSocketOptions() { KeepAliveInterval = TimeSpan.FromSeconds(90) });
+
+            // Make sure the CORS middleware is ahead of Websocket connection.
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("https://legendary-web.azurewebsites.net")
+                    .AllowAnyHeader()
+                    .WithMethods("GET", "POST")
+                    .AllowCredentials();
+            });
+
+
+            app.UseWebSockets();
 
             // Start up the comms to handle websocket requests.
             app.UseMiddleware<Communicator>();

@@ -22,7 +22,7 @@
         }
 
         socket.onopen = e => {
-            console.log("Creating a secure connection to Legendary...", e);
+            console.log("Creating a secure connection to Legendary (" + wsUri + ")...", e);
         };
 
         socket.onclose = function (e) {
