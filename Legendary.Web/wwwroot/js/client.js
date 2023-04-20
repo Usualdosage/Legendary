@@ -27,7 +27,11 @@
 
         socket.onclose = function (e) {
             console.log("Disconnected. Reconnecting in 2 seconds...", e);
-            setTimeout(Connect(), 2000);
+            setTimeout(
+                function () { 
+                    const client = new LegendaryClient();
+                    client.Connect();
+                }, 2000);
         };
 
         socket.onerror = function (e) {
