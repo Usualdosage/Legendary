@@ -329,9 +329,8 @@ namespace Legendary.Web.Controllers
                 this.logger.LogInformation("{username} is logging in from {ipAddress}...", username, ipAddress);
 
                 // Grab the list of users for the message center.
-                //var characters = await this.dataService.Characters.Find(_ => true).ToListAsync();
-                //userModel.Usernames = characters.Select(u => u.FirstName).ToList();
-                userModel.Usernames = new List<string>();
+                var characters = await this.dataService.Characters.Find(_ => true).ToListAsync();
+                userModel.Usernames = characters.Select(u => u.FirstName).ToList();
 
                 return this.View("Game", userModel);
             }
