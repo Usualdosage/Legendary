@@ -2660,11 +2660,11 @@ namespace Legendary.Engine
         /// <param name="cancellationToken">CancellationToken.</param>
         private async Task ShowWelcomeScreen(UserData user, CancellationToken cancellationToken = default)
         {
-            var content = await this.apiClient.GetContent($"welcome?playerName={user.Character.FirstName}");
-            if (content != null)
-            {
-                await this.SendToPlayer(user.Connection, content, cancellationToken);
-            }
+            //var content = await this.apiClient.GetContent($"welcome?playerName={user.Character.FirstName}");
+            //if (content != null)
+            //{
+            //    await this.SendToPlayer(user.Connection, content, cancellationToken);
+            //}
 
             await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} suddenly appears.", cancellationToken);
         }
