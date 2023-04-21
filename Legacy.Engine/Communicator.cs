@@ -192,8 +192,6 @@ namespace Legendary.Engine
             }
 
             CancellationToken cancellationToken = context.RequestAborted;
-            WebSocket currentSocket = await context.WebSockets.AcceptWebSocketAsync();
-            var socketId = Guid.NewGuid().ToString();
 
             // Ensure user has authenticated
             if (context.User.Identity != null && context.User.Identity.IsAuthenticated)
@@ -203,6 +201,9 @@ namespace Legendary.Engine
 
                 // Load the character by name.
                 var character = await this.dataService.FindCharacter(c => c.FirstName == user);
+
+                WebSocket currentSocket = await context.WebSockets.AcceptWebSocketAsync();
+                var socketId = Guid.NewGuid().ToString();
 
                 if (character == null)
                 {
@@ -221,7 +222,7 @@ namespace Legendary.Engine
                 {
                     string message = $"{DateTime.UtcNow}: {user} ({socketId}) had a zombie connection. Removing old connection.";
                     this.logger.Info(message, this);
-                    await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!");
+                    await this.SendToPlayer(connectedUser.Value.Value.Connection, "You have logged in from another location. Disconnecting. Bye!", cancellationToken);
                     await this.Quit(connectedUser.Value.Value.Connection, connectedUser.Value.Value.Character.FirstName);
                     Users?.TryRemove(connectedUser.Value);
                 }
@@ -229,7 +230,7 @@ namespace Legendary.Engine
                 Users?.TryAdd(socketId, userData);
 
                 string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
-                await this.SendToPlayer(userData.Character, $"You have connected from {ip}.");
+                await this.SendToPlayer(userData.Character, $"You have connected from {ip}.", cancellationToken);
                 this.logger.Info(msg, this);
 
                 // Remove any fighting affects

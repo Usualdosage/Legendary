@@ -25,8 +25,10 @@ namespace Legendary.Web
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Caching.Distributed;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
 
     /// <summary>
@@ -78,6 +80,14 @@ namespace Legendary.Web
             services.AddSingleton<IBuildSettings>(sp => sp.GetRequiredService<IOptions<BuildSettings>>().Value);
             services.AddSingleton<IMailService, MailService>();
             services.AddSingleton<ICompanionProcessor, CompanionProcessor>();
+            services.AddSingleton<ICacheService, CacheService>();
+
+            // Configure the Redis cache.
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = this.Configuration["Legendary.ServerSettings.RedisCacheConnectionString"];
+            });
+
 
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -102,8 +112,7 @@ namespace Legendary.Web
         /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <param name="app">The application builder.</param>
-        /// <param name="env">The hosting environment.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
 

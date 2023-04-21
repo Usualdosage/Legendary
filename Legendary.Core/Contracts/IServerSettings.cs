@@ -63,5 +63,15 @@ namespace Legendary.Core.Contracts
         /// Gets or sets the Mongo database name.
         /// </summary>
         string? MongoDatabaseName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the connection string to the Redis cache.
+        /// </summary>
+        string? RedisCacheConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets or sets the instancee of the Redis cache.
+        /// </summary>
+        string? RedisCacheInstance { get; set; }
     }
 }

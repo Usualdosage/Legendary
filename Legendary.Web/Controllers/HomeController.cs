@@ -29,6 +29,7 @@ namespace Legendary.Web.Controllers
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Distributed;
     using Microsoft.Extensions.Logging;
     using MongoDB.Driver;
     using Newtonsoft.Json;
@@ -44,6 +45,7 @@ namespace Legendary.Web.Controllers
         private readonly IServerSettings serverSettings;
         private readonly IMailService mailService;
         private readonly ICompanionProcessor companionProcessor;
+        private readonly ICacheService cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
@@ -54,7 +56,8 @@ namespace Legendary.Web.Controllers
         /// <param name="serverSettings">The server settings.</param>
         /// <param name="mailService">The mail service.</param>
         /// <param name="companionProcessor">The companion processor.</param>
-        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings, IServerSettings serverSettings, IMailService mailService, ICompanionProcessor companionProcessor)
+        /// <param name="cache">The distributed cache provider.</param>
+        public HomeController(ILogger<HomeController> logger, IDataService dataService, IBuildSettings buildSettings, IServerSettings serverSettings, IMailService mailService, ICompanionProcessor companionProcessor, ICacheService cache)
         {
             this.logger = logger;
             this.dataService = dataService;
@@ -62,6 +65,7 @@ namespace Legendary.Web.Controllers
             this.serverSettings = serverSettings;
             this.mailService = mailService;
             this.companionProcessor = companionProcessor;
+            this.cache = cache;
         }
 
         /// <summary>
@@ -254,6 +258,9 @@ namespace Legendary.Web.Controllers
                                 // Do nothing.
                             }
 
+                            // Dump the cache since we have a new character.
+                            await this.cache.ClearCache("Characters");
+
                             return this.View("Login", new LoginModel("Character created. Please login.", this.buildSettings));
                         }
                         else
@@ -293,7 +300,16 @@ namespace Legendary.Web.Controllers
 
             var userModel = new UserModel(username, password);
 
-            var dbUser = await this.dataService.FindCharacter(c => c.FirstName == username);
+            // Grab the list of users and cache if not already there.
+            var characters = await this.cache.GetFromCache<List<Character>>("Characters");
+
+            if (characters == null)
+            {
+                characters = await this.dataService.Characters.Find(_ => true).ToListAsync();
+                await this.cache.SetCache("Characters", characters, new DistributedCacheEntryOptions() {  SlidingExpiration = TimeSpan.FromHours(1) });
+            }
+
+            var dbUser = characters.FirstOrDefault(c => c.FirstName == username);
 
             if (dbUser == null)
             {
@@ -328,8 +344,6 @@ namespace Legendary.Web.Controllers
 
                 this.logger.LogInformation("{username} is logging in from {ipAddress}...", username, ipAddress);
 
-                // Grab the list of users for the message center.
-                var characters = await this.dataService.Characters.Find(_ => true).ToListAsync();
                 userModel.Usernames = characters.Select(u => u.FirstName).ToList();
 
                 return this.View("Game", userModel);

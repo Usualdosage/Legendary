@@ -45,5 +45,11 @@ namespace Legendary.Networking.Models
 
         /// <inheritdoc/>
         public string? MongoDatabaseName { get; set; }
+
+        /// <inheritdoc/>
+        public string? RedisCacheConnectionString { get; set; }
+
+        /// <inheritdoc/>
+        public string? RedisCacheInstance { get; set; }
     }
 }
