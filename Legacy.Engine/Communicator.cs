@@ -229,6 +229,7 @@ namespace Legendary.Engine
                 Users?.TryAdd(socketId, userData);
 
                 string msg = $"{DateTime.UtcNow}: {user} ({socketId}) has connected from {ip}.";
+                await this.SendToPlayer(userData.Character, $"You have connected from {ip}.");
                 this.logger.Info(msg, this);
 
                 // Remove any fighting affects
@@ -244,6 +245,7 @@ namespace Legendary.Engine
                 userData.Character.GroupId = null;
 
                 // Update the user metrics
+                await this.SendToPlayer(userData.Character, $"Loading...");
                 await this.UpdateMetrics(userData, ip?.ToString());
 
                 // Display the welcome content.

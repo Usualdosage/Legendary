@@ -135,7 +135,6 @@ namespace Legendary.Web
                     .AllowCredentials();
             });
 
-
             app.UseWebSockets();
 
             // Start up the comms to handle websocket requests.
