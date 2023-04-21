@@ -245,38 +245,13 @@ namespace Legendary.Engine
                 userData.Character.GroupId = null;
 
                 // Update the user metrics
-                await this.SendToPlayer(userData.Character, $"Loading...");
                 await this.UpdateMetrics(userData, ip?.ToString());
-
-                // Display the welcome content.
-                await this.ShowWelcomeScreen(userData);
 
                 // Add the user to public channels.
                 this.AddToChannels(socketId, userData);
 
                 // See if this is a new character, if so, add the proper hometown, stats, skills, spells, etc.
                 await this.CheckNewCharacter(userData.Character);
-
-                // All players speak common fluently.
-                var common = SkillHelper.ResolveSkill("Common", this, this.random, this.world, this.logger, this.combat);
-
-                if (common != null && !character.Skills.Contains(new SkillProficiency(common.Name, 100)))
-                {
-                    character.Skills.Add(new SkillProficiency(common.Name, 100));
-                    character.Speaking = common.Name;
-                }
-
-                // All players get recall at max.
-                if (!character.Skills.Contains(new SkillProficiency(nameof(Recall), 100)))
-                {
-                    character.Skills.Add(new SkillProficiency(nameof(Recall), 100));
-                }
-
-                // All players get their racial language at max.
-                if (!character.Skills.Contains(new SkillProficiency(character.Race.ToString(), 100)))
-                {
-                    character.Skills.Add(new SkillProficiency(character.Race.ToString(), 100));
-                }
 
                 // Make sure the character is in an existing room.
                 var room = this.ResolveRoom(userData.Character.Location);
@@ -2651,22 +2626,6 @@ namespace Legendary.Engine
             await this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, message), cancellationToken);
 
             return message;
-        }
-
-        /// <summary>
-        /// Displays the welcome screen to the user.
-        /// </summary>
-        /// <param name="user">The player's data.</param>
-        /// <param name="cancellationToken">CancellationToken.</param>
-        private async Task ShowWelcomeScreen(UserData user, CancellationToken cancellationToken = default)
-        {
-            //var content = await this.apiClient.GetContent($"welcome?playerName={user.Character.FirstName}");
-            //if (content != null)
-            //{
-            //    await this.SendToPlayer(user.Connection, content, cancellationToken);
-            //}
-
-            await this.SendToRoom(user.Character, user.Character.Location, $"{user.Character.FirstName.FirstCharToUpper()} suddenly appears.", cancellationToken);
         }
 
         /// <summary>
