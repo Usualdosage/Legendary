@@ -621,6 +621,11 @@ namespace Legendary.Core.Models
         }
 
         /// <summary>
+        /// Gets or sets the wiz flags.
+        /// </summary>
+        public List<WizFlags> WizFlags { get; set; } = new List<WizFlags>();
+
+        /// <summary>
         /// Indicates whether the player has a given skill.
         /// </summary>
         /// <param name="name">The name of the skill.</param>

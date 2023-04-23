@@ -389,6 +389,7 @@ namespace Legendary.Engine.Processors
             this.actions.Add("north", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("ne", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
             this.actions.Add("nw", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoMove)));
+            this.actions.Add("nofollow", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoNoFollow)));
             this.actions.Add("open", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoOpen)));
             this.actions.Add("outfit", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoOutfit)));
             this.actions.Add("put", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoPut)));
@@ -1046,17 +1047,24 @@ namespace Legendary.Engine.Processors
                         // You can follow a person, but they have to be in the same room.
                         if (target.Character.Location.Value == actor.Character.Location.Value)
                         {
-                            if (!target.Character.Followers.Contains(actor.Character.CharacterId))
+                            if (target.Character.CharacterFlags.Contains(CharacterFlags.NoFollow))
                             {
-                                target.Character.Followers.Add(actor.Character.CharacterId);
-                                actor.Character.Following = target.Character.CharacterId;
-                                await this.communicator.SendToPlayer(actor.Connection, $"You begin following {target.Character.FirstName}.", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Character.Location, actor.Character, target.Character, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
-                                await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} now follows you.", cancellationToken);
+                                await this.communicator.SendToPlayer(actor.Connection, $"{target.Character.FirstName} doesn't seem to want any followers.", cancellationToken);
                             }
                             else
                             {
-                                await this.communicator.SendToPlayer(actor.Connection, $"You are already following {target.Character.FirstName}.", cancellationToken);
+                                if (!target.Character.Followers.Contains(actor.Character.CharacterId))
+                                {
+                                    target.Character.Followers.Add(actor.Character.CharacterId);
+                                    actor.Character.Following = target.Character.CharacterId;
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You begin following {target.Character.FirstName}.", cancellationToken);
+                                    await this.communicator.SendToRoom(actor.Character.Location, actor.Character, target.Character, $"{actor.Character.FirstName.FirstCharToUpper()} starts following {target.Character.FirstName}.", cancellationToken);
+                                    await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} now follows you.", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(actor.Connection, $"You are already following {target.Character.FirstName}.", cancellationToken);
+                                }
                             }
                         }
                         else
@@ -1129,8 +1137,7 @@ namespace Legendary.Engine.Processors
 
                             await this.communicator.SendToPlayer(actor.Connection, $"You give {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                             await this.communicator.SendToPlayer(targetPlayer.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} gives you {itemToGive.Name}.", cancellationToken);
-
-                            await this.communicator.SendToRoom(actor.Character, actor.Character.Location, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Character.Location, actor.Character, targetPlayer.Character, $"{actor.Character.FirstName.FirstCharToUpper()} gives {itemToGive.Name} to {targetPlayer.Character.FirstName}.", cancellationToken);
                         }
                         else
                         {
@@ -1800,6 +1807,52 @@ namespace Legendary.Engine.Processors
             else
             {
                 await this.communicator.SendToPlayer(actor.Connection, $"Newbie chat what?", cancellationToken);
+            }
+        }
+
+        [HelpText("<p>Stops following a group and toggles others ability to follow you.</p>")]
+        private async Task DoNoFollow(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (actor.Character.CharacterFlags.Contains(CharacterFlags.NoFollow))
+            {
+                actor.Character.CharacterFlags.Remove(CharacterFlags.NoFollow);
+                await this.communicator.SendToPlayer(actor.Connection, $"You can now be followed by anyone.", cancellationToken);
+            }
+            else
+            {
+                actor.Character.CharacterFlags.Add(CharacterFlags.NoFollow);
+                await this.communicator.SendToPlayer(actor.Connection, $"You no longer allow followers", cancellationToken);
+
+                if (actor.Character.Following != null)
+                {
+                    // Find the person they were following and remove them as a follower.
+                    var target = this.communicator.ResolveCharacter(actor.Character.Following.Value);
+
+                    if (target != null)
+                    {
+                        target.Character.Followers.Remove(actor.Character.CharacterId);
+                        await this.communicator.SendToPlayer(target.Connection, $"{actor.Character.FirstName} stops following you.", cancellationToken);
+                    }
+                }
+
+                actor.Character.Following = null;
+
+                // If the player had followers, remove them.
+                if (actor.Character.Followers != null && actor.Character.Followers.Count > 0)
+                {
+                    foreach (var follower in actor.Character.Followers)
+                    {
+                        var target = this.communicator.ResolveCharacter(follower);
+
+                        if (target != null)
+                        {
+                            target.Character.Following = null;
+                            await this.communicator.SendToPlayer(target.Connection, $"You stop following {actor.Character.FirstName}.", cancellationToken);
+                        }
+                    }
+
+                    actor.Character.Followers = new List<long>();
+                }
             }
         }
 

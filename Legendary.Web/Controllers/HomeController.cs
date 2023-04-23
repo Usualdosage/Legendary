@@ -306,7 +306,7 @@ namespace Legendary.Web.Controllers
             if (characters == null)
             {
                 characters = await this.dataService.Characters.Find(_ => true).ToListAsync();
-                await this.cache.SetCache("Characters", characters, new DistributedCacheEntryOptions() {  SlidingExpiration = TimeSpan.FromHours(1) });
+                await this.cache.SetCache("Characters", characters, new DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromHours(1) });
             }
 
             var dbUser = characters.FirstOrDefault(c => c.FirstName == username);

@@ -40,7 +40,7 @@ namespace Legendary.Engine.Helpers
             }
             else
             {
-                if (target.IsNPC)
+                if (actor.IsNPC || target.IsNPC)
                 {
                     return true;
                 }
@@ -76,6 +76,12 @@ namespace Legendary.Engine.Helpers
         /// <returns>True if the player can see.</returns>
         public static bool CanPlayerSee(IEnvironment environment, ICommunicator communicator, Character actor)
         {
+            // Staff can see everything, at all times.
+            if (actor.Level >= Constants.WIZLEVEL)
+            {
+                return true;
+            }
+
             if (actor.AffectedBy.Any(e => e.Name == EffectName.BLINDNESS || e.Name == EffectName.DIRTKICKING))
             {
                 return false;
@@ -131,6 +137,12 @@ namespace Legendary.Engine.Helpers
         /// <returns>True if the actor can see the target.</returns>
         public static bool CanPlayerSeePlayer(IEnvironment environment, ICommunicator communicator, Character actor, Character? target)
         {
+            // Staff can see everything, at all times.
+            if (actor.Level >= Constants.WIZLEVEL)
+            {
+                return true;
+            }
+
             if (target == null)
             {
                 return false;

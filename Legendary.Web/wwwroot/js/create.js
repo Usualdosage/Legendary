@@ -10,12 +10,10 @@ function check(input) {
         return;
     }
 
-    var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/g;
-
-    if (input.value.match(regex) === null) {
-        input.setCustomValidity('Passwords must contain at least 8 characters, one uppercase letter, one lower case letter, and a number.');
+    if (input.value.length < 8) {
+        input.setCustomValidity('Plassword must be at least 8 characters.');
         return;
-    }
+    } 
 
     input.setCustomValidity('');
 }
@@ -37,7 +35,7 @@ function checkName(input) {
 }
 
 function checkDesc(input) {
-    if (input.value.length < 200) {
+    if (input.value.length < 100) {
         input.setCustomValidity('Please provide some more detail in your description.');
     } else {
         input.setCustomValidity('');

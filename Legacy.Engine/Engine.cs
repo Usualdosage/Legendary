@@ -93,7 +93,7 @@ namespace Legendary.Engine
         /// </summary>
         public void StartGameLoop()
         {
-            this.logger.Info("Waiting for connections...", null);
+            this.logger.Info("Legendary has started.", null);
 
             this.timer = new System.Threading.Timer(
                 async t =>

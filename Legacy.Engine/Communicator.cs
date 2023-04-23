@@ -2645,6 +2645,11 @@ namespace Legendary.Engine
                     channel.AddUser(socketId, user);
                 }
             }
+
+            if (user.Character.WizFlags.Contains(WizFlags.Wiznet))
+            {
+                this.AddToChannel("wiznet", user.ConnectionId, user);
+            }
         }
 
         /// <summary>

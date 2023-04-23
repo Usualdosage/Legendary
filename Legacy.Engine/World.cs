@@ -881,6 +881,13 @@ namespace Legendary.Engine
             }
         }
 
+        /// <inheritdoc/>
+        public async Task ClearCache()
+        {
+            await this.cache.ClearCache("Characters");
+            await this.cache.ClearCache("Mobiles");
+        }
+
         private static async Task ProcessMobileAffects(Room room, CancellationToken cancellationToken)
         {
             // Process effects on mobiles, and (maybe) move them if they are wandering.

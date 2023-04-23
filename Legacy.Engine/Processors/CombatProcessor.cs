@@ -303,11 +303,10 @@ namespace Legendary.Engine.Processors
 
                             if (member != null)
                             {
-                                if (member.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
-                                {
-                                    member.Character.CharacterFlags.Remove(CharacterFlags.Ghost);
-                                }
+                                // If they're a ghost, not anymore.
+                                member.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Ghost);
 
+                                // Set them to be fighting the target.
                                 member.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
                                 member.Character.Fighting = target.CharacterId;
                             }
@@ -331,11 +330,10 @@ namespace Legendary.Engine.Processors
 
                             if (member != null)
                             {
-                                if (member.Character.CharacterFlags.Contains(CharacterFlags.Ghost))
-                                {
-                                    member.Character.CharacterFlags.Remove(CharacterFlags.Ghost);
-                                }
+                                // If they're a ghost, not anymore.
+                                member.Character.CharacterFlags.RemoveIfExists(CharacterFlags.Ghost);
 
+                                // Set them to be fighting the target.
                                 member.Character.CharacterFlags.AddIfNotExists(CharacterFlags.Fighting);
                                 member.Character.Fighting = actor.CharacterId;
                             }
@@ -503,7 +501,7 @@ namespace Legendary.Engine.Processors
                     // Calculate damage FROM character TO target.
                     var damage = this.CalculateDamage(actor, target, combatAction);
 
-                    // Double damage for critical strikes.
+                    // Double damage for critical strikes if they have the skill, otherwise, max damage.
                     if (isCritical)
                     {
                         var criticalStrikes = actor.GetSkillProficiency("critical strikes");
@@ -514,15 +512,22 @@ namespace Legendary.Engine.Processors
 
                             if (result < criticalStrikes.Proficiency && result != 1)
                             {
-                                damage *= 2;
-                                await this.communicator.SendToPlayer(actor, $"You land a CRITICAL HIT on {target.FirstName}!", cancellationToken);
-                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on you!", cancellationToken);
-                                await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL HIT on {target.FirstName}!", cancellationToken);
+                                damage *= 3;
+                                await this.communicator.SendToPlayer(actor, $"You land a CRITICAL STRIKE on {target.FirstName}!", cancellationToken);
+                                await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL STRIKE on you!", cancellationToken);
+                                await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} lands a CRITICAL STRIKE on {target.FirstName}!", cancellationToken);
                             }
                             else
                             {
                                 await this.communicator.SendToPlayer(actor, $"You nearly land a critical strike on {target.FirstName}, but miss.", cancellationToken);
                             }
+                        }
+                        else
+                        {
+                            await this.communicator.SendToPlayer(actor, $"You critically hit {target.FirstName}!", cancellationToken);
+                            await this.communicator.SendToPlayer(target, $"{actor.FirstName.FirstCharToUpper()} critically hits!", cancellationToken);
+                            await this.communicator.SendToRoom(actor.Location, actor, target, $"{actor.FirstName.FirstCharToUpper()} criticially hits {target.FirstName}!", cancellationToken);
+                            damage *= 2;
                         }
                     }
 
@@ -558,27 +563,13 @@ namespace Legendary.Engine.Processors
 
                         if (GroupHelper.IsInGroup(actor.CharacterId))
                         {
-                            var average = GroupHelper.GetAverageLevelOfGroup(actor.CharacterId);
-
-                            // Calculate the experience.
-                            var experience = this.CalculateExperience(actor, target, average);
-
-                            // Apply experience across the group.
-                            await this.ApplyExperienceToGroup(actor, experience, cancellationToken);
+                            // Calculate the group's experience.
+                            await this.ApplyGroupExperience(actor, target, cancellationToken);
                         }
                         else
                         {
                             // Add the experience to the player.
-                            var experience = this.CalculateExperience(actor, target, null);
-
-                            await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
-                            actor.Experience += experience;
-
-                            // See if the player advanced a level.
-                            if (experience > 0)
-                            {
-                                await this.communicator.CheckLevelAdvance(actor, cancellationToken);
-                            }
+                            await this.ApplyPlayerExperience(actor, target, cancellationToken);
                         }
 
                         return true;
@@ -606,7 +597,7 @@ namespace Legendary.Engine.Processors
 
             try
             {
-                if (primaryWeapon != null && primaryWeapon.Proficiency > 1)
+                if (character.IsNPC || (primaryWeapon != null && primaryWeapon.Proficiency > 1))
                 {
                     var result = this.random.Next(1, 101);
                     dead = await this.DoDamage(character, target, primaryAction, result >= 100, cancellationToken);
@@ -614,6 +605,7 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     await this.communicator.SendToPlayer(character, $"Your {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
+                    await this.communicator.SendToRoom(character.Location, character, target, $"{character.FirstName.FirstCharToUpper()}'s {primaryAction.DamageNoun} misses {target.FirstName}.", cancellationToken);
 
                     if (this.random.Next(1, 100) < 20)
                     {
@@ -759,7 +751,7 @@ namespace Legendary.Engine.Processors
                             // Show the opponent's condition.
                             string? condition = GetPlayerCondition(target);
 
-                            if (!string.IsNullOrWhiteSpace(condition))
+                            if (!string.IsNullOrWhiteSpace(condition) && !IsDead(user.Value.Character))
                             {
                                 await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
                             }
@@ -838,65 +830,111 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="target">The target.</param>
-        /// <param name="averageLevel">If provided, used to calculate group experience.</param>
         /// <returns>Int.</returns>
-        public int CalculateExperience(Character actor, Character target, int? averageLevel)
+        public int CalculateExperience(Character actor, Character target)
         {
-            if (!averageLevel.HasValue)
+            double experience;
+            int actorLevel = actor.Level;
+            int targetLevel = target.Level;
+            const int minExperience = 1;
+            int maxExperience = 2000 + this.random.Next(1, 100);
+            int baseIncrementalExperience = 200 + this.random.Next(1, 20);
+
+            int levelDifference = actorLevel - targetLevel;
+
+            // If the actor's level is lower than or equal to the target's level or if the actor's level is more than 10 levels above the target,
+            // return the minimum experience.
+            if (levelDifference <= 0 || levelDifference > 10)
             {
-                int baseExperience = (target.Level * 5) + this.random.Next(1, 201);
-
-                if (actor.Level <= target.Level)
-                {
-                    double levelDiff = target.Level - actor.Level;
-                    double experienceResult = baseExperience * Math.Max(1, levelDiff - 2);
-                    var modified = experienceResult * this.GetModifier(actor, target);
-                    return (int)modified;
-                }
-                else
-                {
-                    double levelDiff = actor.Level - target.Level;
-
-                    // If more than ten levels higher than target, no experience.
-                    if (levelDiff > 10)
-                    {
-                        return 0;
-                    }
-                    else
-                    {
-                        double levelModifier = 1d / (actor.Level - target.Level);
-                        double experienceResult = baseExperience * levelModifier;
-                        var modified = experienceResult * this.GetModifier(actor, target);
-                        return (int)modified;
-                    }
-                }
+                experience = minExperience;
             }
-            else
+
+            // Calculate the base experience gained based on the level difference.
+            int baseExperience = (int)Math.Round(maxExperience * Math.Pow(0.5, levelDifference));
+
+            // Calculate the incremental experience gained for every level higher the target is than the actor.
+            double incrementalExperienceMultiplier = 1 + ((levelDifference - 1) * 0.1);
+            int incrementalExperience = (int)Math.Round(baseIncrementalExperience * incrementalExperienceMultiplier);
+            int incrementalExperienceGained = 0;
+            for (int i = 0; i < levelDifference; i++)
             {
-                int baseExperience = (target.Level * 5) + this.random.Next(1, 201);
+                incrementalExperienceGained += incrementalExperience;
+                incrementalExperience = (int)Math.Round(incrementalExperience * 1.1);
+            }
 
-                if (averageLevel.Value <= target.Level)
-                {
-                    double levelDiff = target.Level - averageLevel.Value;
-                    double experienceResult = baseExperience * Math.Max(1, levelDiff - 2);
-                    var modified = experienceResult * this.GetModifier(actor, target);
-                    return (int)modified;
-                }
-                else
-                {
-                    double levelDiff = actor.Level - target.Level;
+            // Calculate the total experience gained.
+            experience = baseExperience + incrementalExperienceGained;
 
-                    // If more than ten levels higher than target, no experience.
-                    if (levelDiff > 10)
+            // Ensure that the experience gained is within the range of minExperience and maxExperience.
+            experience = Math.Max(minExperience, Math.Min(maxExperience, experience));
+
+            // Get the modifier for the alignment difference.
+            double modifier = this.GetModifier(actor, target);
+
+            // Apply the modifier.
+            experience *= modifier;
+
+            return (int)Math.Round(experience);
+        }
+
+        /// <summary>
+        /// Apply the experience the player gets from killing the target.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task ApplyPlayerExperience(Character actor, Character target, CancellationToken cancellationToken = default)
+        {
+            var experience = this.CalculateExperience(actor, target);
+
+            await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
+            actor.Experience += experience;
+
+            // See if the player advanced a level.
+            if (experience > 0)
+            {
+                await this.communicator.CheckLevelAdvance(actor, cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Apply the experience the group gets from killing the target.
+        /// </summary>
+        /// <param name="actor">The actor.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task ApplyGroupExperience(Character actor, Character target, CancellationToken cancellationToken = default)
+        {
+            if (actor.GroupId.HasValue)
+            {
+                var group = GroupHelper.GetAllGroupMembers(actor.CharacterId);
+
+                if (group != null)
+                {
+                    // If there are 2 in the group, reduce by .85.
+                    // Favor 3 in a group, so give them a bonus.
+                    // Reduce dramatically for 4 or more in a group
+                    double modifier = (group.Count == 2) ? 0.85 : (group.Count == 3) ? 1.5 : (group.Count >= 4) ? 0.75 - ((group.Count - 4) * 0.2) : 0;
+
+                    foreach (var member in group)
                     {
-                        return 0;
-                    }
-                    else
-                    {
-                        double levelModifier = 1d / (averageLevel.Value - target.Level);
-                        double experienceResult = baseExperience * levelModifier;
-                        var modified = experienceResult * this.GetModifier(actor, target);
-                        return (int)modified;
+                        var player = this.communicator.ResolveCharacter(member);
+
+                        if (player != null)
+                        {
+                            int experience = (int)(this.CalculateExperience(player.Character, target) * modifier);
+
+                            await this.communicator.SendToPlayer(player.Character, $"You gain {experience} experience points.", cancellationToken);
+                            player.Character.Experience += experience;
+
+                            // See if the player advanced a level.
+                            if (experience > 0)
+                            {
+                                await this.communicator.CheckLevelAdvance(player.Character, cancellationToken);
+                            }
+                        }
                     }
                 }
             }

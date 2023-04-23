@@ -59,6 +59,12 @@ namespace Legendary.Core.Contracts
         Task<HashSet<Mobile>?> GetMobiles();
 
         /// <summary>
+        /// Resets the cache.
+        /// </summary>
+        /// <returns>Task.</returns>
+        Task ClearCache();
+
+        /// <summary>
         /// Serializes all of the memories from the hashset into the DB for long term storage.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>

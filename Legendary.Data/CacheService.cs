@@ -39,7 +39,7 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task SetCache<T>(string key, T value, DistributedCacheEntryOptions options) 
+        public async Task SetCache<T>(string key, T value, DistributedCacheEntryOptions options)
             where T : class
         {
             var response = JsonSerializer.Serialize(value);

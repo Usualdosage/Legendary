@@ -53,5 +53,20 @@ namespace Legendary.Core.Types
         /// Autosacrifice corpses.
         /// </summary>
         Autosac = 8,
+
+        /// <summary>
+        /// Prevents/enables followers.
+        /// </summary>
+        NoFollow = 9,
+
+        /// <summary>
+        /// Wanted by the law.
+        /// </summary>
+        Wanted = 10,
+
+        /// <summary>
+        /// Permanently wanted.
+        /// </summary>
+        Outlaw = 11,
     }
 }

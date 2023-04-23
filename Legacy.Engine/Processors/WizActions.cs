@@ -349,7 +349,7 @@ namespace Legendary.Engine.Processors
         }
 
         [MinimumLevel(100)]
-        [HelpText("Reloads the world from the database. Note: Does not reload new code.")]
+        [HelpText("Reloads the world from the database, and clears the cache. Note: Does not reload new code.")]
         private async Task DoReload(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
             await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
@@ -611,11 +611,13 @@ namespace Legendary.Engine.Processors
             // Sub/unsub to wiznet channel
             if (this.communicator.IsSubscribed("wiznet", actor.ConnectionId, actor))
             {
+                actor.Character.WizFlags.Remove(WizFlags.Wiznet);
                 await this.communicator.SendToPlayer(actor.Connection, $"Unsubscribed from WIZNET. You will no longer see all logs.", cancellationToken);
                 this.communicator.RemoveFromChannel("wiznet", actor.ConnectionId, actor);
             }
             else
             {
+                actor.Character.WizFlags.Add(WizFlags.Wiznet);
                 await this.communicator.SendToPlayer(actor.Connection, $"Welcome to WIZNET! You will now see all logs.", cancellationToken);
                 this.communicator.AddToChannel("wiznet", actor.ConnectionId, actor);
             }
