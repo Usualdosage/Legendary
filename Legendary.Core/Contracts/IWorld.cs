@@ -33,11 +33,6 @@ namespace Legendary.Core.Contracts
         HashSet<Item> Items { get; }
 
         /// <summary>
-        /// Gets a hashset of mobiles currently loaded into memory.
-        /// </summary>
-        HashSet<Mobile> Mobiles { get; }
-
-        /// <summary>
         /// Gets a hashset of awards currently loaded into memory.
         /// </summary>
         HashSet<Award> Awards { get; }
@@ -56,6 +51,12 @@ namespace Legendary.Core.Contracts
         /// Gets the game metrics.
         /// </summary>
         GameMetrics? GameMetrics { get; }
+
+        /// <summary>
+        /// Gets a hashset of mobiles currently loaded into cache.
+        /// </summary>
+        /// <returns>Hashset of Mobiles.</returns>
+        Task<HashSet<Mobile>?> GetMobiles();
 
         /// <summary>
         /// Serializes all of the memories from the hashset into the DB for long term storage.

@@ -38,7 +38,7 @@ namespace Legendary.Engine
         private readonly ILogger logger;
         private int dayWeatherIndex = 0;
 
-        private List<Weather> dayWeatherForward = new ()
+        private readonly List<Weather> dayWeatherForward = new ()
         {
             new Weather(0, "The sun shines in a nearly cloudless sky.", string.Empty, "It is sunny with a clear, blue sky overhead.", 0),
             new Weather(1, "Some small clouds form in the sky.", string.Empty, "There are some small clouds in the sky, but it is mostly sunny.", 0),

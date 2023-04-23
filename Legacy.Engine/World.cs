@@ -36,7 +36,8 @@ namespace Legendary.Engine
         private readonly IDataService dataService;
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
-        private readonly SemaphoreSlim semaphore = new (1, 1);
+        private readonly ICacheService cache;
+        private readonly SemaphoreSlim semaphore = new(1, 1);
         private DateTime? lastMemoryDate;
 
         /// <summary>
@@ -46,12 +47,14 @@ namespace Legendary.Engine
         /// <param name="random">The random generator.</param>
         /// <param name="logger">The logger.</param>
         /// <param name="communicator">The communicator.</param>
-        public World(IDataService dataService, IRandom random, ILogger logger, ICommunicator communicator)
+        /// <param name="cache">The cache.</param>
+        public World(IDataService dataService, IRandom random, ILogger logger, ICommunicator communicator, ICacheService cache)
         {
             this.dataService = dataService;
             this.logger = logger;
             this.random = random;
             this.communicator = communicator;
+            this.cache = cache;
         }
 
         /// <inheritdoc/>
@@ -59,9 +62,6 @@ namespace Legendary.Engine
 
         /// <inheritdoc/>
         public HashSet<Item> Items { get; private set; } = new HashSet<Item>();
-
-        /// <inheritdoc/>
-        public HashSet<Mobile> Mobiles { get; private set; } = new HashSet<Mobile>();
 
         /// <inheritdoc/>
         public HashSet<Award> Awards { get; private set; } = new HashSet<Award>();
@@ -152,6 +152,23 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
+        public async Task<HashSet<Mobile>?> GetMobiles()
+        {
+            var mobiles = await this.cache.GetFromCache<HashSet<Mobile>>("Mobiles");
+            if (mobiles == null)
+            {
+                var mobilesData = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
+                if (mobilesData != null)
+                {
+                    mobiles = new HashSet<Mobile>(mobilesData);
+                    await this.cache.SetCache("Mobiles", mobiles, new Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromDays(1)});
+                }
+            }
+
+            return mobiles;
+        }
+
+        /// <inheritdoc/>
         public async Task LoadWorld()
         {
             var areas = await this.dataService.Areas.Find(Builders<Area>.Filter.Empty).ToListAsync();
@@ -164,7 +181,6 @@ namespace Legendary.Engine
             // Cache common lookups as hash sets for faster reads.
             this.Areas = new HashSet<Area>(areas);
             this.Items = new HashSet<Item>(items);
-            this.Mobiles = new HashSet<Mobile>(mobiles);
             this.Awards = new HashSet<Award>(awards);
             this.Personas = new HashSet<Persona>(personas);
             this.Memories = new HashSet<Memory>(memories);
@@ -377,7 +393,7 @@ namespace Legendary.Engine
                             // Get one of the rooms they normally would populate in at random.
                             var room = repopRooms?[this.random.Next(0, repopRooms.Count - 1)];
 
-                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == mobCharacterId);
+                            var mobile = this.GetMobiles().Result.FirstOrDefault(m => m.CharacterId == mobCharacterId);
 
                             // Get the mobile.
                             if (mobile != null && room != null)
@@ -480,7 +496,7 @@ namespace Legendary.Engine
                         // Populate mobs from resets
                         foreach (var reset in room.MobileResets)
                         {
-                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
+                            var mobile = this.GetMobiles().Result.FirstOrDefault(m => m.CharacterId == reset);
 
                             if (mobile != null)
                             {
@@ -594,7 +610,8 @@ namespace Legendary.Engine
                 metrics.LastStartupDateTime = startup.HasValue ? startup : metrics.LastStartupDateTime;
                 metrics.MaxPlayers = this.dataService.Characters.CountDocuments(c => c.CharacterId > 0, cancellationToken: cancellationToken);
                 metrics.TotalAreas = this.Areas.Count;
-                metrics.TotalMobiles = this.Mobiles.Count;
+                var mobs = await this.GetMobiles();
+                metrics.TotalMobiles = mobs.Count;
                 metrics.TotalItems = this.Items.Count;
                 metrics.TotalRooms = this.Areas.Sum(a => a.Rooms != null ? a.Rooms.Count : 0);
 

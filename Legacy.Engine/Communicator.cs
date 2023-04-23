@@ -79,7 +79,7 @@ namespace Legendary.Engine
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="random">The random number generator.</param>
-        public Communicator(IHttpContextAccessor httpContextAccessor, RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IRandom random)
+        public Communicator(IHttpContextAccessor httpContextAccessor, RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IRandom random, ICacheService cache)
         {
             this.httpContextAccessor = httpContextAccessor;
             this.webHostEnvironment = webHostEnvironment;
@@ -90,7 +90,7 @@ namespace Legendary.Engine
             this.serverSettings = serverSettings;
             this.random = random;
 
-            this.world = new World(this.dataService, this.random, this.logger, this);
+            this.world = new World(this.dataService, this.random, this.logger, this, cache);
 
             // Add public channels.
             this.Channels = new List<CommChannel>()
