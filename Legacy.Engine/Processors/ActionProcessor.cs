@@ -117,8 +117,8 @@ namespace Legendary.Engine.Processors
             {
                 Direction.South => "to the south of",
                 Direction.North => "to the north of",
-                Direction.East => "to the south of",
-                Direction.West => "to the north of",
+                Direction.East => "to the east of",
+                Direction.West => "to the west of",
                 Direction.SouthEast => "to the southeast of",
                 Direction.SouthWest => "to the southwest of",
                 Direction.NorthEast => "to the northeast of",
@@ -474,7 +474,7 @@ namespace Legendary.Engine.Processors
                 if (!string.IsNullOrWhiteSpace(image))
                 {
                     // TODO: actor.Character.HasGeneratedImage = true;
-                    actor.Character.Image = image;
+                    actor.Character.Images = new List<string>() { image };
                     await this.communicator.SaveCharacter(actor);
                     await this.communicator.SendToPlayer(actor.Connection, $"Your avatar is generated. Type 'LOOK SELF' to review.", cancellationToken);
                 }

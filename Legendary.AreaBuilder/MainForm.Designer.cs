@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
+            tableLayoutPanel1 = new TableLayoutPanel();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
-            tableLayoutPanel1 = new TableLayoutPanel();
             splitContainer2 = new SplitContainer();
             pgArea = new PropertyGrid();
             splitContainer3 = new SplitContainer();
@@ -81,6 +81,7 @@
             selectAllRoomsToolStripMenuItem = new ToolStripMenuItem();
             deselectAllRoomsToolStripMenuItem = new ToolStripMenuItem();
             resetsToolStripMenuItem = new ToolStripMenuItem();
+            updateCharactersToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -116,21 +117,6 @@
             splitContainer1.Size = new Size(1135, 696);
             splitContainer1.SplitterDistance = 899;
             splitContainer1.TabIndex = 0;
-            // 
-            // statusStrip1
-            // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 674);
-            statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(899, 22);
-            statusStrip1.TabIndex = 2;
-            statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(42, 17);
-            toolStripStatusLabel1.Text = "Ready.";
             // 
             // tableLayoutPanel1
             // 
@@ -183,6 +169,21 @@
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 5F));
             tableLayoutPanel1.Size = new Size(899, 674);
             tableLayoutPanel1.TabIndex = 0;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Location = new Point(0, 674);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(899, 22);
+            statusStrip1.TabIndex = 2;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(42, 17);
+            toolStripStatusLabel1.Text = "Ready.";
             // 
             // splitContainer2
             // 
@@ -349,7 +350,7 @@
             // 
             // roomToolStripMenuItem
             // 
-            roomToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { renumberRoomsToolStripMenuItem, validateAreaToolStripMenuItem, toolStripSeparator2, connectSelectedRoomsToolStripMenuItem, disconnectSelectedRoomsToolStripMenuItem, toolStripSeparator1, aIDescriptionGeneratorToolStripMenuItem, generateRoomImagesToolStripMenuItem, resetRoomDescriptionsToolStripMenuItem, resetRoomImagesToolStripMenuItem, toolStripSeparator6, prePopulateRoomImagesToolStripMenuItem, toolStripSeparator7, updateExitsToolStripMenuItem, setSelectedRoomsToToolStripMenuItem });
+            roomToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { renumberRoomsToolStripMenuItem, validateAreaToolStripMenuItem, toolStripSeparator2, connectSelectedRoomsToolStripMenuItem, disconnectSelectedRoomsToolStripMenuItem, toolStripSeparator1, aIDescriptionGeneratorToolStripMenuItem, generateRoomImagesToolStripMenuItem, resetRoomDescriptionsToolStripMenuItem, resetRoomImagesToolStripMenuItem, toolStripSeparator6, prePopulateRoomImagesToolStripMenuItem, toolStripSeparator7, updateExitsToolStripMenuItem, setSelectedRoomsToToolStripMenuItem, updateCharactersToolStripMenuItem });
             roomToolStripMenuItem.Name = "roomToolStripMenuItem";
             roomToolStripMenuItem.Size = new Size(46, 20);
             roomToolStripMenuItem.Text = "Tools";
@@ -478,47 +479,47 @@
             // mountainToolStripMenuItem
             // 
             mountainToolStripMenuItem.Name = "mountainToolStripMenuItem";
-            mountainToolStripMenuItem.Size = new Size(126, 22);
+            mountainToolStripMenuItem.Size = new Size(180, 22);
             mountainToolStripMenuItem.Text = "Mountain";
             mountainToolStripMenuItem.Click += MountainToolStripMenuItem_Click;
             // 
             // cityToolStripMenuItem
             // 
             cityToolStripMenuItem.Name = "cityToolStripMenuItem";
-            cityToolStripMenuItem.Size = new Size(126, 22);
+            cityToolStripMenuItem.Size = new Size(180, 22);
             cityToolStripMenuItem.Text = "City";
             // 
             // hillsToolStripMenuItem
             // 
             hillsToolStripMenuItem.Name = "hillsToolStripMenuItem";
-            hillsToolStripMenuItem.Size = new Size(126, 22);
+            hillsToolStripMenuItem.Size = new Size(180, 22);
             hillsToolStripMenuItem.Text = "Hills";
             // 
             // cavesToolStripMenuItem
             // 
             cavesToolStripMenuItem.Name = "cavesToolStripMenuItem";
-            cavesToolStripMenuItem.Size = new Size(126, 22);
+            cavesToolStripMenuItem.Size = new Size(180, 22);
             cavesToolStripMenuItem.Text = "Caves";
             cavesToolStripMenuItem.Click += CavesToolStripMenuItem_Click;
             // 
             // desertToolStripMenuItem
             // 
             desertToolStripMenuItem.Name = "desertToolStripMenuItem";
-            desertToolStripMenuItem.Size = new Size(126, 22);
+            desertToolStripMenuItem.Size = new Size(180, 22);
             desertToolStripMenuItem.Text = "Desert";
             desertToolStripMenuItem.Click += DesertToolStripMenuItem_Click;
             // 
             // indoorsToolStripMenuItem
             // 
             indoorsToolStripMenuItem.Name = "indoorsToolStripMenuItem";
-            indoorsToolStripMenuItem.Size = new Size(126, 22);
+            indoorsToolStripMenuItem.Size = new Size(180, 22);
             indoorsToolStripMenuItem.Text = "Indoors";
             indoorsToolStripMenuItem.Click += IndoorsToolStripMenuItem_Click;
             // 
             // shipToolStripMenuItem
             // 
             shipToolStripMenuItem.Name = "shipToolStripMenuItem";
-            shipToolStripMenuItem.Size = new Size(126, 22);
+            shipToolStripMenuItem.Size = new Size(180, 22);
             shipToolStripMenuItem.Text = "Ship";
             shipToolStripMenuItem.Click += ShipToolStripMenuItem_Click;
             // 
@@ -549,6 +550,13 @@
             resetsToolStripMenuItem.Size = new Size(52, 20);
             resetsToolStripMenuItem.Text = "Resets";
             resetsToolStripMenuItem.Click += ResetsToolStripMenuItem_Click;
+            // 
+            // updateCharactersToolStripMenuItem
+            // 
+            updateCharactersToolStripMenuItem.Name = "updateCharactersToolStripMenuItem";
+            updateCharactersToolStripMenuItem.Size = new Size(224, 22);
+            updateCharactersToolStripMenuItem.Text = "Update Characters";
+            updateCharactersToolStripMenuItem.Click += updateCharactersToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -640,5 +648,6 @@
         private SplitContainer splitContainer3;
         private PictureBox pbRoomImage;
         private ToolStripMenuItem resetsToolStripMenuItem;
+        private ToolStripMenuItem updateCharactersToolStripMenuItem;
     }
 }

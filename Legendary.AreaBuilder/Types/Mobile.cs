@@ -261,11 +261,11 @@ namespace Legendary.AreaBuilder.Types
         public override SchoolType? SchoolType { get; set; }
 
         /// <summary>
-        /// Gets or sets the base-64 image for this character.
+        /// Gets or sets the images for this character.
         /// </summary>
         [Category("Personal")]
-        [Description("The image generated for this mobile.")]
-        public override string? Image { get; set; }
+        [Description("The images for this mobile.")]
+        public override List<string>? Images { get; set; }
 
         /// <summary>
         /// Gets or sets the player's equipment.

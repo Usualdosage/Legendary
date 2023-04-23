@@ -59,24 +59,17 @@ namespace Legendary.Engine.Processors
         /// <param name="cancellationToken">The cancellation token.</param>
         private async Task CheckCassanovaQuest(string message, Character actor, Mobile mobile, CancellationToken cancellationToken)
         {
-            if (mobile.UseAI && !string.IsNullOrWhiteSpace(mobile.XImage))
+            if (mobile.UseAI && mobile.XImages != null && mobile.XImages.Count > 0)
             {
                 message = message.ToLower();
 
-                if (message.Contains($"disrobes") || message.Contains($"removes {mobile.Pronoun} clothes") || message.Contains($"takes off {mobile.Pronoun}") || message.Contains($"removes {mobile.Pronoun} shirt") || message.Contains($"removes {mobile.Pronoun} top") || message.Contains($"removes {mobile.Pronoun} pants") || message.Contains($"removes {mobile.Pronoun} panties"))
+                if (message.Contains($"disrobes") || message.Contains($"naked body") || message.Contains($"removes {mobile.Pronoun} clothes") || message.Contains($"removes {mobile.Pronoun} clothing") || message.Contains($"takes off {mobile.Pronoun}") || message.Contains($"removes {mobile.Pronoun} shirt") || message.Contains($"removes {mobile.Pronoun} top") || message.Contains($"removes {mobile.Pronoun} pants") || message.Contains($"removes {mobile.Pronoun} panties"))
                 {
-                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
+                    if (mobile.XActive.HasValue && mobile.XActive.Value)
                     {
-                        if (!string.IsNullOrWhiteSpace(mobile.XImage))
-                        {
-                            this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
-                            mobile.XActive = true;
-                            await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
-                        }
-                        else
-                        {
-                            mobile.XActive = false;
-                        }
+                        this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
+                        mobile.XActive = true;
+                        await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                     }
                     else
                     {
@@ -85,7 +78,7 @@ namespace Legendary.Engine.Processors
                 }
                 else if (message.Contains($"gets dressed") || message.Contains($"puts {mobile.Pronoun} clothes on") || message.Contains($"puts {mobile.Pronoun} clothes back on"))
                 {
-                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
+                    if (mobile.XActive.HasValue && mobile.XActive.Value)
                     {
                         this.logger.Info($"{actor.FirstName} has deactivated {mobile.FirstName}.", this.communicator);
                         mobile.XActive = false;
@@ -97,7 +90,7 @@ namespace Legendary.Engine.Processors
                 }
                 else if (message.Contains("cassanova-deactivate"))
                 {
-                    if (mobile.XActive.HasValue && mobile.XActive.Value && !string.IsNullOrWhiteSpace(mobile.XImage))
+                    if (mobile.XActive.HasValue && mobile.XActive.Value)
                     {
                         this.logger.Info($"{actor.FirstName} has deactivated {mobile.FirstName}.", this.communicator);
                         mobile.XActive = false;
@@ -109,16 +102,9 @@ namespace Legendary.Engine.Processors
                 }
                 else if (message.Contains("cassanova-activate"))
                 {
-                    if (!string.IsNullOrWhiteSpace(mobile.XImage))
-                    {
-                        this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
-                        mobile.XActive = true;
-                        await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
-                    }
-                    else
-                    {
-                        mobile.XActive = false;
-                    }
+                    this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
+                    mobile.XActive = true;
+                    await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
                 }
                 else
                 {

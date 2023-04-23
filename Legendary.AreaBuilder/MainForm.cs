@@ -1060,5 +1060,28 @@ namespace Legendary.AreaBuilder
                 frm.ShowDialog();
             }
         }
+
+        private void updateCharactersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //{
+            //    var chars = this.mongo.Characters.Find(m => true).ToList();
+
+            //    foreach (var character in chars)
+            //    {
+            //        if (!string.IsNullOrWhiteSpace(character.Image))
+            //        {
+            //            character.Images = new List<string>()
+            //            {
+            //                character.Image,
+            //            };
+            //        }
+
+            //        this.mongo.Characters.ReplaceOne(m => m.CharacterId == character.CharacterId, character);
+            //    }
+
+            //    this.toolStripStatusLabel1.Text = "Character images migrated.";
+            //}
+        }
+
     }
 }

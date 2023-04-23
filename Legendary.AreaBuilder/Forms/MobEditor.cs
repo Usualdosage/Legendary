@@ -126,9 +126,9 @@ namespace Legendary.AreaBuilder
             {
                 this.propertyGrid1.SelectedObject = this.listBox1.SelectedItem;
 
-                if (this.propertyGrid1.SelectedObject is Mobile mobile && !string.IsNullOrWhiteSpace(mobile.Image))
+                if (this.propertyGrid1.SelectedObject is Mobile mobile && mobile.Images != null && mobile.Images.Count > 0)
                 {
-                    this.pictureBox1.ImageLocation = mobile.Image;
+                    this.pictureBox1.ImageLocation = mobile.Images[0];
                     this.pictureBox1.Update();
                 }
             }
@@ -174,22 +174,30 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private bool UploadMobileImage(Mobile mobile, Stream stream, string extension = ".png")
+        private bool UploadMobileImage(Mobile mobile, Stream stream, string extension = ".png", bool isXImage = false)
         {
             string connectionString = "DefaultEndpointsProtocol=https;AccountName=legendaryweb;AccountKey=SZ7oVHyhh/QghSiA+XL4xqwGxszmBcHgzOYQbYbdAS/3m2SqvXhdg7Tafgew9X/DDidE93Q9TuNq+AStP6A66Q==;EndpointSuffix=core.windows.net";
 
             // Name of the share, directory, and file we'll create
             string shareName = "images";
-            string fileName = $"{mobile.CharacterId}{extension}";
+            string fileName = $"{mobile.CharacterId}_{Guid.NewGuid()}{extension}";
             ShareClient share = new(connectionString, shareName);
             ShareDirectoryClient directory = share.GetDirectoryClient("/mobiles");
 
             try
             {
+                string imageUrl = $"https://legendaryweb.file.core.windows.net/images/mobiles/{fileName}?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+
+                if (isXImage)
+                {
+                    shareName = "mob-x";
+                    share = new(connectionString, shareName);
+                    directory = share.GetDirectoryClient("/");
+                    imageUrl = $"https://legendaryweb.file.core.windows.net/mob-x/{fileName}?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
+                }
+
                 // Get a reference to a file and upload it
                 ShareFileClient file = directory.GetFileClient(fileName);
-
-                string imageUrl = $"https://legendaryweb.file.core.windows.net/images/mobiles/{mobile.CharacterId}{extension}?sv=2021-12-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-03-02T01:01:15Z&st=2023-03-10T17:01:15Z&spr=https&sig=nNpMARshWaVt834sDpwGXLp5%2BfAQtnrMcSQmWqf8o%2Fk%3D";
 
                 var response = file.Create(stream.Length);
 
@@ -197,7 +205,18 @@ namespace Legendary.AreaBuilder
                     new HttpRange(0, stream.Length),
                     stream);
 
-                mobile.Image = imageUrl;
+                if (isXImage)
+                {
+                    mobile.XImages ??= new List<string>();
+
+                    mobile.XImages.Add(imageUrl);
+                }
+                else
+                {
+                    mobile.Images ??= new List<string>();
+
+                    mobile.Images.Add(imageUrl);
+                }
 
                 this.pictureBox1.ImageLocation = imageUrl;
                 this.pictureBox1.Update();
@@ -237,7 +256,7 @@ namespace Legendary.AreaBuilder
                 {
                     mobile.CharacterId = this.listBox1.Items.Count + 1;
                     mobile.FirstName = "CLONE of " + mobile.FirstName;
-                    mobile.Image = string.Empty;
+                    mobile.Images = new List<string>();
                     mobile.LongDescription = string.Empty;
                     this.mongo.Mobiles.InsertOne(mobile);
                     this.toolStripStatusLabel1.Text = "Mobile cloned.";
@@ -267,11 +286,6 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private void BtnUploadXImage_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void BtnAddReset_Click(object sender, EventArgs e)
         {
             if (this.lstItems.SelectedItem != null && this.lstItems.SelectedItem is Item item && this.propertyGrid1.SelectedObject is Mobile mobile)
@@ -294,6 +308,24 @@ namespace Legendary.AreaBuilder
                 else
                 {
                     this.toolStripStatusLabel1.Text = "Item could not be equipped. No valid wear location.";
+                }
+            }
+        }
+
+        private void UploadXImage_Click(object sender, EventArgs e)
+        {
+            var openDlg = new OpenFileDialog()
+            {
+                Title = "Add Image File",
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;",
+            };
+
+            if (openDlg.ShowDialog() == DialogResult.OK)
+            {
+                if (this.propertyGrid1.SelectedObject is Mobile mobile)
+                {
+                    var stream = File.OpenRead(openDlg.FileName);
+                    this.UploadMobileImage(mobile, stream, Path.GetExtension(openDlg.FileName), true);
                 }
             }
         }

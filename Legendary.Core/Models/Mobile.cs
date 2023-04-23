@@ -71,11 +71,6 @@ namespace Legendary.Core.Models
         public override int DamageDice { get; set; }
 
         /// <summary>
-        /// Gets or sets the XImage.
-        /// </summary>
-        public string? XImage { get; set; }
-
-        /// <summary>
         /// Gets or sets the XActive.
         /// </summary>
         public bool? XActive { get; set; }
@@ -84,5 +79,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the program.
         /// </summary>
         public string? Program { get; set; }
+
+        /// <summary>
+        /// Gets or sets the X-images for this mobile.
+        /// </summary>
+        public virtual List<string>? XImages { get; set; }
     }
 }

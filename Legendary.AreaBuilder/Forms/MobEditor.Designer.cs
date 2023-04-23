@@ -42,6 +42,7 @@
             lstItems = new ListBox();
             btnAddReset = new Button();
             BtnWield = new Button();
+            UploadXImage = new Button();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -111,7 +112,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(504, 400);
+            button4.Location = new Point(612, 400);
             button4.Name = "button4";
             button4.Size = new Size(156, 23);
             button4.TabIndex = 12;
@@ -121,7 +122,7 @@
             // 
             // button5
             // 
-            button5.Location = new Point(666, 400);
+            button5.Location = new Point(774, 400);
             button5.Name = "button5";
             button5.Size = new Size(105, 23);
             button5.TabIndex = 13;
@@ -178,11 +179,22 @@
             BtnWield.UseVisualStyleBackColor = true;
             BtnWield.Click += BtnWield_Click;
             // 
+            // UploadXImage
+            // 
+            UploadXImage.Location = new Point(501, 400);
+            UploadXImage.Name = "UploadXImage";
+            UploadXImage.Size = new Size(105, 23);
+            UploadXImage.TabIndex = 20;
+            UploadXImage.Text = "Upload X Image";
+            UploadXImage.UseVisualStyleBackColor = true;
+            UploadXImage.Click += UploadXImage_Click;
+            // 
             // MobEditor
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1154, 507);
+            Controls.Add(UploadXImage);
             Controls.Add(BtnWield);
             Controls.Add(btnAddReset);
             Controls.Add(lstItems);
@@ -223,5 +235,6 @@
         private ListBox lstItems;
         private Button btnAddReset;
         private Button BtnWield;
+        private Button UploadXImage;
     }
 }

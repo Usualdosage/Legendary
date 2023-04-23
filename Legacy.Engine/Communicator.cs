@@ -583,7 +583,7 @@ namespace Legendary.Engine
                 await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {actor.Pronoun}self.", cancellationToken);
 
                 // Update player stats
-                await this.SendGameUpdate(actor, actor.FirstName, actor.Image, cancellationToken);
+                await this.SendGameUpdate(actor, actor.FirstName, actor.Images?[0], cancellationToken);
             }
             else
             {
@@ -647,13 +647,15 @@ namespace Legendary.Engine
                             }
 
                             // Update player stats
-                            if (mobile.XActive.HasValue && mobile.XActive.Value == true && !string.IsNullOrWhiteSpace(mobile.XImage))
+                            if (mobile.XActive.HasValue && mobile.XActive.Value == true && mobile.XImages != null && mobile.XImages.Count > 0)
                             {
-                                await this.SendGameUpdate(actor, mobile.FirstName, mobile.XImage, cancellationToken);
+                                var xImage = mobile.XImages[this.random.Next(0, mobile.XImages.Count - 1)];
+                                await this.SendGameUpdate(actor, mobile.FirstName, xImage, cancellationToken);
                             }
                             else
                             {
-                                await this.SendGameUpdate(actor, mobile.FirstName, mobile.Image, cancellationToken);
+                                var image = mobile.Images?[this.random.Next(0, mobile.Images.Count - 1)];
+                                await this.SendGameUpdate(actor, mobile.FirstName, image, cancellationToken);
                             }
                         }
                         else
@@ -714,7 +716,7 @@ namespace Legendary.Engine
                         }
 
                         // Update player stats
-                        await this.SendGameUpdate(actor, target.Value.Value.Character.FirstName, target.Value.Value.Character.Image, cancellationToken);
+                        await this.SendGameUpdate(actor, target.Value.Value.Character.FirstName, target.Value.Value.Character.Images?[0], cancellationToken);
                     }
                     else
                     {

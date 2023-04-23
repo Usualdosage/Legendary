@@ -590,9 +590,9 @@ namespace Legendary.Core.Models
         public long? Fighting { get; set; }
 
         /// <summary>
-        /// Gets or sets the base-64 image for this character.
+        /// Gets or sets the images for this mobile.
         /// </summary>
-        public virtual string? Image { get; set; }
+        public virtual List<string>? Images { get; set; }
 
         /// <summary>
         /// Gets or sets the player's rewards.
