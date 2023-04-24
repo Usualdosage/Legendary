@@ -29,6 +29,7 @@ namespace Legendary.Engine.Models
             { "cackle", new Emote("You cackle with glee!", "{0} cackles with glee!", "{0} cackles delightfully at {1}.", "You cackle gleefully at {1}.") },
             { "chortle", new Emote("You chortle mischieviously.", "{0} chortles mischieviously.", "{0} chortles mischieviously at {1}.", "You chortle mischieviously at {1}.") },
             { "chuckle", new Emote("You chuckle.", "{0} chuckles lightly.", "{0} chuckles lightly at {1}.", "You chuckle lightly at {1}.") },
+            { "clap", new Emote("You clap your hands excitedly!", "{0} claps their hands excitedly!", "{0} claps excitedly at {1}.", "You clap excitedly at {1}.") },
             { "dance", new Emote("You dance with yourself.", "{0} does some unusual dance moves.", "{0} grabs {1} and dances with them.", "You grab {1} and do a little dance with them.") },
             { "eyebrow", new Emote("You arch your eyebrow.", "{0} arches their eyebrow.", "{0} arches their eyebrow at {1}.", "You arch your eyebrow at {1}.") },
             { "fart", new Emote("You fart loudly.", "{0} farts loudly. A brown cloud fills the room.", "{0} farts on {1}. Gross!", "You are a disgusting person.") },

@@ -810,8 +810,6 @@ namespace Legendary.Engine.Processors
 
                     await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
 
-                    await this.communicator.SendToRoom(actor.Character, actor.Character.Location, sentence, cancellationToken);
-
                     var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
 
                     if (players != null)
@@ -822,7 +820,11 @@ namespace Legendary.Engine.Processors
                             {
                                 if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
                                 {
-                                    await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+                                    await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+                                }
+                                else
+                                {
+                                    await this.communicator.SendToPlayer(player, $"someone {sentence.Trim()}".FirstCharToUpper(), cancellationToken);
                                 }
                             }
                         }
@@ -2386,8 +2388,6 @@ namespace Legendary.Engine.Processors
 
                         await this.communicator.SendToPlayer(actor.Connection, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
 
-                        await this.communicator.SendToRoom(actor.Character, actor.Character.Location, sentence, cancellationToken);
-
                         var players = this.communicator.GetPlayersInRoom(actor.Character, actor.Character.Location);
 
                         if (players != null)
@@ -2398,7 +2398,11 @@ namespace Legendary.Engine.Processors
                                 {
                                     if (PlayerHelper.CanPlayerSeePlayer(this.environment, this.communicator, player, actor.Character) && player.CharacterId != actor.Character.CharacterId)
                                     {
-                                        await this.communicator.SendToPlayer(actor.Character, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+                                        await this.communicator.SendToPlayer(player, $"{actor.Character.FirstName.FirstCharToUpper()} {sentence.Trim()}", cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await this.communicator.SendToPlayer(player, $"someone {sentence.Trim()}".FirstCharToUpper(), cancellationToken);
                                     }
                                 }
                             }

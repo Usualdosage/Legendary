@@ -2360,9 +2360,13 @@ namespace Legendary.Engine
                 {
                     foreach (var player in players)
                     {
-                        if (!PlayerHelper.CanPlayerSeePlayer(this.environment, this, player, actor.Character))
+                        if (PlayerHelper.CanPlayerSeePlayer(this.environment, this, player, actor.Character))
                         {
                             await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", actor.Character.FirstName), cancellationToken);
+                        }
+                        else
+                        {
+                            await this.SendToPlayer(player, emote.ToRoom.Replace("{0}", "someone").FirstCharToUpper(), cancellationToken);
                         }
                     }
                 }
