@@ -27,14 +27,13 @@ namespace Legendary.Core.Models
     [BsonIgnoreExtraElements]
     public partial class Character
     {
+        private readonly int defaultAge = 18;
         private MaxCurrent str = new (10, 10);
         private MaxCurrent intg = new (10, 10);
         private MaxCurrent wis = new (10, 10);
         private MaxCurrent dex = new (10, 10);
         private MaxCurrent con = new (10, 10);
         private MaxCurrent carryWeight = new (80, 80);
-
-        private readonly int defaultAge = 18;
         private int saveDeath = 8;
         private int saveSpell = 8;
         private int saveMaledictive = 8;

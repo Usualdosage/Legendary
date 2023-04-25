@@ -871,8 +871,6 @@ namespace Legendary.AreaBuilder
                 this.toolStripStatusLabel1.Text = $"Generating images, please wait...";
                 this.statusStrip1.Update();
 
-                var area = this.pgArea.SelectedObject as Area;
-
                 foreach (var container in this.SelectedContainers)
                 {
                     var room = container.SelectedRoom;
@@ -1061,27 +1059,8 @@ namespace Legendary.AreaBuilder
             }
         }
 
-        private void updateCharactersToolStripMenuItem_Click(object sender, EventArgs e)
+        private void UpdateCharactersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //{
-            //    var chars = this.mongo.Characters.Find(m => true).ToList();
-
-            //    foreach (var character in chars)
-            //    {
-            //        if (!string.IsNullOrWhiteSpace(character.Image))
-            //        {
-            //            character.Images = new List<string>()
-            //            {
-            //                character.Image,
-            //            };
-            //        }
-
-            //        this.mongo.Characters.ReplaceOne(m => m.CharacterId == character.CharacterId, character);
-            //    }
-
-            //    this.toolStripStatusLabel1.Text = "Character images migrated.";
-            //}
         }
-
     }
 }

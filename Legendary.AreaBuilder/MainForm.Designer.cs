@@ -556,7 +556,7 @@
             updateCharactersToolStripMenuItem.Name = "updateCharactersToolStripMenuItem";
             updateCharactersToolStripMenuItem.Size = new Size(224, 22);
             updateCharactersToolStripMenuItem.Text = "Update Characters";
-            updateCharactersToolStripMenuItem.Click += updateCharactersToolStripMenuItem_Click;
+            updateCharactersToolStripMenuItem.Click += UpdateCharactersToolStripMenuItem_Click;
             // 
             // MainForm
             // 

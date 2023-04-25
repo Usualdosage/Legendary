@@ -27,12 +27,7 @@ namespace Legendary.Data
         /// <param name="serverSettings">The server settings.</param>
         public MongoConnection(IServerSettings serverSettings)
         {
-            if (serverSettings == null)
-            {
-                throw new ArgumentNullException(nameof(serverSettings));
-            }
-
-            this.serverSettings = serverSettings;
+            this.serverSettings = serverSettings ?? throw new ArgumentNullException(nameof(serverSettings));
 
             var settings = MongoClientSettings.FromConnectionString(this.serverSettings.MongoConnectionString);
             this.Client = new MongoClient(settings);

@@ -315,12 +315,12 @@ namespace Legendary.Engine
 
                 if (user.Character.Hunger.Current >= user.Character.Hunger.Max)
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"You are hungry.");
+                    await this.communicator.SendToPlayer(user.Connection, $"You are hungry.", cancellationToken);
                 }
 
                 if (user.Character.Thirst.Current >= user.Character.Thirst.Max)
                 {
-                    await this.communicator.SendToPlayer(user.Connection, $"You are thirsty.");
+                    await this.communicator.SendToPlayer(user.Connection, $"You are thirsty.", cancellationToken);
                 }
             }
         }
@@ -549,32 +549,13 @@ namespace Legendary.Engine
                         break;
                 }
 
-                string precipitate = string.Empty;
-
-                switch (room.Terrain)
+                string precipitate = room.Terrain switch
                 {
-                    default:
-                    case Core.Types.Terrain.Forest:
-                    case Core.Types.Terrain.Grasslands:
-                    case Core.Types.Terrain.Hills:
-                    case Core.Types.Terrain.Jungle:
-                    case Core.Types.Terrain.Air:
-                    case Core.Types.Terrain.Beach:
-                    case Core.Types.Terrain.City:
-                    case Core.Types.Terrain.Swamp:
-                        precipitate = "rain";
-                        break;
-                    case Core.Types.Terrain.Desert:
-                        precipitate = "virga";
-                        break;
-                    case Core.Types.Terrain.Ethereal:
-                        precipitate = "stardust";
-                        break;
-                    case Core.Types.Terrain.Mountains:
-                    case Core.Types.Terrain.Snow:
-                        precipitate = "snow";
-                        break;
-                }
+                    Core.Types.Terrain.Desert => "virga",
+                    Core.Types.Terrain.Ethereal => "stardust",
+                    Core.Types.Terrain.Mountains or Core.Types.Terrain.Snow => "snow",
+                    _ => "rain",
+                };
 
                 Weather weatherMessage = this.dayWeatherForward[0];
 

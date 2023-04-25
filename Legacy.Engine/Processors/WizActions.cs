@@ -482,7 +482,7 @@ namespace Legendary.Engine.Processors
 
                 if (player != null)
                 {
-                    var message = this.ShowStatistics(player.Character);
+                    var message = ShowStatistics(player.Character);
                     await this.communicator.SendToPlayer(actor.Connection, message, cancellationToken);
                 }
                 else
@@ -491,7 +491,7 @@ namespace Legendary.Engine.Processors
 
                     if (mobile != null)
                     {
-                        var message = this.ShowStatistics(mobile);
+                        var message = ShowStatistics(mobile);
                         await this.communicator.SendToPlayer(actor.Connection, message, cancellationToken);
                     }
                     else

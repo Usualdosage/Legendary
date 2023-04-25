@@ -52,8 +52,8 @@ namespace Legendary.Engine.Processors
         private readonly AwardProcessor awardProcessor;
         private readonly IRandom random;
         private readonly CombatProcessor combat;
-        private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
-        private IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
+        private readonly IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> actions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
+        private readonly IDictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>> wizActions = new Dictionary<string, KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionProcessor"/> class.
@@ -319,21 +319,91 @@ namespace Legendary.Engine.Processors
 
         private static int GetTerrainMovementPenalty(Room room)
         {
-            switch (room.Terrain)
+            return room.Terrain switch
             {
-                default:
-                    return 1;
-                case Core.Types.Terrain.Beach:
-                case Core.Types.Terrain.Desert:
-                case Core.Types.Terrain.Jungle:
-                    return 2;
-                case Core.Types.Terrain.Ethereal:
-                    return 0;
-                case Core.Types.Terrain.Swamp:
-                case Core.Types.Terrain.Mountains:
-                case Core.Types.Terrain.Snow:
-                    return 3;
-            }
+                Core.Types.Terrain.Beach or Core.Types.Terrain.Desert or Core.Types.Terrain.Jungle => 2,
+                Core.Types.Terrain.Ethereal => 0,
+                Core.Types.Terrain.Swamp or Core.Types.Terrain.Mountains or Core.Types.Terrain.Snow => 3,
+                _ => 1,
+            };
+        }
+
+        private static string ShowStatistics(Character actor)
+        {
+            Dictionary<WearLocation, Item> equipment = actor.Equipment;
+            List<Effect> effects = actor.AffectedBy;
+            var currencyTuple = actor.Currency.GetCurrency();
+
+            int pierceTotal = equipment.Sum(a => a.Value?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
+            int slashTotal = equipment.Sum(a => a.Value?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
+            int bluntTotal = equipment.Sum(a => a.Value?.Blunt ?? 0) + effects.Sum(a => a?.Blunt ?? 0);
+            int magicTotal = equipment.Sum(a => a.Value?.Magic ?? 0) + effects.Sum(a => a?.Magic ?? 0);
+
+            var message = new ScoreMessage()
+            {
+                Message = new Legendary.Engine.Output.Message()
+                {
+                    Personal = new Personal()
+                    {
+                        Alignment = actor.Alignment.ToString(),
+                        Ethos = actor.Ethos.ToString(),
+                        Gender = actor.Gender.ToString(),
+                        Hometown = actor.IsNPC ? "N/A" : "Griffonshire",
+                        Name = actor.FirstName,
+                        Race = actor.Race.ToString(),
+                        Title = actor.Title,
+                    },
+                    Vitals = new Vitals()
+                    {
+                        Health = $"{actor.Health.Current}/{actor.Health.Max}",
+                        Mana = $"{actor.Mana.Current}/{actor.Mana.Max}",
+                        Movement = $"{actor.Movement.Current}/{actor.Movement.Max}",
+                        Experience = actor.IsNPC ? "N/A" : actor.Experience.ToString(),
+                        Carry = $"{(int)actor.CarryWeight.Current}/{(int)actor.CarryWeight.Max} lbs",
+                        Level = actor.Level.ToString(),
+                    },
+                    Attributes = new Attributes()
+                    {
+                        Str = $"{actor.Str.Max} ({actor.Str.Current})",
+                        Dex = $"{actor.Dex.Max} ({actor.Dex.Current})",
+                        Wis = $"{actor.Wis.Max} ({actor.Wis.Current})",
+                        Int = $"{actor.Int.Max} ({actor.Int.Current})",
+                        Con = $"{actor.Con.Max} ({actor.Con.Current})",
+                        Deity = actor.Deity.ToString(),
+                    },
+                    Armor = new Output.Armor()
+                    {
+                        Blunt = $"{bluntTotal}%",
+                        Pierce = $"{pierceTotal}%",
+                        Edged = $"{slashTotal}%",
+                        Magic = $"{magicTotal}%",
+                    },
+                    Saves = new Saves()
+                    {
+                        Aff = $"{actor.SaveAfflictive}%",
+                        Mal = $"{actor.SaveMaledictive}%",
+                        Neg = $"{actor.SaveNegative}%",
+                        Spell = $"{actor.SaveSpell}%",
+                        Death = $"{actor.SaveDeath}%",
+                        Learn = actor.Learns.ToString(),
+                    },
+                    Other = new Other()
+                    {
+                        Trains = actor.IsNPC ? "N/A" : actor.Trains.ToString(),
+                        Pracs = actor.IsNPC ? "N/A" : actor.Practices.ToString(),
+                        LastLogin = actor.IsNPC ? "N/A" : actor.Metrics.LastLogin.ToShortDateString(),
+                        Gold = currencyTuple.Item1.ToString(),
+                        Silver = currencyTuple.Item2.ToString(),
+                        Copper = currencyTuple.Item3.ToString(),
+                        HitDice = actor.HitDice.ToString(),
+                        DamageDice = actor.DamageDice.ToString(),
+                    },
+                },
+            };
+
+            var objModel = JsonConvert.SerializeObject(message);
+
+            return objModel;
         }
 
         /// <summary>
@@ -802,7 +872,7 @@ namespace Legendary.Engine.Processors
                 var sentence = string.Join(' ', new string?[2] { args.Method, args.Target }).Trim();
                 if (!string.IsNullOrWhiteSpace(sentence))
                 {
-                    if (!char.IsPunctuation(sentence[sentence.Length - 1]))
+                    if (!char.IsPunctuation(sentence[^1]))
                     {
                         sentence += ".";
                     }
@@ -1218,7 +1288,7 @@ namespace Legendary.Engine.Processors
                     StringBuilder sb = new ();
 
                     // Update the player info
-                    this.communicator.SendGameUpdate(actor.Character, item.ShortDescription, item.Image).Wait();
+                    this.communicator.SendGameUpdate(actor.Character, item.ShortDescription, item.Image, cancellationToken).Wait();
 
                     sb.Append($"{item.LongDescription}<br/>");
                     sb.Append($"{item.Name.FirstCharToUpper()} is of type {Enum.GetName<ItemType>(item.ItemType)?.ToString().ToLower()} and appears to have a durability of {item.Durability.Current}.<br/>");
@@ -3334,7 +3404,7 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private Tuple<IItem?, IItem?>? ItemFromRoom(UserData user, CommandArgs args, CancellationToken cancellationToken)
+        private Tuple<IItem?, IItem?>? ItemFromRoom(UserData user, CommandArgs args)
         {
             IItem? item = null;
 
@@ -3489,10 +3559,7 @@ namespace Legendary.Engine.Processors
 
                 var room = this.communicator.ResolveRoom(actor.Character.Location);
 
-                if (room != null)
-                {
-                    room.Items.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
-                }
+                room?.Items.RemoveAll(i => itemsToRemove.Any(r => r.ItemId == i.ItemId));
             }
             else
             {
@@ -4066,87 +4133,9 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        private string ShowStatistics(Character actor)
-        {
-            Dictionary<WearLocation, Item> equipment = actor.Equipment;
-            List<Effect> effects = actor.AffectedBy;
-            var currencyTuple = actor.Currency.GetCurrency();
-
-            int pierceTotal = equipment.Sum(a => a.Value?.Pierce ?? 0) + effects.Sum(a => a?.Pierce ?? 0);
-            int slashTotal = equipment.Sum(a => a.Value?.Edged ?? 0) + effects.Sum(a => a?.Slash ?? 0);
-            int bluntTotal = equipment.Sum(a => a.Value?.Blunt ?? 0) + effects.Sum(a => a?.Blunt ?? 0);
-            int magicTotal = equipment.Sum(a => a.Value?.Magic ?? 0) + effects.Sum(a => a?.Magic ?? 0);
-
-            var message = new ScoreMessage()
-            {
-                Message = new Legendary.Engine.Output.Message()
-                {
-                    Personal = new Personal()
-                    {
-                        Alignment = actor.Alignment.ToString(),
-                        Ethos = actor.Ethos.ToString(),
-                        Gender = actor.Gender.ToString(),
-                        Hometown = actor.IsNPC ? "N/A" : "Griffonshire",
-                        Name = actor.FirstName,
-                        Race = actor.Race.ToString(),
-                        Title = actor.Title,
-                    },
-                    Vitals = new Vitals()
-                    {
-                        Health = $"{actor.Health.Current}/{actor.Health.Max}",
-                        Mana = $"{actor.Mana.Current}/{actor.Mana.Max}",
-                        Movement = $"{actor.Movement.Current}/{actor.Movement.Max}",
-                        Experience = actor.IsNPC ? "N/A" : actor.Experience.ToString(),
-                        Carry = $"{(int)actor.CarryWeight.Current}/{(int)actor.CarryWeight.Max} lbs",
-                        Level = actor.Level.ToString(),
-                    },
-                    Attributes = new Attributes()
-                    {
-                        Str = $"{actor.Str.Max} ({actor.Str.Current})",
-                        Dex = $"{actor.Dex.Max} ({actor.Dex.Current})",
-                        Wis = $"{actor.Wis.Max} ({actor.Wis.Current})",
-                        Int = $"{actor.Int.Max} ({actor.Int.Current})",
-                        Con = $"{actor.Con.Max} ({actor.Con.Current})",
-                        Deity = actor.Deity.ToString(),
-                    },
-                    Armor = new Output.Armor()
-                    {
-                        Blunt = $"{bluntTotal}%",
-                        Pierce = $"{pierceTotal}%",
-                        Edged = $"{slashTotal}%",
-                        Magic = $"{magicTotal}%",
-                    },
-                    Saves = new Saves()
-                    {
-                        Aff = $"{actor.SaveAfflictive}%",
-                        Mal = $"{actor.SaveMaledictive}%",
-                        Neg = $"{actor.SaveNegative}%",
-                        Spell = $"{actor.SaveSpell}%",
-                        Death = $"{actor.SaveDeath}%",
-                        Learn = actor.Learns.ToString(),
-                    },
-                    Other = new Other()
-                    {
-                        Trains = actor.IsNPC ? "N/A" : actor.Trains.ToString(),
-                        Pracs = actor.IsNPC ? "N/A" : actor.Practices.ToString(),
-                        LastLogin = actor.IsNPC ? "N/A" : actor.Metrics.LastLogin.ToShortDateString(),
-                        Gold = currencyTuple.Item1.ToString(),
-                        Silver = currencyTuple.Item2.ToString(),
-                        Copper = currencyTuple.Item3.ToString(),
-                        HitDice = actor.HitDice.ToString(),
-                        DamageDice = actor.DamageDice.ToString(),
-                    },
-                },
-            };
-
-            var objModel = JsonConvert.SerializeObject(message);
-
-            return objModel;
-        }
-
         private async Task ShowPlayerScore(UserData user, CancellationToken cancellationToken = default)
         {
-            var message = this.ShowStatistics(user.Character);
+            var message = ShowStatistics(user.Character);
             await this.communicator.SendToPlayer(user.Connection, message, cancellationToken);
         }
 
@@ -4158,7 +4147,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                decimal amount = 0m;
+                decimal amount;
                 string type = args.Method.ToLower();
 
                 switch (type)

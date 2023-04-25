@@ -129,7 +129,7 @@ namespace Legendary.Engine
             this.questProcessor = new QuestProcessor(this.logger, this, this.awardProcessor);
 
             // Create the language processor.
-            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this.LanguageGenerator, this, this.random, this.environment, this.dataService, this.world, this.awardProcessor, this.questProcessor);
+            this.LanguageProcessor = new LanguageProcessor(this.logger, this.serverSettings, this, this.random, this.environment, this.world, this.questProcessor);
 
             // Create the title generator.
             this.titleGenerator = new TitleGenerator(this, this.random, this.world, this.logger, this.combat);
@@ -598,7 +598,7 @@ namespace Legendary.Engine
             if (targetName == actor.FirstName || targetName == "self")
             {
                 await this.SendToPlayer(actor, "You look at yourself.", cancellationToken);
-                await this.SendToPlayer(actor, this.GetPlayerInfo(actor), cancellationToken);
+                await this.SendToPlayer(actor, GetPlayerInfo(actor), cancellationToken);
                 await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {actor.Pronoun}self.", cancellationToken);
 
                 // Update player stats
@@ -621,7 +621,7 @@ namespace Legendary.Engine
                         {
                             await this.SendToPlayer(actor, $"You look at {mobile.FirstName}.", cancellationToken);
                             await this.SendToRoom(actor.Location, actor, null, $"{actor.FirstName.FirstCharToUpper()} looks at {mobile.FirstName}.", cancellationToken);
-                            await this.SendToPlayer(actor, this.GetPlayerInfo(mobile), cancellationToken);
+                            await this.SendToPlayer(actor, GetPlayerInfo(mobile), cancellationToken);
 
                             if (actor.HasSkill(nameof(Peek)))
                             {
@@ -689,7 +689,7 @@ namespace Legendary.Engine
                     {
                         await this.SendToPlayer(target.Value.Value.Character, $"{actor.FirstName.FirstCharToUpper()} looks at you.", cancellationToken);
                         await this.SendToRoom(actor.Location, actor, target.Value.Value.Character, $"{actor.FirstName} looks at {target.Value.Value.Character.FirstName}.", cancellationToken);
-                        await this.SendToPlayer(actor, this.GetPlayerInfo(target.Value.Value.Character), cancellationToken);
+                        await this.SendToPlayer(actor, GetPlayerInfo(target.Value.Value.Character), cancellationToken);
 
                         if (actor.HasSkill(nameof(Peek)))
                         {
@@ -753,7 +753,7 @@ namespace Legendary.Engine
             StringBuilder sb = new ();
 
             // Update the player info
-            this.SendGameUpdate(actor, item.ShortDescription, item.Image).Wait();
+            this.SendGameUpdate(actor, item.ShortDescription, item.Image, cancellationToken).Wait(cancellationToken);
 
             sb.Append($"{item.LongDescription}<br/>");
 
@@ -1944,6 +1944,34 @@ namespace Legendary.Engine
         }
 
         /// <summary>
+        /// Shows the player (or mobile) to another player.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>String.</returns>
+        private static string GetPlayerInfo(Character target)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"<span class='player-desc-title'>{target.FirstName.FirstCharToUpper()} {target.LastName}</span><br/>");
+            sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
+
+            // How beat up they are.
+            sb.Append(CombatProcessor.GetPlayerCondition(target));
+
+            // Worn items.
+            if (target.IsNPC)
+            {
+                sb.Append(ActionHelper.GetOnlyEquipment(target));
+            }
+            else
+            {
+                sb.Append(ActionHelper.GetEquipment(target));
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Removes the player from groups prior to quitting. Removes followers.
         /// </summary>
         /// <param name="user">The user.</param>
@@ -2239,34 +2267,6 @@ namespace Legendary.Engine
             {
                 character.Title = newTitle;
             }
-        }
-
-        /// <summary>
-        /// Shows the player (or mobile) to another player.
-        /// </summary>
-        /// <param name="target">The target.</param>
-        /// <returns>String.</returns>
-        private string GetPlayerInfo(Character target)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append($"<span class='player-desc-title'>{target.FirstName.FirstCharToUpper()} {target.LastName}</span><br/>");
-            sb.Append($"<span class='player-description'>{target.LongDescription}</span><br/>");
-
-            // How beat up they are.
-            sb.Append(CombatProcessor.GetPlayerCondition(target));
-
-            // Worn items.
-            if (target.IsNPC)
-            {
-                sb.Append(ActionHelper.GetOnlyEquipment(target));
-            }
-            else
-            {
-                sb.Append(ActionHelper.GetEquipment(target));
-            }
-
-            return sb.ToString();
         }
 
         /// <summary>
@@ -2687,7 +2687,7 @@ namespace Legendary.Engine
 
             // Encoding UTF8: https://tools.ietf.org/html/rfc6455#section-5.6
             using var reader = new StreamReader(ms, Encoding.UTF8);
-            var message = await reader.ReadToEndAsync();
+            var message = await reader.ReadToEndAsync(cancellationToken);
 
             await this.OnInputReceived(userData, new CommunicationEventArgs(userData.ConnectionId, message), cancellationToken);
 

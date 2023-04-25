@@ -13,10 +13,7 @@ namespace Legendary.Engine.Processors
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Net;
     using System.Net.Http;
-    using System.Numerics;
-    using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -32,16 +29,7 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Extensions;
     using Legendary.Engine.Helpers;
     using Legendary.Engine.Models;
-    using Legendary.Engine.Models.Output;
-    using Legendary.Engine.Models.Spells;
-    using Legendary.Engine.Output;
-    using Microsoft.AspNetCore.DataProtection.KeyManagement;
-    using Microsoft.AspNetCore.Http.HttpResults;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Newtonsoft.Json;
-    using RestSharp;
-    using static System.Net.Mime.MediaTypeNames;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Processes an input, and returns an AI response.
@@ -52,56 +40,36 @@ namespace Legendary.Engine.Processors
         private readonly IRandom random;
         private readonly ICommunicator communicator;
         private readonly IServerSettings serverSettings;
-        private readonly ILanguageGenerator generator;
         private readonly IEnvironment environment;
-        private readonly IDataService dataService;
         private readonly IWorld world;
-        private readonly AwardProcessor awardProcessor;
         private readonly QuestProcessor questProcessor;
         private readonly string url = "https://api.openai.com/v1/chat/completions";
         private readonly string imageUrl = "https://api.openai.com/v1/images/generations";
+        private readonly Dictionary<Mobile, bool> processingDictionary;
+        private readonly Dictionary<Mobile, List<dynamic>> mobileTrainingData;
         private Persona? basePersona;
-        private Dictionary<Mobile, List<dynamic>> mobileTrainingData;
-        private Dictionary<Mobile, bool> processingDictionary;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LanguageProcessor"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="serverSettings">The server settings.</param>
-        /// <param name="generator">The language generator.</param>
         /// <param name="communicator">The communicator.</param>
         /// <param name="random">The random number generator.</param>
         /// <param name="environment">The environment.</param>
-        /// <param name="dataService">The data service.</param>
         /// <param name="world">The world service.</param>
-        /// <param name="awardProcessor">The award processor.</param>
         /// <param name="questProcessor">The quest processor.</param>
-        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ILanguageGenerator generator, ICommunicator communicator, IRandom random, IEnvironment environment, IDataService dataService, IWorld world, AwardProcessor awardProcessor, QuestProcessor questProcessor)
+        public LanguageProcessor(ILogger logger, IServerSettings serverSettings, ICommunicator communicator, IRandom random, IEnvironment environment, IWorld world, QuestProcessor questProcessor)
         {
             this.logger = logger;
             this.serverSettings = serverSettings;
-            LoadParser();
-            this.generator = generator;
             this.random = random;
             this.communicator = communicator;
             this.environment = environment;
-            this.dataService = dataService;
             this.world = world;
             this.mobileTrainingData = new Dictionary<Mobile, List<dynamic>>();
             this.processingDictionary = new Dictionary<Mobile, bool>();
-            this.awardProcessor = awardProcessor;
             this.questProcessor = questProcessor;
-        }
-
-        /// <summary>
-        /// Reloads the parser to capture any updates.
-        /// </summary>
-        public static void LoadParser()
-        {
-            var parserContent = File.ReadAllText(@"Data/parser.json");
-
-            var parser = JsonConvert.DeserializeObject<Parser>(parserContent);
         }
 
         /// <summary>

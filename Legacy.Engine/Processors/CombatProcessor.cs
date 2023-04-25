@@ -35,11 +35,8 @@ namespace Legendary.Engine.Processors
     {
         private readonly IRandom random;
         private readonly ICommunicator communicator;
-        private readonly IMessageProcessor messageProcessor;
-        private readonly IEnvironment environment;
         private readonly ILogger logger;
         private readonly IWorld world;
-        private readonly IDataService dataService;
         private readonly AwardProcessor awardProcessor;
         private readonly ActionProcessor actionProcessor;
 
@@ -57,11 +54,8 @@ namespace Legendary.Engine.Processors
         {
             this.random = random;
             this.communicator = communicator;
-            this.environment = environment;
             this.logger = logger;
             this.world = world;
-            this.messageProcessor = messageProcessor;
-            this.dataService = dataService;
 
             this.awardProcessor = new AwardProcessor(communicator, world, logger, random, this);
             this.actionProcessor = new ActionProcessor(communicator, environment, world, logger, random, this, messageProcessor, dataService);
@@ -155,7 +149,8 @@ namespace Legendary.Engine.Processors
         /// </summary>
         /// <param name="victim">The victim.</param>
         /// <param name="killer">The killer.</param>
-        public void StopFighting(Character victim, Character? killer)
+        /// <returns>True when the fighting stops.</returns>
+        public bool StopFighting(Character victim, Character? killer)
         {
             victim.CharacterFlags.RemoveIfExists(CharacterFlags.Fighting);
             victim.Fighting = null;
@@ -218,6 +213,8 @@ namespace Legendary.Engine.Processors
                     }
                 }
             }
+
+            return true;
         }
 
         /// <summary>
@@ -543,7 +540,10 @@ namespace Legendary.Engine.Processors
                     if (isDead)
                     {
                         // Target is dead.
-                        this.StopFighting(target, actor);
+                        while (!this.StopFighting(target, actor))
+                        {
+                            this.logger.Debug($"Ending combat between {target.FirstName} and {actor.FirstName}...", this.communicator);
+                        }
 
                         if (actor.IsNPC && target.IsNPC)
                         {
@@ -751,7 +751,7 @@ namespace Legendary.Engine.Processors
                             // Show the opponent's condition.
                             string? condition = GetPlayerCondition(target);
 
-                            if (!string.IsNullOrWhiteSpace(condition) && !IsDead(user.Value.Character))
+                            if (!string.IsNullOrWhiteSpace(condition) && !IsDead(user.Value.Character) && !IsDead(target))
                             {
                                 await this.communicator.SendToPlayer(user.Value.Character, condition, cancellationToken);
                             }
@@ -782,8 +782,8 @@ namespace Legendary.Engine.Processors
                 return 0;
             }
 
-            int hitDice = 0;
-            int damDice = 0;
+            int hitDice;
+            int damDice;
 
             // If it's a spell, use the spell's hit/dam, otherwise, use the hit/dam of the character.
             if (action.ActionType == ActionType.Spell)
@@ -815,7 +815,7 @@ namespace Legendary.Engine.Processors
             }
             else if (this.DidSave(target, action))
             {
-                // Save for half damage.
+                // Save for half damage (spells only).
                 return (int)((damage + adjust) / 2);
             }
             else
@@ -836,17 +836,28 @@ namespace Legendary.Engine.Processors
             double experience;
             int actorLevel = actor.Level;
             int targetLevel = target.Level;
-            const int minExperience = 1;
-            int maxExperience = 2000 + this.random.Next(1, 100);
+            int maxExperience = 1500 + this.random.Next(1, 100);
             int baseIncrementalExperience = 200 + this.random.Next(1, 20);
 
-            int levelDifference = actorLevel - targetLevel;
+            int levelDifference = Math.Max(0, targetLevel - actorLevel);
+
+            // Get the modifier for the alignment difference.
+            double modifier = GetModifier(actor, target);
 
             // If the actor's level is lower than or equal to the target's level or if the actor's level is more than 10 levels above the target,
             // return the minimum experience.
             if (levelDifference <= 0 || levelDifference > 10)
             {
-                experience = minExperience;
+                if (!target.IsNPC)
+                {
+                    // We'll give the player a little experience for a PK.
+                    return (int)(this.random.Next(1, 100) * modifier);
+                }
+                else
+                {
+                    // Mob was same level, no experience.
+                    return 0;
+                }
             }
 
             // Calculate the base experience gained based on the level difference.
@@ -866,10 +877,7 @@ namespace Legendary.Engine.Processors
             experience = baseExperience + incrementalExperienceGained;
 
             // Ensure that the experience gained is within the range of minExperience and maxExperience.
-            experience = Math.Max(minExperience, Math.Min(maxExperience, experience));
-
-            // Get the modifier for the alignment difference.
-            double modifier = this.GetModifier(actor, target);
+            experience = Math.Max(1, Math.Min(maxExperience, experience));
 
             // Apply the modifier.
             experience *= modifier;
@@ -949,7 +957,10 @@ namespace Legendary.Engine.Processors
         /// <returns>Task.</returns>
         public async Task KillMobile(Character target, Character killer, CancellationToken cancellationToken = default)
         {
-            this.StopFighting(target, killer);
+            while (!this.StopFighting(target, killer))
+            {
+                this.logger.Debug($"Ending combat between {target.FirstName} and {killer.FirstName}...", this.communicator);
+            }
 
             await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
             await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
@@ -1036,7 +1047,10 @@ namespace Legendary.Engine.Processors
         {
             if (actor != null)
             {
-                this.StopFighting(actor, killer);
+                while (!this.StopFighting(actor, killer))
+                {
+                    this.logger.Debug($"Ending combat between {actor.FirstName} and {killer.FirstName}...", this.communicator);
+                }
 
                 await this.communicator.SendToPlayer(killer, $"You have KILLED {actor.FirstName}!", cancellationToken);
                 await this.communicator.SendToPlayer(actor, $"{killer.FirstName.FirstCharToUpper()} has KILLED you! You are now dead.", cancellationToken);
@@ -1385,6 +1399,12 @@ namespace Legendary.Engine.Processors
         /// <returns>True if the target saved.</returns>
         public bool DidSave(Character target, IAction action)
         {
+            // Saves only work against spells.
+            if (action.ActionType == ActionType.Skill)
+            {
+                return false;
+            }
+
             var saveThrow = this.random.Next(1, 101);
 
             // Critical failure.
@@ -1393,7 +1413,7 @@ namespace Legendary.Engine.Processors
                 return false;
             }
 
-            int saves = 0;
+            int saves;
 
             switch (action.DamageType)
             {
@@ -1443,98 +1463,12 @@ namespace Legendary.Engine.Processors
         }
 
         /// <summary>
-        /// If the actor is in a group, break out the experience to the rest of the group. Optimal group is 2-3 players. More than that will
-        /// cause the experience value to diminish.
-        /// </summary>
-        /// <param name="actor">The killer.</param>
-        /// <param name="experience">The total experience based on the killer.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Task.</returns>
-        private async Task ApplyExperienceToGroup(Character actor, int experience, CancellationToken cancellationToken)
-        {
-            var group = GroupHelper.GetAllGroupMembers(actor.CharacterId);
-
-            if (group != null)
-            {
-                double adjusted = 0d;
-                double expPerPlayer = 0d;
-
-                var playersInRoom = this.communicator.GetPlayersInRoom(actor.Location);
-
-                if (playersInRoom != null)
-                {
-                    var playersInGroupInRoom = playersInRoom.Where(g => group != null && group.Contains(g.CharacterId));
-
-                    var playersInGroupInRoomCount = playersInGroupInRoom.Count();
-
-                    if (playersInGroupInRoomCount == 1)
-                    {
-                        adjusted = experience;
-                        expPerPlayer = adjusted;
-                    }
-                    else if (playersInGroupInRoomCount == 2)
-                    {
-                        adjusted = experience * 2.5d;
-                        expPerPlayer = adjusted / 2d;
-                    }
-                    else if (playersInGroupInRoomCount == 3)
-                    {
-                        adjusted = experience * 4d;
-                        expPerPlayer = adjusted / 3d;
-                    }
-                    else
-                    {
-                        adjusted = experience * (4 / group.Count);
-                        expPerPlayer = adjusted / group.Count;
-                    }
-
-                    this.logger.Info($"{actor.FirstName}'s group received {experience} total experience. There were {playersInGroupInRoomCount} players in the group (in the room). Adjusted was {adjusted}. Experience per player was {expPerPlayer}.", this.communicator);
-
-                    foreach (var member in playersInGroupInRoom)
-                    {
-                        var player = this.communicator.ResolveCharacter(member);
-
-                        if (player != null)
-                        {
-                            // Group was null or empty, so apply only to player.
-                            await this.communicator.SendToPlayer(player.Character, $"You gain {(int)expPerPlayer} experience points.", cancellationToken);
-                            player.Character.Experience += (int)expPerPlayer;
-
-                            // See if the player advanced a level.
-                            if (expPerPlayer > 0)
-                            {
-                                await this.communicator.CheckLevelAdvance(player.Character, cancellationToken);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // Not sure what the hell happened here, but there were no players in the group in the room.
-                    this.logger.Error("Attempted to apply experience to a group with no players in the same room.", this.communicator);
-                }
-            }
-            else
-            {
-                // Group was null or empty, so apply only to player.
-                await this.communicator.SendToPlayer(actor, $"You gain {experience} experience points.", cancellationToken);
-                actor.Experience += experience;
-
-                // See if the player advanced a level.
-                if (experience > 0)
-                {
-                    await this.communicator.CheckLevelAdvance(actor, cancellationToken);
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets the modifier applied based on the difference of alignments of the target and actor.
         /// </summary>
         /// <param name="actor">The actor.</param>
         /// <param name="target">The target.</param>
         /// <returns>decimal.</returns>
-        private double GetModifier(Character actor, Character target)
+        private static double GetModifier(Character actor, Character target)
         {
             switch (actor.Alignment)
             {
