@@ -147,7 +147,7 @@ namespace Legendary.Engine
                 {
                     await this.ProcessRecovery(user.Value, cancellationToken);
                     await this.ProcessItemRot(user.Value, cancellationToken);
-                    await this.ProcessAffects(user.Value);
+                    await this.ProcessAffects(user.Value, cancellationToken);
                 }
 
                 await this.ProcessTime(gameHour);

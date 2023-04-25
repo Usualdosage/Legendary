@@ -2508,6 +2508,8 @@ namespace Legendary.Engine
 
                 if (Users != null)
                 {
+                    this.logger.Info("TICK.", this);
+
                     // Cleanup any empty groups.
                     this.CleanupGroups();
 

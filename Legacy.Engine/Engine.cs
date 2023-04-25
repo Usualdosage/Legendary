@@ -110,8 +110,6 @@ namespace Legendary.Engine
                         {
                             this.gameTicks = 0;
 
-                            this.logger.Debug("TICK.", null);
-
                             this.gameHour++;
 
                             // Repopulate an area with mobiles 3x per day.

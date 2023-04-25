@@ -47,6 +47,7 @@ namespace Legendary.Engine.Processors
             this.wizActions.Add("snoop", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSnoop)));
             this.wizActions.Add("stat", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoStat)));
             this.wizActions.Add("switch", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(3, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoSwitch)));
+            this.wizActions.Add("tattoo", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTattoo)));
             this.wizActions.Add("title", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTitle)));
             this.wizActions.Add("transfer", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(2, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoTransfer)));
             this.wizActions.Add("wiznet", new KeyValuePair<int, Func<UserData, CommandArgs, CancellationToken, Task>>(1, new Func<UserData, CommandArgs, CancellationToken, Task>(this.DoWiznet)));
@@ -501,6 +502,35 @@ namespace Legendary.Engine.Processors
             await this.communicator.SendToPlayer(actor.Connection, $"Not yet implemented.", cancellationToken);
         }
 
+        [MinimumLevel(92)]
+        private async Task DoTattoo(UserData actor, CommandArgs args, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(args.Method))
+            {
+                await this.communicator.SendToPlayer(actor.Connection, $"Tattoo whom?", cancellationToken);
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(args.Target))
+                {
+                    var player = this.communicator.ResolveCharacter(args.Target);
+
+                    if (player != null)
+                    {
+                        await this.communicator.SaveCharacter(actor.Character);
+                    }
+                    else
+                    {
+                        await this.communicator.SendToPlayer(actor.Connection, $"They aren't here.", cancellationToken);
+                    }
+                }
+                else
+                {
+                    await this.communicator.SaveCharacter(actor.Character);
+                }
+            }
+        }
+
         [MinimumLevel(95)]
         private async Task DoTitle(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
@@ -527,6 +557,7 @@ namespace Legendary.Engine.Processors
                 }
                 else
                 {
+                    // Self
                     actor.Character.Title = args.Method;
                     await this.communicator.SaveCharacter(actor.Character);
                     await this.communicator.SendToPlayer(actor.Connection, $"Title set to \"{args.Method}\".", cancellationToken);
