@@ -21,8 +21,8 @@ namespace Legendary.AreaBuilder.Extensions
         /// <returns>Core.Models.Item.</returns>
         public static Core.Models.Item ToDomainModel(this Legendary.AreaBuilder.Types.Item item)
         {
-            return new Core.Models.Item() 
-            { 
+            return new Core.Models.Item()
+            {
                 SaveAfflictive = item.SaveAfflictive,
                 Blunt = item.Blunt,
                 CarryWeight = item.CarryWeight,

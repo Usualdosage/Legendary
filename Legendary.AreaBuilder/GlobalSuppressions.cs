@@ -1,7 +1,11 @@
-﻿// This file is used by Code Analysis to maintain SuppressMessage
-// attributes that are applied to this project.
-// Project-level suppressions either have no target or are given
-// a specific target and scoped to a namespace, type, member, etc.
+﻿// <copyright file="GlobalSuppressions.cs" company="Legendary™">
+//  Copyright ©2021-2022 Legendary and Matthew Martin (Crypticant).
+//  Use, reuse, and/or modification of this software requires
+//  adherence to the included license file at
+//  https://github.com/Usualdosage/Legendary.
+//  Registered work by https://www.thelegendarygame.com.
+//  This header must remain on all derived works.
+// </copyright>
 
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,4 +15,3 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1000:Keywords should be spaced correctly", Justification = "UI bug.", Scope = "member", Target = "~M:Legendary.AreaBuilder.MainForm.PgArea_SelectedObjectsChanged(System.Object,System.EventArgs)")]
 [assembly: SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1000:Keywords should be spaced correctly", Justification = "UI bug.", Scope = "member", Target = "~M:Legendary.AreaBuilder.MainForm.RenumberRoomsToolStripMenuItem_Click(System.Object,System.EventArgs)")]
 [assembly: SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1000:Keywords should be spaced correctly", Justification = "UI bug.", Scope = "member", Target = "~M:Legendary.AreaBuilder.MainForm.UploadRoomImage(Legendary.Core.Models.Room,System.IO.Stream)~System.Boolean")]
-[assembly: SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1000:Keywords should be spaced correctly", Justification = "UI bug.", Scope = "member", Target = "~M:Legendary.AreaBuilder.MobEditor.UploadMobileImage(Legendary.AreaBuilder.Types.Mobile,System.IO.Stream,System.String)~System.Boolean")]

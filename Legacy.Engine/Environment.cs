@@ -36,7 +36,6 @@ namespace Legendary.Engine
         private readonly IRandom random;
         private readonly IWorld world;
         private readonly ILogger logger;
-        private int dayWeatherIndex = 0;
 
         private readonly List<Weather> dayWeatherForward = new ()
         {
@@ -56,7 +55,7 @@ namespace Legendary.Engine
             new Weather(13, "The {precipitate} is coming down in buckets all around you.", Sounds.HEAVYRAIN, "It's hard to look at the sky as the rain is coming down heavily. Black clouds fill the sky.", 0),
         };
 
-        private List<Weather> dayWeatherBackward = new ()
+        private readonly List<Weather> dayWeatherBackward = new ()
         {
             new Weather(0, "The small clouds dissipate.", string.Empty, "It is sunny with a clear, blue sky overhead.", 0),
             new Weather(1, "The thicker clouds get smaller as the wind blows them away.", string.Empty, "There are some small clouds in the sky, but it is mostly sunny.", 0),
@@ -72,6 +71,8 @@ namespace Legendary.Engine
             new Weather(11, "The thunder and lighting around you seems to gradually fade out.", Sounds.THUNDERFADE, "A heavy thunderstorm crackles with lightning all around but, but seems to be slowing.", 0),
             new Weather(12, "The {precipitate} stops coming down so heavily.", Sounds.RAIN, "The rain is slowing, but heavy showers are still in the area.", 0),
         };
+
+        private int dayWeatherIndex = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Environment"/> class.

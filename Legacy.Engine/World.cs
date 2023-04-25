@@ -36,7 +36,7 @@ namespace Legendary.Engine
         private readonly ILogger logger;
         private readonly ICommunicator communicator;
         private readonly ICacheService cache;
-        private readonly SemaphoreSlim semaphore = new(1, 1);
+        private readonly SemaphoreSlim semaphore = new (1, 1);
         private DateTime? lastMemoryDate;
 
         /// <summary>

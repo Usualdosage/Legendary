@@ -34,7 +34,7 @@ namespace Legendary.Core.Models
         private MaxCurrent con = new (10, 10);
         private MaxCurrent carryWeight = new (80, 80);
 
-        private int defaultAge = 18;
+        private readonly int defaultAge = 18;
         private int saveDeath = 8;
         private int saveSpell = 8;
         private int saveMaledictive = 8;

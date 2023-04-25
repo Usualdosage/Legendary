@@ -9,9 +9,9 @@
 
 namespace Legendary.Web.Contracts
 {
-    using Legendary.Web.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Legendary.Web.Models;
 
     /// <summary>
     /// Implementastion of a Companion Processor.

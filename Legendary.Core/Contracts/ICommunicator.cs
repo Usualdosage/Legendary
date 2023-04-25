@@ -359,7 +359,7 @@ namespace Legendary.Core.Contracts
         /// <param name="player">The player name.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task.</returns>
-        Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default);
+        Task Quit(WebSocket? socket, string? player, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Returns true if the target is in the provided room.

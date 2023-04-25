@@ -88,7 +88,6 @@ namespace Legendary.Web
                 options.Configuration = this.Configuration["Legendary.ServerSettings.RedisCacheConnectionString"];
             });
 
-
             // Configure authentication.
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>

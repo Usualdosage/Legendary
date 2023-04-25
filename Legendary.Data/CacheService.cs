@@ -31,7 +31,7 @@ namespace Legendary.Data
         }
 
         /// <inheritdoc/>
-        public async Task<T?> GetFromCache<T>(string key) 
+        public async Task<T?> GetFromCache<T>(string key)
             where T : class
         {
             var cachedResponse = await this.cache.GetStringAsync(key);

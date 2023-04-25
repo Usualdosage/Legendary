@@ -187,7 +187,7 @@ namespace Legendary.Core.Contracts
         /// <summary>
         /// Gets or sets the program file.
         /// </summary>
-        public string Program { get; set; }
+        public string? Program { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether or not the container is trapped.

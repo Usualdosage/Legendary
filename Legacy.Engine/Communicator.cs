@@ -79,6 +79,7 @@ namespace Legendary.Engine
         /// <param name="apiClient">The api client.</param>
         /// <param name="dataService">The data service.</param>
         /// <param name="random">The random number generator.</param>
+        /// <param name="cache">The cache.</param>
         public Communicator(IHttpContextAccessor httpContextAccessor, RequestDelegate requestDelegate, IWebHostEnvironment webHostEnvironment, ILogger logger, IServerSettings serverSettings, IApiClient apiClient, IDataService dataService, IRandom random, ICacheService cache)
         {
             this.httpContextAccessor = httpContextAccessor;
@@ -405,7 +406,7 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task Quit(WebSocket socket, string? player, CancellationToken cancellationToken = default)
+        public async Task Quit(WebSocket? socket, string? player, CancellationToken cancellationToken = default)
         {
             var user = Users?.FirstOrDefault(u => u.Value.Username == player);
 
@@ -431,7 +432,11 @@ namespace Legendary.Engine
 
                     string message = $"{DateTime.UtcNow}: {player} has left Mystra.";
                     this.logger.Info(message, this);
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
+
+                    if (socket != null)
+                    {
+                        await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
+                    }
 
                     // Sign out and redirect back to the login screen.
                     if (this.httpContextAccessor.HttpContext != null)
@@ -445,7 +450,11 @@ namespace Legendary.Engine
                 // Should not get here if user was null. But if we do, just close the socket.
                 string message = $"{DateTime.UtcNow}: {player} was not found, but issued QUIT command. Closing socket.";
                 this.logger.Warn(message, this);
-                await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
+
+                if (socket != null)
+                {
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, $"{message}", cancellationToken);
+                }
             }
         }
 
@@ -1209,7 +1218,10 @@ namespace Legendary.Engine
                     {
                         if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
                         {
-                            await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                            if (user.Value.Connection != null)
+                            {
+                                await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                            }
                         }
                     }
                 }
@@ -1232,7 +1244,10 @@ namespace Legendary.Engine
                     {
                         if (!user.Value.Character.CharacterFlags.Contains(CharacterFlags.Sleeping))
                         {
-                            await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                            if (user.Value.Connection != null)
+                            {
+                                await user.Value.Connection.SendAsync(segment, WebSocketMessageType.Text, true, cancellationToken);
+                            }
                         }
                     }
                 }
@@ -2644,6 +2659,11 @@ namespace Legendary.Engine
         /// <returns>Task.</returns>
         private async Task<string?> ReceiveStringAsync(UserData userData, CancellationToken cancellationToken = default)
         {
+            if (userData.Connection == null)
+            {
+                return null;
+            }
+
             var buffer = new ArraySegment<byte>(new byte[8192]);
 
             using var ms = new MemoryStream();
