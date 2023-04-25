@@ -274,14 +274,18 @@ namespace Legendary.AreaBuilder
             {
                 Title = "Add Image File",
                 Filter = "Image Files|*.jpg;*.jpeg;*.png;",
+                Multiselect = true,
             };
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
                 if (this.propertyGrid1.SelectedObject is Mobile mobile)
                 {
-                    var stream = File.OpenRead(openDlg.FileName);
-                    this.UploadMobileImage(mobile, stream, Path.GetExtension(openDlg.FileName));
+                    foreach (var fileName in openDlg.FileNames)
+                    {
+                        var stream = File.OpenRead(fileName);
+                        this.UploadMobileImage(mobile, stream, Path.GetExtension(fileName));
+                    }
                 }
             }
         }
@@ -318,14 +322,18 @@ namespace Legendary.AreaBuilder
             {
                 Title = "Add Image File",
                 Filter = "Image Files|*.jpg;*.jpeg;*.png;",
+                Multiselect = true,
             };
 
             if (openDlg.ShowDialog() == DialogResult.OK)
             {
                 if (this.propertyGrid1.SelectedObject is Mobile mobile)
                 {
-                    var stream = File.OpenRead(openDlg.FileName);
-                    this.UploadMobileImage(mobile, stream, Path.GetExtension(openDlg.FileName), true);
+                    foreach (var fileName in openDlg.FileNames)
+                    {
+                        var stream = File.OpenRead(fileName);
+                        this.UploadMobileImage(mobile, stream, Path.GetExtension(fileName), true);
+                    }
                 }
             }
         }

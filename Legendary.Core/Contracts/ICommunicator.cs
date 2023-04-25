@@ -236,7 +236,7 @@ namespace Legendary.Core.Contracts
         /// <param name="message">The message.</param>
         /// <param name="cancellationToken">CancellationToken.</param>
         /// <returns>Task with result.</returns>
-        Task<CommResult> SendToPlayer(WebSocket socket, string message, CancellationToken cancellationToken = default);
+        Task<CommResult> SendToPlayer(WebSocket? socket, string message, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Sends a message to a player by resolving the socket from the character name.

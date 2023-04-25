@@ -353,10 +353,17 @@ namespace Legendary.Engine.Processors
         [HelpText("Reloads the world from the database, and clears the cache. Note: Does not reload new code.")]
         private async Task DoReload(UserData actor, CommandArgs args, CancellationToken cancellationToken)
         {
+            this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has initiated a reload of the world...", this.communicator);
             await this.communicator.SendToPlayer(actor.Connection, "Reloading the world...", cancellationToken);
+            await this.communicator.SendToPlayer(actor.Connection, "Clearing caches...", cancellationToken);
+            await this.world.ClearCache();
+            await this.communicator.SendToPlayer(actor.Connection, "Reloading the world from disk...", cancellationToken);
             await this.world.LoadWorld();
+            await this.communicator.SendToPlayer(actor.Connection, "Performing cleanup...", cancellationToken);
             await this.world.CleanupWorld(cancellationToken);
+            await this.communicator.SendToPlayer(actor.Connection, "Populating the world...", cancellationToken);
             this.world.Populate();
+            await this.communicator.SendToPlayer(actor.Connection, "Restarting the main game loop...", cancellationToken);
             this.communicator.RestartGameLoop();
             await this.communicator.SendToPlayer(actor.Connection, "You have reloaded the area, room, mobiles, and items, and repopulated the world.", cancellationToken);
             this.logger.Warn($"{actor.Character.FirstName.FirstCharToUpper()} has reloaded all of the game data and repopulated the world.", this.communicator);

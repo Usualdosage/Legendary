@@ -72,6 +72,9 @@ namespace Legendary.Engine
         public HashSet<Memory> Memories { get; set; } = new HashSet<Memory>();
 
         /// <inheritdoc/>
+        public HashSet<Mobile> Mobiles { get; set; } = new HashSet<Mobile>();
+
+        /// <inheritdoc/>
         public GameMetrics? GameMetrics { get; internal set; } = null;
 
         /// <summary>
@@ -151,31 +154,14 @@ namespace Legendary.Engine
         }
 
         /// <inheritdoc/>
-        public async Task<HashSet<Mobile>?> GetMobiles()
-        {
-            var mobiles = await this.cache.GetFromCache<HashSet<Mobile>>("Mobiles");
-            if (mobiles == null)
-            {
-                var mobilesData = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
-                if (mobilesData != null)
-                {
-                    mobiles = new HashSet<Mobile>(mobilesData);
-                    await this.cache.SetCache("Mobiles", mobiles, new Microsoft.Extensions.Caching.Distributed.DistributedCacheEntryOptions() { SlidingExpiration = TimeSpan.FromDays(1)});
-                }
-            }
-
-            return mobiles;
-        }
-
-        /// <inheritdoc/>
         public async Task LoadWorld()
         {
             var areas = await this.dataService.Areas.Find(Builders<Area>.Filter.Empty).ToListAsync();
             var items = await this.dataService.Items.Find(Builders<Item>.Filter.Empty).ToListAsync();
-            var mobiles = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
             var awards = await this.dataService.Awards.Find(Builders<Award>.Filter.Empty).ToListAsync();
             var personas = await this.dataService.Personas.Find(Builders<Persona>.Filter.Empty).ToListAsync();
             var memories = await this.dataService.Memories.Find(Builders<Memory>.Filter.Empty).ToListAsync();
+            var mobiles = await this.dataService.Mobiles.Find(Builders<Mobile>.Filter.Empty).ToListAsync();
 
             // Cache common lookups as hash sets for faster reads.
             this.Areas = new HashSet<Area>(areas);
@@ -183,6 +169,7 @@ namespace Legendary.Engine
             this.Awards = new HashSet<Award>(awards);
             this.Personas = new HashSet<Persona>(personas);
             this.Memories = new HashSet<Memory>(memories);
+            this.Mobiles = new HashSet<Mobile>(mobiles);
 
             // Set the last memory date. Any new memories that come in will be serialized each tick.
             this.lastMemoryDate = memories.Max(m => m.LastInteraction);
@@ -392,7 +379,7 @@ namespace Legendary.Engine
                             // Get one of the rooms they normally would populate in at random.
                             var room = repopRooms?[this.random.Next(0, repopRooms.Count - 1)];
 
-                            var mobile = this.GetMobiles().Result.FirstOrDefault(m => m.CharacterId == mobCharacterId);
+                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == mobCharacterId);
 
                             // Get the mobile.
                             if (mobile != null && room != null)
@@ -495,7 +482,7 @@ namespace Legendary.Engine
                         // Populate mobs from resets
                         foreach (var reset in room.MobileResets)
                         {
-                            var mobile = this.GetMobiles().Result.FirstOrDefault(m => m.CharacterId == reset);
+                            var mobile = this.Mobiles.FirstOrDefault(m => m.CharacterId == reset);
 
                             if (mobile != null)
                             {
@@ -609,8 +596,7 @@ namespace Legendary.Engine
                 metrics.LastStartupDateTime = startup.HasValue ? startup : metrics.LastStartupDateTime;
                 metrics.MaxPlayers = this.dataService.Characters.CountDocuments(c => c.CharacterId > 0, cancellationToken: cancellationToken);
                 metrics.TotalAreas = this.Areas.Count;
-                var mobs = await this.GetMobiles();
-                metrics.TotalMobiles = mobs.Count;
+                metrics.TotalMobiles = this.Mobiles.Count;
                 metrics.TotalItems = this.Items.Count;
                 metrics.TotalRooms = this.Areas.Sum(a => a.Rooms != null ? a.Rooms.Count : 0);
 
@@ -884,7 +870,7 @@ namespace Legendary.Engine
         /// <inheritdoc/>
         public async Task ClearCache()
         {
-            await this.cache.ClearCache("Characters");
+            // await this.cache.ClearCache("Characters");
             await this.cache.ClearCache("Mobiles");
         }
 

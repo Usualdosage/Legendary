@@ -23,7 +23,7 @@ namespace Legendary.Core.Models
         /// <param name="connection">The socket.</param>
         /// <param name="userName">The username.</param>
         /// <param name="character">The character.</param>
-        public UserData(string connectionId, WebSocket connection, string userName, Character character)
+        public UserData(string connectionId, WebSocket? connection, string userName, Character character)
         {
             this.ConnectionId = connectionId;
             this.Connection = connection;
@@ -39,7 +39,7 @@ namespace Legendary.Core.Models
         /// <summary>
         /// Gets the active user connection (socket).
         /// </summary>
-        public WebSocket Connection { get; private set; }
+        public WebSocket? Connection { get; private set; }
 
         /// <summary>
         /// Gets the username.

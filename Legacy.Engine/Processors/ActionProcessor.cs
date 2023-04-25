@@ -36,7 +36,6 @@ namespace Legendary.Engine.Processors
     using Microsoft.AspNetCore.Hosting;
     using MongoDB.Driver;
     using Newtonsoft.Json;
-    using SharpCompress.Compressors.Xz;
 
     /// <summary>
     /// Used to perform quick lookups of skills.
@@ -132,11 +131,11 @@ namespace Legendary.Engine.Processors
         /// <summary>
         /// Executes the action provided by the command.
         /// </summary>
-        /// <param name="actor">The actor.</param>
+        /// <param name="userData">The userData.</param>
         /// <param name="args">The input args.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task.</returns>
-        public async Task DoAction(UserData actor, CommandArgs args, CancellationToken cancellationToken = default)
+        public async Task DoAction(UserData userData, CommandArgs args, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -150,15 +149,15 @@ namespace Legendary.Engine.Processors
                 {
                     var methodAttribs = (MinimumLevelAttribute?)action.Value.Value.GetMethodInfo()?.GetCustomAttribute(typeof(MinimumLevelAttribute));
 
-                    if (methodAttribs != null & methodAttribs?.Level > actor.Character.Level)
+                    if (methodAttribs != null & methodAttribs?.Level > userData.Character.Level)
                     {
-                        await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                        await this.communicator.SendToPlayer(userData.Character, "Unknown command.", cancellationToken);
                     }
                     else
                     {
-                        if (actor.Character.CharacterFlags.Contains(CharacterFlags.Sleeping) && action.Key.ToLower() != "wake" && action.Key.ToLower() != "quit")
+                        if (userData.Character.CharacterFlags.Contains(CharacterFlags.Sleeping) && action.Key.ToLower() != "wake" && action.Key.ToLower() != "quit")
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, "You can't do that while you're sleeping.", cancellationToken);
+                            await this.communicator.SendToPlayer(userData.Character, "You can't do that while you're sleeping.", cancellationToken);
                             return;
                         }
                         else
@@ -167,19 +166,19 @@ namespace Legendary.Engine.Processors
 
                             if (sightRequiredAttrib != null)
                             {
-                                if (!PlayerHelper.CanPlayerSee(this.environment, this.communicator, actor.Character))
+                                if (!PlayerHelper.CanPlayerSee(this.environment, this.communicator, userData.Character))
                                 {
-                                    await this.communicator.SendToPlayer(actor.Connection, "You can't see anything, it's pitch black.", cancellationToken);
+                                    await this.communicator.SendToPlayer(userData.Character, "You can't see anything, it's pitch black.", cancellationToken);
                                     return;
                                 }
                                 else
                                 {
-                                    await action.Value.Value(actor, args, cancellationToken);
+                                    await action.Value.Value(userData, args, cancellationToken);
                                 }
                             }
                             else
                             {
-                                await action.Value.Value(actor, args, cancellationToken);
+                                await action.Value.Value(userData, args, cancellationToken);
                             }
                         }
                     }
@@ -187,7 +186,7 @@ namespace Legendary.Engine.Processors
                 else
                 {
                     // If the player is a wiz, try those commands.
-                    if (actor.Character.Level >= Constants.WIZLEVEL)
+                    if (userData.Character.Level >= Constants.WIZLEVEL)
                     {
                         // Get the matching actions for the wizard command word.
                         var wizAction = this.wizActions
@@ -199,30 +198,30 @@ namespace Legendary.Engine.Processors
                         {
                             var methodAttribs = (MinimumLevelAttribute?)wizAction.Value.Value.GetMethodInfo().GetCustomAttribute(typeof(MinimumLevelAttribute));
 
-                            if (methodAttribs != null & methodAttribs?.Level > actor.Character.Level)
+                            if (methodAttribs != null & methodAttribs?.Level > userData.Character.Level)
                             {
-                                await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                                await this.communicator.SendToPlayer(userData.Character, "Unknown command.", cancellationToken);
                             }
                             else
                             {
-                                await wizAction.Value.Value(actor, args, cancellationToken);
+                                await wizAction.Value.Value(userData, args, cancellationToken);
                             }
                         }
                         else
                         {
-                            await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                            await this.communicator.SendToPlayer(userData.Character, "Unknown command.", cancellationToken);
                         }
                     }
                     else
                     {
-                        await this.communicator.SendToPlayer(actor.Connection, "Unknown command.", cancellationToken);
+                        await this.communicator.SendToPlayer(userData.Character, "Unknown command.", cancellationToken);
                     }
                 }
             }
             catch (Exception ex)
             {
                 this.logger.Error(ex, this.communicator);
-                await this.communicator.SendToPlayer(actor.Connection, "<span class='error'>Unable to process command. This has been logged.</span>", cancellationToken);
+                await this.communicator.SendToPlayer(userData.Character, "<span class='error'>Unable to process command. This has been logged.</span>", cancellationToken);
             }
         }
 

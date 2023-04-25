@@ -36,6 +36,8 @@ namespace Legendary.Engine.Processors
     using Legendary.Engine.Models.Spells;
     using Legendary.Engine.Output;
     using Microsoft.AspNetCore.DataProtection.KeyManagement;
+    using Microsoft.AspNetCore.Http.HttpResults;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Newtonsoft.Json;
     using RestSharp;
     using static System.Net.Mime.MediaTypeNames;
@@ -193,6 +195,9 @@ namespace Legendary.Engine.Processors
                         {
                             // Send a message to the UI to clear the speech bubble.
                             await this.communicator.SendToPlayer(character, $"CLEARCHAT:{engagedMobile.CharacterId}", cancellationToken);
+
+                            // Log the raw message.
+                            this.logger.Info($"Raw message result from {persona.Name}: {message}", this.communicator);
 
                             // Clean and process all of the output from the AI engine.
                             var result = (ProcessOutput(message, persona, engagedMobile), engagedMobile);
@@ -477,187 +482,74 @@ namespace Legendary.Engine.Processors
             }
         }
 
-        /// <summary>
-        /// Parses an AI response into say messages and emotes.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="persona">The mobile persona.</param>
-        /// <param name="mobile">The mobile.</param>
-        /// <returns>Cleaned output message.</returns>
         private static string[]? ProcessOutput(string message, Persona persona, Mobile mobile)
         {
             List<string> messages = new ();
 
             message = message.Trim();
 
-            // Name:, in Common, 'some sentence.'
-            if (message.Contains(':'))
+            var sbMessage = new StringBuilder();
+            bool sentenceStart = false;
+            bool emoteStart = false;
+
+            foreach (var character in message)
             {
-                message = message.Split(':')[1].Trim();
+                if (character == '{')
+                {
+                    sentenceStart = true;
+                    sbMessage.Append("say ");
+                    continue;
+                }
+
+                if (character == '[')
+                {
+                    emoteStart = true;
+                    sbMessage.Append("emote ");
+                    continue;
+                }
+
+                if (character == '}' && sentenceStart)
+                {
+                    sentenceStart = false;
+                    messages.Add(sbMessage.ToString());
+                    sbMessage = new StringBuilder();
+                    continue;
+                }
+
+                if (character == ']' && emoteStart)
+                {
+                    emoteStart = false;
+                    messages.Add(sbMessage.ToString());
+                    sbMessage = new StringBuilder();
+                    continue;
+                }
+
+                sbMessage.Append(character);
             }
 
-            if (message.Contains('*'))
+            List<string> cleaned = new List<string>();
+
+            // Clean up the messages
+            foreach (var action in messages)
             {
-                List<string> sentences = new ();
-                StringBuilder sbFormat = new ();
+                var clean = CleanSentence(mobile, persona, action);
 
-                bool open = true;
-
-                for (int i = 0; i < message.Length; i++)
+                if (!string.IsNullOrWhiteSpace(clean))
                 {
-                    if (message[i] == '*')
-                    {
-                        sbFormat.AppendFormat(open ? "[{0}" : "{0}]", message[i]);
-                        open = !open;
-                    }
-                    else
-                    {
-                        sbFormat.Append(message[i]);
-                    }
-                }
-
-                StringBuilder sb = new ();
-
-                foreach (char c in sbFormat.ToString())
-                {
-                    if (c == '[')
-                    {
-                        if (sb.Length > 0)
-                        {
-                            sentences.Add(sb.ToString());
-                            sb = new StringBuilder();
-                            sb.Append(c);
-                        }
-                        else
-                        {
-                            sb.Append(c);
-                        }
-                    }
-                    else if (c == ']')
-                    {
-                        sb.Append(c);
-                        sentences.Add(sb.ToString());
-                        sb = new StringBuilder();
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
-                }
-
-                sentences.Add(sb.ToString());
-
-                foreach (var sentence in sentences)
-                {
-                    if (string.IsNullOrWhiteSpace(sentence))
-                    {
-                        continue;
-                    }
-                    else if (sentence[0] == '[')
-                    {
-                        // This is an emote
-                        messages.Add($"{CleanSentence(mobile, persona, sentence, true)}");
-                    }
-                    else
-                    {
-                        // This is an emote, but not an emote with brackets, so clean it up.
-                        if (sentence.StartsWith("EMOTE"))
-                        {
-                            var cleaned = CleanSentence(mobile, persona, sentence, true);
-
-                            if (!string.IsNullOrWhiteSpace(cleaned))
-                            {
-                                messages.Add($"{cleaned}");
-                            }
-                        }
-                        else
-                        {
-                            // This is a sentence (probably).
-                            var cleaned = CleanSentence(mobile, persona, sentence, false)?.FirstCharToUpper();
-
-                            if (!string.IsNullOrWhiteSpace(cleaned))
-                            {
-                                // I'm not sure why this happens, but it does.
-                                if (cleaned.ToLower() != "says.")
-                                {
-                                    messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{cleaned}</span>\"");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                var sentence = CleanSentence(mobile, persona, message, false)?.FirstCharToUpper();
-
-                if (!string.IsNullOrWhiteSpace(sentence))
-                {
-                    messages.Add($"{persona.Name ?? mobile.FirstName} says \"<span class='say'>{sentence}</span>\"");
+                    cleaned.Add(clean);
                 }
             }
 
-            return messages.ToArray();
+            return cleaned.ToArray();
         }
 
-        private static string? CleanSentence(Mobile mobile, Persona persona, string sentence, bool isEmote)
+        private static string? CleanSentence(Mobile mobile, Persona persona, string sentence)
         {
-            // TODO: Get a regex to replace the punctuation/characters we don't want.
-            sentence = sentence.Replace("[", string.Empty).Replace("]", string.Empty).Replace("*", string.Empty).Replace("*", string.Empty);
-            sentence = sentence.ReplaceFirst(persona.Name?.FirstCharToLower() ?? mobile.FirstName.FirstCharToLower(), string.Empty);
-            sentence = sentence.Replace("EMOTE", string.Empty);
+            sentence = sentence.ReplaceFirst(persona.Name ?? mobile.FirstName, string.Empty);
             sentence = sentence.Replace("CASSANOVA-DEACTIVATE", string.Empty);
             sentence = sentence.Replace("CASSANOVA-ACTIVATE", string.Empty);
-            sentence = sentence.Replace(":", string.Empty);
-
-            /*
-            if (isEmote)
-            {
-                sentence = sentence.Replace("my", mobile.Pronoun);
-            }
-            */
-
             sentence = sentence.Trim();
-
-            // Remove leading punctuation if we have it.
-            if (sentence.Length > 0 && char.IsPunctuation(sentence[0]))
-            {
-                sentence = sentence[1..];
-            }
-
-            sentence = sentence.Trim();
-
-            if (!isEmote)
-            {
-                // Not an emote, so be sure they don't put their name in.
-                if (!string.IsNullOrWhiteSpace(persona.Name))
-                {
-                    sentence = sentence.Replace(persona.Name, string.Empty);
-                }
-
-                sentence = sentence.Replace(mobile.FirstName, string.Empty);
-
-                // Just got junk here.
-                if (sentence.Length <= 2)
-                {
-                    sentence = string.Empty;
-                }
-            }
-
-            // End with punctuation if we didn't.
-            if (!string.IsNullOrWhiteSpace(sentence) && !char.IsPunctuation(sentence[^1]))
-            {
-                sentence += ".";
-            }
-
-            if (!string.IsNullOrWhiteSpace(sentence))
-            {
-                return sentence.FirstCharToUpper().Trim();
-            }
-            else
-            {
-                return null;
-            }
+            return sentence;
         }
 
         [GeneratedRegex("http[^\\s]+")]
@@ -702,8 +594,7 @@ namespace Legendary.Engine.Processors
                 $"Your gender is {mobile.Gender}.",
                 $"Your alignment is {mobile.Alignment}, and your ethos is {mobile.Ethos}.",
                 $"The person you are speaking to may have an alignment of {character.Alignment} and an ethos of {character.Ethos}.",
-                $"The person you are speaking to appearss to be a {character.Gender} {character.Race}.",
-                $"If speaking, form your sentence as {persona.Name} says: ''",
+                $"The person you are speaking to appears to be a {character.Gender} {character.Race}.",
             };
 
             // Add the base behaviors for all AI mobs.

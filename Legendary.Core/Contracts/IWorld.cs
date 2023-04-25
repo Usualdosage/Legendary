@@ -48,15 +48,14 @@ namespace Legendary.Core.Contracts
         HashSet<Memory> Memories { get; set; }
 
         /// <summary>
+        /// Gets or sets a hashset of mobiles currently loaded into memory.
+        /// </summary>
+        HashSet<Mobile> Mobiles { get; set; }
+
+        /// <summary>
         /// Gets the game metrics.
         /// </summary>
         GameMetrics? GameMetrics { get; }
-
-        /// <summary>
-        /// Gets a hashset of mobiles currently loaded into cache.
-        /// </summary>
-        /// <returns>Hashset of Mobiles.</returns>
-        Task<HashSet<Mobile>?> GetMobiles();
 
         /// <summary>
         /// Resets the cache.

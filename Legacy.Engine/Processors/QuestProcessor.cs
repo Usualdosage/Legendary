@@ -81,6 +81,7 @@ namespace Legendary.Engine.Processors
                     if (mobile.XActive.HasValue && mobile.XActive.Value)
                     {
                         this.logger.Info($"{actor.FirstName} has deactivated {mobile.FirstName}.", this.communicator);
+                        await this.communicator.SendToPlayer(actor, $"{mobile.FirstName} gets dressed.", cancellationToken);
                         mobile.XActive = false;
                     }
                     else
@@ -93,6 +94,7 @@ namespace Legendary.Engine.Processors
                     if (mobile.XActive.HasValue && mobile.XActive.Value)
                     {
                         this.logger.Info($"{actor.FirstName} has deactivated {mobile.FirstName}.", this.communicator);
+                        await this.communicator.SendToPlayer(actor, $"{mobile.FirstName} seems turned off by your request and gets dressed.", cancellationToken);
                         mobile.XActive = false;
                     }
                     else
@@ -105,6 +107,7 @@ namespace Legendary.Engine.Processors
                     this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
                     mobile.XActive = true;
                     await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
+                    await this.communicator.SendToPlayer(actor, $"{mobile.FirstName} complies with your request.", cancellationToken);
                 }
                 else
                 {
