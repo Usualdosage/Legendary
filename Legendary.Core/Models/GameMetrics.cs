@@ -87,6 +87,11 @@ namespace Legendary.Core.Models
         public string? MostKills { get; set; }
 
         /// <summary>
+        /// Gets or sets the player with the most awards.
+        /// </summary>
+        public string? MasterQuestor { get; set; }
+
+        /// <summary>
         /// Gets or sets the host URL.
         /// </summary>
         public string? HostURL { get; set; }

@@ -58,5 +58,20 @@ namespace Legendary.Core.Types
         /// Cassanova award.
         /// </summary>
         Cassanova = 10,
+
+        /// <summary>
+        /// Discoverer award.
+        /// </summary>
+        Discoverer = 11,
+
+        /// <summary>
+        /// Slayer award.
+        /// </summary>
+        Slayer = 12,
+
+        /// <summary>
+        /// Outlaw award.
+        /// </summary>
+        Outlaw = 13,
     }
 }

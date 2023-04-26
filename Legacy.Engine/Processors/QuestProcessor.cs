@@ -107,7 +107,7 @@ namespace Legendary.Engine.Processors
                     this.logger.Info($"{actor.FirstName} has activated {mobile.FirstName}.", this.communicator);
                     mobile.XActive = true;
                     await this.awardProcessor.GrantAward((int)Legendary.Core.Types.AwardType.Cassanova, actor, $"managed to see {mobile.FirstName} nude", cancellationToken);
-                    await this.communicator.SendToPlayer(actor, $"{mobile.FirstName} complies with your request.", cancellationToken);
+                    await this.communicator.SendToPlayer(actor, $"{mobile.FirstName} has removed {mobile.Pronoun} clothing.", cancellationToken);
                 }
                 else
                 {

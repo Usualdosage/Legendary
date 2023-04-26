@@ -614,6 +614,34 @@ namespace Legendary.Engine
                     metrics.MostKills = "Nobody";
                 }
 
+                var questors = await this.dataService.Characters.Find(c => c.Awards != null && c.Awards.Count > 0 && !c.IsNPC).ToListAsync();
+
+                if (questors != null)
+                {
+                    var questor = questors.OrderByDescending(o => o.Awards.Count).FirstOrDefault();
+
+                    if (questor != null)
+                    {
+                        var questorName = questor.FirstName.ToLower().FirstCharToUpper();
+
+                        // Check if we have a new hero.
+                        if (!string.IsNullOrWhiteSpace(metrics.MasterQuestor) && metrics.MasterQuestor != questorName)
+                        {
+                            await this.communicator.SendGlobal($"{questorName} is now the <span class='say'>Master Questor</span> of Mystra!", cancellationToken);
+                        }
+
+                        metrics.MasterQuestor = questor.FirstName.ToLower().FirstCharToUpper();
+                    }
+                    else
+                    {
+                        metrics.MasterQuestor = "Nobody";
+                    }
+                }
+                else
+                {
+                    metrics.MasterQuestor = "Nobody";
+                }
+
                 await this.dataService.SaveGameMetrics(metrics, cancellationToken);
 
                 return metrics;

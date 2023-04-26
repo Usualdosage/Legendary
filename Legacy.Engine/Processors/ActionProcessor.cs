@@ -2921,6 +2921,8 @@ namespace Legendary.Engine.Processors
                 await this.communicator.SendToPlayer(actor.Connection, sb.ToString(), cancellationToken);
 
                 await this.communicator.SendToPlayer(actor.Connection, $"There are {Communicator.Users?.Count} players in Mystra.", cancellationToken);
+
+                await this.communicator.SendToPlayer(actor.Connection, $"The <span class='say'>Master Questor</span> of Mystra is {this.world.GameMetrics?.MasterQuestor}", cancellationToken);
             }
         }
 

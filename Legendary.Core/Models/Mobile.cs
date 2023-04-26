@@ -84,5 +84,10 @@ namespace Legendary.Core.Models
         /// Gets or sets the X-images for this mobile.
         /// </summary>
         public virtual List<string>? XImages { get; set; }
+
+        /// <summary>
+        /// Gets or sets the quest types for this mob.
+        /// </summary>
+        public virtual List<QuestType> QuestTypes { get; set; } = new List<QuestType>();
     }
 }

@@ -124,5 +124,53 @@ namespace Legendary.Engine.Processors
                 }
             }
         }
+
+        /// <summary>
+        /// Check the discoverer award.
+        /// </summary>
+        /// <param name="mobiles">The mobiles.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task CheckDiscovererAward(List<Mobile> mobiles, Character actor, CancellationToken cancellationToken)
+        {
+            foreach (var mobile in mobiles)
+            {
+                if (mobile.QuestTypes != null && mobile.QuestTypes.Contains(QuestType.Find))
+                {
+                    await this.GrantAward((int)AwardType.Discoverer, actor, $"found {mobile.FirstName}", cancellationToken);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check the slayer award.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task CheckSlayerAward(Mobile mobile, Character actor, CancellationToken cancellationToken)
+        {
+            if (mobile.QuestTypes != null && mobile.QuestTypes.Contains(QuestType.Kill))
+            {
+                await this.GrantAward((int)AwardType.Slayer, actor, $"slain {mobile.FirstName}", cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Check the outlaw award.
+        /// </summary>
+        /// <param name="mobile">The mobile.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task CheckOutlawAward(Mobile mobile, Character actor, CancellationToken cancellationToken)
+        {
+            if (mobile.QuestTypes != null && mobile.QuestTypes.Contains(QuestType.Outlaw))
+            {
+                await this.GrantAward((int)AwardType.Outlaw, actor, $"murdered {mobile.FirstName}", cancellationToken);
+            }
+        }
     }
 }

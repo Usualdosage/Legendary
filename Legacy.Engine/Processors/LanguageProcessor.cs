@@ -155,8 +155,16 @@ namespace Legendary.Engine.Processors
                             return (null, null);
                         }
 
+                        bool? priorState = engagedMobile.XActive;
+
                         // See if any parts of the message complete a quest.
                         await this.questProcessor.CheckQuest(message, character, engagedMobile, cancellationToken);
+
+                        // Mobile has toggled XActive.
+                        if (engagedMobile.XActive.HasValue && priorState.HasValue && priorState.Value != engagedMobile.XActive.Value)
+                        {
+                            this.mobileTrainingData.Add(engagedMobile, this.ToggleMobileActive(persona, character, engagedMobile));
+                        }
 
                         // Parse all of the resulting language.
                         try
@@ -495,7 +503,7 @@ namespace Legendary.Engine.Processors
                 sbMessage.Append(character);
             }
 
-            List<string> cleaned = new List<string>();
+            List<string> cleaned = new ();
 
             // Clean up the messages
             foreach (var action in messages)
@@ -624,6 +632,51 @@ namespace Legendary.Engine.Processors
             };
 
             return messages;
+        }
+
+        private List<dynamic> ToggleMobileActive(Persona persona, Character character, Mobile mobile)
+        {
+            if (mobile.XActive == true)
+            {
+                var trainingInformation = new List<string>
+                {
+                    $"You have become excited by {character.FirstName} and have removed your clothing.",
+                    $"You find yourself very attracted to {character.FirstName}.",
+                };
+
+                this.world.AddMemory(character, mobile, $"You have become excited by {character.FirstName} and have removed your clothing. You find {character.Pronoun} attractive.");
+
+                var messages = new List<dynamic>
+                {
+                    new
+                    {
+                        role = "system",
+                        content = string.Join(" ", trainingInformation),
+                    },
+                };
+
+                return messages;
+            }
+            else
+            {
+                var trainingInformation = new List<string>
+                {
+                    $"You have become turned off by {character.FirstName} and have put your clothing back on.",
+                };
+
+                this.world.AddMemory(character, mobile, $"You have become turned off by {character.FirstName} and have put your clothing back on.");
+
+                var messages = new List<dynamic>
+                {
+                    new
+                    {
+                        role = "system",
+                        content = string.Join(" ", trainingInformation),
+                    },
+                };
+
+                return messages;
+            }
         }
 
         /// <summary>

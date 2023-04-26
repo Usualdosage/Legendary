@@ -914,6 +914,9 @@ namespace Legendary.Engine
                         }
                     }
                 }
+
+                // See if they get an award for discovery.
+                await this.awardProcessor.CheckDiscovererAward(room.Mobiles, actor, cancellationToken);
             }
 
             // Show other players

@@ -222,6 +222,7 @@ namespace Legendary.AreaBuilder
                 this.pictureBox1.Update();
 
                 this.toolStripStatusLabel1.Text = $"Uploaded image for {mobile.FirstName}: {imageUrl}!";
+                this.statusStrip1.Update();
 
                 return true;
             }

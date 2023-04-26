@@ -241,11 +241,18 @@ namespace Legendary.Engine.Processors
             // If they fall below wimpy, haul ass.
             if (target.Health.Current <= target.Wimpy)
             {
-                if (Communicator.Users != null)
+                if (!target.IsNPC)
                 {
-                    var userData = Communicator.Users.FirstOrDefault(u => u.Value.Character.CharacterId == target.CharacterId);
-                    var commandArgs = new CommandArgs("flee", null, null, 0);
-                    this.actionProcessor.DoAction(userData.Value, commandArgs).Wait();
+                    if (Communicator.Users != null)
+                    {
+                        var userData = Communicator.Users.FirstOrDefault(u => u.Value.Character.CharacterId == target.CharacterId);
+                        var commandArgs = new CommandArgs("flee", null, null, 0);
+                        this.actionProcessor.DoAction(userData.Value, commandArgs).Wait();
+                    }
+                }
+                else
+                {
+                    // TODO: Implement me.
                 }
             }
 
@@ -964,6 +971,9 @@ namespace Legendary.Engine.Processors
 
             await this.communicator.SendToPlayer(killer, $"You have KILLED {target.FirstName}!", cancellationToken);
             await this.communicator.SendToRoom(target.Location, target, killer, $"{target.FirstName.FirstCharToUpper()} is DEAD!", cancellationToken);
+
+            // See if they get an award for killing it.
+            await this.awardProcessor.CheckSlayerAward((Mobile)target, killer, cancellationToken);
 
             killer.Metrics.MobKills += 1;
 

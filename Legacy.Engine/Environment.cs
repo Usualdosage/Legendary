@@ -401,19 +401,15 @@ namespace Legendary.Engine
                 }
                 else
                 {
-                    item.RotTimer -= 1;
+                    // Only food will rot in inventory.
+                    if (item.ItemId == Constants.ITEM_FOOD || item.ItemType == ItemType.Food)
+                    {
+                        item.RotTimer -= 1;
+                    }
 
                     if (item.RotTimer <= 0)
                     {
-                        if (item.ItemId == Constants.ITEM_SPRING)
-                        {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} dries up.", cancellationToken);
-                        }
-                        else if (item.ItemId == Constants.ITEM_LIGHT)
-                        {
-                            await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
-                        }
-                        else if (item.ItemId == Constants.ITEM_FOOD)
+                        if (item.ItemId == Constants.ITEM_FOOD || item.ItemType == ItemType.Food)
                         {
                             await this.communicator.SendToRoom(userData.Character.Location, $"{item.Name.FirstCharToUpper()} rots away.", cancellationToken);
                         }
@@ -441,17 +437,21 @@ namespace Legendary.Engine
                 {
                     item.Value.RotTimer -= 1;
 
-                    if (item.Value.RotTimer <= 0)
+                    if (item.Value.RotTimer <= 2 && item.Value.RotTimer > 0 && (item.Value.ItemId == Constants.ITEM_LIGHT || item.Value.ItemType == ItemType.Light))
                     {
-                        if (item.Value.ItemId == Constants.ITEM_SPRING)
+                        await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} flickers and fades momentarily.", cancellationToken);
+                    }
+                    else if (item.Value.RotTimer <= 0)
+                    {
+                        if (item.Value.ItemId == Constants.ITEM_SPRING || item.Value.ItemType == ItemType.Spring)
                         {
                             await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} dries up.", cancellationToken);
                         }
-                        else if (item.Value.ItemId == Constants.ITEM_LIGHT)
+                        else if (item.Value.ItemId == Constants.ITEM_LIGHT || item.Value.ItemType == ItemType.Light)
                         {
                             await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} flickers and fades into darkness.", cancellationToken);
                         }
-                        else if (item.Value.ItemId == Constants.ITEM_FOOD)
+                        else if (item.Value.ItemId == Constants.ITEM_FOOD || item.Value.ItemType == ItemType.Food)
                         {
                             await this.communicator.SendToRoom(userData.Character.Location, $"{item.Value.Name.FirstCharToUpper()} rots away.", cancellationToken);
                         }
