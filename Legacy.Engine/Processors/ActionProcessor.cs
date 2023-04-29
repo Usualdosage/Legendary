@@ -869,7 +869,7 @@ namespace Legendary.Engine.Processors
             }
             else
             {
-                var sentence = string.Join(' ', new string?[2] { args.Method, args.Target }).Trim();
+                var sentence = string.Join(' ', new string?[2] { args.Method, args.Target }).Trim().FirstCharToLower();
                 if (!string.IsNullOrWhiteSpace(sentence))
                 {
                     if (!char.IsPunctuation(sentence[^1]))

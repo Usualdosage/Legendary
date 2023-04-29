@@ -663,6 +663,9 @@ namespace Legendary.Engine
                     {
                         foreach (var room in area.Rooms)
                         {
+                            // Decrement the rot timer for anything that can rot.
+                            room.Items?.Where(i => i.RotTimer > -1).ToList().ForEach(r => r.RotTimer -= 1);
+                            
                             // Decompose items.
                             var items = room.Items?.Where(i => i.RotTimer == 0);
 
